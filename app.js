@@ -84,11 +84,14 @@
   document.querySelectorAll("[data-phone-link]").forEach(a => { a.href = `tel:${profile.phone.replace(/\s+/g,'')}`; a.textContent = profile.phone; });
   document.querySelectorAll("[data-linkedin-link]").forEach(a => { a.href = profile.linkedin; });
   document.querySelectorAll("[data-cv-link]").forEach(a => { a.href = profile.cv; });
+  // Icon-only variants: set the link but keep the symbol as visible text
+  document.querySelectorAll("[data-email-icon]").forEach(a => { a.href = `mailto:${profile.email}`; a.title = profile.email; });
+  document.querySelectorAll("[data-phone-icon]").forEach(a => { a.href = `tel:${profile.phone.replace(/\s+/g,'')}`; a.title = profile.phone; });
 
   // Mobile nav
   const toggle = el("mobileToggle"), links = el("mobileLinks");
   if (toggle && links) {
-    links.innerHTML = `<a href="index.html">Home</a><a href="about.html">About</a><a href="experience.html">Experience</a><a href="education.html">Education</a><a href="skills.html">Expertise</a><a href="activities.html">Activities</a><a href="contact.html">Contact</a>`;
+    links.innerHTML = `<a href="index.html">Home</a><a href="about.html">About</a><a href="experience.html">Experience</a><a href="education.html">Education</a><a href="skills.html">Expertise</a><a href="activities.html">Activities</a><a href="aeroops.html">AeroOps Desk</a><a href="contact.html">Contact</a>`;
     toggle.addEventListener("click", ()=>links.classList.toggle("open"));
   }
 

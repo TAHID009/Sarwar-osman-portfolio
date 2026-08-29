@@ -1,0 +1,3647 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AeroOps Desk | Md Sarwar Osman Sagar</title>
+<meta name="description" content="Internal work record and ticket sales tracker for Md Sarwar Osman Sagar.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./style.css">
+<script src="./profile.js"></script><script defer src="./app.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<style>
+
+  #ptc-root{
+    --ink:#0B2545;
+    --ink-soft:#3C5573;
+    --paper:#F1F4F9;
+    --card:#FFFFFF;
+    --line:#DCE3EC;
+    --muted:#6B7A8D;
+
+    --booking:#2E6F95;
+    --booking-soft:#E7F0F5;
+    --reissue:#C97F1E;
+    --reissue-soft:#FBF0E1;
+    --refund:#B4453B;
+    --refund-soft:#F9E9E7;
+    --void:#6B7280;
+    --void-soft:#EDEEF0;
+
+    --brand:#0E6E73;
+    --brand-soft:#E3F2F2;
+
+    --accent: var(--brand);
+    --accent-soft: var(--brand-soft);
+
+    --shadow-sm: 0 1px 3px rgba(11,37,69,0.06);
+    --shadow-md: 0 4px 16px rgba(11,37,69,0.08);
+    --shadow-lg: 0 12px 32px rgba(11,37,69,0.14);
+  }
+
+  * { box-sizing: border-box; }
+
+  #ptc-root ::selection{ background: var(--accent); color:#fff; }
+
+  #ptc-root :focus-visible{
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  #ptc-root{
+    font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    padding: 24px 16px 40px;
+    min-height: 100%;
+  }
+
+  #ptc-root .mono{
+    font-family: 'IBM Plex Mono', 'SFMono-Regular', Menlo, monospace;
+  }
+
+  .ptc-shell{
+    max-width: 880px;
+    margin: 0 auto;
+  }
+
+  .ptc-header{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .ptc-header h1{
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+    margin: 0;
+  }
+
+  .ptc-header .ptc-eyebrow{
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.6px;
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  .ptc-card{
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-left: 5px solid var(--accent);
+    border-radius: 10px;
+    padding: 22px 22px 18px;
+    box-shadow: var(--shadow-sm);
+    transition: border-left-color .25s ease, box-shadow .25s ease;
+    margin-bottom: 20px;
+  }
+
+  .ptc-row{
+    display:grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px 16px;
+    margin-bottom: 14px;
+  }
+
+  @media (max-width: 560px){
+    .ptc-row{ grid-template-columns: 1fr; }
+  }
+
+  .ptc-field label{
+    display:block;
+    font-size: 11.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--ink-soft);
+    margin-bottom: 5px;
+  }
+
+  .ptc-field input,
+  .ptc-field select,
+  .ptc-field textarea{
+    width:100%;
+    padding: 9px 10px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    font-size: 14px;
+    color: var(--ink);
+    background: #FCFDFE;
+    font-family: inherit;
+  }
+
+  .ptc-field input:focus,
+  .ptc-field select:focus,
+  .ptc-field textarea:focus{
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+    border-color: var(--accent);
+  }
+
+  .ptc-field input,
+  .ptc-field select,
+  .ptc-field textarea{
+    transition: border-color .15s ease, box-shadow .15s ease;
+  }
+  .ptc-field input:hover,
+  .ptc-field select:hover,
+  .ptc-field textarea:hover{
+    border-color: #B9C4D2;
+  }
+
+  .ptc-type-select select{
+    font-weight: 700;
+    color: var(--accent);
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+
+  .ptc-section-label{
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.4px;
+    font-weight: 700;
+    color: var(--accent);
+    margin: 4px 0 12px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--line);
+  }
+
+  .ptc-actions{
+    display:flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 6px;
+  }
+
+  .ptc-btn{
+    border: none;
+    border-radius: 7px;
+    padding: 10px 18px;
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: transform .12s ease, box-shadow .2s ease, filter .15s ease, background .15s ease;
+  }
+  .ptc-btn:active{ transform: translateY(1px); }
+
+  .ptc-btn-primary{
+    background: var(--accent);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(14,110,115,0.28);
+  }
+  .ptc-btn-primary:hover{ filter: brightness(1.08); box-shadow: 0 4px 14px rgba(14,110,115,0.34); }
+
+  .ptc-btn-ghost{
+    background: transparent;
+    color: var(--ink-soft);
+    border: 1px solid var(--line);
+  }
+  .ptc-btn-ghost:hover{ background: #F3F5F8; border-color: #C4CEDA; }
+  .ptc-btn:disabled{ opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  .ptc-log-head{
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+
+  .ptc-log-head h2{
+    font-size: 14px;
+    margin:0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--ink-soft);
+  }
+
+  .ptc-count{
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .ach-progress-track{
+    height: 9px;
+    background: #E7ECF2;
+    border-radius: 5px;
+    overflow: hidden;
+  }
+  .ach-progress-fill{
+    height: 100%;
+    border-radius: 5px;
+    width: 0%;
+    background: linear-gradient(90deg, #2E6F95, #3D8AB8);
+    transition: width 0.4s ease, background 0.3s ease;
+  }
+
+  .ptc-table-wrap{
+    overflow-x: auto;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--card);
+    box-shadow: var(--shadow-sm);
+  }
+  .ptc-table-wrap::-webkit-scrollbar{ height: 8px; }
+  .ptc-table-wrap::-webkit-scrollbar-track{ background: var(--paper); }
+  .ptc-table-wrap::-webkit-scrollbar-thumb{ background: #C4CEDA; border-radius: 8px; }
+  .ptc-table-wrap::-webkit-scrollbar-thumb:hover{ background: var(--ink-soft); }
+
+  table.ptc-table{
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12.5px;
+    min-width: 900px;
+  }
+
+  table.ptc-table th{
+    background: var(--ink);
+    color: #fff;
+    text-align: left;
+    padding: 9px 10px;
+    font-weight: 600;
+    white-space: nowrap;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+
+  table.ptc-table td{
+    padding: 8px 10px;
+    border-top: 1px solid var(--line);
+    white-space: nowrap;
+  }
+
+  table.ptc-table tr:nth-child(even) td{
+    background: #FAFBFD;
+  }
+
+  table.ptc-table tbody tr{ transition: background .12s ease; }
+  table.ptc-table tbody tr:hover td{ background: var(--accent-soft); }
+
+  .ptc-tag{
+    display:inline-block;
+    padding: 3px 9px;
+    border-radius: 20px;
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: #fff;
+    box-shadow: 0 1px 2px rgba(11,37,69,0.15);
+  }
+
+  .ptc-empty{
+    padding: 28px 14px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  .ptc-del{
+    background: none;
+    border: none;
+    color: var(--refund);
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 2px 4px;
+  }
+
+  .ptc-note{
+    font-size: 11.5px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  .ptc-info{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--line);
+    color: var(--ink-soft);
+    font-size: 11px;
+    font-weight: 700;
+    font-style: normal;
+    cursor: help;
+    position: relative;
+    margin-left: 6px;
+    vertical-align: middle;
+    user-select: none;
+  }
+
+  .ptc-info .ptc-tooltip{
+    display: none;
+    position: absolute;
+    bottom: 130%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 260px;
+    max-width: 70vw;
+    background: var(--ink);
+    color: #fff;
+    font-size: 11.5px;
+    font-weight: 400;
+    line-height: 1.5;
+    padding: 10px 12px;
+    border-radius: 6px;
+    z-index: 20;
+    text-align: left;
+    box-shadow: 0 4px 12px rgba(11,37,69,0.25);
+  }
+
+  .ptc-info:hover .ptc-tooltip,
+  .ptc-info:focus .ptc-tooltip,
+  .ptc-info.ptc-info-open .ptc-tooltip{
+    display: block;
+  }
+
+  .ptc-toast{
+    position: fixed;
+    bottom: 22px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--ink);
+    color: #fff;
+    padding: 9px 16px;
+    border-radius: 6px;
+    font-size: 12.5px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .2s ease;
+    z-index: 50;
+  }
+  .ptc-toast.show{ opacity: 1; }
+
+  .ptc-import-btn{
+    display:inline-block;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 10px 18px;
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    background: transparent;
+    color: var(--ink-soft);
+  }
+  .ptc-import-btn:hover{ background: #F3F5F8; }
+
+  .ptc-adj-btn.ptc-adj-active{
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+
+  .ptc-status-tag-pending{ background: var(--reissue); }
+  .ptc-status-tag-refunded{ background: var(--booking); }
+  .ptc-status-tag-due{ background: var(--refund); }
+  .ptc-status-tag-paid{ background: #1E7A46; }
+  .ptc-status-tag-partial{ background: var(--reissue); }
+
+  .ptc-edit{
+    background: none;
+    border: none;
+    color: var(--booking);
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 2px 4px;
+    margin-left: 4px;
+  }
+
+  #ptc-card.ptc-editing,
+  #sales-card.ptc-editing{
+    border-left-color: var(--reissue);
+    box-shadow: 0 0 0 2px var(--reissue-soft);
+  }
+
+  .ptc-editing-banner{
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--reissue-soft);
+    color: var(--reissue);
+    font-size: 12.5px;
+    font-weight: 700;
+    padding: 8px 14px;
+    border-radius: 6px;
+    margin-bottom: 14px;
+  }
+  .ptc-editing-banner.show{ display: flex; }
+
+  .ptc-modal-backdrop{
+    position: fixed; inset: 0;
+    background: rgba(11,37,69,0.55);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+  }
+  .ptc-modal{
+    background: #fff;
+    border-radius: 14px;
+    padding: 24px;
+    max-width: 520px;
+    width: 100%;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(11,37,69,0.3);
+  }
+
+  /* ===== Dashboard ===== */
+  .ptc-tabs{
+    display:flex;
+    gap:6px;
+    margin-bottom:18px;
+    background:#E3E9F0;
+    padding:4px;
+    border-radius:11px;
+    max-width: 620px;
+    flex-wrap: wrap;
+  }
+  .ptc-tab{
+    flex:1;
+    border:none;
+    background:transparent;
+    color:var(--ink-soft);
+    font-family:inherit;
+    font-size:13px;
+    font-weight:700;
+    letter-spacing:0.2px;
+    padding:9px 12px;
+    border-radius:8px;
+    cursor:pointer;
+    transition: all .18s ease;
+  }
+  .ptc-tab:hover{ color: var(--ink); }
+  .ptc-tab.active{
+    background:#fff;
+    color:var(--accent);
+    box-shadow: var(--shadow-sm);
+  }
+  .ptc-view{ display:none; }
+  .ptc-view.active{ display:block; animation: ptc-fade-in .25s ease; }
+  @keyframes ptc-fade-in{ from{ opacity:0; transform:translateY(4px);} to{ opacity:1; transform:translateY(0);} }
+
+  .ptc-dash-hero{
+    background: linear-gradient(135deg, var(--ink) 0%, #143a68 55%, var(--brand) 140%);
+    border-radius: 14px;
+    padding: 22px 24px 20px;
+    color:#fff;
+    margin-bottom: 18px;
+    position:relative;
+    overflow:hidden;
+    box-shadow: var(--shadow-lg);
+  }
+  .ptc-dash-hero::after{
+    content:"";
+    position:absolute;
+    right:-40px; top:-60px;
+    width:200px; height:200px;
+    border-radius:50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0) 70%);
+  }
+  .ptc-dash-hero-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    flex-wrap:wrap;
+    gap:10px;
+    position:relative;
+    z-index:1;
+  }
+  .ptc-dash-hero .ptc-eyebrow{ color: rgba(255,255,255,0.65); letter-spacing: 2px; }
+  .ptc-dash-hero h1{
+    color:#fff;
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    margin: 4px 0 0;
+  }
+  .ptc-dash-greeting{ font-size:13px; color:rgba(255,255,255,0.8); position:relative; z-index:1; }
+
+  .ptc-hero-perf{
+    position: relative;
+    z-index: 1;
+    height: 1px;
+    margin: 14px 0 10px;
+    background-image: repeating-linear-gradient(to right, rgba(255,255,255,0.35) 0 6px, transparent 6px 12px);
+  }
+
+  .ptc-kpi-grid{
+    display:grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap:14px;
+    margin-bottom:18px;
+  }
+  @media (max-width: 720px){ .ptc-kpi-grid{ grid-template-columns: repeat(2, 1fr); } }
+
+  .ptc-kpi{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:14px 16px;
+    border-top:3px solid var(--accent);
+    box-shadow: var(--shadow-sm);
+    transition: transform .18s ease, box-shadow .18s ease;
+  }
+  .ptc-kpi:hover{ transform: translateY(-2px); box-shadow: var(--shadow-md); }
+  .ptc-kpi-label{
+    font-size:10.5px;
+    text-transform:uppercase;
+    letter-spacing:0.6px;
+    color:var(--muted);
+    font-weight:700;
+  }
+  .ptc-kpi-value{
+    font-size:22px;
+    font-weight:800;
+    color:var(--ink);
+    margin-top:4px;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .ptc-kpi-sub{
+    font-size:11.5px;
+    color:var(--muted);
+    margin-top:2px;
+  }
+
+  .ptc-dash-grid{
+    display:grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap:16px;
+    margin-bottom:16px;
+  }
+  @media (max-width: 780px){ .ptc-dash-grid{ grid-template-columns: 1fr; } }
+
+  .ptc-panel{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:16px 18px 10px;
+  }
+  .ptc-panel h3{
+    font-size:12.5px;
+    text-transform:uppercase;
+    letter-spacing:0.6px;
+    color:var(--ink-soft);
+    margin:0 0 12px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .ptc-panel-canvas-wrap{ position:relative; height:230px; }
+  .ptc-panel-canvas-wrap.tall{ height:280px; }
+
+  .ptc-legend-row{
+    display:flex;
+    gap:14px;
+    flex-wrap:wrap;
+    font-size:11.5px;
+    color:var(--ink-soft);
+    margin-top:10px;
+  }
+  .ptc-legend-row span{ display:inline-flex; align-items:center; gap:5px; }
+  .ptc-legend-dot{ width:8px; height:8px; border-radius:50%; display:inline-block; }
+
+  .ptc-feed{ max-height:280px; overflow-y:auto; }
+  .ptc-feed-item{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    padding:9px 0;
+    border-bottom:1px dashed var(--line);
+    font-size:12.5px;
+  }
+  .ptc-feed-item:last-child{ border-bottom:none; }
+  .ptc-feed-name{ font-weight:600; color:var(--ink); }
+  .ptc-feed-meta{ color:var(--muted); font-size:11px; }
+  .ptc-feed-amt{ font-family:'IBM Plex Mono', monospace; font-weight:700; color:var(--ink); white-space:nowrap; }
+
+  .ptc-dash-empty{
+    text-align:center;
+    padding:40px 20px;
+    color:var(--muted);
+    font-size:13.5px;
+  }
+
+  /* ===== Search result detail cards ===== */
+  .ptc-detail-card{
+    background:#F8FAFC;
+    border:1px solid var(--line);
+    border-left:4px solid var(--accent);
+    border-radius:9px;
+    padding:14px 16px;
+    margin-bottom:12px;
+  }
+  .ptc-detail-card-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-bottom:10px;
+    padding-bottom:8px;
+    border-bottom:1px dashed var(--line);
+  }
+  .ptc-detail-name{ font-weight:800; font-size:14.5px; color:var(--ink); }
+  .ptc-detail-sub{ font-size:11.5px; color:var(--muted); margin-top:2px; }
+  .ptc-detail-grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap:10px 16px;
+  }
+  .ptc-detail-field-label{
+    font-size:9.5px;
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+    color:var(--muted);
+    font-weight:700;
+  }
+  .ptc-detail-field-value{
+    font-size:13px;
+    color:var(--ink);
+    font-family:'IBM Plex Mono', monospace;
+    margin-top:1px;
+    word-break:break-word;
+  }
+  .ptc-detail-actions{ margin-top:10px; display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+  .ptc-search-noresult{
+    text-align:center;
+    padding:20px;
+    color:var(--muted);
+    font-size:13px;
+  }
+
+</style>
+</head><body><div class="site-shell">
+<header class="header"><div class="container nav-wrap"><div class="nav">
+<a class="logo" href="index.html"><span class="logo-mark">S</span><span>Sagar<span>.</span></span></a>
+<nav class="nav-links" aria-label="Primary navigation">
+<a href="index.html">Home</a><a href="about.html">About</a>
+<a href="experience.html">Experience</a><a href="education.html">Education</a>
+<a href="skills.html">Expertise</a><a href="activities.html">Activities</a>
+<a href="aeroops.html">AeroOps Desk</a>
+</nav>
+<a class="btn" href="contact.html">Contact</a><button id="mobileToggle" class="mobile-toggle" aria-label="Open menu">☰</button>
+</div></div></header>
+<div id="mobileLinks" class="container mobile-menu" style="display:none"></div>
+
+<main style="padding:24px 0 10px">
+<div id="ptc-root">
+  <div class="ptc-shell">
+    <div class="ptc-dash-hero">
+      <div class="ptc-dash-hero-top">
+        <div>
+          <div class="ptc-eyebrow">✈ Ticketing Back Office</div>
+          <h1>Work Record Database</h1>
+        </div>
+        <div class="ptc-eyebrow" id="ptc-clock" style="color:rgba(255,255,255,0.75);"></div>
+      </div>
+      <div class="ptc-hero-perf" aria-hidden="true"></div>
+      <div class="ptc-dash-greeting" id="ptc-greeting">Every booking, reissue, refund and void — in one place.</div>
+    </div>
+
+    <div class="ptc-tabs">
+      <button class="ptc-tab active" id="tab-btn-entry" data-view="entry">🧾 Add Entry &amp; Log</button>
+      <button class="ptc-tab" id="tab-btn-sales" data-view="sales">💳 Sales &amp; Payments</button>
+    </div>
+
+    <!-- ============ DASHBOARD VIEW ============ -->
+    <div class="ptc-view" id="view-dashboard">
+      <button class="ptc-btn ptc-btn-ghost" id="btn-dashboard-back" style="margin-bottom:14px;">← Back to Entries</button>
+      <div class="ptc-kpi-grid" id="ptc-kpi-grid"></div>
+      <div id="ptc-charts-offline-notice" style="display:none; background:#FBF0E1; color:#8A5A12; font-size:12.5px; font-weight:600; padding:10px 14px; border-radius:8px; margin-bottom:14px;">
+        Charts couldn't load (likely no internet connection right now). Your entries, KPI numbers and file saving all still work normally — the charts will appear again next time you're online.
+      </div>
+
+      <div id="ptc-dash-content">
+        <div class="ptc-dash-grid">
+          <div class="ptc-panel">
+            <h3>Monthly Activity <span style="font-weight:400; text-transform:none; letter-spacing:0;">last 6 months</span></h3>
+            <div class="ptc-panel-canvas-wrap"><canvas id="chart-monthly"></canvas></div>
+          </div>
+          <div class="ptc-panel">
+            <h3>Mix by Type</h3>
+            <div class="ptc-panel-canvas-wrap"><canvas id="chart-type"></canvas></div>
+            <div class="ptc-legend-row" id="chart-type-legend"></div>
+          </div>
+        </div>
+
+        <div class="ptc-dash-grid">
+          <div class="ptc-panel">
+            <h3>Top Airlines by Volume</h3>
+            <div class="ptc-panel-canvas-wrap"><canvas id="chart-airline"></canvas></div>
+          </div>
+          <div class="ptc-panel">
+            <h3>Recent Activity</h3>
+            <div class="ptc-feed" id="ptc-feed"></div>
+          </div>
+        </div>
+
+        <div class="ptc-dash-grid" style="grid-template-columns: 1fr;">
+          <div class="ptc-panel">
+            <h3>Refund Status</h3>
+            <div class="ptc-panel-canvas-wrap" style="height:160px;"><canvas id="chart-refund"></canvas></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ptc-dash-empty" id="ptc-dash-empty" style="display:none;">No entries yet. Switch to <strong>Add Entry &amp; Log</strong> to record your first transaction — the dashboard fills in automatically.</div>
+    </div>
+
+    <!-- ============ ENTRY / LOG VIEW ============ -->
+    <div class="ptc-view active" id="view-entry">
+
+    <div class="ptc-card" id="ptc-filebar" style="padding:16px 20px; margin-bottom:16px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; border-left-color:#0B2545; background:#F8FAFC;">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <span id="ptc-file-dot" style="width:9px; height:9px; border-radius:50%; background:var(--muted); display:inline-block; flex-shrink:0;"></span>
+        <div>
+          <div style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.6px; color:var(--ink);">Master Data File (Excel Workbook)</div>
+          <div style="font-size:13px; color:var(--ink-soft);" id="ptc-filestatus">Not set — entries save to this browser only.</div>
+        </div>
+      </div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <button class="ptc-btn ptc-btn-ghost" id="btn-reconnect-file" style="display:none; border-color:var(--booking); color:var(--booking); font-weight:700;">Reconnect</button>
+        <button class="ptc-btn ptc-btn-ghost" id="btn-connect-file">Set Master Data File</button>
+        <button class="ptc-btn ptc-btn-ghost" id="btn-disconnect-file" style="display:none;">Disconnect</button>
+      </div>
+    </div>
+
+    <div class="ptc-card" id="ptc-cloudbar" style="padding:16px 20px; margin-bottom:16px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; border-left-color:#1E7A46; background:#F4FAF6;">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <span id="ptc-cloud-dot" style="width:9px; height:9px; border-radius:50%; background:var(--muted); display:inline-block; flex-shrink:0;"></span>
+        <div>
+          <div style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.6px; color:var(--ink);">Live Cloud Sync <span style="text-transform:none; font-weight:600; color:var(--ink-soft);">(use this exact same file on any phone, tablet, or computer)</span></div>
+          <div style="font-size:13px; color:var(--ink-soft);" id="ptc-cloud-status">Not connected — set up once to access your data live from any device.</div>
+        </div>
+      </div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <button class="ptc-btn ptc-btn-ghost" id="btn-cloud-setup" style="display:none; border-color:#1E7A46; color:#1E7A46; font-weight:700;">Set Up Cloud Sync</button>
+        <button class="ptc-btn ptc-btn-ghost" id="btn-cloud-disconnect" style="display:none;">Disconnect</button>
+      </div>
+    </div>
+
+    <div class="ptc-modal-backdrop" id="cloud-modal-backdrop" style="display:none;">
+      <div class="ptc-modal">
+        <h3 style="margin:0 0 8px; font-size:16px; color:var(--ink);">Connect Live Cloud Sync</h3>
+        <p style="font-size:13px; color:var(--ink-soft); line-height:1.5; margin:0 0 12px;">
+          This uses a free Google Firebase project as your live database — no coding needed, takes about 5 minutes the first time. Once connected, every entry saves instantly and shows up on every device you connect with this same config.
+        </p>
+        <ol style="font-size:12.5px; color:var(--ink-soft); line-height:1.6; margin:0 0 14px; padding-left:18px;">
+          <li>Go to <strong>console.firebase.google.com</strong> → Add project (any name, e.g. "my-work-records") → skip Google Analytics.</li>
+          <li>In the project, open <strong>Firestore Database → Create database</strong> → pick a region → start in <strong>test mode</strong>.</li>
+          <li>Open <strong>Authentication</strong> in the sidebar → Get started → click <strong>Email/Password</strong> → enable it → Save. This is what keeps your data private.</li>
+          <li>Click the ⚙️ gear (Project settings) → under "Your apps" click the <strong>&lt;/&gt; (Web)</strong> icon → register an app (any nickname) → it shows a <code>firebaseConfig</code> object.</li>
+          <li>Copy that whole <code>{ ... }</code> object and paste it below.</li>
+        </ol>
+        <textarea id="cloud-config-input" rows="7" style="width:100%; font-family:'SFMono-Regular',Consolas,monospace; font-size:12px; padding:10px; border:1px solid var(--line); border-radius:8px; resize:vertical;" placeholder='{
+  "apiKey": "...",
+  "authDomain": "your-project.firebaseapp.com",
+  "projectId": "your-project",
+  "appId": "..."
+}'></textarea>
+        <div class="ptc-actions" style="margin-top:14px; justify-content:flex-end;">
+          <button class="ptc-btn ptc-btn-ghost" id="btn-cloud-cancel">Cancel</button>
+          <button class="ptc-btn ptc-btn-primary" id="btn-cloud-connect-confirm" style="background:#1E7A46;">Connect</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="ptc-modal-backdrop" id="cloud-auth-modal-backdrop" style="display:flex; background:var(--bg); z-index:5000;">
+      <div class="ptc-modal">
+        <h3 style="margin:0 0 8px; font-size:16px; color:var(--ink);">Sign In to Work Record Database</h3>
+        <p style="font-size:13px; color:var(--ink-soft); line-height:1.5; margin:0 0 14px;">
+          Sign in required before anything else loads — this keeps your data private on every device, even if someone else has this file.
+        </p>
+        <div class="ptc-field" style="margin-bottom:10px;">
+          <label for="cloud-auth-email">Email</label>
+          <input type="email" id="cloud-auth-email" placeholder="you@example.com" autocomplete="username" />
+        </div>
+        <div class="ptc-field" style="margin-bottom:6px;">
+          <label for="cloud-auth-password">Password</label>
+          <div style="position:relative;">
+            <input type="password" id="cloud-auth-password" placeholder="At least 6 characters" autocomplete="current-password" style="width:100%; box-sizing:border-box; padding-right:42px;" />
+            <button type="button" id="btn-toggle-password" aria-label="Show password" style="position:absolute; right:6px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; font-size:17px; line-height:1; padding:4px; color:var(--ink-soft);">👁️</button>
+          </div>
+        </div>
+        <div id="cloud-auth-error" style="color:var(--refund); font-size:12.5px; min-height:16px; margin-bottom:6px;"></div>
+        <div class="ptc-actions" style="margin-top:8px; justify-content:flex-end; flex-wrap:wrap;">
+          <button class="ptc-btn ptc-btn-ghost" id="btn-cloud-auth-create" style="border-color:#1E7A46; color:#1E7A46; font-weight:700;">Create Account</button>
+          <button class="ptc-btn ptc-btn-primary" id="btn-cloud-auth-signin" style="background:#1E7A46;">Sign In</button>
+        </div>
+        <p style="font-size:11.5px; color:var(--ink-soft); margin:10px 0 0;">First time on this device? Enter your email/password and click "Create Account" only if this account doesn't exist yet. Otherwise use "Sign In."</p>
+      </div>
+    </div>
+
+    <div class="ptc-card" id="ptc-card">
+      <div class="ptc-editing-banner" id="ptc-editing-banner">
+        <span id="ptc-editing-banner-text">Editing entry #1</span>
+      </div>
+      <div class="ptc-row">
+        <div class="ptc-field ptc-type-select">
+          <label for="f-type">Transaction Type</label>
+          <select id="f-type">
+            <option value="Ticketing">Ticketing</option>
+            <option value="Reissue">Reissue</option>
+            <option value="Refund">Refund</option>
+            <option value="Void">Void</option>
+          </select>
+        </div>
+        <div class="ptc-field">
+          <label for="f-date">Date</label>
+          <input type="date" id="f-date" />
+        </div>
+      </div>
+
+      <div class="ptc-row">
+        <div class="ptc-field">
+          <label for="f-pnr-gds">GDS PNR</label>
+          <input type="text" id="f-pnr-gds" class="mono" placeholder="e.g. ABC123" />
+        </div>
+        <div class="ptc-field">
+          <label for="f-pnr-air">Airline PNR</label>
+          <input type="text" id="f-pnr-air" class="mono" placeholder="e.g. XYZ789" />
+        </div>
+      </div>
+
+      <div class="ptc-row">
+        <div class="ptc-field">
+          <label for="f-pname">Passenger Name</label>
+          <input type="text" id="f-pname" placeholder="e.g. JOHN DOE" />
+        </div>
+        <div class="ptc-field">
+          <label for="f-pnum">Passenger Number</label>
+          <input type="text" id="f-pnum" class="mono" placeholder="e.g. 1" />
+        </div>
+      </div>
+
+      <div class="ptc-row">
+        <div class="ptc-field">
+          <label for="f-ptype">Passenger Type</label>
+          <select id="f-ptype">
+            <option value="ADULT">Adult</option>
+            <option value="CHILD">Child</option>
+            <option value="INFANT">Infant</option>
+          </select>
+        </div>
+        <div></div>
+      </div>
+
+      <div class="ptc-row">
+        <div class="ptc-field">
+          <label for="f-platform">Platform</label>
+          <select id="f-platform">
+            <option value="Sabre">Sabre</option>
+            <option value="Galileo">Galileo</option>
+            <option value="Amadeus">Amadeus</option>
+            <option value="NDC">NDC</option>
+            <option value="OTA">OTA</option>
+            <option value="OTHER">Other (write manually)</option>
+          </select>
+          <input type="text" id="f-platform-other" class="mono" placeholder="Type platform name" style="display:none; margin-top:6px;" />
+        </div>
+        <div class="ptc-field">
+          <label for="f-airline">Airline Code</label>
+          <select id="f-airline">
+            <option value="BG">BG — Biman Bangladesh Airlines</option>
+            <option value="BS">BS — US-Bangla Airlines</option>
+            <option value="VQ">VQ — Novoair</option>
+            <option value="2A">2A — Air Astra</option>
+            <option value="EK">EK — Emirates</option>
+            <option value="QR">QR — Qatar Airways</option>
+            <option value="TK">TK — Turkish Airlines</option>
+            <option value="TG">TG — Thai Airways</option>
+            <option value="WY">WY — Oman Air</option>
+            <option value="SV">SV — Saudia</option>
+            <option value="EY">EY — Etihad Airways</option>
+            <option value="GF">GF — Gulf Air</option>
+            <option value="KU">KU — Kuwait Airways</option>
+            <option value="FZ">FZ — flydubai</option>
+            <option value="G9">G9 — Air Arabia</option>
+            <option value="J9">J9 — Jazeera Airways</option>
+            <option value="MH">MH — Malaysia Airlines</option>
+            <option value="OD">OD — Batik Air Malaysia</option>
+            <option value="SQ">SQ — Singapore Airlines</option>
+            <option value="CX">CX — Cathay Pacific</option>
+            <option value="6E">6E — IndiGo</option>
+            <option value="AI">AI — Air India</option>
+            <option value="UL">UL — SriLankan Airlines</option>
+            <option value="CZ">CZ — China Southern</option>
+            <option value="MU">MU — China Eastern</option>
+            <option value="CA">CA — Air China</option>
+            <option value="PK">PK — Pakistan International Airlines</option>
+            <option value="OTHER">Other (write manually)</option>
+          </select>
+          <input type="text" id="f-airline-other" class="mono" placeholder="Type airline code" style="display:none; margin-top:6px;" />
+        </div>
+      </div>
+
+      <!-- ===== TICKETING FIELDS ===== -->
+      <div id="section-Ticketing">
+        <div class="ptc-section-label">Ticketing Details</div>
+        <div class="ptc-row">
+          <div class="ptc-field">
+            <label for="f-newtkt-t">New Ticket Number</label>
+            <input type="text" id="f-newtkt-t" class="mono" placeholder="e.g. 1234567890123" />
+          </div>
+          <div class="ptc-field">
+            <label for="f-sector-t">Sector / Route</label>
+            <input type="text" id="f-sector-t" class="mono" placeholder="e.g. DAC-DXB" />
+          </div>
+        </div>
+        <div class="ptc-row">
+          <div class="ptc-field">
+            <label for="f-basefare-t">Base Fare</label>
+            <input type="number" step="0.01" id="f-basefare-t" class="mono ptc-fare-calc" placeholder="0.00" />
+          </div>
+          <div class="ptc-field">
+            <label for="f-taxfare-t">Tax Fare</label>
+            <input type="number" step="0.01" id="f-taxfare-t" class="mono ptc-fare-calc" placeholder="0.00" />
+          </div>
+        </div>
+        <div class="ptc-row">
+          <div class="ptc-field">
+            <label for="f-discount-t">Discount</label>
+            <input type="number" step="0.01" id="f-discount-t" class="mono ptc-fare-calc" placeholder="0.00" />
+          </div>
+          <div class="ptc-field">
+            <label for="f-markup-t">OTA Markup % (max 7%)</label>
+            <input type="number" step="0.01" min="0" max="7" id="f-markup-t" class="mono ptc-fare-calc" placeholder="0.00" title="Percentage applied to Airline Ticket Price. Capped automatically at 7%." />
+          </div>
+        </div>
+        <div class="ptc-row">
+          <div class="ptc-field">
+            <label for="f-atp-t">Airline Ticket Price (auto)</label>
+            <input type="text" id="f-atp-t" class="mono" placeholder="0.00" readonly style="background:#F3F5F8; font-weight:700;" title="Base Fare + Tax" />
+          </div>
+          <div class="ptc-field">
+            <label for="f-markupamt-t">OTA Markup Amount (auto)</label>
+            <input type="text" id="f-markupamt-t" class="mono" placeholder="0.00" readonly style="background:#F3F5F8; font-weight:700;" title="Airline Ticket Price × Markup %" />
+          </div>
+        </div>
+        <div class="ptc-row">
+          <div class="ptc-field">
+            <label for="f-totalfare-t">Customer Selling Price (auto)</label>
+            <input type="text" id="f-totalfare-t" class="mono" placeholder="0.00" readonly style="background:#F3F5F8; font-weight:700;" title="Airline Ticket Price + OTA Markup Amount − Discount" />
+          </div>
+          <div></div>
+        </div>
+      </div>
+
+      <!-- ===== REISSUE FIELDS ===== -->
+      <div id="section-Reissue" style="display:none;">
+        <div class="ptc-section-label">Reissue Details</div>
+        <div class="ptc-row">
+          <div class="ptc-field">
+            <label for="f-oldtkt-r">Old Ticket Number</label>
+            <input type="text" id="f-oldtkt-r" class="mono" placeholder="e.g. 1234567890123" />
+          </div>
+          <div class="ptc-field">
+            <label for="f-newtkt-r">New Ticket Number</label>
+            <input type="text" id="f-newtkt-r" class="mono" placeholder="e.g. 1234567890124" />
+          </div>
+        </div>
+        <div class="ptc-row">
+          <div class="ptc-field">
+            <label for="f-sector-r">Reissue Sector</label>
+            <input type="text" id="f-sector-r" class="mono" placeholder="e.g. DAC-DXB-DAC" />
+          </div>
+          <div class="ptc-field">
+            <label for="f-code-r">Reissue Code</label>
+            <input type="text" id="f-code-r" class="mono" placeholder="e.g. RC01" />
+          </div>
+        </div>
+        <div class="ptc-row">
+          <div class="ptc-field">
+            <label for="f-faredif-r">Fare Difference</label>
+            <input type="number" step="0.01" id="f-faredif-r" class="mono ptc-reissue-calc" placeholder="0.00" />
+          </div>
+          <div class="ptc-field">
+            <label for="f-airline-r">Airline Charge</label>
+            <input type="number" step="0.01" id="f-airline-r" class="mono ptc-reissue-calc" placeholder="0.00" />
+          </div>
+        </div>
+        <div class="ptc-row">
+          <div class="ptc-field">
+            <label for="f-svc-r">Service Charge</label>
+            <input type="number" step="0.01" id="f-svc-r" class="mono ptc-reissue-calc" placeholder="0.00" />
+          </div>
+          <div class="ptc-field">
+            <label for="f-total-r">Total Collection (auto)</label>
+            <input type="text" id="f-total-r" class="mono" placeholder="0.00" readonly style="background:#F3F5F8; font-weight:700;" />
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== REFUND / VOID FIELDS ===== -->
+      <div id="section-Refund" style="display:none;">
+        <div class="ptc-section-label" id="refund-void-label">Refund Details</div>
+        <div class="ptc-row">
+          <div class="ptc-field">
+            <label for="f-oldtkt-f">Ticket Number</label>
+            <input type="text" id="f-oldtkt-f" class="mono" placeholder="e.g. 1234567890123" />
+          </div>
+          <div class="ptc-field" id="refund-mode-wrap">
+            <label for="f-mode-f">Refund Type</label>
+            <select id="f-mode-f">
+              <option value="FULL">Full Refund</option>
+              <option value="PARTIAL">Partial Refund</option>
+              <option value="AS_PER_POLICY">As Per Policy</option>
+            </select>
+          </div>
+        </div>
+        <div class="ptc-row" id="refund-payable-row">
+          <div class="ptc-field" id="refund-payable-wrap">
+            <label for="f-payable-f">Ticket Payable Fare</label>
+            <input type="number" step="0.01" id="f-payable-f" class="mono ptc-refund-calc" placeholder="0.00" />
+          </div>
+          <div class="ptc-field" id="refund-discount-wrap">
+            <label for="f-discount-f">Discount Given</label>
+            <input type="number" step="0.01" id="f-discount-f" class="mono ptc-refund-calc" placeholder="0.00" />
+          </div>
+        </div>
+        <div class="ptc-row" id="refund-charges-row">
+          <div class="ptc-field">
+            <label for="f-airline-f">Airline Charge</label>
+            <input type="number" step="0.01" id="f-airline-f" class="mono ptc-refund-calc" placeholder="0.00" />
+          </div>
+          <div class="ptc-field">
+            <label for="f-svc-f">Service Charge</label>
+            <input type="number" step="0.01" id="f-svc-f" class="mono ptc-refund-calc" placeholder="0.00" />
+          </div>
+        </div>
+        <div class="ptc-row" id="refund-amounts-row">
+          <div class="ptc-field">
+            <label for="f-charge-f" id="f-charge-f-label">Refund Charge</label>
+            <input type="number" step="0.01" id="f-charge-f" class="mono" placeholder="0.00" />
+          </div>
+          <div class="ptc-field" id="tax-refund-wrap">
+            <label for="f-tax-f">Tax Refund</label>
+            <input type="number" step="0.01" id="f-tax-f" class="mono" placeholder="0.00" />
+          </div>
+        </div>
+        <div class="ptc-row" id="refund-status-row">
+          <div class="ptc-field" id="refund-status-wrap">
+            <label for="f-status-f">Refund Status</label>
+            <select id="f-status-f">
+              <option value="PENDING">Pending</option>
+              <option value="REFUNDED">Refunded</option>
+            </select>
+          </div>
+          <div class="ptc-field" id="refund-adjustment-wrap">
+            <label>Adjustment Given
+              <span class="ptc-info" tabindex="0" aria-label="Adjustment info">ⓘ<span class="ptc-tooltip">Mark "Yes" if, instead of a cash refund, the fare was adjusted/held against a future booking. Enter the adjusted amount when Yes is selected.</span></span>
+            </label>
+            <div style="display:flex; gap:8px;">
+              <button type="button" class="ptc-btn ptc-btn-ghost ptc-adj-btn" data-val="NO" id="btn-adj-no" style="flex:1; padding:9px 10px;">No</button>
+              <button type="button" class="ptc-btn ptc-btn-ghost ptc-adj-btn" data-val="YES" id="btn-adj-yes" style="flex:1; padding:9px 10px;">Yes</button>
+            </div>
+            <input type="hidden" id="f-adjgiven-f" value="NO" />
+          </div>
+        </div>
+        <div class="ptc-row" id="refund-adjamt-row" style="display:none;">
+          <div class="ptc-field">
+            <label for="f-adjamt-f">Adjustment Amount</label>
+            <input type="number" step="0.01" id="f-adjamt-f" class="mono" placeholder="0.00" />
+          </div>
+          <div></div>
+        </div>
+      </div>
+
+
+      <div class="ptc-row" style="margin-top:4px;">
+        <div class="ptc-field" style="grid-column: 1 / -1;">
+          <label for="f-note">Note</label>
+          <textarea id="f-note" rows="2" placeholder="Any additional remarks"></textarea>
+        </div>
+      </div>
+
+      <div class="ptc-actions">
+        <button class="ptc-btn ptc-btn-ghost" id="btn-cancel-edit" style="display:none; border-color:var(--reissue); color:var(--reissue); font-weight:700;">Cancel Edit</button>
+        <button class="ptc-btn ptc-btn-ghost" id="btn-clear">Clear Form</button>
+        <button class="ptc-btn ptc-btn-primary" id="btn-add">Add Entry</button>
+      </div>
+    </div>
+
+    <div class="ptc-log-head">
+      <h2>Entries Log</h2>
+      <span class="ptc-count" id="ptc-count">0 entries</span>
+    </div>
+
+    <div class="ptc-card" style="padding:14px 18px; margin-bottom:14px;">
+      <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+        <div style="flex:1; min-width:260px; position:relative;">
+          <span style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--muted); font-size:14px;">🔍</span>
+          <input type="text" id="ptc-search" placeholder="Search by PNR, GDS/Airline reference, Ticket Number, or Passenger Name..."
+            style="width:100%; box-sizing:border-box; padding:10px 12px 10px 34px; border:1px solid var(--line); border-radius:8px; font-family:inherit; font-size:13px; color:var(--ink);" />
+        </div>
+        <button class="ptc-btn ptc-btn-ghost" id="btn-search-clear" style="display:none;">Clear Search</button>
+      </div>
+      <div id="ptc-search-meta" style="font-size:11.5px; color:var(--muted); margin-top:8px; display:none;"></div>
+      <div id="ptc-search-results" style="margin-top:12px; display:none;"></div>
+
+      <div id="ptc-log-filter-row" style="display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap; margin-top:12px; padding-top:12px; border-top:1px solid var(--line);">
+        <div class="ptc-field" style="margin:0; min-width:150px;">
+          <label for="ptc-filter-from" style="font-size:11px;">From date</label>
+          <input type="date" id="ptc-filter-from" style="padding:8px 10px;" />
+        </div>
+        <div class="ptc-field" style="margin:0; min-width:150px;">
+          <label for="ptc-filter-to" style="font-size:11px;">To date</label>
+          <input type="date" id="ptc-filter-to" style="padding:8px 10px;" />
+        </div>
+        <button class="ptc-btn ptc-btn-ghost" id="btn-filter-clear" style="padding:8px 14px;">Clear Date Filter</button>
+        <span id="ptc-filter-summary" style="font-size:12px; color:var(--muted); margin-left:auto; align-self:center;"></span>
+      </div>
+    </div>
+
+    <div class="ptc-table-wrap" id="ptc-table-wrap">
+      <table class="ptc-table" id="ptc-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>GDS PNR</th>
+            <th>Airline PNR</th>
+            <th>Passenger</th>
+            <th>Type</th>
+            <th>Platform</th>
+            <th>Airline</th>
+            <th>Txn</th>
+            <th>Old Tkt</th>
+            <th>New Tkt</th>
+            <th>Sector</th>
+            <th>Base Fare</th>
+            <th>Tax Fare</th>
+            <th>Airline Ticket Price</th>
+            <th>Discount</th>
+            <th>OTA Markup %</th>
+            <th>OTA Markup Amt</th>
+            <th>Selling Price</th>
+            <th>Fare Diff</th>
+            <th>Airline Chg</th>
+            <th>Service Chg</th>
+            <th>Total Collection</th>
+            <th>Payable Fare</th>
+            <th>Refund Chg</th>
+            <th>Tax Refund</th>
+            <th>Refund Type</th>
+            <th>Refund Status</th>
+            <th>Adjustment</th>
+            <th>Adj. Amount</th>
+            <th>Code</th>
+            <th>Note</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="ptc-tbody"></tbody>
+      </table>
+      <div class="ptc-empty" id="ptc-empty">No entries yet — fill the form above and click "Add Entry".</div>
+    </div>
+
+    <div id="ptc-pagination" style="display:none; align-items:center; justify-content:space-between; gap:10px; margin-top:10px; flex-wrap:wrap;">
+      <span id="ptc-page-summary" style="font-size:12.5px; color:var(--muted);"></span>
+      <div style="display:flex; gap:8px;">
+        <button class="ptc-btn ptc-btn-ghost" id="btn-page-prev" style="padding:7px 14px; font-size:12.5px;">← Prev</button>
+        <span id="ptc-page-indicator" style="font-size:12.5px; color:var(--ink-soft); align-self:center; padding:0 4px;"></span>
+        <button class="ptc-btn ptc-btn-ghost" id="btn-page-next" style="padding:7px 14px; font-size:12.5px;">Next →</button>
+      </div>
+    </div>
+
+    <div class="ptc-actions" style="margin-top:14px;">
+      <button class="ptc-btn ptc-btn-ghost" id="btn-clear-all">Clear All Entries</button>
+      <label class="ptc-import-btn" for="file-import">Import CSV / Excel</label>
+      <input type="file" id="file-import" accept=".csv,.xlsx,.xls" style="display:none;" />
+      <button class="ptc-btn ptc-btn-primary" id="btn-export" style="background:var(--ink);">Download Backup Copy (.xlsx)</button>
+      <span class="ptc-info" tabindex="0" aria-label="Save details">ⓘ<span class="ptc-tooltip">If you've connected Live Cloud Sync or set a Master Data File above, every entry already auto-saves there — you don't need to export anything manually. "Download Backup Copy" just gives you an extra snapshot (a multi-sheet Excel workbook with a separate tab for each transaction type) any time you want one, e.g. to email or archive. "Import" can load rows back in from either a .csv or .xlsx file — and will upload straight to the cloud if it's connected.</span></span>
+    </div>
+
+    <div class="ptc-log-head" style="margin-top:28px;">
+      <h2>Weekly Achievement</h2>
+      <button class="ptc-btn ptc-btn-ghost" id="btn-open-dashboard" style="padding:6px 14px; font-size:12px;">📊 View Full Dashboard</button>
+    </div>
+    <div class="ptc-count" id="ach-range-label" style="margin-bottom:10px; display:block;"></div>
+    <div style="text-align:right; margin-bottom:10px;">
+      <button class="ptc-btn ptc-btn-ghost" id="btn-this-week" style="padding:6px 14px; font-size:12px;">Reset to Last 7 Days</button>
+    </div>
+
+    <div class="ptc-card" id="ach-card" style="border-left-color:#0B2545;">
+      <div class="ptc-row">
+        <div class="ptc-field">
+          <label for="ach-start">Week Start</label>
+          <input type="date" id="ach-start" />
+        </div>
+        <div class="ptc-field">
+          <label for="ach-end">Week End</label>
+          <input type="date" id="ach-end" />
+        </div>
+      </div>
+      <div class="ptc-row">
+        <div class="ptc-field">
+          <label for="ach-value-target">Fare / Charge Value Target
+            <span class="ptc-info" tabindex="0" aria-label="What counts as value">ⓘ<span class="ptc-tooltip">Adds up: Total Fare (Ticketing) + Fare Difference/Airline Charge/Service Charge (Reissue) + Refund or Void Charge (Refund/Void) — the amounts that reflect your processed work, not raw pass-through fare alone.</span></span>
+          </label>
+          <input type="number" step="0.01" id="ach-value-target" class="mono" placeholder="0.00" />
+        </div>
+        <div class="ptc-field">
+          <label for="ach-count-target">Transaction Count Target</label>
+          <input type="number" step="1" id="ach-count-target" class="mono" placeholder="0" />
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;" id="ach-results">
+        <div class="ach-metric" style="border:1px solid var(--line); border-radius:8px; padding:14px;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.6px; color:var(--muted); font-weight:600;">Value Achievement</div>
+          <div style="font-size:28px; font-weight:700; margin:4px 0;" id="ach-value-pct">0%</div>
+          <div class="ach-progress-track"><div class="ach-progress-fill" id="ach-value-bar"></div></div>
+          <div style="font-size:12.5px; color:var(--muted); margin-top:8px;" id="ach-value-detail">Actual 0.00 / Target 0.00</div>
+        </div>
+        <div class="ach-metric" style="border:1px solid var(--line); border-radius:8px; padding:14px;">
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.6px; color:var(--muted); font-weight:600;">Transaction Achievement</div>
+          <div style="font-size:28px; font-weight:700; margin:4px 0;" id="ach-count-pct">0%</div>
+          <div class="ach-progress-track"><div class="ach-progress-fill" id="ach-count-bar"></div></div>
+          <div style="font-size:12.5px; color:var(--muted); margin-top:8px;" id="ach-count-detail">Actual 0 / Target 0</div>
+        </div>
+      </div>
+
+      <div style="margin-top:14px;">
+        <div class="ptc-section-label" style="border-top:none; padding-top:0;">Breakdown by Type (this range)</div>
+        <div id="ach-breakdown" style="font-size:13px; color:var(--ink-soft);"></div>
+      </div>
+    </div>
+
+    </div><!-- /view-entry -->
+
+    <div class="ptc-view" id="view-sales">
+
+      <div class="ptc-kpi-grid" id="sales-kpi-grid" style="margin-bottom:20px;"></div>
+
+      <div class="ptc-card" id="sales-card" style="border-left-color:#1E7A46;">
+        <div class="ptc-editing-banner" id="sales-editing-banner">
+          <span id="sales-editing-banner-text">Editing sale #1</span>
+        </div>
+        <div class="ptc-section-label" style="color:#1E7A46;">Ticket Sale Information</div>
+        <div class="ptc-row">
+          <div class="ptc-field">
+            <label for="s-date">Sale Date</label>
+            <input type="date" id="s-date" />
+          </div>
+          <div class="ptc-field">
+            <label for="s-pname">Customer / Passenger Name</label>
+            <input type="text" id="s-pname" placeholder="e.g. JOHN DOE" />
+          </div>
+        </div>
+        <div class="ptc-row">
+          <div class="ptc-field">
+            <label for="s-phone">Contact Number</label>
+            <input type="text" id="s-phone" class="mono" placeholder="e.g. 01XXXXXXXXX" />
+          </div>
+          <div class="ptc-field">
+            <label for="s-tkt">Ticket Number</label>
+            <input type="text" id="s-tkt" class="mono" placeholder="e.g. 1234567890123" />
+          </div>
+        </div>
+        <div class="ptc-row">
+          <div class="ptc-field">
+            <label for="s-pnr">PNR</label>
+            <input type="text" id="s-pnr" class="mono" placeholder="e.g. ABC123" />
+          </div>
+          <div class="ptc-field">
+            <label for="s-sector">Sector / Route</label>
+            <input type="text" id="s-sector" class="mono" placeholder="e.g. DAC-DXB-DAC" />
+          </div>
+        </div>
+        <div class="ptc-row">
+          <div class="ptc-field">
+            <label for="s-airline">Airline</label>
+            <input type="text" id="s-airline" class="mono" placeholder="e.g. EK" />
+          </div>
+          <div></div>
+        </div>
+
+        <div class="ptc-section-label" style="color:#1E7A46;">Payment Information</div>
+        <div class="ptc-row">
+          <div class="ptc-field">
+            <label for="s-price">Selling Price</label>
+            <input type="number" step="0.01" id="s-price" class="mono ptc-sale-calc" placeholder="0.00" />
+          </div>
+          <div class="ptc-field">
+            <label for="s-cost">Net Cost (optional)</label>
+            <input type="number" step="0.01" id="s-cost" class="mono ptc-sale-calc" placeholder="0.00" />
+          </div>
+        </div>
+        <div class="ptc-row">
+          <div class="ptc-field">
+            <label for="s-profit">Profit / Margin (auto)</label>
+            <input type="text" id="s-profit" class="mono" placeholder="0.00" readonly style="background:#F3F5F8; font-weight:700;" />
+          </div>
+          <div class="ptc-field">
+            <label for="s-method">Payment Method</label>
+            <select id="s-method">
+              <option value="CASH">Cash</option>
+              <option value="BKASH">bKash</option>
+              <option value="NAGAD">Nagad</option>
+              <option value="ROCKET">Rocket</option>
+              <option value="BANK">Bank Transfer</option>
+              <option value="CARD">Card</option>
+              <option value="OTHER">Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="ptc-row">
+          <div class="ptc-field">
+            <label for="s-paid">Amount Paid</label>
+            <input type="number" step="0.01" id="s-paid" class="mono ptc-sale-calc" placeholder="0.00" />
+          </div>
+          <div class="ptc-field">
+            <label for="s-due">Amount Due (auto)</label>
+            <input type="text" id="s-due" class="mono" placeholder="0.00" readonly style="background:#F3F5F8; font-weight:700;" />
+          </div>
+        </div>
+        <div class="ptc-row">
+          <div class="ptc-field">
+            <label for="s-status">Payment Status (auto)</label>
+            <input type="text" id="s-status" class="mono" placeholder="—" readonly style="background:#F3F5F8; font-weight:700;" />
+          </div>
+          <div class="ptc-field" id="s-duedate-wrap">
+            <label for="s-duedate">Due Date</label>
+            <input type="date" id="s-duedate" />
+          </div>
+        </div>
+        <div class="ptc-row" style="margin-top:4px;">
+          <div class="ptc-field" style="grid-column: 1 / -1;">
+            <label for="s-note">Note</label>
+            <textarea id="s-note" rows="2" placeholder="Any additional remarks"></textarea>
+          </div>
+        </div>
+
+        <div class="ptc-actions">
+          <button class="ptc-btn ptc-btn-ghost" id="btn-sales-cancel-edit" style="display:none; border-color:var(--reissue); color:var(--reissue); font-weight:700;">Cancel Edit</button>
+          <button class="ptc-btn ptc-btn-ghost" id="btn-sales-clear">Clear Form</button>
+          <button class="ptc-btn ptc-btn-primary" id="btn-sales-add" style="background:#1E7A46;">Add Sale</button>
+        </div>
+      </div>
+
+      <div class="ptc-log-head">
+        <h2>Sales Log</h2>
+        <span class="ptc-count" id="sales-count">0 sales</span>
+      </div>
+
+      <div class="ptc-table-wrap" id="sales-table-wrap">
+        <table class="ptc-table" id="sales-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Customer</th>
+              <th>Contact</th>
+              <th>Ticket No.</th>
+              <th>PNR</th>
+              <th>Sector</th>
+              <th>Airline</th>
+              <th>Selling Price</th>
+              <th>Net Cost</th>
+              <th>Profit</th>
+              <th>Method</th>
+              <th>Paid</th>
+              <th>Due</th>
+              <th>Status</th>
+              <th>Due Date</th>
+              <th>Note</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="sales-tbody"></tbody>
+        </table>
+        <div class="ptc-empty" id="sales-empty">No sales recorded yet — fill the form above and click "Add Sale".</div>
+      </div>
+
+      <div class="ptc-actions" style="margin-top:14px;">
+        <button class="ptc-btn ptc-btn-ghost" id="btn-sales-clear-all">Clear All Sales</button>
+        <button class="ptc-btn ptc-btn-primary" id="btn-sales-export" style="background:var(--ink);">Download Sales Backup (.xlsx)</button>
+      </div>
+
+    </div><!-- /view-sales -->
+
+  </div>
+  <div class="ptc-toast" id="ptc-toast"></div>
+</div>
+
+
+</main>
+
+<footer class="footer"><div class="container"><div class="footer-grid">
+<div><a class="logo" href="index.html"><span class="logo-mark">S</span><span>Sagar<span>.</span></span></a>
+<p style="margin-top:12px">Air ticketing, reservation and travel operations professional with hands-on experience across GDS, NDC and OTA workflows.</p></div>
+<div><h4>Quick Links</h4><ul><li><a href="index.html">Home</a></li><li><a href="about.html">About</a></li><li><a href="experience.html">Experience</a></li><li><a href="skills.html">Expertise</a></li><li><a href="contact.html">Contact</a></li></ul></div>
+<div><h4>Core Focus</h4><ul><li>Air Reservation</li><li>Ticketing & Fare Rules</li><li>GDS / NDC / OTA</li><li>Customer Service</li><li>Travel Operations</li></ul></div>
+<div><h4>Get In Touch</h4><ul><li><a data-email-link href="#">Email</a></li><li><a data-phone-link href="#">Phone</a></li><li><span data-profile-location></span></li><li><a data-linkedin-link href="#" target="_blank" rel="noreferrer">LinkedIn</a></li></ul></div>
+</div><div class="copy">© 2026 Md Sarwar Osman Sagar. All rights reserved.</div></div></footer>
+</div>
+
+<script>
+(function(){
+  const root = document.getElementById('ptc-root');
+  const typeMeta = {
+    Ticketing: { color: 'var(--booking)', soft: 'var(--booking-soft)' },
+    Reissue: { color: 'var(--reissue)', soft: 'var(--reissue-soft)' },
+    Refund:  { color: 'var(--refund)',  soft: 'var(--refund-soft)' },
+    Void:    { color: 'var(--void)',    soft: 'var(--void-soft)' },
+  };
+  const tagColor = { Ticketing:'#2E6F95', Reissue:'#C97F1E', Refund:'#B4453B', Void:'#6B7280' };
+
+  const $ = (id) => document.getElementById(id);
+
+  // ---- File System connection (writes directly to a real file on your PC) ----
+  // The file handle itself is remembered across sessions via IndexedDB, so you
+  // only browse for the file once — after that, it's a single "Reconnect" click
+  // (browsers require that click to re-confirm permission; they won't let a
+  // page silently regain write access to your files on its own).
+  const FS_SUPPORTED = 'showSaveFilePicker' in window;
+  let fileHandle = null;
+  const IDB_NAME = 'wrd_filehandle_db';
+  const IDB_STORE = 'handles';
+  const IDB_KEY = 'masterFile';
+
+  function idbOpen(){
+    return new Promise((resolve, reject) => {
+      const req = indexedDB.open(IDB_NAME, 1);
+      req.onupgradeneeded = () => { req.result.createObjectStore(IDB_STORE); };
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+  }
+  async function idbSaveHandle(handle){
+    try{
+      const db = await idbOpen();
+      await new Promise((res, rej) => {
+        const tx = db.transaction(IDB_STORE, 'readwrite');
+        tx.objectStore(IDB_STORE).put(handle, IDB_KEY);
+        tx.oncomplete = res;
+        tx.onerror = () => rej(tx.error);
+      });
+    }catch(err){ console.error('Could not remember file handle', err); }
+  }
+  async function idbLoadHandle(){
+    try{
+      const db = await idbOpen();
+      return await new Promise((res, rej) => {
+        const tx = db.transaction(IDB_STORE, 'readonly');
+        const req = tx.objectStore(IDB_STORE).get(IDB_KEY);
+        req.onsuccess = () => res(req.result || null);
+        req.onerror = () => rej(req.error);
+      });
+    }catch(err){ return null; }
+  }
+  async function idbClearHandle(){
+    try{
+      const db = await idbOpen();
+      const tx = db.transaction(IDB_STORE, 'readwrite');
+      tx.objectStore(IDB_STORE).delete(IDB_KEY);
+    }catch(err){ /* ignore */ }
+  }
+
+  function csvEscape(v){
+    if(v === null || v === undefined) return '';
+    const s = String(v);
+    if(s.includes(',') || s.includes('"') || s.includes('\n')){
+      return '"' + s.replace(/"/g, '""') + '"';
+    }
+    return s;
+  }
+
+  // ---- Column definitions shared by every sheet of the master workbook ----
+  const ALL_COLUMNS = [
+    { h:'DATE', f:'date' },
+    { h:'GDS PNR', f:'pnrGds' },
+    { h:'AIRLINE PNR', f:'pnrAirline' },
+    { h:'PASSENGER NAME', f:'pname' },
+    { h:'PASSENGER NUMBER', f:'pnum' },
+    { h:'PASSENGER TYPE', f:'ptype' },
+    { h:'PLATFORM', f:'platform' },
+    { h:'AIRLINE', f:'airline' },
+    { h:'TRANSACTION TYPE', f:'txn' },
+    { h:'OLD TKT NUMBER', f:'oldTkt' },
+    { h:'NEW TKT NUMBER', f:'newTkt' },
+    { h:'SECTOR', f:'sector' },
+    { h:'BASE FARE', f:'baseFare', n:true },
+    { h:'TAX FARE', f:'taxFare', n:true },
+    { h:'AIRLINE TICKET PRICE', f:'airlineTicketPrice', n:true },
+    { h:'DISCOUNT', f:'discount', n:true },
+    { h:'OTA MARKUP %', f:'markUp', n:true },
+    { h:'OTA MARKUP AMOUNT', f:'markupAmount', n:true },
+    { h:'CUSTOMER SELLING PRICE', f:'totalFare', n:true },
+    { h:'FARE DIFFERENCE', f:'fareDiff', n:true },
+    { h:'AIRLINE CHARGE', f:'airlineCharge', n:true },
+    { h:'SERVICE CHARGE', f:'svc', n:true },
+    { h:'TOTAL COLLECTION', f:'totalCollection', n:true },
+    { h:'TICKET PAYABLE FARE', f:'payableFare', n:true },
+    { h:'REFUND CHARGE', f:'refundCharge', n:true },
+    { h:'TAX REFUND', f:'taxRefund', n:true },
+    { h:'REFUND TYPE', f:'refundType' },
+    { h:'REFUND STATUS', f:'refundStatus' },
+    { h:'ADJUSTMENT GIVEN', f:'adjustmentGiven' },
+    { h:'ADJUSTMENT AMOUNT', f:'adjustmentAmount', n:true },
+    { h:'REISSUE CODE', f:'code' },
+    { h:'NOTE', f:'note' },
+    { h:'CREATED AT', f:'createdAt' },
+    { h:'LAST EDITED', f:'editedAt' },
+  ];
+  const COL_BY_FIELD = {};
+  ALL_COLUMNS.forEach(c => { COL_BY_FIELD[c.f] = c; });
+  function pickCols(fields){ return fields.map(f => COL_BY_FIELD[f]).filter(Boolean); }
+
+  const COMMON_FIELDS = ['date','pnrGds','pnrAirline','pname','pnum','ptype','platform','airline'];
+  const SHEET_DEFS = [
+    { name:'Ticketing', fields: COMMON_FIELDS.concat(['newTkt','sector','baseFare','taxFare','airlineTicketPrice','discount','markUp','markupAmount','totalFare','note']) },
+    { name:'Reissue', fields: COMMON_FIELDS.concat(['oldTkt','newTkt','sector','code','fareDiff','airlineCharge','svc','totalCollection','note']) },
+    { name:'Refund', fields: COMMON_FIELDS.concat(['oldTkt','refundType','payableFare','airlineCharge','svc','discount','refundCharge','taxRefund','refundStatus','adjustmentGiven','adjustmentAmount','note']) },
+    { name:'Void', fields: COMMON_FIELDS.concat(['oldTkt','airlineCharge','svc','refundCharge','note']) },
+  ];
+
+  function cellValue(e, col){
+    const v = e[col.f];
+    if(col.n){
+      const n = parseFloat(v);
+      return (v === '' || v === null || v === undefined || isNaN(n)) ? '' : n;
+    }
+    return (v === null || v === undefined) ? '' : v;
+  }
+
+  function rowsForColumns(list, cols){
+    return [cols.map(c => c.h), ...list.map(e => cols.map(c => cellValue(e, c)))];
+  }
+
+  function styleSheet(ws, ncols, nrows){
+    if(ncols <= 0 || nrows <= 0) return;
+    ws['!autofilter'] = { ref: XLSX.utils.encode_range({ s:{r:0,c:0}, e:{r:nrows-1,c:ncols-1} }) };
+    ws['!freeze'] = { xSplit: 0, ySplit: 1 };
+    ws['!cols'] = Array.from({length: ncols}, (_, i) => ({ wch: 14 }));
+  }
+
+  function buildSummarySheet(list){
+    const rows = [
+      ['WORK RECORD DATABASE — SUMMARY'],
+      ['Generated', new Date().toLocaleString()],
+      [],
+      ['Transaction Type', 'Count', 'Total Value']
+    ];
+    const types = ['Ticketing','Reissue','Refund','Void'];
+    types.forEach(t => {
+      const subset = list.filter(e => e.txn === t);
+      const total = subset.reduce((sum, e) => sum + entryValue(e), 0);
+      rows.push([t, subset.length, Number(total.toFixed(2))]);
+    });
+    rows.push([]);
+    const refunds = list.filter(e => e.txn === 'Refund');
+    rows.push(['Refund Status Breakdown', '']);
+    rows.push(['Pending', refunds.filter(e => e.refundStatus === 'PENDING').length]);
+    rows.push(['Refunded', refunds.filter(e => e.refundStatus === 'REFUNDED').length]);
+    rows.push(['Adjustment Given (count)', refunds.filter(e => e.adjustmentGiven === 'YES').length]);
+    rows.push([]);
+    rows.push(['TOTAL ENTRIES (all types)', list.length]);
+    const ws = XLSX.utils.aoa_to_sheet(rows);
+    ws['!cols'] = [{ wch: 30 }, { wch: 16 }, { wch: 16 }];
+    return ws;
+  }
+
+  function buildWorkbook(list){
+    const wb = XLSX.utils.book_new();
+
+    const allData = rowsForColumns(list, ALL_COLUMNS);
+    const wsAll = XLSX.utils.aoa_to_sheet(allData);
+    styleSheet(wsAll, ALL_COLUMNS.length, allData.length);
+    XLSX.utils.book_append_sheet(wb, wsAll, 'All Entries');
+
+    SHEET_DEFS.forEach(def => {
+      const cols = pickCols(def.fields);
+      const subset = list.filter(e => e.txn === def.name);
+      const data = rowsForColumns(subset, cols);
+      const ws = XLSX.utils.aoa_to_sheet(data);
+      styleSheet(ws, cols.length, data.length);
+      XLSX.utils.book_append_sheet(wb, ws, def.name);
+    });
+
+    XLSX.utils.book_append_sheet(wb, buildSummarySheet(list), 'Summary');
+    return wb;
+  }
+
+  function sheetToEntries(ws){
+    if(!ws) return [];
+    const aoa = XLSX.utils.sheet_to_json(ws, { header:1, raw:true, defval:'' });
+    if(aoa.length < 2) return [];
+    const headerRow = aoa[0].map(h => String(h).trim().toUpperCase());
+    const fieldMap = headerRow.map(h => HEADER_TO_FIELD[h] || null);
+    const imported = [];
+    for(let i = 1; i < aoa.length; i++){
+      const cells = aoa[i];
+      const entry = {};
+      FIELD_ORDER.forEach(f => entry[f] = '');
+      fieldMap.forEach((field, idx) => {
+        if(!field) return;
+        let v = cells[idx];
+        if(v === undefined || v === null) v = '';
+        if(NUMERIC_FIELDS.includes(field)){
+          v = (v === '') ? '' : parseFloat(v);
+          if(isNaN(v)) v = '';
+        } else if(v !== ''){
+          v = String(v);
+        }
+        entry[field] = v;
+      });
+      if(entry.pnrGds || entry.pname) imported.push(entry);
+    }
+    return imported;
+  }
+
+  function parseWorkbook(buf){
+    const wb = XLSX.read(buf, { type:'array' });
+    const preferredNames = ['All Entries','Master','Sheet1'];
+    const sheetName = wb.SheetNames.find(n => preferredNames.includes(n)) || wb.SheetNames[0];
+    return sheetToEntries(wb.Sheets[sheetName]);
+  }
+
+  async function writeToConnectedFile(){
+    if(!fileHandle) return;
+    try{
+      const wb = buildWorkbook(entries);
+      const wbout = XLSX.write(wb, { bookType:'xlsx', type:'array' });
+      const writable = await fileHandle.createWritable();
+      await writable.write(wbout);
+      await writable.close();
+      setFileStatus('connected');
+    }catch(err){
+      console.error('File write failed', err);
+      setFileStatus('error');
+    }
+  }
+
+  function setFileStatus(state, name){
+    const el = $('ptc-filestatus');
+    const dot = $('ptc-file-dot');
+    const connectBtn = $('btn-connect-file');
+    const disconnectBtn = $('btn-disconnect-file');
+    const reconnectBtn = $('btn-reconnect-file');
+
+    if(state === 'connected'){
+      el.textContent = 'Connected — every entry auto-saves to "' + (name || (fileHandle && fileHandle.name) || 'your file') + '".';
+      el.style.color = 'var(--booking)';
+      dot.style.background = 'var(--booking)';
+      connectBtn.textContent = 'Switch File';
+      disconnectBtn.style.display = 'inline-block';
+      reconnectBtn.style.display = 'none';
+    } else if(state === 'needs-reconnect'){
+      el.textContent = 'Remembered "' + name + '" — click Reconnect to resume auto-saving to it.';
+      el.style.color = 'var(--reissue)';
+      dot.style.background = 'var(--reissue)';
+      reconnectBtn.style.display = 'inline-block';
+      reconnectBtn.textContent = 'Reconnect to "' + name + '"';
+      disconnectBtn.style.display = 'inline-block';
+    } else if(state === 'error'){
+      el.textContent = 'Could not write to the connected file. Check it hasn\'t been moved or deleted, then reconnect.';
+      el.style.color = 'var(--refund)';
+      dot.style.background = 'var(--refund)';
+    } else if(state === 'unsupported'){
+      el.textContent = 'Your browser doesn\'t support direct file connection (needs Chrome or Edge). Use "Download Backup Copy" / "Import" below instead.';
+      el.style.color = 'var(--muted)';
+      dot.style.background = 'var(--muted)';
+      connectBtn.style.display = 'none';
+    } else {
+      el.textContent = 'Not set — entries save to this browser only.';
+      el.style.color = 'var(--ink-soft)';
+      dot.style.background = 'var(--muted)';
+      connectBtn.textContent = 'Set Master Data File';
+      disconnectBtn.style.display = 'none';
+      reconnectBtn.style.display = 'none';
+    }
+  }
+
+  async function connectToHandle(handle, { offerLoad } = { offerLoad: true }){
+    const perm = await handle.requestPermission({ mode: 'readwrite' });
+    if(perm !== 'granted'){ toast('Permission denied for that file.'); return false; }
+
+    if(offerLoad){
+      try{
+        const file = await handle.getFile();
+        const nameLower = (file.name || '').toLowerCase();
+        let imported = [];
+        if(nameLower.endsWith('.csv')){
+          const text = await file.text();
+          if(text.trim().length > 0) imported = parseCsv(text);
+        } else {
+          const buf = await file.arrayBuffer();
+          if(buf.byteLength > 0) imported = parseWorkbook(buf);
+        }
+        if(imported.length > 0 && confirm('This file already has ' + imported.length + ' row(s). Load them into the table?')){
+          entries = imported;
+        }
+      }catch(readErr){ /* new/empty file, ignore */ }
+    }
+
+    fileHandle = handle;
+    await idbSaveHandle(handle);
+    persist();
+    render();
+    await writeToConnectedFile();
+    return true;
+  }
+
+  $('btn-connect-file').addEventListener('click', async () => {
+    if(!FS_SUPPORTED){ setFileStatus('unsupported'); return; }
+    try{
+      // This picker lets you type a brand-new file name (creates it) OR
+      // click an existing workbook (it will ask "replace?" — say yes; we read
+      // its existing rows first, so nothing is lost). Older .csv master files
+      // are also readable here and will be upgraded to the new workbook format.
+      const handle = await window.showSaveFilePicker({
+        suggestedName: 'work_record_database.xlsx',
+        types: [
+          { description: 'Excel Workbook', accept: {'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx']} },
+          { description: 'CSV file', accept: {'text/csv': ['.csv']} },
+        ],
+      });
+      const ok = await connectToHandle(handle, { offerLoad: true });
+      if(ok) toast('Master file set: ' + handle.name);
+    }catch(err){
+      if(err.name !== 'AbortError'){
+        console.error(err);
+        toast('Could not set the master file.');
+      }
+    }
+  });
+
+  $('btn-reconnect-file').addEventListener('click', async () => {
+    const remembered = await idbLoadHandle();
+    if(!remembered){ toast('No remembered file found — click "Set Master Data File".'); return; }
+    const ok = await connectToHandle(remembered, { offerLoad: false });
+    if(ok) toast('Reconnected to ' + remembered.name);
+  });
+
+  $('btn-disconnect-file').addEventListener('click', async () => {
+    fileHandle = null;
+    await idbClearHandle();
+    setFileStatus('idle');
+    toast('Disconnected. Entries will still save in this browser.');
+  });
+
+  async function initFileConnection(){
+    if(!FS_SUPPORTED){ setFileStatus('unsupported'); return; }
+    const remembered = await idbLoadHandle();
+    if(!remembered){ setFileStatus('idle'); return; }
+    try{
+      const perm = await remembered.queryPermission({ mode: 'readwrite' });
+      if(perm === 'granted'){
+        fileHandle = remembered;
+        setFileStatus('connected', remembered.name);
+      } else {
+        setFileStatus('needs-reconnect', remembered.name);
+      }
+    }catch(err){
+      setFileStatus('needs-reconnect', remembered.name || 'your file');
+    }
+  }
+
+  // ---- Live Cloud Sync (Firebase Firestore + Auth) — works on any device, any browser ----
+  const CLOUD_CONFIG_KEY = 'wrd_cloud_config_v1';
+  const CLOUD_COLLECTION = 'work_record_entries';
+  let cloudDb = null;
+  let cloudUnsub = null;
+  let cloudAuthUser = null;
+  let cloudPendingConfig = null;
+
+  function loadFirebaseScripts(cb, onerr){
+    if(window.firebase && window.firebase.firestore && window.firebase.auth){ cb(); return; }
+    const s1 = document.createElement('script');
+    s1.src = 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js';
+    s1.onload = () => {
+      const s2 = document.createElement('script');
+      s2.src = 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js';
+      s2.onload = () => {
+        const s3 = document.createElement('script');
+        s3.src = 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js';
+        s3.onload = cb;
+        s3.onerror = onerr;
+        document.head.appendChild(s3);
+      };
+      s2.onerror = onerr;
+      document.head.appendChild(s2);
+    };
+    s1.onerror = onerr;
+    document.head.appendChild(s1);
+  }
+
+  function setCloudStatus(state){
+    const el = $('ptc-cloud-status');
+    const dot = $('ptc-cloud-dot');
+    const btnSetup = $('btn-cloud-setup');
+    const btnDisc = $('btn-cloud-disconnect');
+    if(state === 'connected'){
+      const who = (cloudAuthUser && cloudAuthUser.email) ? (' as ' + cloudAuthUser.email) : '';
+      el.textContent = 'Connected' + who + ' — entries sync live to every device signed in with this account.';
+      dot.style.background = '#1E7A46';
+      btnSetup.style.display = 'none';
+      btnDisc.style.display = 'inline-block';
+    } else if(state === 'error'){
+      el.textContent = 'Connection failed. Check your config and try again.';
+      dot.style.background = 'var(--refund)';
+    } else if(state === 'connecting'){
+      el.textContent = 'Connecting…';
+      dot.style.background = 'var(--reissue)';
+    } else {
+      el.textContent = 'Not connected — set up once to access your data live from any device.';
+      dot.style.background = 'var(--muted)';
+      btnSetup.style.display = 'inline-block';
+      btnDisc.style.display = 'none';
+    }
+  }
+
+  // ---- Storage efficiency: only send fields that actually have a value ----
+  // A Ticketing entry has ~10 relevant fields out of ~28 possible ones; writing
+  // the other 18 blank strings to Firestore on every single document wastes
+  // storage and bandwidth for no benefit, since collectEntry()/expandCloudDoc()
+  // already fill in '' for anything missing when the app reads it back.
+  function trimForCloud(entry){
+    const out = {};
+    Object.keys(entry).forEach(k => {
+      if(k === '_id') return; // redundant — the Firestore document ID already carries this
+      const v = entry[k];
+      if(v !== '' && v !== null && v !== undefined) out[k] = v;
+    });
+    return out;
+  }
+
+  function expandCloudDoc(id, data){
+    const full = {};
+    FIELD_ORDER.forEach(f => { full[f] = (data[f] !== undefined ? data[f] : ''); });
+    full._id = id;
+    return full;
+  }
+
+  function subscribeCloud(){
+    if(!cloudDb) return;
+    if(cloudUnsub) cloudUnsub();
+    cloudUnsub = cloudDb.collection(CLOUD_COLLECTION).onSnapshot((snap) => {
+      const list = [];
+      snap.forEach(doc => list.push(expandCloudDoc(doc.id, doc.data())));
+
+      if(snap.empty && entries.length > 0 && !cloudDb.__migrated){
+        cloudDb.__migrated = true;
+        if(confirm('Your cloud database is empty but this browser has ' + entries.length + ' saved entr' + (entries.length===1?'y':'ies') + '. Upload them to the cloud now?')){
+          const batch = cloudDb.batch();
+          entries.forEach(e => {
+            const id = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(16).slice(2));
+            batch.set(cloudDb.collection(CLOUD_COLLECTION).doc(id), trimForCloud(e));
+          });
+          batch.commit().catch(err => { console.error('Migration failed', err); toast('Could not upload existing entries to the cloud.'); });
+          return; // the commit will trigger another snapshot with the real data
+        }
+      }
+
+      list.sort((a,b) => (b.date||'').localeCompare(a.date||''));
+      entries = list;
+      persist();
+      writeToConnectedFile();
+      render();
+    }, (err) => {
+      console.error('Cloud sync error', err);
+      toast('Cloud sync interrupted — check your internet connection or that you\'re still signed in.');
+    });
+  }
+
+  // ---- Security: require a signed-in account before the database is ever touched.
+  // Firestore rules should be set to `allow read, write: if request.auth != null;`
+  // so the apiKey alone (which is not a secret) can no longer grant access —
+  // only a real account, password-protected, can.
+  function beginCloudConnection(config){
+    setCloudStatus('connecting');
+    loadFirebaseScripts(() => {
+      try{
+        if(!firebase.apps || !firebase.apps.length){ firebase.initializeApp(config); }
+        else if(firebase.apps[0].options.projectId !== config.projectId){
+          // switching to a different Firebase project — start clean
+          firebase.apps.forEach(a => a.delete());
+          firebase.initializeApp(config);
+        }
+        cloudPendingConfig = config;
+        const auth = firebase.auth();
+        auth.onAuthStateChanged((user) => {
+          cloudAuthUser = user;
+          if(user){
+            $('cloud-auth-modal-backdrop').style.display = 'none';
+            cloudDb = firebase.firestore();
+            localStorage.setItem(CLOUD_CONFIG_KEY, JSON.stringify(config));
+            setCloudStatus('connected');
+            subscribeCloud();
+          } else {
+            cloudDb = null;
+            if(cloudUnsub){ cloudUnsub(); cloudUnsub = null; }
+            setCloudStatus('idle');
+            $('cloud-auth-error').textContent = '';
+            $('cloud-auth-modal-backdrop').style.display = 'flex';
+          }
+        });
+      }catch(err){
+        console.error('Cloud connect failed', err);
+        toast('Could not connect — check the config and try again.');
+        setCloudStatus('error');
+      }
+    }, () => {
+      toast('Could not load the cloud library — check your internet connection.');
+      setCloudStatus('error');
+    });
+  }
+  function connectCloud(config){ beginCloudConnection(config); }
+
+  function disconnectCloud(){
+    if(cloudUnsub){ cloudUnsub(); cloudUnsub = null; }
+    cloudDb = null;
+    cloudAuthUser = null;
+    localStorage.removeItem(CLOUD_CONFIG_KEY);
+    if(window.firebase && firebase.auth && firebase.apps && firebase.apps.length){
+      firebase.auth().signOut().catch(() => {});
+    }
+    setCloudStatus('idle');
+  }
+
+  function isCloudConnected(){ return !!cloudDb && !!cloudAuthUser; }
+
+  $('btn-cloud-setup').addEventListener('click', () => {
+    $('cloud-config-input').value = '';
+    $('cloud-modal-backdrop').style.display = 'flex';
+  });
+  $('btn-cloud-cancel').addEventListener('click', () => {
+    $('cloud-modal-backdrop').style.display = 'none';
+  });
+  $('btn-cloud-connect-confirm').addEventListener('click', () => {
+    const raw = $('cloud-config-input').value.trim();
+    if(!raw){ toast('Paste your Firebase config first.'); return; }
+    let config;
+    try{ config = JSON.parse(raw); }
+    catch(err){ toast('That doesn\'t look like valid config — copy the whole { ... } object.'); return; }
+    if(!config.apiKey || !config.projectId){ toast('Config looks incomplete — make sure apiKey and projectId are included.'); return; }
+    $('cloud-modal-backdrop').style.display = 'none';
+    connectCloud(config);
+  });
+  $('btn-cloud-disconnect').addEventListener('click', () => {
+    if(confirm('Sign out? You will need to sign in again on this device to keep using the tool.')){
+      disconnectCloud();
+      toast('Signed out.');
+    }
+  });
+
+  $('btn-toggle-password').addEventListener('click', () => {
+    const pwField = $('cloud-auth-password');
+    const btn = $('btn-toggle-password');
+    const nowVisible = pwField.type === 'password';
+    pwField.type = nowVisible ? 'text' : 'password';
+    btn.textContent = nowVisible ? '🙈' : '👁️';
+    btn.setAttribute('aria-label', nowVisible ? 'Hide password' : 'Show password');
+  });
+
+  $('btn-cloud-auth-signin').addEventListener('click', () => {
+    const email = $('cloud-auth-email').value.trim();
+    const pw = $('cloud-auth-password').value;
+    $('cloud-auth-error').textContent = '';
+    if(!email || !pw){ $('cloud-auth-error').textContent = 'Enter both email and password.'; return; }
+    firebase.auth().signInWithEmailAndPassword(email, pw)
+      .catch(err => { $('cloud-auth-error').textContent = friendlyAuthError(err); });
+  });
+  $('btn-cloud-auth-create').addEventListener('click', () => {
+    const email = $('cloud-auth-email').value.trim();
+    const pw = $('cloud-auth-password').value;
+    $('cloud-auth-error').textContent = '';
+    if(!email || !pw){ $('cloud-auth-error').textContent = 'Enter both email and password.'; return; }
+    if(pw.length < 6){ $('cloud-auth-error').textContent = 'Password must be at least 6 characters.'; return; }
+    firebase.auth().createUserWithEmailAndPassword(email, pw)
+      .catch(err => { $('cloud-auth-error').textContent = friendlyAuthError(err); });
+  });
+  function friendlyAuthError(err){
+    const code = err && err.code || '';
+    if(code === 'auth/wrong-password' || code === 'auth/invalid-credential') return 'Wrong email or password.';
+    if(code === 'auth/user-not-found') return 'No account with that email — try "Create Account" instead.';
+    if(code === 'auth/email-already-in-use') return 'That email already has an account — try "Sign In" instead.';
+    if(code === 'auth/invalid-email') return 'That email address doesn\'t look valid.';
+    if(code === 'auth/weak-password') return 'Password must be at least 6 characters.';
+    if(code === 'auth/operation-not-allowed') return 'Email/Password sign-in isn\'t enabled yet — turn it on in Firebase Console → Authentication → Sign-in method.';
+    console.error('Auth error', err);
+    return 'Something went wrong — please try again.';
+  }
+
+  // ---- Fixed project config — baked in so the login gate can appear immediately
+  // on any device without needing the config pasted in first. This apiKey is not
+  // a secret (Firebase client keys never are); real protection comes from the
+  // Firestore rule requiring request.auth != null, plus your account password.
+  const DEFAULT_FIREBASE_CONFIG = {
+    apiKey: "AIzaSyD05sxfNz7W21pxG_lS6ETRbBevu7x_O14",
+    authDomain: "my-work-records.firebaseapp.com",
+    projectId: "my-work-records",
+    storageBucket: "my-work-records.firebasestorage.app",
+    messagingSenderId: "686225881136",
+    appId: "1:686225881136:web:eac8f36503ae83e189d5f5"
+  };
+
+  function initCloudConnection(){
+    // Login is now mandatory: always attempt to connect using the fixed config,
+    // regardless of what's saved locally. beginCloudConnection() shows the
+    // sign-in gate automatically whenever there's no active session.
+    beginCloudConnection(DEFAULT_FIREBASE_CONFIG);
+  }
+
+  const card = $('ptc-card');
+  const typeSelect = $('f-type');
+  const sections = {
+    Ticketing: $('section-Ticketing'),
+    Reissue: $('section-Reissue'),
+    Refund: $('section-Refund'),
+    Void: $('section-Refund'),
+  };
+
+  let entries = [];
+  let editingIndex = null;
+  let logFilterFrom = '';
+  let logFilterTo = '';
+  let logPage = 1;
+  const LOG_PAGE_SIZE = 10;
+  const STORE_KEY = 'pnr_entries_v1';
+
+  function todayISO(){
+    const d = new Date();
+    return d.toISOString().slice(0,10);
+  }
+  $('f-date').value = todayISO();
+
+  function setClock(){
+    $('ptc-clock').textContent = new Date().toLocaleDateString(undefined, {year:'numeric', month:'short', day:'numeric'});
+  }
+  setClock();
+
+  function applyTypeStyling(type){
+    const meta = typeMeta[type] || typeMeta.Ticketing;
+    root.style.setProperty('--accent', meta.color);
+    root.style.setProperty('--accent-soft', meta.soft);
+  }
+
+  function showSection(type){
+    Object.values(sections).forEach(s => { if(s) s.style.display = 'none'; });
+    if(type === 'Ticketing'){ sections.Ticketing.style.display = 'block'; }
+    else if(type === 'Reissue'){ sections.Reissue.style.display = 'block'; }
+    else if(type === 'Refund' || type === 'Void'){
+      sections.Refund.style.display = 'block';
+      const label = $('refund-void-label');
+      const modeWrap = $('refund-mode-wrap');
+      const taxWrap = $('tax-refund-wrap');
+      const chargeLabel = $('f-charge-f-label');
+      const chargeInput = $('f-charge-f');
+      const statusWrap = $('refund-status-wrap');
+      const adjWrap = $('refund-adjustment-wrap');
+      const payableWrap = $('refund-payable-wrap');
+      const discountWrap = $('refund-discount-wrap');
+      if(type === 'Void'){
+        label.textContent = 'Void Details';
+        label.style.color = 'var(--accent)';
+        modeWrap.style.display = 'none';
+        taxWrap.style.display = 'none';
+        payableWrap.style.display = 'none';
+        discountWrap.style.display = 'none';
+        chargeLabel.textContent = 'Void Charge';
+        statusWrap.style.display = 'none';
+        adjWrap.style.display = 'none';
+        $('refund-adjamt-row').style.display = 'none';
+        chargeInput.readOnly = false;
+        chargeInput.style.background = '#FCFDFE';
+        chargeInput.style.fontWeight = '400';
+      } else {
+        label.textContent = 'Refund Details';
+        label.style.color = 'var(--accent)';
+        modeWrap.style.display = 'block';
+        taxWrap.style.display = 'block';
+        payableWrap.style.display = 'block';
+        discountWrap.style.display = 'block';
+        chargeLabel.textContent = 'Refund Charge (auto)';
+        statusWrap.style.display = 'block';
+        adjWrap.style.display = 'block';
+        $('refund-adjamt-row').style.display = ($('f-adjgiven-f').value === 'YES') ? 'grid' : 'none';
+        chargeInput.readOnly = true;
+        chargeInput.style.background = '#F3F5F8';
+        chargeInput.style.fontWeight = '700';
+        if(typeof recalcRefundCharge === 'function') recalcRefundCharge();
+      }
+    }
+    applyTypeStyling(type);
+  }
+
+  typeSelect.addEventListener('change', () => showSection(typeSelect.value));
+  showSection(typeSelect.value);
+
+  // ---- Platform / Airline "Other" manual entry toggle ----
+  function wireOtherToggle(selectId, otherId){
+    const sel = $(selectId);
+    const other = $(otherId);
+    sel.addEventListener('change', () => {
+      other.style.display = sel.value === 'OTHER' ? 'block' : 'none';
+      if(sel.value === 'OTHER'){ other.focus(); }
+    });
+  }
+  wireOtherToggle('f-platform', 'f-platform-other');
+  wireOtherToggle('f-airline', 'f-airline-other');
+
+  function getPlatformValue(){
+    const sel = $('f-platform');
+    return sel.value === 'OTHER' ? val('f-platform-other') : sel.value;
+  }
+  function getAirlineValue(){
+    const sel = $('f-airline');
+    return sel.value === 'OTHER' ? val('f-airline-other').toUpperCase() : sel.value;
+  }
+
+  function val(id){ return $(id).value.trim(); }
+  function num(id){ const v = $(id).value; return v === '' ? '' : parseFloat(v); }
+
+  // ---- Ticketing fare auto-calculation (OTA Markup model) ----
+  // Airline Ticket Price = Base Fare + Tax
+  // OTA Markup Amount = Airline Ticket Price x Markup% (Markup% capped 0-7)
+  // Customer Selling Price = Airline Ticket Price + OTA Markup Amount - Discount
+  function recalcTicketingFare(){
+    const base = parseFloat($('f-basefare-t').value) || 0;
+    const tax = parseFloat($('f-taxfare-t').value) || 0;
+    const discount = parseFloat($('f-discount-t').value) || 0;
+    let markupPct = parseFloat($('f-markup-t').value) || 0;
+    if(markupPct > 7){ markupPct = 7; $('f-markup-t').value = 7; }
+    if(markupPct < 0){ markupPct = 0; $('f-markup-t').value = 0; }
+    const airlinePrice = base + tax;
+    const markupAmt = airlinePrice * (markupPct / 100);
+    const sellingPrice = airlinePrice + markupAmt;
+    const total = sellingPrice - discount;
+    $('f-atp-t').value = airlinePrice.toFixed(2);
+    $('f-markupamt-t').value = markupAmt.toFixed(2);
+    $('f-totalfare-t').value = total.toFixed(2);
+  }
+  // Display-only breakdown (does NOT touch the saved Customer Selling Price).
+  // Used when loading an existing record for edit so historical totals aren't
+  // silently recalculated with the new formula just by opening the record.
+  function showTicketingBreakdown(){
+    const base = parseFloat($('f-basefare-t').value) || 0;
+    const tax = parseFloat($('f-taxfare-t').value) || 0;
+    const markupPct = parseFloat($('f-markup-t').value) || 0;
+    const airlinePrice = base + tax;
+    const markupAmt = airlinePrice * (markupPct / 100);
+    $('f-atp-t').value = airlinePrice.toFixed(2);
+    $('f-markupamt-t').value = markupAmt.toFixed(2);
+  }
+  document.querySelectorAll('.ptc-fare-calc').forEach(el => {
+    el.addEventListener('input', recalcTicketingFare);
+  });
+  recalcTicketingFare();
+
+  // ---- Reissue total collection auto-calculation: Fare Diff + Airline Charge + Service Charge ----
+  function recalcReissueTotal(){
+    const fareDiff = parseFloat($('f-faredif-r').value) || 0;
+    const airlineChg = parseFloat($('f-airline-r').value) || 0;
+    const svc = parseFloat($('f-svc-r').value) || 0;
+    const total = fareDiff + airlineChg + svc;
+    $('f-total-r').value = total.toFixed(2);
+  }
+  document.querySelectorAll('.ptc-reissue-calc').forEach(el => {
+    el.addEventListener('input', recalcReissueTotal);
+  });
+  recalcReissueTotal();
+
+  // ---- Refund charge auto-calculation: Ticket Payable Fare − Airline Charge − Service Charge − Discount − Adjustment (if given) ----
+  // Only applies when Transaction Type = Refund. For Void, the charge field stays a plain editable input.
+  function recalcRefundCharge(){
+    if(typeSelect.value !== 'Refund') return;
+    const payable = parseFloat($('f-payable-f').value) || 0;
+    const airlineChg = parseFloat($('f-airline-f').value) || 0;
+    const svc = parseFloat($('f-svc-f').value) || 0;
+    const discount = parseFloat($('f-discount-f').value) || 0;
+    const adjAmt = ($('f-adjgiven-f').value === 'YES') ? (parseFloat($('f-adjamt-f').value) || 0) : 0;
+    const total = payable - airlineChg - svc - discount - adjAmt;
+    $('f-charge-f').value = total.toFixed(2);
+  }
+  document.querySelectorAll('.ptc-refund-calc').forEach(el => {
+    el.addEventListener('input', recalcRefundCharge);
+  });
+  $('f-adjamt-f').addEventListener('input', recalcRefundCharge);
+
+  // ---- Refund: Adjustment Given toggle ----
+  function setAdjustmentGiven(val){
+    $('f-adjgiven-f').value = val;
+    $('btn-adj-no').classList.toggle('ptc-adj-active', val === 'NO');
+    $('btn-adj-yes').classList.toggle('ptc-adj-active', val === 'YES');
+    $('refund-adjamt-row').style.display = (val === 'YES' && typeSelect.value === 'Refund') ? 'grid' : 'none';
+    if(val === 'NO'){ $('f-adjamt-f').value = ''; }
+    recalcRefundCharge();
+  }
+  $('btn-adj-no').addEventListener('click', () => setAdjustmentGiven('NO'));
+  $('btn-adj-yes').addEventListener('click', () => setAdjustmentGiven('YES'));
+  setAdjustmentGiven('NO');
+
+  function collectEntry(){
+    const type = typeSelect.value;
+    const base = {
+      date: val('f-date'),
+      pnrGds: val('f-pnr-gds').toUpperCase(),
+      pnrAirline: val('f-pnr-air').toUpperCase(),
+      pname: val('f-pname').toUpperCase(),
+      pnum: val('f-pnum'),
+      ptype: $('f-ptype').value,
+      platform: getPlatformValue(),
+      airline: getAirlineValue(),
+      txn: type,
+      oldTkt: '',
+      newTkt: '',
+      sector: '',
+      baseFare: '',
+      taxFare: '',
+      airlineTicketPrice: '',
+      markupAmount: '',
+      discount: '',
+      markUp: '',
+      totalFare: '',
+      fareDiff: '',
+      airlineCharge: '',
+      svc: '',
+      totalCollection: '',
+      payableFare: '',
+      refundCharge: '',
+      taxRefund: '',
+      refundType: '',
+      refundStatus: '',
+      adjustmentGiven: '',
+      adjustmentAmount: '',
+      code: '',
+      note: val('f-note'),
+    };
+
+    if(type === 'Ticketing'){
+      base.newTkt = val('f-newtkt-t');
+      base.sector = val('f-sector-t');
+      base.baseFare = num('f-basefare-t');
+      base.taxFare = num('f-taxfare-t');
+      base.discount = num('f-discount-t');
+      base.markUp = num('f-markup-t');
+      base.airlineTicketPrice = parseFloat($('f-atp-t').value) || 0;
+      base.markupAmount = parseFloat($('f-markupamt-t').value) || 0;
+      base.totalFare = parseFloat($('f-totalfare-t').value) || 0;
+    } else if(type === 'Reissue'){
+      base.oldTkt = val('f-oldtkt-r');
+      base.newTkt = val('f-newtkt-r');
+      base.sector = val('f-sector-r');
+      base.code = val('f-code-r');
+      base.fareDiff = num('f-faredif-r');
+      base.airlineCharge = num('f-airline-r');
+      base.svc = num('f-svc-r');
+      base.totalCollection = parseFloat($('f-total-r').value) || 0;
+    } else if(type === 'Refund'){
+      base.oldTkt = val('f-oldtkt-f');
+      base.refundType = $('f-mode-f').value;
+      base.payableFare = num('f-payable-f');
+      base.discount = num('f-discount-f');
+      base.airlineCharge = num('f-airline-f');
+      base.svc = num('f-svc-f');
+      const payableN = Number(num('f-payable-f')) || 0;
+      const discountN = Number(num('f-discount-f')) || 0;
+      const airlineN = Number(num('f-airline-f')) || 0;
+      const svcN = Number(num('f-svc-f')) || 0;
+      const adjN = ($('f-adjgiven-f').value === 'YES') ? (Number(num('f-adjamt-f')) || 0) : 0;
+      base.refundCharge = payableN - airlineN - svcN - discountN - adjN; // Ticket Payable − Airline − Service − Discount − Adjustment
+      base.taxRefund = num('f-tax-f');
+      base.refundStatus = $('f-status-f').value;
+      base.adjustmentGiven = $('f-adjgiven-f').value;
+      base.adjustmentAmount = $('f-adjgiven-f').value === 'YES' ? num('f-adjamt-f') : '';
+    } else if(type === 'Void'){
+      base.oldTkt = val('f-oldtkt-f');
+      base.airlineCharge = num('f-airline-f');
+      base.svc = num('f-svc-f');
+      base.refundCharge = num('f-charge-f'); // stays manually editable for Void
+    }
+    return base;
+  }
+
+  function validate(entry){
+    if(!entry.date) return 'Please enter a date.';
+    if(!entry.pnrGds) return 'Please enter the GDS PNR.';
+    if(!entry.pname) return 'Please enter the passenger name.';
+    return null;
+  }
+
+  function fmtMoney(v){
+    if(v === '' || v === null || v === undefined || isNaN(v)) return '';
+    return Number(v).toFixed(2);
+  }
+
+  function fmtPct(v){
+    if(v === '' || v === null || v === undefined || isNaN(v)) return '';
+    return Number(v).toFixed(2) + '%';
+  }
+
+  function render(){
+    const tbody = $('ptc-tbody');
+    const empty = $('ptc-empty');
+    tbody.innerHTML = '';
+    $('ptc-count').textContent = entries.length + (entries.length === 1 ? ' entry' : ' entries');
+
+    if(entries.length === 0){
+      empty.style.display = 'block';
+      $('ptc-pagination').style.display = 'none';
+      $('ptc-filter-summary').textContent = '';
+      try { if(typeof recalcAchievement === 'function') recalcAchievement(); }
+      catch(err){ console.error('recalcAchievement failed', err); }
+      try { if(typeof renderDashboard === 'function') renderDashboard(); }
+      catch(err){ console.error('Dashboard failed to render:', err); }
+      return;
+    }
+    empty.style.display = 'none';
+
+    // Date filter — pair each entry with its real index in `entries` so
+    // Edit/Remove buttons always act on the correct underlying record.
+    const withIdx = entries.map((e, idx) => ({ e, idx }));
+    const filtered = withIdx.filter(({ e }) => {
+      if(!logFilterFrom && !logFilterTo) return true;
+      if(!e.date) return false;
+      if(logFilterFrom && e.date < logFilterFrom) return false;
+      if(logFilterTo && e.date > logFilterTo) return false;
+      return true;
+    });
+
+    if(logFilterFrom || logFilterTo){
+      $('ptc-filter-summary').textContent = filtered.length + ' of ' + entries.length + ' entries match this date range';
+    } else {
+      $('ptc-filter-summary').textContent = '';
+    }
+
+    const totalPages = Math.max(1, Math.ceil(filtered.length / LOG_PAGE_SIZE));
+    if(logPage > totalPages) logPage = totalPages;
+    if(logPage < 1) logPage = 1;
+    const pageStart = (logPage - 1) * LOG_PAGE_SIZE;
+    const pageItems = filtered.slice(pageStart, pageStart + LOG_PAGE_SIZE);
+
+    const pag = $('ptc-pagination');
+    if(filtered.length > LOG_PAGE_SIZE){
+      pag.style.display = 'flex';
+      const shownFrom = filtered.length === 0 ? 0 : pageStart + 1;
+      const shownTo = Math.min(pageStart + LOG_PAGE_SIZE, filtered.length);
+      $('ptc-page-summary').textContent = 'Showing ' + shownFrom + '–' + shownTo + ' of ' + filtered.length;
+      $('ptc-page-indicator').textContent = 'Page ' + logPage + ' of ' + totalPages;
+      $('btn-page-prev').disabled = (logPage <= 1);
+      $('btn-page-next').disabled = (logPage >= totalPages);
+      $('btn-page-prev').style.opacity = (logPage <= 1) ? '0.5' : '1';
+      $('btn-page-next').style.opacity = (logPage >= totalPages) ? '0.5' : '1';
+    } else {
+      pag.style.display = 'none';
+    }
+
+    if(filtered.length === 0){
+      tbody.innerHTML = '<tr><td colspan="30" style="text-align:center; padding:20px; color:var(--muted);">No entries in this date range.</td></tr>';
+    }
+
+    pageItems.forEach(({ e, idx }) => {
+      const tr = document.createElement('tr');
+      const color = tagColor[e.txn] || '#6B7280';
+      const statusBadge = e.refundStatus
+        ? `<span class="ptc-tag ${e.refundStatus === 'REFUNDED' ? 'ptc-status-tag-refunded' : 'ptc-status-tag-pending'}">${e.refundStatus}</span>`
+        : '';
+      tr.innerHTML = `
+        <td>${e.date || ''}</td>
+        <td class="mono">${e.pnrGds || ''}</td>
+        <td class="mono">${e.pnrAirline || ''}</td>
+        <td>${e.pname || ''}</td>
+        <td>${e.ptype || ''}</td>
+        <td class="mono">${e.platform || ''}</td>
+        <td class="mono">${e.airline || ''}</td>
+        <td><span class="ptc-tag" style="background:${color}">${e.txn}</span></td>
+        <td class="mono">${e.oldTkt || ''}</td>
+        <td class="mono">${e.newTkt || ''}</td>
+        <td class="mono">${e.sector || ''}</td>
+        <td class="mono">${fmtMoney(e.baseFare)}</td>
+        <td class="mono">${fmtMoney(e.taxFare)}</td>
+        <td class="mono">${fmtMoney(e.airlineTicketPrice)}</td>
+        <td class="mono">${fmtMoney(e.discount)}</td>
+        <td class="mono">${fmtPct(e.markUp)}</td>
+        <td class="mono">${fmtMoney(e.markupAmount)}</td>
+        <td class="mono">${fmtMoney(e.totalFare)}</td>
+        <td class="mono">${fmtMoney(e.fareDiff)}</td>
+        <td class="mono">${fmtMoney(e.airlineCharge)}</td>
+        <td class="mono">${fmtMoney(e.svc)}</td>
+        <td class="mono">${fmtMoney(e.totalCollection)}</td>
+        <td class="mono">${fmtMoney(e.payableFare)}</td>
+        <td class="mono">${fmtMoney(e.refundCharge)}</td>
+        <td class="mono">${fmtMoney(e.taxRefund)}</td>
+        <td class="mono">${e.refundType || ''}</td>
+        <td>${statusBadge}</td>
+        <td>${e.adjustmentGiven || ''}</td>
+        <td class="mono">${fmtMoney(e.adjustmentAmount)}</td>
+        <td class="mono">${e.code || ''}</td>
+        <td>${e.note || ''}</td>
+        <td style="white-space:nowrap;">${e.editedAt ? `<span title="Last edited ${new Date(e.editedAt).toLocaleString()}" style="margin-right:6px; font-size:12px; cursor:help;">✏️</span>` : ''}<button class="ptc-edit" data-idx="${idx}">Edit</button><button class="ptc-del" data-idx="${idx}">Remove</button></td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    tbody.querySelectorAll('.ptc-del').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const i = parseInt(btn.getAttribute('data-idx'), 10);
+        const target = entries[i];
+        if(editingIndex === i){ stopEdit(); clearForm(); }
+        else if(editingIndex !== null && i < editingIndex){ editingIndex -= 1; }
+
+        if(isCloudConnected() && target && target._id){
+          cloudDb.collection(CLOUD_COLLECTION).doc(target._id).delete()
+            .catch(err => { console.error(err); toast('Cloud delete failed — check your connection.'); });
+          return;
+        }
+
+        entries.splice(i, 1);
+        persist();
+        writeToConnectedFile();
+        render();
+      });
+    });
+
+    tbody.querySelectorAll('.ptc-edit').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const i = parseInt(btn.getAttribute('data-idx'), 10);
+        startEdit(i);
+      });
+    });
+
+    try { if(typeof recalcAchievement === 'function') recalcAchievement(); }
+    catch(err){ console.error('recalcAchievement failed', err); }
+
+    try { if(typeof renderDashboard === 'function') renderDashboard(); }
+    catch(err){ console.error('Dashboard failed to render (this never affects saving or the entry form):', err); }
+
+    try { if(typeof renderSearchResults === 'function') renderSearchResults(); }
+    catch(err){ console.error('renderSearchResults failed', err); }
+  }
+
+  function toast(msg){
+    const t = $('ptc-toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 1600);
+  }
+
+  function persist(){
+    try{
+      localStorage.setItem(STORE_KEY, JSON.stringify(entries));
+    }catch(err){
+      console.error('Local save failed', err);
+      toast('Could not save — your browser storage may be full or blocked.');
+    }
+  }
+
+  function load(){
+    try{
+      const raw = localStorage.getItem(STORE_KEY);
+      if(raw){ entries = JSON.parse(raw); }
+    }catch(err){
+      entries = [];
+    }
+    render();
+  }
+
+  function clearForm(){
+    ['f-pnr-gds','f-pnr-air','f-pname','f-pnum','f-note','f-platform-other','f-airline-other',
+     'f-newtkt-t','f-sector-t','f-basefare-t','f-taxfare-t','f-discount-t','f-markup-t','f-atp-t','f-markupamt-t',
+     'f-oldtkt-r','f-newtkt-r','f-sector-r','f-code-r','f-faredif-r','f-airline-r','f-svc-r',
+     'f-oldtkt-f','f-airline-f','f-svc-f','f-payable-f','f-discount-f','f-charge-f','f-tax-f','f-adjamt-f'
+    ].forEach(id => { const el = $(id); if(el) el.value = ''; });
+    $('f-date').value = todayISO();
+    $('f-ptype').value = 'ADULT';
+    $('f-mode-f').value = 'FULL';
+    $('f-status-f').value = 'PENDING';
+    $('f-platform').value = 'Sabre';
+    $('f-airline').value = 'BG';
+    $('f-platform-other').style.display = 'none';
+    $('f-airline-other').style.display = 'none';
+    if(typeof setAdjustmentGiven === 'function') setAdjustmentGiven('NO');
+    recalcTicketingFare();
+    if(typeof recalcReissueTotal === 'function') recalcReissueTotal();
+    if(typeof recalcRefundCharge === 'function') recalcRefundCharge();
+    const firstField = $('f-pnr-gds');
+    if(firstField) firstField.focus();
+  }
+
+  // ---- Edit an existing entry: load its values back into the form ----
+  function setSelectOrOther(selId, otherId, value){
+    const sel = $(selId);
+    const other = $(otherId);
+    if(!value){
+      sel.selectedIndex = 0;
+      other.style.display = 'none';
+      other.value = '';
+      return;
+    }
+    const hasOption = Array.from(sel.options).some(o => o.value === value);
+    if(hasOption){
+      sel.value = value;
+      other.style.display = 'none';
+      other.value = '';
+    } else {
+      sel.value = 'OTHER';
+      other.style.display = 'block';
+      other.value = value;
+    }
+  }
+
+  function setVal(id, v){
+    const el = $(id);
+    if(!el) return;
+    el.value = (v === null || v === undefined) ? '' : v;
+  }
+
+  function populateForm(e){
+    typeSelect.value = e.txn;
+    showSection(e.txn);
+
+    setVal('f-date', e.date || todayISO());
+    setVal('f-pnr-gds', e.pnrGds);
+    setVal('f-pnr-air', e.pnrAirline);
+    setVal('f-pname', e.pname);
+    setVal('f-pnum', e.pnum);
+    $('f-ptype').value = e.ptype || 'ADULT';
+    setSelectOrOther('f-platform', 'f-platform-other', e.platform);
+    setSelectOrOther('f-airline', 'f-airline-other', e.airline);
+    setVal('f-note', e.note);
+
+    if(e.txn === 'Ticketing'){
+      setVal('f-newtkt-t', e.newTkt);
+      setVal('f-sector-t', e.sector);
+      setVal('f-basefare-t', e.baseFare);
+      setVal('f-taxfare-t', e.taxFare);
+      setVal('f-discount-t', e.discount);
+      setVal('f-markup-t', e.markUp);
+      showTicketingBreakdown();
+    } else if(e.txn === 'Reissue'){
+      setVal('f-oldtkt-r', e.oldTkt);
+      setVal('f-newtkt-r', e.newTkt);
+      setVal('f-sector-r', e.sector);
+      setVal('f-code-r', e.code);
+      setVal('f-faredif-r', e.fareDiff);
+      setVal('f-airline-r', e.airlineCharge);
+      setVal('f-svc-r', e.svc);
+      recalcReissueTotal();
+    } else if(e.txn === 'Refund'){
+      setVal('f-oldtkt-f', e.oldTkt);
+      $('f-mode-f').value = e.refundType || 'FULL';
+      setVal('f-airline-f', e.airlineCharge);
+      setVal('f-svc-f', e.svc);
+      // Legacy entries saved before this fix used "totalCollection" for what is now
+      // "Ticket Payable Fare" — fall back to it so old records still populate correctly.
+      const payableVal = (e.payableFare !== '' && e.payableFare !== undefined && e.payableFare !== null)
+        ? e.payableFare : e.totalCollection;
+      setVal('f-payable-f', payableVal);
+      setVal('f-discount-f', e.discount);
+      setVal('f-tax-f', e.taxRefund);
+      $('f-status-f').value = e.refundStatus || 'PENDING';
+      setAdjustmentGiven(e.adjustmentGiven === 'YES' ? 'YES' : 'NO');
+      setVal('f-adjamt-f', e.adjustmentAmount);
+      // Recalculate from components; if this is a legacy entry with no fare breakdown at all,
+      // fall back to the stored value so it isn't overwritten with 0.00.
+      const hasBreakdown = payableVal !== '' && payableVal !== undefined && payableVal !== null;
+      if(hasBreakdown){ recalcRefundCharge(); } else { setVal('f-charge-f', e.refundCharge); }
+    } else if(e.txn === 'Void'){
+      setVal('f-oldtkt-f', e.oldTkt);
+      setVal('f-airline-f', e.airlineCharge);
+      setVal('f-svc-f', e.svc);
+      setVal('f-charge-f', e.refundCharge);
+    }
+  }
+
+  function startEdit(i){
+    editingIndex = i;
+    populateForm(entries[i]);
+    $('btn-add').textContent = 'Save Changes';
+    $('btn-cancel-edit').style.display = 'inline-block';
+    $('ptc-card').classList.add('ptc-editing');
+    const banner = $('ptc-editing-banner');
+    banner.classList.add('show');
+    $('ptc-editing-banner-text').textContent =
+      'Editing entry: ' + (entries[i].pnrGds || entries[i].pname || '') + ' — update the fields below, then click "Save Changes".';
+    try { card.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch(err){ /* not critical */ }
+    toast('Editing entry — click "Save Changes" when done');
+  }
+
+  function stopEdit(){
+    editingIndex = null;
+    $('btn-add').textContent = 'Add Entry';
+    $('btn-cancel-edit').style.display = 'none';
+    $('ptc-card').classList.remove('ptc-editing');
+    $('ptc-editing-banner').classList.remove('show');
+  }
+
+  $('btn-add').addEventListener('click', () => {
+    const entry = collectEntry();
+    const err = validate(entry);
+    if(err){ toast(err); return; }
+
+    if(isCloudConnected()){
+      const wasEditing = editingIndex !== null;
+      const existing = wasEditing ? entries[editingIndex] : null;
+      entry._id = existing && existing._id ? existing._id : (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(16).slice(2));
+      entry.createdAt = (existing && existing.createdAt) ? existing.createdAt : new Date().toISOString();
+      if(wasEditing) entry.editedAt = new Date().toISOString();
+      if(wasEditing) stopEdit();
+      clearForm();
+      cloudDb.collection(CLOUD_COLLECTION).doc(entry._id).set(trimForCloud(entry))
+        .then(() => toast(wasEditing ? 'Entry updated — synced to the cloud' : 'Entry added — synced to the cloud'))
+        .catch(err2 => { console.error(err2); toast('Cloud save failed — check your connection.'); });
+      return;
+    }
+
+    if(editingIndex !== null){
+      entry.createdAt = entries[editingIndex].createdAt || new Date().toISOString();
+      entry.editedAt = new Date().toISOString();
+      entries[editingIndex] = entry;
+      stopEdit();
+      persist();
+      render();
+      clearForm();
+      if(fileHandle){
+        writeToConnectedFile();
+        toast('Entry updated and saved to file');
+      } else {
+        toast('Entry updated');
+      }
+    } else {
+      entry.createdAt = new Date().toISOString();
+      entries.unshift(entry);
+      persist();
+      render();
+      clearForm();
+      if(fileHandle){
+        writeToConnectedFile();
+        toast('Entry added and saved to file');
+      } else {
+        toast('Entry added');
+      }
+    }
+  });
+
+  $('btn-clear').addEventListener('click', () => {
+    if(editingIndex !== null){ stopEdit(); toast('Edit cancelled'); }
+    clearForm();
+  });
+
+  $('btn-cancel-edit').addEventListener('click', () => {
+    stopEdit();
+    clearForm();
+    toast('Edit cancelled');
+  });
+
+  $('ptc-filter-from').addEventListener('change', () => {
+    logFilterFrom = $('ptc-filter-from').value;
+    logPage = 1;
+    render();
+  });
+  $('ptc-filter-to').addEventListener('change', () => {
+    logFilterTo = $('ptc-filter-to').value;
+    logPage = 1;
+    render();
+  });
+  $('btn-filter-clear').addEventListener('click', () => {
+    logFilterFrom = '';
+    logFilterTo = '';
+    $('ptc-filter-from').value = '';
+    $('ptc-filter-to').value = '';
+    logPage = 1;
+    render();
+  });
+  $('btn-page-prev').addEventListener('click', () => {
+    if(logPage > 1){ logPage -= 1; render(); }
+  });
+  $('btn-page-next').addEventListener('click', () => {
+    logPage += 1;
+    render();
+  });
+
+  $('btn-clear-all').addEventListener('click', () => {
+    if(entries.length === 0) return;
+    if(confirm('Remove all entries? This cannot be undone.')){
+      if(editingIndex !== null){ stopEdit(); clearForm(); }
+
+      if(isCloudConnected()){
+        const batch = cloudDb.batch();
+        entries.forEach(e => { if(e._id) batch.delete(cloudDb.collection(CLOUD_COLLECTION).doc(e._id)); });
+        batch.commit().catch(err => { console.error(err); toast('Cloud clear failed — check your connection.'); });
+        toast('All entries cleared from the cloud');
+        return;
+      }
+
+      entries = [];
+      persist();
+      writeToConnectedFile();
+      render();
+      toast('All entries cleared');
+    }
+  });
+
+  $('btn-export').addEventListener('click', () => {
+    if(entries.length === 0){ toast('No entries to export'); return; }
+    const wb = buildWorkbook(entries);
+    XLSX.writeFile(wb, 'work_record_database.xlsx');
+    toast('Excel workbook downloaded');
+  });
+
+  // ---- CSV import ----
+  const FIELD_ORDER = ['date','pnrGds','pnrAirline','pname','pnum','ptype','platform','airline','txn','oldTkt','newTkt','sector',
+                       'baseFare','taxFare','airlineTicketPrice','discount','markUp','markupAmount','totalFare',
+                       'fareDiff','airlineCharge','svc','totalCollection','payableFare',
+                       'refundCharge','taxRefund','refundType','refundStatus','adjustmentGiven','adjustmentAmount',
+                       'code','note','createdAt','editedAt'];
+  const HEADER_TO_FIELD = {
+    'DATE':'date','GDS PNR':'pnrGds','AIRLINE PNR':'pnrAirline','PNR':'pnrGds',
+    'PASSENGER NAME':'pname','PASSENGER NUMBER':'pnum',
+    'PASSENGER TYPE':'ptype','PLATFORM':'platform','AIRLINE':'airline','TRANSACTION TYPE':'txn','OLD TKT NUMBER':'oldTkt',
+    'NEW TKT NUMBER':'newTkt','SECTOR':'sector',
+    'BASE FARE':'baseFare','TAX FARE':'taxFare','AIRLINE TICKET PRICE':'airlineTicketPrice','DISCOUNT':'discount',
+    'MARK UP':'markUp','OTA MARKUP %':'markUp','OTA MARKUP AMOUNT':'markupAmount',
+    'TOTAL FARE':'totalFare','CUSTOMER SELLING PRICE':'totalFare',
+    'FARE DIFFERENCE':'fareDiff','AIRLINE CHARGE':'airlineCharge','SERVICE CHARGE':'svc','TOTAL COLLECTION':'totalCollection',
+    'TICKET PAYABLE FARE':'payableFare',
+    'REFUND CHARGE':'refundCharge','TAX REFUND':'taxRefund','REFUND TYPE':'refundType','REFUND STATUS':'refundStatus',
+    'ADJUSTMENT GIVEN':'adjustmentGiven','ADJUSTMENT AMOUNT':'adjustmentAmount',
+    'REISSUE CODE':'code','NOTE':'note','CREATED AT':'createdAt','LAST EDITED':'editedAt'
+  };
+  const NUMERIC_FIELDS = ['baseFare','taxFare','airlineTicketPrice','discount','markUp','markupAmount','totalFare','fareDiff','airlineCharge','svc','totalCollection','payableFare','refundCharge','taxRefund','adjustmentAmount'];
+
+  function parseCsvLine(line){
+    const out = [];
+    let cur = '';
+    let inQuotes = false;
+    for(let i = 0; i < line.length; i++){
+      const ch = line[i];
+      if(inQuotes){
+        if(ch === '"'){
+          if(line[i+1] === '"'){ cur += '"'; i++; }
+          else { inQuotes = false; }
+        } else { cur += ch; }
+      } else {
+        if(ch === '"'){ inQuotes = true; }
+        else if(ch === ','){ out.push(cur); cur = ''; }
+        else { cur += ch; }
+      }
+    }
+    out.push(cur);
+    return out;
+  }
+
+  function parseCsv(text){
+    const lines = text.split(/\r?\n/).filter(l => l.trim().length > 0);
+    if(lines.length < 2) return [];
+    const headerCells = parseCsvLine(lines[0]).map(h => h.trim().toUpperCase());
+    const fieldMap = headerCells.map(h => HEADER_TO_FIELD[h] || null);
+    const imported = [];
+    for(let i = 1; i < lines.length; i++){
+      const cells = parseCsvLine(lines[i]);
+      const entry = {};
+      FIELD_ORDER.forEach(f => entry[f] = '');
+      fieldMap.forEach((field, idx) => {
+        if(!field) return;
+        let v = cells[idx] !== undefined ? cells[idx] : '';
+        if(NUMERIC_FIELDS.includes(field)){
+          v = v === '' ? '' : parseFloat(v);
+          if(isNaN(v)) v = '';
+        }
+        entry[field] = v;
+      });
+      if(entry.pnrGds || entry.pname) imported.push(entry);
+    }
+    return imported;
+  }
+
+  $('file-import').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if(!file) return;
+    const isCsv = /\.csv$/i.test(file.name);
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try{
+        const imported = isCsv ? parseCsv(ev.target.result) : parseWorkbook(ev.target.result);
+        if(imported.length === 0){
+          toast('No rows found in that file.');
+          return;
+        }
+        if(editingIndex !== null){ stopEdit(); clearForm(); }
+
+        if(isCloudConnected()){
+          const batch = cloudDb.batch();
+          imported.forEach(row => {
+            const id = crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(16).slice(2);
+            batch.set(cloudDb.collection(CLOUD_COLLECTION).doc(id), trimForCloud(row));
+          });
+          batch.commit()
+            .then(() => toast(imported.length + ' row(s) imported to the cloud'))
+            .catch(err2 => { console.error(err2); toast('Cloud import failed — check your connection.'); });
+          e.target.value = '';
+          return;
+        }
+
+        entries = imported.concat(entries);
+        persist();
+        writeToConnectedFile();
+        render();
+        toast(imported.length + ' row(s) imported');
+      }catch(err){
+        console.error(err);
+        toast('Could not read that file.');
+      }
+      e.target.value = '';
+    };
+    if(isCsv){ reader.readAsText(file); } else { reader.readAsArrayBuffer(file); }
+  });
+
+  // ---- Weekly Achievement ----
+  const ACH_TARGETS_KEY = 'wrd_weekly_targets_v1';
+
+  function isoDaysAgo(n){
+    const d = new Date();
+    d.setDate(d.getDate() - n);
+    return d.toISOString().slice(0,10);
+  }
+
+  function entryValue(e){
+    if(e.txn === 'Ticketing'){
+      return parseFloat(e.totalFare) || 0;
+    } else if(e.txn === 'Reissue'){
+      return parseFloat(e.totalCollection) || ((parseFloat(e.fareDiff)||0) + (parseFloat(e.airlineCharge)||0) + (parseFloat(e.svc)||0));
+    } else if(e.txn === 'Refund' || e.txn === 'Void'){
+      return parseFloat(e.refundCharge) || 0;
+    }
+    return 0;
+  }
+
+  function pctColor(pct){
+    if(pct >= 100) return 'var(--booking)';
+    if(pct >= 70) return 'var(--reissue)';
+    return 'var(--refund)';
+  }
+
+  function saveAchTargets(){
+    try{
+      localStorage.setItem(ACH_TARGETS_KEY, JSON.stringify({
+        valueTarget: $('ach-value-target').value,
+        countTarget: $('ach-count-target').value,
+        start: $('ach-start').value,
+        end: $('ach-end').value,
+      }));
+    }catch(err){ /* ignore */ }
+  }
+
+  function loadAchTargets(){
+    let saved = null;
+    try{
+      const raw = localStorage.getItem(ACH_TARGETS_KEY);
+      if(raw) saved = JSON.parse(raw);
+    }catch(err){ saved = null; }
+
+    // Date range always resets to "the last 7 days" on every fresh open —
+    // so it moves forward automatically each time you open the file,
+    // without you needing to edit the dates by hand.
+    $('ach-start').value = isoDaysAgo(6);
+    $('ach-end').value = isoDaysAgo(0);
+    // Targets persist, since your weekly goal is usually the same each week.
+    $('ach-value-target').value = (saved && saved.valueTarget) || '';
+    $('ach-count-target').value = (saved && saved.countTarget) || '';
+  }
+
+  function recalcAchievement(){
+    const startEl = $('ach-start');
+    const endEl = $('ach-end');
+    if(!startEl || !endEl) return; // panel not in DOM yet
+    const start = startEl.value;
+    const end = endEl.value;
+    $('ach-range-label').textContent = start && end ? (start + ' → ' + end) : '';
+
+    const filtered = entries.filter(e => {
+      if(!e.date) return false;
+      if(start && e.date < start) return false;
+      if(end && e.date > end) return false;
+      return true;
+    });
+
+    const valueActual = filtered.reduce((sum, e) => sum + entryValue(e), 0);
+    const countActual = filtered.length;
+
+    const valueTarget = parseFloat($('ach-value-target').value) || 0;
+    const countTarget = parseFloat($('ach-count-target').value) || 0;
+
+    const valuePct = valueTarget > 0 ? (valueActual / valueTarget * 100) : 0;
+    const countPct = countTarget > 0 ? (countActual / countTarget * 100) : 0;
+
+    const vPctEl = $('ach-value-pct');
+    vPctEl.textContent = valuePct.toFixed(1) + '%';
+    vPctEl.style.color = valueTarget > 0 ? pctColor(valuePct) : 'var(--muted)';
+    $('ach-value-detail').textContent = 'Actual ' + valueActual.toFixed(2) + ' / Target ' + valueTarget.toFixed(2);
+    const vBar = $('ach-value-bar');
+    vBar.style.width = Math.max(0, Math.min(100, valuePct)) + '%';
+    vBar.style.background = valueTarget > 0 ? pctColor(valuePct) : '#C7D0DB';
+
+    const cPctEl = $('ach-count-pct');
+    cPctEl.textContent = countPct.toFixed(1) + '%';
+    cPctEl.style.color = countTarget > 0 ? pctColor(countPct) : 'var(--muted)';
+    $('ach-count-detail').textContent = 'Actual ' + countActual + ' / Target ' + countTarget;
+    const cBar = $('ach-count-bar');
+    cBar.style.width = Math.max(0, Math.min(100, countPct)) + '%';
+    cBar.style.background = countTarget > 0 ? pctColor(countPct) : '#C7D0DB';
+
+    // breakdown by type
+    const byType = { Ticketing: 0, Reissue: 0, Refund: 0, Void: 0 };
+    filtered.forEach(e => { if(byType.hasOwnProperty(e.txn)) byType[e.txn]++; });
+    const breakdownEl = $('ach-breakdown');
+    breakdownEl.innerHTML = Object.keys(byType).map(t =>
+      `<span class="ptc-tag" style="background:${tagColor[t]}; margin-right:8px;">${t}: ${byType[t]}</span>`
+    ).join('');
+  }
+
+  ['ach-start','ach-end','ach-value-target','ach-count-target'].forEach(id => {
+    const el = $(id);
+    if(el){
+      el.addEventListener('input', () => { saveAchTargets(); recalcAchievement(); });
+      el.addEventListener('change', () => { saveAchTargets(); recalcAchievement(); });
+    }
+  });
+
+  $('btn-this-week').addEventListener('click', () => {
+    $('ach-start').value = isoDaysAgo(6);
+    $('ach-end').value = isoDaysAgo(0);
+    saveAchTargets();
+    recalcAchievement();
+    toast('Reset to the last 7 days');
+  });
+
+  loadAchTargets();
+  recalcAchievement();
+
+  // ---- Info tooltip: tap-to-toggle on touch devices, hover works natively via CSS ----
+  document.querySelectorAll('.ptc-info').forEach(icon => {
+    icon.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isOpen = icon.classList.contains('ptc-info-open');
+      document.querySelectorAll('.ptc-info.ptc-info-open').forEach(el => el.classList.remove('ptc-info-open'));
+      if(!isOpen) icon.classList.add('ptc-info-open');
+    });
+  });
+  document.addEventListener('click', () => {
+    document.querySelectorAll('.ptc-info.ptc-info-open').forEach(el => el.classList.remove('ptc-info-open'));
+  });
+
+  // ================= SEARCH =================
+  let searchQuery = '';
+
+  function detailFields(e){
+    const f = [
+      ['Date', e.date],
+      ['Passenger', e.pname],
+      ['Type', e.ptype],
+      ['GDS PNR', e.pnrGds],
+      ['Airline PNR', e.pnrAirline],
+      ['Platform', e.platform],
+      ['Airline', e.airline],
+    ];
+    if(e.txn === 'Ticketing'){
+      f.push(
+        ['Ticket No.', e.newTkt], ['Sector', e.sector],
+        ['Base Fare', fmtMoney(e.baseFare)], ['Tax', fmtMoney(e.taxFare)],
+        ['Airline Ticket Price', fmtMoney(e.airlineTicketPrice)],
+        ['Discount', fmtMoney(e.discount)], ['OTA Markup %', fmtPct(e.markUp)],
+        ['OTA Markup Amount', fmtMoney(e.markupAmount)],
+        ['Customer Selling Price', fmtMoney(e.totalFare)]
+      );
+    } else if(e.txn === 'Reissue'){
+      f.push(
+        ['Old Ticket', e.oldTkt], ['New Ticket', e.newTkt], ['Sector', e.sector], ['Reissue Code', e.code],
+        ['Fare Diff', fmtMoney(e.fareDiff)], ['Airline Charge', fmtMoney(e.airlineCharge)],
+        ['Service Charge', fmtMoney(e.svc)], ['Total Collected', fmtMoney(e.totalCollection)]
+      );
+    } else if(e.txn === 'Refund'){
+      f.push(
+        ['Ticket No.', e.oldTkt], ['Refund Type', e.refundType],
+        ['Ticket Payable Fare', fmtMoney(e.payableFare)],
+        ['Airline Charge', fmtMoney(e.airlineCharge)], ['Service Charge', fmtMoney(e.svc)],
+        ['Discount Given', fmtMoney(e.discount)],
+        ['Refund Charge', fmtMoney(e.refundCharge)], ['Tax Refund', fmtMoney(e.taxRefund)],
+        ['Status', e.refundStatus], ['Adjustment Given', e.adjustmentGiven],
+        ['Adjustment Amt', fmtMoney(e.adjustmentAmount)]
+      );
+    } else if(e.txn === 'Void'){
+      f.push(
+        ['Ticket No.', e.oldTkt],
+        ['Airline Charge', fmtMoney(e.airlineCharge)], ['Service Charge', fmtMoney(e.svc)],
+        ['Void Charge', fmtMoney(e.refundCharge)]
+      );
+    }
+    if(e.note) f.push(['Note', e.note]);
+    return f;
+  }
+
+  function matchesQuery(e, q){
+    const hay = [e.pnrGds, e.pnrAirline, e.oldTkt, e.newTkt, e.pname, e.code]
+      .map(v => (v || '').toString().toUpperCase()).join(' | ');
+    return hay.includes(q.toUpperCase());
+  }
+
+  // ---- Quick Adjustment Given toggle from search results — updates the record
+  // and immediately writes it to whichever master data store is active (cloud
+  // and/or local Excel file), without needing to open the full edit form. ----
+  function quickSetAdjustment(idx, val){
+    const e = entries[idx];
+    if(!e || e.txn !== 'Refund') return;
+    e.adjustmentGiven = val;
+    if(val === 'NO'){ e.adjustmentAmount = ''; }
+    const payable = parseFloat(e.payableFare) || 0;
+    const airlineChg = parseFloat(e.airlineCharge) || 0;
+    const svc = parseFloat(e.svc) || 0;
+    const discount = parseFloat(e.discount) || 0;
+    const adjAmt = (val === 'YES') ? (parseFloat(e.adjustmentAmount) || 0) : 0;
+    e.refundCharge = payable - airlineChg - svc - discount - adjAmt;
+    e.editedAt = new Date().toISOString();
+
+    if(isCloudConnected() && e._id){
+      cloudDb.collection(CLOUD_COLLECTION).doc(e._id).set(trimForCloud(e))
+        .then(() => toast('Adjustment status updated — synced to the cloud'))
+        .catch(err => { console.error(err); toast('Cloud update failed — check your connection.'); });
+    } else {
+      persist();
+      writeToConnectedFile();
+      toast('Adjustment status updated');
+    }
+    render();
+  }
+
+  function renderSearchResults(){
+    const wrap = $('ptc-search-results');
+    const meta = $('ptc-search-meta');
+    const tableWrap = $('ptc-table-wrap');
+    const clearBtn = $('btn-search-clear');
+
+    if(!searchQuery.trim()){
+      wrap.style.display = 'none';
+      meta.style.display = 'none';
+      clearBtn.style.display = 'none';
+      tableWrap.style.display = '';
+      return;
+    }
+
+    clearBtn.style.display = 'inline-flex';
+    tableWrap.style.display = 'none';
+
+    const matches = [];
+    entries.forEach((e, idx) => { if(matchesQuery(e, searchQuery)) matches.push(idx); });
+
+    meta.style.display = 'block';
+    meta.textContent = matches.length + ' match' + (matches.length === 1 ? '' : 'es') + ' for "' + searchQuery + '"';
+
+    wrap.style.display = 'block';
+    if(!matches.length){
+      wrap.innerHTML = '<div class="ptc-search-noresult">No entry found for that PNR / ticket number / name. Check the spelling or clear the search to browse the full log.</div>';
+      return;
+    }
+
+    wrap.innerHTML = matches.map(idx => {
+      const e = entries[idx];
+      const color = tagColor[e.txn] || '#6B7280';
+      const fields = detailFields(e);
+      return `
+        <div class="ptc-detail-card" style="border-left-color:${color};">
+          <div class="ptc-detail-card-head">
+            <div>
+              <div class="ptc-detail-name">${e.pname || 'Unnamed'} <span class="ptc-tag" style="background:${color}; font-size:10px;">${e.txn}</span></div>
+              <div class="ptc-detail-sub">${e.date || ''} · GDS ${e.pnrGds || '—'} · Airline PNR ${e.pnrAirline || '—'}</div>
+              ${e.editedAt ? `<div class="ptc-detail-sub" style="color:var(--reissue);">✏️ Last edited ${new Date(e.editedAt).toLocaleString()}</div>` : ''}
+            </div>
+          </div>
+          <div class="ptc-detail-grid">
+            ${fields.map(([label,value]) => `
+              <div>
+                <div class="ptc-detail-field-label">${label}</div>
+                <div class="ptc-detail-field-value">${(value === '' || value === undefined || value === null) ? '—' : value}</div>
+              </div>
+            `).join('')}
+          </div>
+          <div class="ptc-detail-actions">
+            ${e.txn === 'Refund' ? `
+            <div style="display:flex; align-items:center; gap:8px; margin-right:auto;">
+              <span class="ptc-detail-field-label" style="margin:0;">Adjustment Given</span>
+              <button type="button" class="ptc-btn ptc-btn-ghost ptc-adj-btn ptc-search-adj ${(e.adjustmentGiven !== 'YES') ? 'ptc-adj-active' : ''}" data-idx="${idx}" data-val="NO" style="padding:6px 14px; font-size:12px;">No</button>
+              <button type="button" class="ptc-btn ptc-btn-ghost ptc-adj-btn ptc-search-adj ${(e.adjustmentGiven === 'YES') ? 'ptc-adj-active' : ''}" data-idx="${idx}" data-val="YES" style="padding:6px 14px; font-size:12px;">Yes</button>
+            </div>
+            ` : ''}
+            <button class="ptc-btn ptc-btn-ghost ptc-search-edit" data-idx="${idx}" style="padding:6px 14px; font-size:12px;">Edit</button>
+            <button class="ptc-btn ptc-btn-ghost ptc-search-del" data-idx="${idx}" style="padding:6px 14px; font-size:12px; border-color:var(--refund); color:var(--refund);">Remove</button>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    wrap.querySelectorAll('.ptc-search-adj').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const i = parseInt(btn.getAttribute('data-idx'), 10);
+        const val = btn.getAttribute('data-val');
+        quickSetAdjustment(i, val);
+      });
+    });
+    wrap.querySelectorAll('.ptc-search-edit').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const i = parseInt(btn.getAttribute('data-idx'), 10);
+        startEdit(i);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    });
+    wrap.querySelectorAll('.ptc-search-del').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const i = parseInt(btn.getAttribute('data-idx'), 10);
+        if(editingIndex === i){ stopEdit(); clearForm(); }
+        else if(editingIndex !== null && i < editingIndex){ editingIndex -= 1; }
+        entries.splice(i, 1);
+        persist();
+        writeToConnectedFile();
+        render();
+      });
+    });
+  }
+
+  $('ptc-search').addEventListener('input', (e) => {
+    searchQuery = e.target.value;
+    renderSearchResults();
+  });
+  $('btn-search-clear').addEventListener('click', () => {
+    searchQuery = '';
+    $('ptc-search').value = '';
+    renderSearchResults();
+  });
+
+  // ================= DASHBOARD =================
+  const moneyFields = { Ticketing:'totalFare', Reissue:'totalCollection', Refund:'refundCharge', Void:'refundCharge' };
+  let charts = {};
+
+  function greet(){
+    const h = new Date().getHours();
+    if(h < 12) return 'Good morning — here\'s where things stand.';
+    if(h < 17) return 'Good afternoon — here\'s where things stand.';
+    return 'Good evening — here\'s where things stand.';
+  }
+
+  function fmtK(v){
+    if(!v) return '0';
+    if(Math.abs(v) >= 100000) return (v/100000).toFixed(1) + 'L';
+    if(Math.abs(v) >= 1000) return (v/1000).toFixed(1) + 'k';
+    return v.toFixed(0);
+  }
+
+  function destroyChart(key){ if(charts[key]){ charts[key].destroy(); delete charts[key]; } }
+
+  function renderDashboard(){
+    const gEl = $('ptc-greeting'); if(gEl) gEl.textContent = greet();
+    const dashContent = $('ptc-dash-content');
+    const dashEmpty = $('ptc-dash-empty');
+
+    if(!entries.length){
+      dashContent.style.display = 'none';
+      dashEmpty.style.display = 'block';
+      $('ptc-kpi-grid').innerHTML = '';
+      return;
+    }
+    dashContent.style.display = 'block';
+    dashEmpty.style.display = 'none';
+
+    const chartsAvailable = (typeof Chart !== 'undefined');
+    const offlineNotice = $('ptc-charts-offline-notice');
+    if(offlineNotice) offlineNotice.style.display = chartsAvailable ? 'none' : 'block';
+
+    // ---- KPI cards ----
+    const totalEntries = entries.length;
+    const now = new Date();
+    const monthKey = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
+    const thisMonth = entries.filter(e => (e.date||'').slice(0,7) === monthKey);
+    let ticketingValue = 0, reissueValue = 0, refundValue = 0, pendingRefunds = 0;
+    entries.forEach(e => {
+      if(e.txn === 'Ticketing') ticketingValue += Number(e.totalFare)||0;
+      if(e.txn === 'Reissue') reissueValue += Number(e.totalCollection)||0;
+      if(e.txn === 'Refund'){ refundValue += Number(e.refundCharge)||0; if(e.refundStatus === 'PENDING') pendingRefunds++; }
+    });
+    const kpis = [
+      { label:'Total Entries', value: totalEntries, sub: thisMonth.length + ' this month', color:'var(--booking)' },
+      { label:'Ticketing Value', value: fmtK(ticketingValue), sub:'Total fare collected', color:'var(--booking)' },
+      { label:'Reissue Collection', value: fmtK(reissueValue), sub:'Fare diff + charges', color:'var(--reissue)' },
+      { label:'Pending Refunds', value: pendingRefunds, sub: fmtK(refundValue) + ' total refund value', color:'var(--refund)' },
+    ];
+    $('ptc-kpi-grid').innerHTML = kpis.map(k => `
+      <div class="ptc-kpi" style="border-top-color:${k.color};">
+        <div class="ptc-kpi-label">${k.label}</div>
+        <div class="ptc-kpi-value">${k.value}</div>
+        <div class="ptc-kpi-sub">${k.sub}</div>
+      </div>
+    `).join('');
+
+    // ---- Monthly activity (last 6 months) ----
+    const months = [];
+    for(let i=5; i>=0; i--){
+      const d = new Date(now.getFullYear(), now.getMonth()-i, 1);
+      months.push({ key: d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'), label: d.toLocaleString(undefined,{month:'short'}) });
+    }
+    const byMonthType = months.map(m => {
+      const rows = entries.filter(e => (e.date||'').slice(0,7) === m.key);
+      return {
+        Ticketing: rows.filter(e=>e.txn==='Ticketing').length,
+        Reissue: rows.filter(e=>e.txn==='Reissue').length,
+        Refund: rows.filter(e=>e.txn==='Refund').length,
+        Void: rows.filter(e=>e.txn==='Void').length,
+      };
+    });
+    if(chartsAvailable) try {
+      destroyChart('monthly');
+      charts.monthly = new Chart($('chart-monthly'), {
+        type: 'bar',
+        data: {
+          labels: months.map(m=>m.label),
+          datasets: ['Ticketing','Reissue','Refund','Void'].map(t => ({
+            label: t,
+            data: byMonthType.map(m => m[t]),
+            backgroundColor: tagColor[t],
+            borderRadius: 4,
+            maxBarThickness: 22,
+          }))
+        },
+        options: {
+          responsive:true, maintainAspectRatio:false,
+          plugins:{ legend:{ position:'bottom', labels:{ boxWidth:9, font:{size:11} } } },
+          scales:{ x:{ stacked:true, grid:{ display:false } }, y:{ stacked:true, beginAtZero:true, ticks:{ precision:0 } } }
+        }
+      });
+    } catch(err){ console.error('Monthly chart failed', err); }
+
+    // ---- Mix by type (donut) ----
+    const typeCounts = { Ticketing:0, Reissue:0, Refund:0, Void:0 };
+    entries.forEach(e => { if(typeCounts.hasOwnProperty(e.txn)) typeCounts[e.txn]++; });
+    if(chartsAvailable) try {
+      destroyChart('type');
+      charts.type = new Chart($('chart-type'), {
+        type:'doughnut',
+        data:{
+          labels: Object.keys(typeCounts),
+          datasets:[{ data: Object.values(typeCounts), backgroundColor: Object.keys(typeCounts).map(t=>tagColor[t]), borderWidth:2, borderColor:'#fff' }]
+        },
+        options:{ responsive:true, maintainAspectRatio:false, cutout:'68%', plugins:{ legend:{ display:false } } }
+      });
+    } catch(err){ console.error('Type mix chart failed', err); }
+    try {
+      $('chart-type-legend').innerHTML = Object.keys(typeCounts).map(t =>
+        `<span><span class="ptc-legend-dot" style="background:${tagColor[t]}"></span>${t} (${typeCounts[t]})</span>`
+      ).join('');
+    } catch(err){ console.error('Type legend failed', err); }
+
+    // ---- Top airlines ----
+    const airlineCounts = {};
+    entries.forEach(e => { const a = e.airline || 'Unknown'; airlineCounts[a] = (airlineCounts[a]||0)+1; });
+    const topAirlines = Object.entries(airlineCounts).sort((a,b)=>b[1]-a[1]).slice(0,8);
+    if(chartsAvailable) try {
+      destroyChart('airline');
+      charts.airline = new Chart($('chart-airline'), {
+        type:'bar',
+        data:{
+          labels: topAirlines.map(a=>a[0]),
+          datasets:[{ data: topAirlines.map(a=>a[1]), backgroundColor:'#2E6F95', borderRadius:4, maxBarThickness:18 }]
+        },
+        options:{
+          indexAxis:'y', responsive:true, maintainAspectRatio:false,
+          plugins:{ legend:{ display:false } },
+          scales:{ x:{ beginAtZero:true, ticks:{ precision:0 } }, y:{ grid:{ display:false } } }
+        }
+      });
+    } catch(err){ console.error('Airline chart failed', err); }
+
+    // ---- Refund status ----
+    const refunds = entries.filter(e => e.txn === 'Refund');
+    const refunded = refunds.filter(e => e.refundStatus === 'REFUNDED').length;
+    const pending = refunds.filter(e => e.refundStatus === 'PENDING').length;
+    if(chartsAvailable) try {
+      destroyChart('refund');
+      charts.refund = new Chart($('chart-refund'), {
+        type:'bar',
+        data:{
+          labels:['Refunded','Pending'],
+          datasets:[{ data:[refunded, pending], backgroundColor:['#2E6F95','#C97F1E'], borderRadius:4, maxBarThickness:34 }]
+        },
+        options:{
+          indexAxis:'y', responsive:true, maintainAspectRatio:false,
+          plugins:{ legend:{ display:false } },
+          scales:{ x:{ beginAtZero:true, ticks:{ precision:0 } }, y:{ grid:{ display:false } } }
+        }
+      });
+    } catch(err){ console.error('Refund status chart failed', err); }
+
+    // ---- Recent activity feed ----
+    const recent = entries.slice(-8).reverse();
+    $('ptc-feed').innerHTML = recent.map(e => {
+      const amtField = moneyFields[e.txn];
+      const amt = amtField ? Number(e[amtField])||0 : 0;
+      return `
+        <div class="ptc-feed-item">
+          <div>
+            <div class="ptc-feed-name">${e.pname || '—'} <span class="ptc-tag" style="background:${tagColor[e.txn]}; font-size:9.5px; padding:1px 6px;">${e.txn}</span></div>
+            <div class="ptc-feed-meta">${e.date || ''} · ${e.pnrGds || ''} ${e.sector ? '· ' + e.sector : ''}</div>
+          </div>
+          <div class="ptc-feed-amt">${amt ? amt.toFixed(2) : ''}</div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // ---- Tab switching ----
+  function switchView(view){
+    document.querySelectorAll('.ptc-tab').forEach(b => b.classList.toggle('active', b.dataset.view === view));
+    $('view-dashboard').classList.toggle('active', view === 'dashboard');
+    $('view-entry').classList.toggle('active', view === 'entry');
+    $('view-sales').classList.toggle('active', view === 'sales');
+    if(view === 'dashboard'){
+      try { renderDashboard(); } catch(err){ console.error('Dashboard failed to render:', err); }
+    }
+    if(view === 'sales'){
+      try { renderSales(); } catch(err){ console.error('Sales view failed to render:', err); }
+    }
+  }
+  $('tab-btn-entry').addEventListener('click', () => switchView('entry'));
+  $('tab-btn-sales').addEventListener('click', () => switchView('sales'));
+  $('btn-open-dashboard').addEventListener('click', () => switchView('dashboard'));
+  $('btn-dashboard-back').addEventListener('click', () => switchView('entry'));
+
+  load();
+  initFileConnection();
+  initCloudConnection();
+  try { renderDashboard(); } catch(err){ console.error('Dashboard failed to render:', err); }
+
+  // ================= PERSONAL SALES ENTRY (ticket sales + payment tracking) =================
+  // This log is separate from the GDS/airline transaction records above — it's a simple
+  // day-to-day ledger of what you sold, to whom, and whether they've paid in full.
+  let salesEntries = [];
+  let salesEditingIndex = null;
+  const SALES_STORE_KEY = 'pnr_sales_v1';
+
+  function salesVal(id){ return $(id).value.trim(); }
+  function salesNum(id){ const v = $(id).value; return v === '' ? '' : parseFloat(v); }
+  function todayISOSales(){ return todayISO(); }
+  $('s-date').value = todayISOSales();
+
+  function fmtMoneySales(v){
+    if(v === '' || v === null || v === undefined || isNaN(v)) return '';
+    return Number(v).toFixed(2);
+  }
+
+  // ---- Auto-calc: Profit = Selling Price − Net Cost; Due = Selling Price − Amount Paid; Status derived from Due ----
+  function recalcSale(){
+    const price = parseFloat($('s-price').value) || 0;
+    const cost = parseFloat($('s-cost').value) || 0;
+    const paid = parseFloat($('s-paid').value) || 0;
+    const profit = price - cost;
+    const due = Math.max(price - paid, 0);
+    $('s-profit').value = profit.toFixed(2);
+    $('s-due').value = due.toFixed(2);
+    let status = 'DUE';
+    if(price > 0 && paid >= price) status = 'PAID';
+    else if(paid > 0 && paid < price) status = 'PARTIAL';
+    else if(price === 0) status = '—';
+    $('s-status').value = status === '—' ? '—' : status;
+    $('s-duedate-wrap').style.display = (status === 'PAID' || status === '—') ? 'none' : 'block';
+  }
+  document.querySelectorAll('.ptc-sale-calc').forEach(el => el.addEventListener('input', recalcSale));
+  recalcSale();
+
+  function persistSales(){
+    try{ localStorage.setItem(SALES_STORE_KEY, JSON.stringify(salesEntries)); }
+    catch(err){ console.error('Sales save failed', err); toast('Could not save sale — your browser storage may be full or blocked.'); }
+  }
+
+  function loadSales(){
+    try{
+      const raw = localStorage.getItem(SALES_STORE_KEY);
+      if(raw){ salesEntries = JSON.parse(raw); }
+    }catch(err){ salesEntries = []; }
+  }
+
+  function collectSale(){
+    const price = parseFloat($('s-price').value) || 0;
+    const paid = parseFloat($('s-paid').value) || 0;
+    let status = 'DUE';
+    if(price > 0 && paid >= price) status = 'PAID';
+    else if(paid > 0 && paid < price) status = 'PARTIAL';
+    return {
+      date: salesVal('s-date'),
+      pname: salesVal('s-pname').toUpperCase(),
+      phone: salesVal('s-phone'),
+      tkt: salesVal('s-tkt').toUpperCase(),
+      pnr: salesVal('s-pnr').toUpperCase(),
+      sector: salesVal('s-sector').toUpperCase(),
+      airline: salesVal('s-airline').toUpperCase(),
+      price: salesNum('s-price') || 0,
+      cost: salesNum('s-cost') || 0,
+      profit: parseFloat($('s-profit').value) || 0,
+      method: $('s-method').value,
+      paid: salesNum('s-paid') || 0,
+      due: parseFloat($('s-due').value) || 0,
+      status: status,
+      dueDate: (status === 'PAID') ? '' : salesVal('s-duedate'),
+      note: salesVal('s-note'),
+    };
+  }
+
+  function validateSale(sale){
+    if(!sale.date) return 'Please enter a sale date.';
+    if(!sale.pname) return 'Please enter the customer/passenger name.';
+    if(!sale.price) return 'Please enter the selling price.';
+    return null;
+  }
+
+  function clearSaleForm(){
+    ['s-pname','s-phone','s-tkt','s-pnr','s-sector','s-airline','s-price','s-cost','s-paid','s-duedate','s-note']
+      .forEach(id => { const el = $(id); if(el) el.value = ''; });
+    $('s-date').value = todayISOSales();
+    $('s-method').value = 'CASH';
+    recalcSale();
+    const first = $('s-pname');
+    if(first) first.focus();
+  }
+
+  function sIcon(status){
+    if(status === 'PAID') return 'ptc-status-tag-paid';
+    if(status === 'PARTIAL') return 'ptc-status-tag-partial';
+    return 'ptc-status-tag-due';
+  }
+
+  function renderSalesKpis(){
+    const grid = $('sales-kpi-grid');
+    if(!grid) return;
+    const totalSales = salesEntries.reduce((s,e) => s + (Number(e.price)||0), 0);
+    const totalCollected = salesEntries.reduce((s,e) => s + (Number(e.paid)||0), 0);
+    const totalDue = salesEntries.reduce((s,e) => s + (Number(e.due)||0), 0);
+    const totalProfit = salesEntries.reduce((s,e) => s + (Number(e.profit)||0), 0);
+    const kpis = [
+      { label:'Total Sales', value: fmtMoneySales(totalSales) || '0.00', sub: salesEntries.length + ' ticket(s)', color:'#1E7A46' },
+      { label:'Collected', value: fmtMoneySales(totalCollected) || '0.00', sub:'Amount received', color:'var(--booking)' },
+      { label:'Outstanding Due', value: fmtMoneySales(totalDue) || '0.00', sub: salesEntries.filter(e=>e.status!=='PAID').length + ' unpaid/partial', color:'var(--refund)' },
+      { label:'Total Profit', value: fmtMoneySales(totalProfit) || '0.00', sub:'Selling price − cost', color:'var(--reissue)' },
+    ];
+    grid.innerHTML = kpis.map(k => `
+      <div class="ptc-kpi" style="border-top-color:${k.color};">
+        <div class="ptc-kpi-label">${k.label}</div>
+        <div class="ptc-kpi-value">${k.value}</div>
+        <div class="ptc-kpi-sub">${k.sub}</div>
+      </div>
+    `).join('');
+  }
+
+  function renderSales(){
+    const tbody = $('sales-tbody');
+    const empty = $('sales-empty');
+    tbody.innerHTML = '';
+    $('sales-count').textContent = salesEntries.length + (salesEntries.length === 1 ? ' sale' : ' sales');
+    renderSalesKpis();
+
+    if(salesEntries.length === 0){
+      empty.style.display = 'block';
+      return;
+    }
+    empty.style.display = 'none';
+
+    salesEntries.forEach((s, idx) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${s.date || ''}</td>
+        <td>${s.pname || ''}</td>
+        <td class="mono">${s.phone || ''}</td>
+        <td class="mono">${s.tkt || ''}</td>
+        <td class="mono">${s.pnr || ''}</td>
+        <td class="mono">${s.sector || ''}</td>
+        <td class="mono">${s.airline || ''}</td>
+        <td class="mono">${fmtMoneySales(s.price)}</td>
+        <td class="mono">${fmtMoneySales(s.cost)}</td>
+        <td class="mono">${fmtMoneySales(s.profit)}</td>
+        <td>${s.method || ''}</td>
+        <td class="mono">${fmtMoneySales(s.paid)}</td>
+        <td class="mono">${fmtMoneySales(s.due)}</td>
+        <td><span class="ptc-tag ${sIcon(s.status)}">${s.status}</span></td>
+        <td>${s.dueDate || ''}</td>
+        <td>${s.note || ''}</td>
+        <td style="white-space:nowrap;"><button class="ptc-sales-edit" data-idx="${idx}">Edit</button><button class="ptc-sales-del" data-idx="${idx}">Remove</button></td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    tbody.querySelectorAll('.ptc-sales-del').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const i = parseInt(btn.getAttribute('data-idx'), 10);
+        if(salesEditingIndex === i){ stopSaleEdit(); clearSaleForm(); }
+        else if(salesEditingIndex !== null && i < salesEditingIndex){ salesEditingIndex -= 1; }
+        salesEntries.splice(i, 1);
+        persistSales();
+        renderSales();
+        toast('Sale removed');
+      });
+    });
+    tbody.querySelectorAll('.ptc-sales-edit').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const i = parseInt(btn.getAttribute('data-idx'), 10);
+        startSaleEdit(i);
+      });
+    });
+  }
+
+  function populateSaleForm(s){
+    $('s-date').value = s.date || todayISOSales();
+    $('s-pname').value = s.pname || '';
+    $('s-phone').value = s.phone || '';
+    $('s-tkt').value = s.tkt || '';
+    $('s-pnr').value = s.pnr || '';
+    $('s-sector').value = s.sector || '';
+    $('s-airline').value = s.airline || '';
+    $('s-price').value = s.price === '' || s.price === undefined ? '' : s.price;
+    $('s-cost').value = s.cost === '' || s.cost === undefined ? '' : s.cost;
+    $('s-paid').value = s.paid === '' || s.paid === undefined ? '' : s.paid;
+    $('s-method').value = s.method || 'CASH';
+    $('s-duedate').value = s.dueDate || '';
+    $('s-note').value = s.note || '';
+    recalcSale();
+  }
+
+  function startSaleEdit(i){
+    salesEditingIndex = i;
+    populateSaleForm(salesEntries[i]);
+    $('btn-sales-add').textContent = 'Save Changes';
+    $('btn-sales-cancel-edit').style.display = 'inline-block';
+    $('sales-card').classList.add('ptc-editing');
+    const banner = $('sales-editing-banner');
+    banner.classList.add('show');
+    $('sales-editing-banner-text').textContent =
+      'Editing sale: ' + (salesEntries[i].pname || salesEntries[i].tkt || '') + ' — update the fields below, then click "Save Changes".';
+    $('sales-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    toast('Editing sale — click "Save Changes" when done');
+  }
+
+  function stopSaleEdit(){
+    salesEditingIndex = null;
+    $('btn-sales-add').textContent = 'Add Sale';
+    $('btn-sales-cancel-edit').style.display = 'none';
+    $('sales-card').classList.remove('ptc-editing');
+    $('sales-editing-banner').classList.remove('show');
+  }
+
+  $('btn-sales-add').addEventListener('click', () => {
+    const sale = collectSale();
+    const err = validateSale(sale);
+    if(err){ toast(err); return; }
+    if(salesEditingIndex !== null){
+      salesEntries[salesEditingIndex] = sale;
+      toast('Sale updated');
+      stopSaleEdit();
+    } else {
+      salesEntries.push(sale);
+      toast('Sale added');
+    }
+    persistSales();
+    clearSaleForm();
+    renderSales();
+  });
+
+  $('btn-sales-clear').addEventListener('click', () => { clearSaleForm(); });
+  $('btn-sales-cancel-edit').addEventListener('click', () => { stopSaleEdit(); clearSaleForm(); });
+
+  $('btn-sales-clear-all').addEventListener('click', () => {
+    if(!salesEntries.length) return;
+    if(!confirm('Remove all sales entries? This cannot be undone.')) return;
+    salesEntries = [];
+    salesEditingIndex = null;
+    stopSaleEdit();
+    persistSales();
+    renderSales();
+    toast('All sales cleared');
+  });
+
+  $('btn-sales-export').addEventListener('click', () => {
+    if(typeof XLSX === 'undefined'){ toast('Export library failed to load — check your internet connection.'); return; }
+    const cols = [
+      ['DATE','date'], ['CUSTOMER NAME','pname'], ['CONTACT','phone'], ['TICKET NUMBER','tkt'], ['PNR','pnr'],
+      ['SECTOR','sector'], ['AIRLINE','airline'], ['SELLING PRICE','price'], ['NET COST','cost'],
+      ['PROFIT','profit'], ['PAYMENT METHOD','method'], ['AMOUNT PAID','paid'], ['AMOUNT DUE','due'],
+      ['STATUS','status'], ['DUE DATE','dueDate'], ['NOTE','note'],
+    ];
+    const rows = [cols.map(c => c[0]), ...salesEntries.map(s => cols.map(c => s[c[1]] ?? ''))];
+    const ws = XLSX.utils.aoa_to_sheet(rows);
+    ws['!cols'] = cols.map(() => ({ wch: 16 }));
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Sales');
+    XLSX.writeFile(wb, 'Ticket_Sales_Backup_' + todayISOSales() + '.xlsx');
+    toast('Sales backup downloaded');
+  });
+
+  loadSales();
+  renderSales();
+})();
+</script>
+</body></html>
