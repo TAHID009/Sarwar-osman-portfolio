@@ -1,6 +1,6 @@
 const profile = {
   name: "Md Sarwar Osman Sagar",
-  shortName: "Sagar",
+  shortName: "Sarwar",
   professionalTitle: "Air Ticketing & Reservation Professional",
   tagline: "GDS • NDC • OTA • Fare Management",
   location: "Chattogram, Bangladesh",
@@ -12,7 +12,7 @@ const profile = {
   gdsCount: "3 GDS",
   focus: "Travel Operations",
   summary: "Reservation and ticketing professional focused on accurate air bookings, fare rules, reissue and refund handling, NDC and OTA workflows, and clear customer communication.",
-  about: "I work across airline reservation and ticketing workflows, combining GDS knowledge, fare and policy review, customer communication, and travel operations support. My goal is to make every booking accurate, efficient, and easy for the customer.",
+  about: "I work across airline reservation and ticketing workflows, combining GDS knowledge, fare and policy review, customer communication, and travel operations support. My goal is to make every booking accurate, efficient, and easy for the customer. On the academic side, I hold a BBA in Human Resource Management from Southern University Bangladesh and a Master's in International Business from Wuhan University, China, on a Chinese Government Scholarship.",
   experience: [
     {
       period: "Aug 2026 – Present",

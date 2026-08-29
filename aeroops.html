@@ -2,12 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AeroOps Desk | Md Sarwar Osman Sagar</title>
+<title>AeroOps Desk | Sarwar</title>
 <meta name="description" content="Internal work record and ticket sales tracker for Md Sarwar Osman Sagar.">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="./style.css">
+<link rel="icon" type="image/png" sizes="192x192" href="./favicon-192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="./favicon-32.png">
 <script src="./profile.js"></script><script defer src="./app.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
@@ -684,19 +686,30 @@
 </style>
 </head><body><div class="site-shell">
 <header class="header"><div class="container nav-wrap"><div class="nav">
-<a class="logo" href="index.html"><span class="logo-mark">S</span><span>Sagar<span>.</span></span></a>
+<a class="logo" href="index.html#home"><span class="logo-mark">S</span><span>SARWAR</span></a>
 <nav class="nav-links" aria-label="Primary navigation">
-<a href="index.html">Home</a><a href="about.html">About</a>
-<a href="experience.html">Experience</a><a href="education.html">Education</a>
-<a href="skills.html">Expertise</a><a href="activities.html">Activities</a>
-<a href="aeroops.html">AeroOps Desk</a>
+<a href="index.html#home">Home</a><a href="index.html#about">About</a>
+<a href="index.html#experience">Experience</a><a href="index.html#skills">Skills</a>
 </nav>
-<a class="btn" href="contact.html">Contact</a><button id="mobileToggle" class="mobile-toggle" aria-label="Open menu">☰</button>
+<a class="btn" href="index.html#contact">Contact</a><button id="mobileToggle" class="mobile-toggle" aria-label="Open menu">☰</button>
 </div></div></header>
 <div id="mobileLinks" class="container mobile-menu" style="display:none"></div>
 
 <main style="padding:24px 0 10px">
-<div id="ptc-root">
+
+<!-- ===== PASSWORD GATE ===== -->
+<div class="container" id="aeroGateSection" style="max-width:420px">
+<div class="contact-item" style="text-align:center">
+<span class="kicker" style="justify-content:center">Restricted</span>
+<h2 class="section-title" style="font-size:24px;margin-top:10px">AeroOps Desk</h2>
+<p style="color:var(--muted);font-size:13px;margin:8px 0 20px">Private aviation operations &amp; fare management system. Enter the access code to continue.</p>
+<input type="password" id="aeroGatePassword" placeholder="Access code" style="width:100%;padding:13px 14px;border-radius:10px;border:1px solid var(--line);font-size:14px;margin-bottom:12px" autocomplete="off">
+<button class="btn" id="aeroGateSubmit" style="width:100%">Unlock ↗</button>
+<p id="aeroGateError" style="color:#c0392b;font-size:12px;margin-top:12px;display:none">Incorrect code. Try again.</p>
+</div>
+</div>
+
+<div id="ptc-root" style="display:none">
   <div class="ptc-shell">
     <div class="ptc-dash-hero">
       <div class="ptc-dash-hero-top">
@@ -1437,13 +1450,42 @@
 </main>
 
 <footer class="footer"><div class="container"><div class="footer-grid">
-<div><a class="logo" href="index.html"><span class="logo-mark">S</span><span>Sagar<span>.</span></span></a>
-<p style="margin-top:12px">Air ticketing, reservation and travel operations professional with hands-on experience across GDS, NDC and OTA workflows.</p></div>
-<div><h4>Quick Links</h4><ul><li><a href="index.html">Home</a></li><li><a href="about.html">About</a></li><li><a href="experience.html">Experience</a></li><li><a href="skills.html">Expertise</a></li><li><a href="contact.html">Contact</a></li></ul></div>
-<div><h4>Core Focus</h4><ul><li>Air Reservation</li><li>Ticketing & Fare Rules</li><li>GDS / NDC / OTA</li><li>Customer Service</li><li>Travel Operations</li></ul></div>
+<div><a class="logo" href="index.html#home"><span class="logo-mark">S</span><span>SARWAR</span></a>
+<p style="margin-top:12px">Aviation reservation and ticketing professional with hands-on experience across GDS, NDC and OTA workflows.</p></div>
+<div><h4>Quick Links</h4><ul><li><a href="index.html#home">Home</a></li><li><a href="index.html#about">About</a></li><li><a href="index.html#experience">Experience</a></li><li><a href="index.html#skills">Skills</a></li><li><a href="index.html#contact">Contact</a></li></ul></div>
+<div><h4>Core Focus</h4><ul><li>Air Reservation</li><li>Ticketing &amp; Fare Rules</li><li>GDS / NDC / OTA</li><li>Customer Service</li></ul></div>
 <div><h4>Get In Touch</h4><ul><li><a data-email-link href="#">Email</a></li><li><a data-phone-link href="#">Phone</a></li><li><span data-profile-location></span></li><li><a data-linkedin-link href="#" target="_blank" rel="noreferrer">LinkedIn</a></li></ul></div>
-</div><div class="copy">© 2026 Md Sarwar Osman Sagar. All rights reserved.</div></div></footer>
+</div><div class="copy">© 2026 <span data-profile-name></span>. All rights reserved.</div></div></footer>
 </div>
+
+<script>
+(async function () {
+  // Password gate for AeroOps Desk — client-side only, deters casual visitors, not a true security boundary
+  const AERO_HASH = "f963b0bb8bc3ed92372e08a1d923ad63fa5f20d98c7cf6ec6a688e1f9c6b7935"; // default code: aeroops2026
+  async function sha256(text) {
+    const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, "0")).join("");
+  }
+  function unlockAero() {
+    document.getElementById("aeroGateSection").style.display = "none";
+    document.getElementById("ptc-root").style.display = "";
+  }
+  if (sessionStorage.getItem("aeroUnlocked") === "1") unlockAero();
+  document.getElementById("aeroGateSubmit").addEventListener("click", async () => {
+    const val = document.getElementById("aeroGatePassword").value;
+    const hash = await sha256(val);
+    if (hash === AERO_HASH) {
+      sessionStorage.setItem("aeroUnlocked", "1");
+      unlockAero();
+    } else {
+      document.getElementById("aeroGateError").style.display = "block";
+    }
+  });
+  document.getElementById("aeroGatePassword").addEventListener("keydown", (e) => {
+    if (e.key === "Enter") document.getElementById("aeroGateSubmit").click();
+  });
+})();
+</script>
 
 <script>
 (function(){

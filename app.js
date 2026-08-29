@@ -4,11 +4,11 @@
 
   // Shared identity
   document.querySelectorAll("[data-profile-name]").forEach(n => n.textContent = profile.name);
+  document.querySelectorAll("[data-profile-shortname]").forEach(n => n.textContent = profile.shortName);
   document.querySelectorAll("[data-profile-title]").forEach(n => n.textContent = profile.professionalTitle);
   document.querySelectorAll("[data-profile-location]").forEach(n => n.textContent = profile.location);
 
   // Home
-  if (el("heroTitle")) el("heroTitle").innerHTML = `Air Ticketing &<br><span class="gradient">Reservation Professional</span>`;
   if (el("heroLead")) el("heroLead").textContent = profile.summary;
   if (el("heroYears")) el("heroYears").textContent = profile.yearsExperience;
   if (el("heroGds")) el("heroGds").textContent = profile.gdsCount;
@@ -30,21 +30,31 @@
       </article>`).join("");
   }
 
-  if (el("experiencePreview")) {
-    el("experiencePreview").innerHTML = profile.experience.slice(0,3).map(x=>`
+  if (el("experienceFull")) {
+    el("experienceFull").innerHTML = profile.experience.map(x=>`
       <article class="job-card">
         <div class="job-date"><span class="timeline-dot"></span>${esc(x.period)}</div>
         <div>
           <h3>${esc(x.role)}</h3>
           <h4>${esc(x.company)} · ${esc(x.location)}</h4>
-          <ul>${x.bullets.slice(0,2).map(b=>`<li>${esc(b)}</li>`).join("")}</ul>
+          <ul>${x.bullets.map(b=>`<li>${esc(b)}</li>`).join("")}</ul>
         </div>
       </article>`).join("");
   }
 
-  if (el("skillsGrid")) {
-    el("skillsGrid").innerHTML = profile.skills.map(([name,cat])=>`
-      <div class="skill-card"><strong>${esc(name)}</strong><span>${esc(cat)}</span></div>`).join("");
+  // Skills grouped into meaningful categories (no percentage bars, just clean grouped tags)
+  if (el("skillGroups")) {
+    const catMap = { "GDS":"Systems", "Distribution":"Systems", "Core":"Aviation & Reservation", "Service":"Aviation & Reservation", "Analytics":"Business & Technology", "Productivity":"Business & Technology" };
+    const groups = { "Aviation & Reservation": [], "Systems": [], "Business & Technology": [] };
+    profile.skills.forEach(([name, cat]) => {
+      const group = catMap[cat] || "Aviation & Reservation";
+      groups[group].push(name);
+    });
+    el("skillGroups").innerHTML = Object.entries(groups).map(([group, items]) => `
+      <div class="skill-group">
+        <h4>${esc(group)}</h4>
+        <div class="tag-row">${items.map(i=>`<span class="pill">${esc(i)}</span>`).join("")}</div>
+      </div>`).join("");
   }
 
   if (el("educationGrid")) {
@@ -58,46 +68,39 @@
       </article>`).join("");
   }
 
-  if (el("experienceFull")) {
-    el("experienceFull").innerHTML = profile.experience.map(x=>`
-      <article class="job-card">
-        <div class="job-date"><span class="timeline-dot"></span>${esc(x.period)}</div>
-        <div>
-          <h3>${esc(x.role)}</h3>
-          <h4>${esc(x.company)} · ${esc(x.location)}</h4>
-          <ul>${x.bullets.map(b=>`<li>${esc(b)}</li>`).join("")}</ul>
-        </div>
-      </article>`).join("");
-  }
-
-  if (el("activitiesGrid")) {
-    el("activitiesGrid").innerHTML = profile.activities.map((x,i)=>`
-      <article class="card">
-        <div class="card-icon">${String(i+1).padStart(2,"0")}</div>
-        <h3>${esc(x[0])}</h3>
-        <p>${esc(x[1])}</p>
-      </article>`).join("");
-  }
-
   // Contact links
   document.querySelectorAll("[data-email-link]").forEach(a => { a.href = `mailto:${profile.email}`; a.textContent = profile.email; });
   document.querySelectorAll("[data-phone-link]").forEach(a => { a.href = `tel:${profile.phone.replace(/\s+/g,'')}`; a.textContent = profile.phone; });
   document.querySelectorAll("[data-linkedin-link]").forEach(a => { a.href = profile.linkedin; });
   document.querySelectorAll("[data-cv-link]").forEach(a => { a.href = profile.cv; });
-  // Icon-only variants: set the link but keep the symbol as visible text
   document.querySelectorAll("[data-email-icon]").forEach(a => { a.href = `mailto:${profile.email}`; a.title = profile.email; });
   document.querySelectorAll("[data-phone-icon]").forEach(a => { a.href = `tel:${profile.phone.replace(/\s+/g,'')}`; a.title = profile.phone; });
+  // Rich contact cards: set href on the card, set text only on the inner label (keeps icon/markup intact)
+  document.querySelectorAll("[data-email-card]").forEach(a => { a.href = `mailto:${profile.email}`; });
+  document.querySelectorAll("[data-phone-card]").forEach(a => { a.href = `tel:${profile.phone.replace(/\s+/g,'')}`; });
+  document.querySelectorAll("[data-email-text]").forEach(n => { n.textContent = profile.email; });
+  document.querySelectorAll("[data-phone-text]").forEach(n => { n.textContent = profile.phone; });
 
-  // Mobile nav
+  // Mobile nav — anchor links to sections on the single-page site
   const toggle = el("mobileToggle"), links = el("mobileLinks");
   if (toggle && links) {
-    links.innerHTML = `<a href="index.html">Home</a><a href="about.html">About</a><a href="experience.html">Experience</a><a href="education.html">Education</a><a href="skills.html">Expertise</a><a href="activities.html">Activities</a><a href="aeroops.html">AeroOps Desk</a><a href="contact.html">Contact</a>`;
+    links.innerHTML = `<a href="#home">Home</a><a href="#about">About</a><a href="#experience">Experience</a><a href="#skills">Skills</a><a href="#contact">Contact</a>`;
     toggle.addEventListener("click", ()=>links.classList.toggle("open"));
+    links.querySelectorAll("a").forEach(a => a.addEventListener("click", ()=>links.classList.remove("open")));
   }
 
-  // Highlight the current page in the nav so it's clear a click registered
-  const currentPage = (location.pathname.split("/").pop() || "index.html");
-  document.querySelectorAll(".nav-links a, #mobileLinks a").forEach(a => {
-    if (a.getAttribute("href") === currentPage) a.classList.add("active");
-  });
+  // Scroll-spy: highlight whichever section is currently in view
+  const navAnchors = document.querySelectorAll('.nav-links a[href^="#"], #mobileLinks a[href^="#"]');
+  const sections = Array.from(navAnchors).map(a => document.querySelector(a.getAttribute("href"))).filter(Boolean);
+  if (sections.length && "IntersectionObserver" in window) {
+    const spy = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const id = "#" + entry.target.id;
+          navAnchors.forEach(a => a.classList.toggle("active", a.getAttribute("href") === id));
+        }
+      });
+    }, { rootMargin: "-45% 0px -50% 0px" });
+    sections.forEach(s => spy.observe(s));
+  }
 })();
