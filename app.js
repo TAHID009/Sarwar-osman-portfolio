@@ -91,4 +91,10 @@
     links.innerHTML = `<a href="index.html">Home</a><a href="about.html">About</a><a href="experience.html">Experience</a><a href="education.html">Education</a><a href="skills.html">Expertise</a><a href="activities.html">Activities</a><a href="contact.html">Contact</a>`;
     toggle.addEventListener("click", ()=>links.classList.toggle("open"));
   }
+
+  // Highlight the current page in the nav so it's clear a click registered
+  const currentPage = (location.pathname.split("/").pop() || "index.html");
+  document.querySelectorAll(".nav-links a, #mobileLinks a").forEach(a => {
+    if (a.getAttribute("href") === currentPage) a.classList.add("active");
+  });
 })();
