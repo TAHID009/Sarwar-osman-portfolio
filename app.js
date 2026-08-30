@@ -1,4 +1,17 @@
 (function () {
+  // Refresh anywhere except AeroOps Desk (which has its own login-gate refresh logic) sends you home
+  const currentFile = (location.pathname.split("/").pop() || "index.html");
+  if (currentFile !== "index.html" && currentFile !== "aeroops.html") {
+    const navEntry = performance.getEntriesByType("navigation")[0];
+    const isReload = navEntry ? navEntry.type === "reload" : (performance.navigation && performance.navigation.type === 1);
+    if (isReload) {
+      location.replace("index.html");
+      return;
+    }
+  }
+})();
+
+(function () {
   const el = (id) => document.getElementById(id);
   const esc = (s) => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
