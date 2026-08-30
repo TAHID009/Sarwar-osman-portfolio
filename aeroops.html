@@ -2,6 +2,17 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<script>
+(function(){
+  var nav = performance.getEntriesByType("navigation")[0];
+  if(nav && nav.type === "reload"){ location.replace("index.html"); return; }
+  // Also catch the browser restoring this page from bfcache (Back/Forward) —
+  // that would otherwise show the in-memory authenticated state without a fresh load.
+  window.addEventListener("pageshow", function(e){
+    if(e.persisted){ location.replace("index.html"); }
+  });
+})();
+</script>
 <title>SARWAR OSMAN | PORTFOLIO</title>
 <meta name="description" content="Internal work record and ticket sales tracker for Md Sarwar Osman Sagar.">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -2024,6 +2035,44 @@
   // only a real account, password-protected, can.
   let awaitingNewPassword = false; // true right after email-link verification, until Access Code is set
 
+  // ---- Inactivity auto-refresh: after 10 minutes with no interaction on an
+  // authenticated AeroOps session, reload — which the reload-detector above
+  // then routes to Home, and the NONE persistence above ensures the login
+  // does not come back with it. One timer only; armed/disarmed by auth state
+  // below so it never runs on the sign-in screen or after sign-out. ----
+  const INACTIVITY_LIMIT_MS = 10 * 60 * 1000;
+  const ACTIVITY_THROTTLE_MS = 1000; // coalesce bursts of mousemove/scroll
+  let inactivityTimer = null;
+  let inactivityArmed = false;
+  let lastActivityReset = 0;
+
+  function fireInactivityRefresh(){
+    location.replace('index.html');
+  }
+  function onActivityEvent(){
+    if(!inactivityArmed) return;
+    const now = Date.now();
+    if(now - lastActivityReset < ACTIVITY_THROTTLE_MS) return;
+    lastActivityReset = now;
+    clearTimeout(inactivityTimer);
+    inactivityTimer = setTimeout(fireInactivityRefresh, INACTIVITY_LIMIT_MS);
+  }
+  const ACTIVITY_EVENTS = ['mousemove','mousedown','keydown','scroll','touchstart'];
+  function armInactivityWatch(){
+    if(inactivityArmed) return; // guards against duplicate timers/listeners
+    inactivityArmed = true;
+    ACTIVITY_EVENTS.forEach(evt => window.addEventListener(evt, onActivityEvent, { passive: true }));
+    lastActivityReset = Date.now();
+    clearTimeout(inactivityTimer);
+    inactivityTimer = setTimeout(fireInactivityRefresh, INACTIVITY_LIMIT_MS);
+  }
+  function disarmInactivityWatch(){
+    if(!inactivityArmed) return;
+    inactivityArmed = false;
+    ACTIVITY_EVENTS.forEach(evt => window.removeEventListener(evt, onActivityEvent));
+    clearTimeout(inactivityTimer);
+  }
+
   function beginCloudConnection(config){
     setCloudStatus('connecting');
     loadFirebaseScripts(() => {
@@ -2036,6 +2085,12 @@
         }
         cloudPendingConfig = config;
         const auth = firebase.auth();
+        // In-memory only: the whole point of the refresh→Home behavior is that a
+        // reload must NOT silently restore a previous login. Firebase's own
+        // Persistence.NONE mode is built exactly for this — no localStorage/
+        // indexedDB/cookie is written for the session, so a fresh page load
+        // always starts signed out regardless of what happened before.
+        auth.setPersistence(firebase.auth.Auth.Persistence.NONE).catch(() => {});
         checkForEmailLinkSignIn();
         auth.onAuthStateChanged((user) => {
           cloudAuthUser = user;
@@ -2046,12 +2101,14 @@
             localStorage.setItem(CLOUD_CONFIG_KEY, JSON.stringify(config));
             setCloudStatus('connected');
             subscribeCloud();
+            armInactivityWatch();
           } else {
             cloudDb = null;
             if(cloudUnsub){ cloudUnsub(); cloudUnsub = null; }
             setCloudStatus('idle');
             $('cloud-auth-error').textContent = '';
             $('cloud-auth-modal-backdrop').style.display = 'flex';
+            disarmInactivityWatch();
           }
         });
       }catch(err){
