@@ -479,6 +479,14 @@
     box-shadow: 0 20px 60px rgba(11,37,69,0.3);
   }
 
+  .ptc-eye-toggle{
+    position:absolute; right:6px; top:50%; transform:translateY(-50%);
+    width:30px; height:30px; display:flex; align-items:center; justify-content:center;
+    background:none; border:none; cursor:pointer; padding:4px; color: var(--ink-soft);
+  }
+  .ptc-eye-toggle:hover{ color: var(--ink); }
+  .ptc-eye-toggle svg{ width:19px; height:19px; }
+
   /* ===== Dashboard ===== */
   .ptc-tabs{
     display:flex;
@@ -845,28 +853,92 @@
 
     <div class="ptc-modal-backdrop" id="cloud-auth-modal-backdrop" style="display:flex; background:var(--bg); z-index:5000;">
       <div class="ptc-modal">
-        <h3 style="margin:0 0 8px; font-size:16px; color:var(--ink);">Sign In to Work Record Database</h3>
-        <p style="font-size:13px; color:var(--ink-soft); line-height:1.5; margin:0 0 14px;">
-          Sign in required before anything else loads — this keeps your data private on every device, even if someone else has this file.
-        </p>
-        <div class="ptc-field" style="margin-bottom:10px;">
-          <label for="cloud-auth-email">Email</label>
-          <input type="email" id="cloud-auth-email" placeholder="you@example.com" autocomplete="username" />
+
+        <!-- ===== VIEW: SIGN IN ===== -->
+        <div id="auth-view-signin">
+          <h3 style="margin:0 0 8px; font-size:16px; color:var(--ink);">AeroOps Desk — Private Access</h3>
+          <p id="signin-subtext" style="font-size:13px; color:var(--ink-soft); line-height:1.5; margin:0 0 14px;">Enter your Access Code to continue.</p>
+          <div class="ptc-field" id="signin-email-field" style="margin-bottom:10px; display:none;">
+            <label for="cloud-auth-email">Email</label>
+            <input type="email" id="cloud-auth-email" placeholder="you@example.com" autocomplete="username" />
+          </div>
+          <div class="ptc-field" style="margin-bottom:6px;">
+            <label for="cloud-auth-password">Access Code</label>
+            <div style="position:relative;">
+              <input type="password" id="cloud-auth-password" placeholder="Enter your Access Code" autocomplete="current-password" style="width:100%; box-sizing:border-box; padding-right:42px;" />
+              <button type="button" class="ptc-eye-toggle" data-target="cloud-auth-password" aria-label="Show password"></button>
+            </div>
+          </div>
+          <div id="cloud-auth-error" style="color:var(--refund); font-size:12.5px; min-height:16px; margin-bottom:6px;"></div>
+          <div id="cloud-auth-reset-msg" style="color:#1E7A46; font-size:12.5px; min-height:16px; margin-bottom:6px; display:none;"></div>
+          <div class="ptc-actions" style="margin-top:8px; justify-content:space-between; flex-wrap:wrap;">
+            <button class="ptc-btn ptc-btn-ghost" id="btn-cloud-auth-reset" style="border:none; color:var(--ink-soft); font-size:12px; padding:8px 0;">Forgot Access Code?</button>
+            <button class="ptc-btn ptc-btn-primary" id="btn-cloud-auth-signin" style="background:#1E7A46;">Unlock</button>
+          </div>
+          <p style="font-size:11.5px; color:var(--ink-soft); margin:12px 0 0;">
+            <a href="#" id="link-go-register" style="color:var(--ink-soft);">First time here? Register with your email →</a><br>
+            <a href="#" id="link-use-different-email" style="color:var(--ink-soft); display:none;">Not your account? Sign in with a different email →</a>
+          </p>
         </div>
-        <div class="ptc-field" style="margin-bottom:6px;">
-          <label for="cloud-auth-password">Password</label>
-          <div style="position:relative;">
-            <input type="password" id="cloud-auth-password" placeholder="At least 6 characters" autocomplete="current-password" style="width:100%; box-sizing:border-box; padding-right:42px;" />
-            <button type="button" id="btn-toggle-password" aria-label="Show password" style="position:absolute; right:6px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; font-size:17px; line-height:1; padding:4px; color:var(--ink-soft);">👁️</button>
+
+        <!-- ===== VIEW: REGISTER (step 1 — enter email) ===== -->
+        <div id="auth-view-register" style="display:none;">
+          <h3 style="margin:0 0 8px; font-size:16px; color:var(--ink);">Register for AeroOps Desk</h3>
+          <p style="font-size:13px; color:var(--ink-soft); line-height:1.5; margin:0 0 14px;">Enter your email — we'll send a verification link before you set your Access Code.</p>
+          <div class="ptc-field" style="margin-bottom:10px;">
+            <label for="reg-email">Email</label>
+            <input type="email" id="reg-email" placeholder="you@example.com" autocomplete="username" />
+          </div>
+          <div id="reg-error" style="color:var(--refund); font-size:12.5px; min-height:16px; margin-bottom:6px;"></div>
+          <div class="ptc-actions" style="margin-top:8px; justify-content:space-between; flex-wrap:wrap;">
+            <button class="ptc-btn ptc-btn-ghost" id="link-back-to-signin" style="border:none; color:var(--ink-soft); font-size:12px; padding:8px 0;">← Back to Sign In</button>
+            <button class="ptc-btn ptc-btn-primary" id="btn-send-verify-link" style="background:#1E7A46;">Send Verification Link</button>
           </div>
         </div>
-        <div id="cloud-auth-error" style="color:var(--refund); font-size:12.5px; min-height:16px; margin-bottom:6px;"></div>
-        <div id="cloud-auth-reset-msg" style="color:#1E7A46; font-size:12.5px; min-height:16px; margin-bottom:6px; display:none;"></div>
-        <div class="ptc-actions" style="margin-top:8px; justify-content:space-between; flex-wrap:wrap;">
-          <button class="ptc-btn ptc-btn-ghost" id="btn-cloud-auth-reset" style="border:none; color:var(--ink-soft); font-size:12px; padding:8px 0;">Forgot password?</button>
-          <button class="ptc-btn ptc-btn-primary" id="btn-cloud-auth-signin" style="background:#1E7A46;">Sign In</button>
+
+        <!-- ===== VIEW: LINK SENT ===== -->
+        <div id="auth-view-sent" style="display:none; text-align:center;">
+          <div style="font-size:34px; margin-bottom:10px;">📩</div>
+          <h3 style="margin:0 0 8px; font-size:16px; color:var(--ink);">Check your email</h3>
+          <p style="font-size:13px; color:var(--ink-soft); line-height:1.5; margin:0 0 14px;">
+            We sent a verification link to <strong id="sent-email-display"></strong>. Open it on this device to continue.
+          </p>
+          <button class="ptc-btn ptc-btn-ghost" id="link-back-to-signin-2" style="border-color:var(--line);">← Back to Sign In</button>
         </div>
-        <p style="font-size:11.5px; color:var(--ink-soft); margin:10px 0 0;">This is a private, single-account system. If you don't have an account yet, create one from the Firebase Console (Authentication → Users → Add user) — not from this page.</p>
+
+        <!-- ===== VIEW: SET PASSWORD (after clicking the email link) ===== -->
+        <div id="auth-view-setpassword" style="display:none;">
+          <h3 style="margin:0 0 8px; font-size:16px; color:var(--ink);">Email verified — set your Access Code</h3>
+          <p style="font-size:13px; color:var(--ink-soft); line-height:1.5; margin:0 0 14px;">This is the only time you'll set this. You'll only need the code (not your email) to sign in from now on.</p>
+          <div class="ptc-field" style="margin-bottom:10px;">
+            <label for="setpw-password">Access Code</label>
+            <div style="position:relative;">
+              <input type="password" id="setpw-password" placeholder="At least 6 characters" style="width:100%; box-sizing:border-box; padding-right:42px;" />
+              <button type="button" class="ptc-eye-toggle" data-target="setpw-password" aria-label="Show password"></button>
+            </div>
+          </div>
+          <div class="ptc-field" style="margin-bottom:6px;">
+            <label for="setpw-confirm">Confirm Access Code</label>
+            <div style="position:relative;">
+              <input type="password" id="setpw-confirm" placeholder="Re-enter the same code" style="width:100%; box-sizing:border-box; padding-right:42px;" />
+              <button type="button" class="ptc-eye-toggle" data-target="setpw-confirm" aria-label="Show password"></button>
+            </div>
+          </div>
+          <div id="setpw-error" style="color:var(--refund); font-size:12.5px; min-height:16px; margin-bottom:6px;"></div>
+          <div class="ptc-actions" style="margin-top:8px; justify-content:flex-end;">
+            <button class="ptc-btn ptc-btn-primary" id="btn-set-password" style="background:#1E7A46;">Set Access Code &amp; Continue</button>
+          </div>
+        </div>
+
+        <div style="margin-top:14px; padding:12px 14px; background:var(--card,#F7F9FC); border-radius:10px; border:1px solid var(--line,#E3E7EE);">
+          <p style="font-size:11.5px; font-weight:700; color:var(--ink); margin:0 0 6px;">Access Code rules:</p>
+          <ul style="font-size:11.5px; color:var(--ink-soft); margin:0; padding-left:16px; line-height:1.7;">
+            <li>At least 6 characters</li>
+            <li>At least one letter (a–z / A–Z)</li>
+            <li>At least one number (0–9)</li>
+            <li>At least one special character (e.g. ! @ # $ % *)</li>
+          </ul>
+        </div>
       </div>
     </div>
 
@@ -1950,6 +2022,8 @@
   // Firestore rules should be set to `allow read, write: if request.auth != null;`
   // so the apiKey alone (which is not a secret) can no longer grant access —
   // only a real account, password-protected, can.
+  let awaitingNewPassword = false; // true right after email-link verification, until Access Code is set
+
   function beginCloudConnection(config){
     setCloudStatus('connecting');
     loadFirebaseScripts(() => {
@@ -1962,9 +2036,11 @@
         }
         cloudPendingConfig = config;
         const auth = firebase.auth();
+        checkForEmailLinkSignIn();
         auth.onAuthStateChanged((user) => {
           cloudAuthUser = user;
           if(user){
+            if(awaitingNewPassword){ return; } // keep the Set Access Code view open — don't jump to the dashboard yet
             $('cloud-auth-modal-backdrop').style.display = 'none';
             cloudDb = firebase.firestore();
             localStorage.setItem(CLOUD_CONFIG_KEY, JSON.stringify(config));
@@ -2027,43 +2103,168 @@
     }
   });
 
-  $('btn-toggle-password').addEventListener('click', () => {
-    const pwField = $('cloud-auth-password');
-    const btn = $('btn-toggle-password');
-    const nowVisible = pwField.type === 'password';
-    pwField.type = nowVisible ? 'text' : 'password';
-    btn.textContent = nowVisible ? '🙈' : '👁️';
-    btn.setAttribute('aria-label', nowVisible ? 'Hide password' : 'Show password');
+  // ===== Password visibility icons (SVG, replaces the old emoji toggle) =====
+  const EYE_OPEN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg>';
+  const EYE_CLOSED = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a20.3 20.3 0 0 1 5.06-6.06M9.9 4.24A10.4 10.4 0 0 1 12 4c7 0 11 8 11 8a20.5 20.5 0 0 1-3.22 4.44M14.12 14.12a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
+  document.querySelectorAll('.ptc-eye-toggle').forEach(btn => {
+    btn.innerHTML = EYE_OPEN;
+    btn.addEventListener('click', () => {
+      const field = $(btn.dataset.target);
+      const nowVisible = field.type === 'password';
+      field.type = nowVisible ? 'text' : 'password';
+      btn.innerHTML = nowVisible ? EYE_CLOSED : EYE_OPEN;
+      btn.setAttribute('aria-label', nowVisible ? 'Hide password' : 'Show password');
+    });
   });
 
+  // ===== Registration is locked to one approved email — anyone else is rejected
+  // even though the form looks normal to them. This is what stops a stranger
+  // from registering their own account and getting access to this data. =====
+  const ALLOWED_REGISTER_EMAIL = 'mdsarwar.osman.ft@gmail.com';
+  const REMEMBERED_EMAIL_KEY = 'aeroops_registered_email';
+
+  function accessCodeIssues(code){
+    const issues = [];
+    if(code.length < 6) issues.push('at least 6 characters');
+    if(!/[a-zA-Z]/.test(code)) issues.push('at least one letter');
+    if(!/[0-9]/.test(code)) issues.push('at least one number');
+    if(!/[^a-zA-Z0-9]/.test(code)) issues.push('at least one special character');
+    return issues;
+  }
+
+  function showAuthView(name){
+    ['signin','register','sent','setpassword'].forEach(v => {
+      $('auth-view-' + v).style.display = (v === name) ? 'block' : 'none';
+    });
+  }
+
+  // ---- View: normal Sign In. If we remember an email on this device, only ask for the code. ----
+  function setupSignInView(){
+    const remembered = localStorage.getItem(REMEMBERED_EMAIL_KEY);
+    if(remembered){
+      $('signin-email-field').style.display = 'none';
+      $('signin-subtext').textContent = 'Enter your Access Code to continue.';
+      $('link-use-different-email').style.display = 'inline';
+      $('link-go-register').style.display = 'none';
+    } else {
+      $('signin-email-field').style.display = 'block';
+      $('signin-subtext').textContent = 'Enter your email and Access Code to continue.';
+      $('link-use-different-email').style.display = 'none';
+      $('link-go-register').style.display = 'inline';
+    }
+  }
+  setupSignInView();
+
+  $('link-go-register').addEventListener('click', (e) => { e.preventDefault(); $('reg-error').textContent=''; $('reg-email').value=''; showAuthView('register'); });
+  $('link-back-to-signin').addEventListener('click', (e) => { e.preventDefault(); showAuthView('signin'); });
+  $('link-back-to-signin-2').addEventListener('click', (e) => { e.preventDefault(); showAuthView('signin'); });
+  $('link-use-different-email').addEventListener('click', (e) => {
+    e.preventDefault();
+    localStorage.removeItem(REMEMBERED_EMAIL_KEY);
+    setupSignInView();
+  });
+
+  function signInEmailForCurrentView(){
+    const remembered = localStorage.getItem(REMEMBERED_EMAIL_KEY);
+    return remembered || $('cloud-auth-email').value.trim();
+  }
+
   $('btn-cloud-auth-signin').addEventListener('click', () => {
-    const email = $('cloud-auth-email').value.trim();
-    const pw = $('cloud-auth-password').value;
+    const email = signInEmailForCurrentView();
+    const code = $('cloud-auth-password').value;
     $('cloud-auth-error').textContent = '';
-    if(!email || !pw){ $('cloud-auth-error').textContent = 'Enter both email and password.'; return; }
-    firebase.auth().signInWithEmailAndPassword(email, pw)
+    if(!email || !code){ $('cloud-auth-error').textContent = 'Enter your email and Access Code.'; return; }
+    firebase.auth().signInWithEmailAndPassword(email, code)
+      .then(() => { localStorage.setItem(REMEMBERED_EMAIL_KEY, email); })
       .catch(err => { $('cloud-auth-error').textContent = friendlyAuthError(err); });
   });
+
   $('btn-cloud-auth-reset').addEventListener('click', () => {
-    const email = $('cloud-auth-email').value.trim();
+    const email = signInEmailForCurrentView();
     $('cloud-auth-error').textContent = '';
     $('cloud-auth-reset-msg').style.display = 'none';
-    if(!email){ $('cloud-auth-error').textContent = 'Enter your email above first, then click "Forgot password?"'; return; }
+    if(!email){ $('cloud-auth-error').textContent = 'Enter your email above first, then click "Forgot Access Code?"'; return; }
     firebase.auth().sendPasswordResetEmail(email)
       .then(() => {
-        $('cloud-auth-reset-msg').textContent = 'Password reset email sent — check your inbox.';
+        $('cloud-auth-reset-msg').textContent = 'Reset link sent to ' + email + ' — open it, then set a new Access Code.';
         $('cloud-auth-reset-msg').style.display = 'block';
       })
       .catch(err => { $('cloud-auth-error').textContent = friendlyAuthError(err); });
   });
+
+  // ---- View: Register (step 1 — send the verification link) ----
+  $('btn-send-verify-link').addEventListener('click', () => {
+    const email = $('reg-email').value.trim();
+    $('reg-error').textContent = '';
+    if(!email){ $('reg-error').textContent = 'Enter your email.'; return; }
+    if(email.toLowerCase() !== ALLOWED_REGISTER_EMAIL.toLowerCase()){
+      $('reg-error').textContent = 'This system is private — registration is restricted to an approved email.';
+      return;
+    }
+    const actionCodeSettings = {
+      url: window.location.origin + window.location.pathname,
+      handleCodeInApp: true
+    };
+    firebase.auth().sendSignInLinkToEmail(email, actionCodeSettings)
+      .then(() => {
+        window.localStorage.setItem('aeroops_pending_verify_email', email);
+        $('sent-email-display').textContent = email;
+        showAuthView('sent');
+      })
+      .catch(err => { $('reg-error').textContent = friendlyAuthError(err); });
+  });
+
+  // ---- On page load: were we just brought back here by clicking the email link? ----
+  function checkForEmailLinkSignIn(){
+    if(!firebase.auth().isSignInWithEmailLink(window.location.href)) return;
+    let email = window.localStorage.getItem('aeroops_pending_verify_email');
+    if(!email){ email = window.prompt('Confirm your email to finish verifying:'); }
+    if(!email) return;
+    firebase.auth().signInWithEmailLink(email, window.location.href)
+      .then(() => {
+        window.localStorage.removeItem('aeroops_pending_verify_email');
+        history.replaceState(null, '', window.location.pathname);
+        awaitingNewPassword = true;
+        showAuthView('setpassword');
+      })
+      .catch(err => {
+        showAuthView('signin');
+        $('cloud-auth-error').textContent = friendlyAuthError(err);
+      });
+  }
+
+  $('btn-set-password').addEventListener('click', () => {
+    const pw = $('setpw-password').value;
+    const confirm = $('setpw-confirm').value;
+    $('setpw-error').textContent = '';
+    const issues = accessCodeIssues(pw);
+    if(issues.length){ $('setpw-error').textContent = 'Access Code needs: ' + issues.join(', ') + '.'; return; }
+    if(pw !== confirm){ $('setpw-error').textContent = 'Codes don\'t match — re-enter both.'; return; }
+    const user = firebase.auth().currentUser;
+    if(!user){ $('setpw-error').textContent = 'Session expired — please register again.'; showAuthView('register'); return; }
+    user.updatePassword(pw)
+      .then(() => {
+        localStorage.setItem(REMEMBERED_EMAIL_KEY, user.email);
+        awaitingNewPassword = false;
+        $('cloud-auth-modal-backdrop').style.display = 'none';
+        cloudDb = firebase.firestore();
+        setCloudStatus('connected');
+        subscribeCloud();
+        toast('Access Code set — you\'re in.');
+      })
+      .catch(err => { $('setpw-error').textContent = friendlyAuthError(err); });
+  });
+
   function friendlyAuthError(err){
     const code = err && err.code || '';
-    if(code === 'auth/wrong-password' || code === 'auth/invalid-credential') return 'Wrong email or password.';
-    if(code === 'auth/user-not-found') return 'No account with that email — try "Create Account" instead.';
-    if(code === 'auth/email-already-in-use') return 'That email already has an account — try "Sign In" instead.';
+    if(code === 'auth/wrong-password' || code === 'auth/invalid-credential') return 'Incorrect Access Code.';
+    if(code === 'auth/user-not-found') return 'No account with that email — register first.';
+    if(code === 'auth/email-already-in-use') return 'That email is already registered — use Sign In instead.';
     if(code === 'auth/invalid-email') return 'That email address doesn\'t look valid.';
-    if(code === 'auth/weak-password') return 'Password must be at least 6 characters.';
-    if(code === 'auth/operation-not-allowed') return 'Email/Password sign-in isn\'t enabled yet — turn it on in Firebase Console → Authentication → Sign-in method.';
+    if(code === 'auth/too-many-requests') return 'Too many attempts — wait a bit and try again.';
+    if(code === 'auth/weak-password') return 'Access Code must be at least 6 characters.';
+    if(code === 'auth/operation-not-allowed') return 'Email link sign-in isn\'t enabled yet — turn it on in Firebase Console → Authentication → Sign-in method → Email Link.';
+    if(code === 'auth/requires-recent-login') return 'For security, please sign in again before setting a new code.';
     console.error('Auth error', err);
     return 'Something went wrong — please try again.';
   }
