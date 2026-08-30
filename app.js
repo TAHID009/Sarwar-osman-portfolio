@@ -1,15 +1,4 @@
 (function () {
-  // Refresh anywhere except AeroOps Desk (which has its own login-gate refresh logic) sends you home
-  const currentFile = (location.pathname.split("/").pop() || "index.html");
-  const navEntry = performance.getEntriesByType("navigation")[0];
-  const isReload = navEntry ? navEntry.type === "reload" : (performance.navigation && performance.navigation.type === 1);
-
-  if (currentFile !== "index.html" && currentFile !== "aeroops.html" && isReload) {
-    document.body.classList.add("page-fade-out");
-    setTimeout(() => location.replace("index.html"), 180);
-    return;
-  }
-
   // Smooth fade transition when navigating via internal links (logo, nav, buttons)
   document.addEventListener("click", (e) => {
     const a = e.target.closest("a[href]");
