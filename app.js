@@ -1,17 +1,4 @@
 (function () {
-  // Smooth fade transition when navigating via internal links (logo, nav, buttons)
-  document.addEventListener("click", (e) => {
-    const a = e.target.closest("a[href]");
-    if (!a) return;
-    const href = a.getAttribute("href");
-    if (!href || href.startsWith("#") || href.startsWith("http") || href.startsWith("mailto:") || href.startsWith("tel:") || a.target === "_blank" || e.metaKey || e.ctrlKey) return;
-    e.preventDefault();
-    document.body.classList.add("page-fade-out");
-    setTimeout(() => { location.href = href; }, 180);
-  });
-})();
-
-(function () {
   const el = (id) => document.getElementById(id);
   const esc = (s) => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
