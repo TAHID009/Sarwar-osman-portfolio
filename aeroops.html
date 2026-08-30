@@ -736,6 +736,15 @@
 <div id="aeroGateCaps" style="display:none;color:#B8860B;font-size:11.5px;font-weight:600;margin:0 0 12px;text-align:left">⚠ Caps Lock is on</div>
 <button class="btn" id="aeroGateSubmit" style="width:100%">Unlock ↗</button>
 <p id="aeroGateError" style="color:#c0392b;font-size:12px;margin-top:12px;display:none">Incorrect code. Try again.</p>
+<button type="button" id="aeroGateForgot" style="background:none;border:none;color:var(--muted);font-size:12px;text-decoration:underline;cursor:pointer;margin-top:10px;padding:4px;">Forgot the access code?</button>
+<div id="aeroGateResetPanel" style="display:none;margin-top:12px;padding:14px;border:1px solid var(--line);border-radius:10px;background:#FBF0E1;text-align:left">
+  <p style="font-size:12.5px;color:#8A5A12;margin:0 0 10px;line-height:1.5">There's no email tied to this code, so it can only be reset back to the original default code — not recovered. Anyone with this link could also do this, so only use it if you're genuinely locked out.</p>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <button class="ptc-btn ptc-btn-ghost" id="aeroGateResetCancel" style="font-size:12px;">Cancel</button>
+    <button class="ptc-btn ptc-btn-primary" id="aeroGateResetConfirm" style="font-size:12px;">Reset to Default Code</button>
+  </div>
+  <p id="aeroGateResetDone" style="display:none;color:#1E7A46;font-size:12.5px;font-weight:600;margin:10px 0 0;">Reset. The access code is now <code>aeroops2026</code> — change it again once you're in.</p>
+</div>
 </div>
 </div>
 
@@ -1554,8 +1563,10 @@
     document.getElementById("ptc-root").style.display = "";
     if (window.refreshAeroNavLabel) window.refreshAeroNavLabel();
   }
-  // Every fresh visit to this page requires the code again — no auto-unlock from a past session.
+  // Every fresh execution of this script forces the gate closed first — regardless of any
+  // leftover DOM/session state — then only the correct code (checked below) opens it.
   sessionStorage.removeItem("aeroUnlocked");
+  lockAero();
   if (window.refreshAeroNavLabel) window.refreshAeroNavLabel();
   document.getElementById("aeroGateSubmit").addEventListener("click", async () => {
     const val = document.getElementById("aeroGatePassword").value;
@@ -1570,6 +1581,24 @@
   document.getElementById("aeroGatePassword").addEventListener("keydown", (e) => {
     if (e.key === "Enter") document.getElementById("aeroGateSubmit").click();
   });
+  // ===== Forgot access code → reset to default =====
+  const forgotBtn = document.getElementById("aeroGateForgot");
+  const resetPanel = document.getElementById("aeroGateResetPanel");
+  const resetCancel = document.getElementById("aeroGateResetCancel");
+  const resetConfirm = document.getElementById("aeroGateResetConfirm");
+  const resetDone = document.getElementById("aeroGateResetDone");
+  if (forgotBtn) forgotBtn.addEventListener("click", () => {
+    resetPanel.style.display = resetPanel.style.display === "none" ? "block" : "none";
+    resetDone.style.display = "none";
+  });
+  if (resetCancel) resetCancel.addEventListener("click", () => { resetPanel.style.display = "none"; });
+  if (resetConfirm) resetConfirm.addEventListener("click", () => {
+    localStorage.removeItem(AERO_HASH_KEY); // falls back to DEFAULT_AERO_HASH (aeroops2026)
+    resetDone.style.display = "block";
+    document.getElementById("aeroGatePassword").value = "";
+    document.getElementById("aeroGateError").style.display = "none";
+  });
+
   // Also catch the back/forward-cache case: browser restores the page (and its unlocked DOM state)
   // without re-running this script from scratch, so force the gate back up explicitly.
   window.addEventListener("pageshow", (event) => {
