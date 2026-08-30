@@ -36,8 +36,9 @@ img{max-width:100%;display:block}
 .btn-outline:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px)}
 .btn-soft{background:#fff;color:var(--accent);border:1px solid #d3e3f0;box-shadow:none;transition:background .2s ease,transform .2s ease}
 .btn-soft:hover{background:#eef4fa;transform:translateY(-2px)}
-html{scroll-behavior:smooth}
-.hero,.section{scroll-margin-top:110px}
+.about-teaser{display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;background:#fff;border:1px solid var(--line);border-radius:20px;padding:26px 28px}
+.about-teaser p{color:var(--muted);line-height:1.6}
+@media (max-width:700px){.about-teaser{flex-direction:column;align-items:flex-start}}
 .hero-cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}
 .mobile-toggle{display:none;border:0;background:transparent;font-size:24px}
 

@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Keep private/internal pages out of search results
+Disallow: /aeroops.html
+Disallow: /insights.html
+
+Sitemap: https://tahid009.github.io/Sarwar_portfolio/sitemap.xml

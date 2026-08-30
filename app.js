@@ -8,18 +8,31 @@
   document.querySelectorAll("[data-profile-title]").forEach(n => n.textContent = profile.professionalTitle);
   document.querySelectorAll("[data-profile-location]").forEach(n => n.textContent = profile.location);
 
-  // Home
+  // Home hero
   if (el("heroLead")) el("heroLead").textContent = profile.summary;
   if (el("heroYears")) el("heroYears").textContent = profile.yearsExperience;
   if (el("heroGds")) el("heroGds").textContent = profile.gdsCount;
   if (el("heroFocus")) el("heroFocus").textContent = profile.focus;
-  if (el("aboutText")) el("aboutText").textContent = profile.about;
 
+  // Home About teaser (text only, no photo — full photo lives on About page)
+  if (el("aboutTeaser")) {
+    const short = profile.about.split(". ").slice(0, 2).join(". ") + ".";
+    el("aboutTeaser").textContent = short;
+  }
+  // Home experience teaser (most recent role only)
+  if (el("experienceTeaser") && profile.experience[0]) {
+    const latest = profile.experience[0];
+    el("experienceTeaser").textContent = `Currently ${latest.role} at ${latest.company}, with ${profile.yearsExperience.toLowerCase()} across reservation, ticketing and travel operations.`;
+  }
+
+  // About page
+  if (el("aboutText")) el("aboutText").textContent = profile.about;
   if (el("factName")) el("factName").textContent = profile.name;
   if (el("factEmail")) el("factEmail").textContent = profile.email;
   if (el("factLocation")) el("factLocation").textContent = profile.location;
   if (el("factExp")) el("factExp").textContent = profile.yearsExperience;
 
+  // Expertise cards (Home performance visualization + Skills page)
   if (el("expertiseGrid")) {
     el("expertiseGrid").innerHTML = profile.expertise.map((x,i)=>`
       <article class="card">
@@ -30,6 +43,7 @@
       </article>`).join("");
   }
 
+  // Full experience timeline (Experience page)
   if (el("experienceFull")) {
     el("experienceFull").innerHTML = profile.experience.map(x=>`
       <article class="job-card">
@@ -42,7 +56,7 @@
       </article>`).join("");
   }
 
-  // Skills grouped into meaningful categories (no percentage bars, just clean grouped tags)
+  // Skills grouped into meaningful categories (no percentage bars)
   if (el("skillGroups")) {
     const catMap = { "GDS":"Systems", "Distribution":"Systems", "Core":"Aviation & Reservation", "Service":"Aviation & Reservation", "Analytics":"Business & Technology", "Productivity":"Business & Technology" };
     const groups = { "Aviation & Reservation": [], "Systems": [], "Business & Technology": [] };
@@ -57,6 +71,7 @@
       </div>`).join("");
   }
 
+  // Education
   if (el("educationGrid")) {
     el("educationGrid").innerHTML = profile.education.map(x=>`
       <article class="edu-card">
@@ -68,11 +83,22 @@
       </article>`).join("");
   }
 
-  // Contact links
+  // Activities
+  if (el("activitiesGrid")) {
+    el("activitiesGrid").innerHTML = profile.activities.map((x,i)=>`
+      <article class="card">
+        <div class="card-icon">${String(i+1).padStart(2,"0")}</div>
+        <h3>${esc(x[0])}</h3>
+        <p>${esc(x[1])}</p>
+      </article>`).join("");
+  }
+
+  // Contact links (footer + simple text links)
   document.querySelectorAll("[data-email-link]").forEach(a => { a.href = `mailto:${profile.email}`; a.textContent = profile.email; });
   document.querySelectorAll("[data-phone-link]").forEach(a => { a.href = `tel:${profile.phone.replace(/\s+/g,'')}`; a.textContent = profile.phone; });
   document.querySelectorAll("[data-linkedin-link]").forEach(a => { a.href = profile.linkedin; });
   document.querySelectorAll("[data-cv-link]").forEach(a => { a.href = profile.cv; });
+  // Icon-only variants: set the link but keep the symbol as visible text
   document.querySelectorAll("[data-email-icon]").forEach(a => { a.href = `mailto:${profile.email}`; a.title = profile.email; });
   document.querySelectorAll("[data-phone-icon]").forEach(a => { a.href = `tel:${profile.phone.replace(/\s+/g,'')}`; a.title = profile.phone; });
   // Rich contact cards: set href on the card, set text only on the inner label (keeps icon/markup intact)
@@ -81,26 +107,16 @@
   document.querySelectorAll("[data-email-text]").forEach(n => { n.textContent = profile.email; });
   document.querySelectorAll("[data-phone-text]").forEach(n => { n.textContent = profile.phone; });
 
-  // Mobile nav — anchor links to sections on the single-page site
+  // Mobile nav — multi-page links
   const toggle = el("mobileToggle"), links = el("mobileLinks");
   if (toggle && links) {
-    links.innerHTML = `<a href="#home">Home</a><a href="#about">About</a><a href="#experience">Experience</a><a href="#skills">Skills</a><a href="#contact">Contact</a>`;
+    links.innerHTML = `<a href="index.html">Home</a><a href="about.html">About</a><a href="experience.html">Experience</a><a href="skills.html">Skills</a><a href="education.html">Education</a><a href="activities.html">Activities</a><a href="aeroops.html">AeroOps Desk</a><a href="contact.html">Contact</a>`;
     toggle.addEventListener("click", ()=>links.classList.toggle("open"));
-    links.querySelectorAll("a").forEach(a => a.addEventListener("click", ()=>links.classList.remove("open")));
   }
 
-  // Scroll-spy: highlight whichever section is currently in view
-  const navAnchors = document.querySelectorAll('.nav-links a[href^="#"], #mobileLinks a[href^="#"]');
-  const sections = Array.from(navAnchors).map(a => document.querySelector(a.getAttribute("href"))).filter(Boolean);
-  if (sections.length && "IntersectionObserver" in window) {
-    const spy = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const id = "#" + entry.target.id;
-          navAnchors.forEach(a => a.classList.toggle("active", a.getAttribute("href") === id));
-        }
-      });
-    }, { rootMargin: "-45% 0px -50% 0px" });
-    sections.forEach(s => spy.observe(s));
-  }
+  // Highlight the current page in the nav
+  const currentPage = (location.pathname.split("/").pop() || "index.html");
+  document.querySelectorAll(".nav-links a, #mobileLinks a").forEach(a => {
+    if (a.getAttribute("href") === currentPage) a.classList.add("active");
+  });
 })();

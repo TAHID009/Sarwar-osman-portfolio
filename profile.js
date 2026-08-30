@@ -1,7 +1,7 @@
 const profile = {
   name: "Md Sarwar Osman Sagar",
   shortName: "Sarwar",
-  professionalTitle: "Air Ticketing & Reservation Professional",
+  professionalTitle: "Aviation Reservation & Ticketing Professional",
   tagline: "GDS • NDC • OTA • Fare Management",
   location: "Chattogram, Bangladesh",
   email: "mdsarwarosman22@gmail.com",
