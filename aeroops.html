@@ -888,7 +888,9 @@
             <button type="button" id="btn-toggle-password" aria-label="Show password" style="position:absolute; right:6px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; font-size:17px; line-height:1; padding:4px; color:var(--ink-soft);">👁️</button>
           </div>
         </div>
-        <div id="cloud-auth-error" style="color:var(--refund); font-size:12.5px; min-height:16px; margin-bottom:6px;"></div>
+        <div id="cloud-auth-error" style="color:var(--refund); font-size:12.5px; min-height:16px; margin-bottom:2px;"></div>
+        <div id="cloud-auth-reset-ok" style="color:#1E7A46; font-size:12.5px; min-height:16px; margin-bottom:4px; display:none;"></div>
+        <button type="button" id="btn-cloud-forgot-password" style="background:none; border:none; color:var(--ink-soft); font-size:12px; text-decoration:underline; cursor:pointer; padding:2px 0; margin-bottom:6px;">Forgot password?</button>
         <div class="ptc-actions" style="margin-top:8px; justify-content:flex-end; flex-wrap:wrap;">
           <button class="ptc-btn ptc-btn-ghost" id="btn-cloud-auth-create" style="border-color:#1E7A46; color:#1E7A46; font-weight:700;">Create Account</button>
           <button class="ptc-btn ptc-btn-primary" id="btn-cloud-auth-signin" style="background:#1E7A46;">Sign In</button>
@@ -2197,6 +2199,7 @@
             if(cloudUnsub){ cloudUnsub(); cloudUnsub = null; }
             setCloudStatus('idle');
             $('cloud-auth-error').textContent = '';
+            $('cloud-auth-reset-ok').style.display = 'none';
             $('cloud-auth-modal-backdrop').style.display = 'flex';
           }
         });
@@ -2273,6 +2276,18 @@
     if(!email || !pw){ $('cloud-auth-error').textContent = 'Enter both email and password.'; return; }
     if(pw.length < 6){ $('cloud-auth-error').textContent = 'Password must be at least 6 characters.'; return; }
     firebase.auth().createUserWithEmailAndPassword(email, pw)
+      .catch(err => { $('cloud-auth-error').textContent = friendlyAuthError(err); });
+  });
+  $('btn-cloud-forgot-password').addEventListener('click', () => {
+    const email = $('cloud-auth-email').value.trim();
+    $('cloud-auth-error').textContent = '';
+    $('cloud-auth-reset-ok').style.display = 'none';
+    if(!email){ $('cloud-auth-error').textContent = 'Enter your email above first, then click "Forgot password?"'; return; }
+    firebase.auth().sendPasswordResetEmail(email)
+      .then(() => {
+        $('cloud-auth-reset-ok').textContent = 'Reset link sent to ' + email + ' — check your inbox (and spam folder).';
+        $('cloud-auth-reset-ok').style.display = 'block';
+      })
       .catch(err => { $('cloud-auth-error').textContent = friendlyAuthError(err); });
   });
   function friendlyAuthError(err){
