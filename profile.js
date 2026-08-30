@@ -32,7 +32,7 @@ const profile = {
       company: "BeFresh PLC",
       location: "Chattogram, Bangladesh",
       bullets: [
-        "Handled reservation and ticketing operations using GDS, NDC and OTA channels.",
+        "Oversaw reservation and ticketing operations using GDS, NDC and OTA channels.",
         "Supported customers through booking, documentation, schedule changes and post-ticketing service.",
         "Applied fare rules and airline policies while processing operational requests."
       ]
@@ -68,19 +68,12 @@ const profile = {
   ],
   education: [
     {
-      year: "2018 – 2020",
       degree: "Master’s in International Business",
-      institution: "Wuhan University",
-      location: "Wuhan, China",
-      result: "CGPA 3.54 / 4.00",
-      note: "Chinese Government Scholarship (CSC)"
+      institution: "Wuhan University"
     },
     {
-      year: "2014 – 2017",
       degree: "BBA in Human Resource Management",
-      institution: "Southern University Bangladesh",
-      location: "Chattogram, Bangladesh",
-      result: "CGPA 3.71 / 4.00"
+      institution: "Southern University Bangladesh"
     }
   ],
   expertise: [
@@ -96,9 +89,9 @@ const profile = {
     ["Air Ticketing","Core"],["Fare Rules","Core"],["Reissue & Refund","Core"],["Customer Service","Service"],["Microsoft Power BI","Analytics"],["Microsoft Office","Productivity"]
   ],
   activities: [
-    ["International Student Affairs Member · Wuhan University","Campus photography and student event activities."],
-    ["Delegator · WISMUN Conference, Greece","Participated as a university conference delegate."],
-    ["Volunteer · JOBMARKETBD.COM","Assisted with career talks and student guidance activities."],
-    ["Program Coordinator · Biz-Quiz 2017","Supported execution of an inter-university quiz competition."]
+    ["Student Affairs","Campus photography and student event activities."],
+    ["Delegate","Participated as a university conference delegate."],
+    ["Volunteering","Assisted with career talks and student guidance activities."],
+    ["Event Coordination","Supported execution of an inter-university quiz competition."]
   ]
 };

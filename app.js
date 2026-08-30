@@ -75,11 +75,8 @@
   if (el("educationGrid")) {
     el("educationGrid").innerHTML = profile.education.map(x=>`
       <article class="edu-card">
-        <div class="year">${esc(x.year)}</div>
         <h3>${esc(x.degree)}</h3>
-        <p><strong>${esc(x.institution)}</strong> · ${esc(x.location)}</p>
-        <p>${esc(x.result)}</p>
-        ${x.note ? `<p>${esc(x.note)}</p>` : ""}
+        <p><strong>${esc(x.institution)}</strong></p>
       </article>`).join("");
   }
 
