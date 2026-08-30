@@ -11,7 +11,7 @@ const profile = {
   yearsExperience: "3+ Years",
   gdsCount: "3 GDS",
   focus: "Travel Operations",
-  summary: "Reservation and ticketing professional focused on accurate air bookings, fare rules, reissue and refund handling, NDC and OTA workflows, and clear customer communication.",
+  summary: "Reservation and ticketing professional focused on accurate air bookings, fare rules, reissue and refund handling, GDS, NDC and OTA workflows, and clear customer communication.",
   about: "I work across airline reservation and ticketing workflows, combining GDS knowledge, fare and policy review, customer communication, and travel operations support. My goal is to make every booking accurate, efficient, and easy for the customer. On the academic side, I hold a BBA in Human Resource Management from Southern University Bangladesh and a Master's in International Business from Wuhan University, China, on a Chinese Government Scholarship.",
   experience: [
     {
@@ -78,10 +78,10 @@ const profile = {
   ],
   expertise: [
     {title:"Air Ticketing & Reservation", text:"Booking, PNR handling, ticket issuance and post-ticketing support.", tags:["GDS","Ticketing"]},
-    {title:"Fare & Policy Handling", text:"Fare rules, restrictions, pricing checks and airline policy review.", tags:["Fare Rules","Reissue","Refund"]},
+    {title:"Fare & Policy Review", text:"Fare rules, restrictions, pricing checks and airline policy review.", tags:["Fare Rules","Reissue","Refund"]},
     {title:"NDC & OTA Workflows", text:"Operate across newer airline distribution and OTA booking channels.", tags:["NDC","OTA"]},
-    {title:"Customer Service", text:"Clear communication through booking, change, cancellation and service cases.", tags:["Phone","Email","Chat"]},
-    {title:"Travel Operations", text:"Accurate records, coordination, documentation and day-to-day travel support.", tags:["Operations","Documentation"]},
+    {title:"Customer Service", text:"Customer-focused communication through booking, change, cancellation and service cases.", tags:["Phone","Email","Chat"]},
+    {title:"Travel Operations", text:"Maintaining detailed records, coordination, documentation and day-to-day travel support.", tags:["Operations","Documentation"]},
     {title:"Reporting & Business Tools", text:"Microsoft Office and Power BI skills supporting reporting and analysis.", tags:["Excel","Power BI"]}
   ],
   skills: [
