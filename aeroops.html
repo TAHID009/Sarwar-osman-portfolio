@@ -1023,30 +1023,34 @@
             <input type="number" step="0.01" id="f-taxfare-t" class="mono ptc-fare-calc" placeholder="0.00" />
           </div>
         </div>
-        <div class="ptc-row">
+        <div class="ptc-row" style="display:none;">
           <div class="ptc-field">
-            <label for="f-discount-t">Discount</label>
+            <label for="f-discount-t">Discount (legacy, unused)</label>
             <input type="number" step="0.01" id="f-discount-t" class="mono ptc-fare-calc" placeholder="0.00" />
           </div>
-          <div class="ptc-field">
-            <label for="f-markup-t">OTA Markup % (max 7%)</label>
-            <input type="number" step="0.01" min="0" max="7" id="f-markup-t" class="mono ptc-fare-calc" placeholder="0.00" title="Percentage applied to Airline Ticket Price. Capped automatically at 7%." />
-          </div>
+          <div></div>
         </div>
         <div class="ptc-row">
           <div class="ptc-field">
-            <label for="f-atp-t">Airline Ticket Price (auto)</label>
+            <label for="f-markup-t">Discount % shared with client (max 7%, of Base Fare)</label>
+            <input type="number" step="0.01" min="0" max="7" id="f-markup-t" class="mono ptc-fare-calc" placeholder="0.00 (leave blank if none)" title="Percentage of Base Fare given as discount to the client. Capped automatically at 7%. Leave 0 if the airline gives no discount." />
+          </div>
+          <div></div>
+        </div>
+        <div class="ptc-row">
+          <div class="ptc-field">
+            <label for="f-atp-t">Total Fare (auto)</label>
             <input type="text" id="f-atp-t" class="mono" placeholder="0.00" readonly style="background:#F3F5F8; font-weight:700;" title="Base Fare + Tax" />
           </div>
           <div class="ptc-field">
-            <label for="f-markupamt-t">OTA Markup Amount (auto)</label>
-            <input type="text" id="f-markupamt-t" class="mono" placeholder="0.00" readonly style="background:#F3F5F8; font-weight:700;" title="Airline Ticket Price × Markup %" />
+            <label for="f-markupamt-t">Discount Amount (auto)</label>
+            <input type="text" id="f-markupamt-t" class="mono" placeholder="0.00" readonly style="background:#F3F5F8; font-weight:700;" title="Base Fare × Discount %" />
           </div>
         </div>
         <div class="ptc-row">
           <div class="ptc-field">
-            <label for="f-totalfare-t">Customer Selling Price (auto)</label>
-            <input type="text" id="f-totalfare-t" class="mono" placeholder="0.00" readonly style="background:#F3F5F8; font-weight:700;" title="Airline Ticket Price + OTA Markup Amount − Discount" />
+            <label for="f-totalfare-t">Payable Fare — Client Pays (auto)</label>
+            <input type="text" id="f-totalfare-t" class="mono" placeholder="0.00" readonly style="background:#F3F5F8; font-weight:700;" title="Total Fare − Discount Amount" />
           </div>
           <div></div>
         </div>
@@ -1237,11 +1241,11 @@
             <th>Sector</th>
             <th>Base Fare</th>
             <th>Tax Fare</th>
-            <th>Airline Ticket Price</th>
-            <th>Discount</th>
-            <th>OTA Markup %</th>
-            <th>OTA Markup Amt</th>
-            <th>Selling Price</th>
+            <th>Total Fare</th>
+            <th>Discount (legacy)</th>
+            <th>Discount %</th>
+            <th>Discount Amt</th>
+            <th>Payable Fare</th>
             <th>Fare Diff</th>
             <th>Airline Chg</th>
             <th>Service Chg</th>
@@ -2324,36 +2328,34 @@
     renderRouteBuilder();
   }
 
-  // ---- Ticketing fare auto-calculation (OTA Markup model) ----
-  // Airline Ticket Price = Base Fare + Tax
-  // OTA Markup Amount = Airline Ticket Price x Markup% (Markup% capped 0-7)
-  // Customer Selling Price = Airline Ticket Price + OTA Markup Amount - Discount
+  // ---- Ticketing fare auto-calculation (Client Discount model) ----
+  // Total Fare = Base Fare + Tax
+  // Discount Amount = Base Fare x Discount% (Discount% capped 0-7, entered by agent, 0 if none given by airline)
+  // Payable Fare (Client Pays) = Total Fare - Discount Amount
   function recalcTicketingFare(){
     const base = parseFloat($('f-basefare-t').value) || 0;
     const tax = parseFloat($('f-taxfare-t').value) || 0;
-    const discount = parseFloat($('f-discount-t').value) || 0;
-    let markupPct = parseFloat($('f-markup-t').value) || 0;
-    if(markupPct > 7){ markupPct = 7; $('f-markup-t').value = 7; }
-    if(markupPct < 0){ markupPct = 0; $('f-markup-t').value = 0; }
-    const airlinePrice = base + tax;
-    const markupAmt = airlinePrice * (markupPct / 100);
-    const sellingPrice = airlinePrice + markupAmt;
-    const total = sellingPrice - discount;
-    $('f-atp-t').value = airlinePrice.toFixed(2);
-    $('f-markupamt-t').value = markupAmt.toFixed(2);
-    $('f-totalfare-t').value = total.toFixed(2);
+    let discountPct = parseFloat($('f-markup-t').value) || 0;
+    if(discountPct > 7){ discountPct = 7; $('f-markup-t').value = 7; }
+    if(discountPct < 0){ discountPct = 0; $('f-markup-t').value = 0; }
+    const totalFare = base + tax;
+    const discountAmt = base * (discountPct / 100);
+    const payableFare = totalFare - discountAmt;
+    $('f-atp-t').value = totalFare.toFixed(2);
+    $('f-markupamt-t').value = discountAmt.toFixed(2);
+    $('f-totalfare-t').value = payableFare.toFixed(2);
   }
-  // Display-only breakdown (does NOT touch the saved Customer Selling Price).
+  // Display-only breakdown (does NOT touch the saved Payable Fare).
   // Used when loading an existing record for edit so historical totals aren't
   // silently recalculated with the new formula just by opening the record.
   function showTicketingBreakdown(){
     const base = parseFloat($('f-basefare-t').value) || 0;
     const tax = parseFloat($('f-taxfare-t').value) || 0;
-    const markupPct = parseFloat($('f-markup-t').value) || 0;
-    const airlinePrice = base + tax;
-    const markupAmt = airlinePrice * (markupPct / 100);
-    $('f-atp-t').value = airlinePrice.toFixed(2);
-    $('f-markupamt-t').value = markupAmt.toFixed(2);
+    const discountPct = parseFloat($('f-markup-t').value) || 0;
+    const totalFare = base + tax;
+    const discountAmt = base * (discountPct / 100);
+    $('f-atp-t').value = totalFare.toFixed(2);
+    $('f-markupamt-t').value = discountAmt.toFixed(2);
   }
   document.querySelectorAll('.ptc-fare-calc').forEach(el => {
     el.addEventListener('input', recalcTicketingFare);
@@ -3174,10 +3176,10 @@
       f.push(
         ['Ticket No.', e.newTkt], ['Sector', e.sector],
         ['Base Fare', fmtMoney(e.baseFare)], ['Tax', fmtMoney(e.taxFare)],
-        ['Airline Ticket Price', fmtMoney(e.airlineTicketPrice)],
-        ['Discount', fmtMoney(e.discount)], ['OTA Markup %', fmtPct(e.markUp)],
-        ['OTA Markup Amount', fmtMoney(e.markupAmount)],
-        ['Customer Selling Price', fmtMoney(e.totalFare)]
+        ['Total Fare', fmtMoney(e.airlineTicketPrice)],
+        ['Discount %', fmtPct(e.markUp)],
+        ['Discount Amount', fmtMoney(e.markupAmount)],
+        ['Payable Fare (Client Pays)', fmtMoney(e.totalFare)]
       );
     } else if(e.txn === 'Reissue'){
       f.push(
