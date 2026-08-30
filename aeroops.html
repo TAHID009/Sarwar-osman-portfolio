@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AeroOps Desk | Sarwar</title>
+<title>SARWAR OSMAN | PORTFOLIO</title>
 <meta name="description" content="Internal work record and ticket sales tracker for Md Sarwar Osman Sagar.">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -889,6 +889,7 @@
         <div class="ptc-field ptc-type-select">
           <label for="f-type">Transaction Type</label>
           <select id="f-type">
+            <option value="" disabled selected>Select Type</option>
             <option value="Ticketing">Ticketing</option>
             <option value="Reissue">Reissue</option>
             <option value="Refund">Refund</option>
@@ -939,6 +940,7 @@
         <div class="ptc-field">
           <label for="f-platform">Platform</label>
           <select id="f-platform">
+            <option value="" disabled selected>Select Type</option>
             <option value="Sabre">Sabre</option>
             <option value="Galileo">Galileo</option>
             <option value="Amadeus">Amadeus</option>
@@ -951,6 +953,7 @@
         <div class="ptc-field">
           <label for="f-airline">Airline Code</label>
           <select id="f-airline">
+            <option value="" disabled selected>Select Type</option>
             <option value="BG">BG — Biman Bangladesh Airlines</option>
             <option value="BS">BS — US-Bangla Airlines</option>
             <option value="VQ">VQ — Novoair</option>
@@ -995,6 +998,7 @@
           <div class="ptc-field ptc-type-select">
             <label for="f-routetype-t">Route Type</label>
             <select id="f-routetype-t">
+              <option value="" disabled selected>Select Type</option>
               <option value="OneWay">One Way</option>
               <option value="RoundWay">Round Way</option>
               <option value="MultiCity">Multiple City</option>
@@ -1104,6 +1108,7 @@
           <div class="ptc-field" id="refund-mode-wrap">
             <label for="f-mode-f">Refund Type</label>
             <select id="f-mode-f">
+              <option value="" disabled selected>Select Type</option>
               <option value="FULL">Full Refund</option>
               <option value="PARTIAL">Partial Refund</option>
               <option value="AS_PER_POLICY">As Per Policy</option>
@@ -1144,6 +1149,7 @@
           <div class="ptc-field" id="refund-status-wrap">
             <label for="f-status-f">Refund Status</label>
             <select id="f-status-f">
+              <option value="" disabled selected>Select Type</option>
               <option value="PENDING">Pending</option>
               <option value="REFUNDED">Refunded</option>
             </select>
@@ -1396,6 +1402,7 @@
           <div class="ptc-field">
             <label for="s-method">Payment Method</label>
             <select id="s-method">
+              <option value="" disabled selected>Select Type</option>
               <option value="CASH">Cash</option>
               <option value="BKASH">bKash</option>
               <option value="NAGAD">Nagad</option>
@@ -2669,12 +2676,15 @@
     ].forEach(id => { const el = $(id); if(el) el.value = ''; });
     $('f-date').value = todayISO();
     $('f-ptype').value = 'ADULT';
-    $('f-mode-f').value = 'FULL';
-    $('f-status-f').value = 'PENDING';
-    $('f-platform').value = 'Sabre';
-    $('f-airline').value = 'BG';
+    $('f-mode-f').value = '';
+    $('f-status-f').value = '';
+    $('f-platform').value = '';
+    $('f-airline').value = '';
     $('f-platform-other').style.display = 'none';
     $('f-airline-other').style.display = 'none';
+    typeSelect.value = '';
+    showSection('');
+    if($('f-routetype-t')){ $('f-routetype-t').value = ''; if(typeof renderRouteBuilder === 'function') renderRouteBuilder(); }
     if(typeof setAdjustmentGiven === 'function') setAdjustmentGiven('NO');
     recalcTicketingFare();
     if(typeof recalcReissueTotal === 'function') recalcReissueTotal();
@@ -3617,7 +3627,7 @@
     ['s-pname','s-phone','s-tkt','s-pnr','s-sector','s-airline','s-price','s-cost','s-paid','s-duedate','s-note']
       .forEach(id => { const el = $(id); if(el) el.value = ''; });
     $('s-date').value = todayISOSales();
-    $('s-method').value = 'CASH';
+    $('s-method').value = '';
     recalcSale();
     const first = $('s-pname');
     if(first) first.focus();
