@@ -115,6 +115,27 @@
     .ptc-row{ grid-template-columns: 1fr; }
   }
 
+  .ptc-route-builder{ margin-bottom: 14px; }
+  .ptc-route-segment{
+    display:grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 10px;
+    align-items:end;
+    margin-bottom: 8px;
+  }
+  @media (max-width: 560px){ .ptc-route-segment{ grid-template-columns: 1fr 1fr; } .ptc-route-segment .ptc-seg-remove{ grid-column: 1 / -1; } }
+  .ptc-route-segment input{ text-transform: uppercase; }
+  .ptc-seg-remove{
+    height: 38px; padding: 0 12px; border-radius: 8px; border: 1px solid var(--line, #E3E7EE);
+    background: #fff; color: #C0392B; font-weight: 700; cursor: pointer; font-size: 12px;
+  }
+  .ptc-seg-remove:hover{ background: #FDECEA; }
+  .ptc-add-segment{
+    display:inline-flex; align-items:center; gap:6px; background:none; border:1px dashed var(--accent, #0B3D63);
+    color: var(--accent, #0B3D63); font-weight:700; font-size:12px; padding:8px 14px; border-radius:8px; cursor:pointer; margin-bottom:14px;
+  }
+  .ptc-add-segment:hover{ background: var(--accent-soft, #EEF4FA); }
+
   .ptc-field label{
     display:block;
     font-size: 11.5px;
@@ -698,6 +719,10 @@
 
 <main style="padding:24px 0 10px">
 
+<div class="container" style="max-width:1180px;padding-bottom:0">
+<a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--muted,#667085);text-decoration:none;margin-bottom:8px">← Back to Portfolio</a>
+</div>
+
 <!-- ===== PASSWORD GATE ===== -->
 <div class="container" id="aeroGateSection" style="max-width:420px">
 <div class="contact-item" style="text-align:center">
@@ -898,7 +923,7 @@
         </div>
       </div>
 
-      <div class="ptc-row">
+      <div class="ptc-row" style="display:none;">
         <div class="ptc-field">
           <label for="f-ptype">Passenger Type</label>
           <select id="f-ptype">
@@ -967,10 +992,22 @@
             <label for="f-newtkt-t">New Ticket Number</label>
             <input type="text" id="f-newtkt-t" class="mono" placeholder="e.g. 1234567890123" />
           </div>
+          <div class="ptc-field ptc-type-select">
+            <label for="f-routetype-t">Route Type</label>
+            <select id="f-routetype-t">
+              <option value="OneWay">One Way</option>
+              <option value="RoundWay">Round Way</option>
+              <option value="MultiCity">Multiple City</option>
+            </select>
+          </div>
+        </div>
+        <div id="route-builder-t" class="ptc-route-builder"></div>
+        <div class="ptc-row">
           <div class="ptc-field">
-            <label for="f-sector-t">Sector / Route</label>
+            <label for="f-sector-t">Sector / Route <span style="font-weight:400;color:var(--ink-soft);font-size:11px;">(auto-filled from Route Type above — edit manually if needed)</span></label>
             <input type="text" id="f-sector-t" class="mono" placeholder="e.g. DAC-DXB" />
           </div>
+          <div></div>
         </div>
         <div class="ptc-row">
           <div class="ptc-field">
@@ -2205,6 +2242,80 @@
 
   function val(id){ return $(id).value.trim(); }
   function num(id){ const v = $(id).value; return v === '' ? '' : parseFloat(v); }
+
+  // ---- Route Type + Segment Builder ----
+  // Builds a friendly Origin/Destination UI and composes it into the existing
+  // f-sector-t field (e.g. "DAC-DXB", "DAC-DXB-DAC", "DAC-DXB-JED-DAC") so all
+  // existing save/load/table/export logic that reads e.sector keeps working unchanged.
+  let routeSegments = [{ from: '', to: '' }];
+
+  function renderRouteBuilder(){
+    const type = $('f-routetype-t').value;
+    const wrap = $('route-builder-t');
+    if(!wrap) return;
+
+    if(type === 'MultiCity'){
+      if(routeSegments.length < 2) routeSegments = [{from:'',to:''},{from:'',to:''}];
+      wrap.innerHTML = routeSegments.map((seg, i) => `
+        <div class="ptc-route-segment">
+          <input type="text" maxlength="3" class="mono route-seg-from" data-i="${i}" placeholder="e.g. DAC" value="${seg.from}" />
+          <input type="text" maxlength="3" class="mono route-seg-to" data-i="${i}" placeholder="e.g. DXB" value="${seg.to}" />
+          ${routeSegments.length > 2 ? `<button type="button" class="ptc-seg-remove" data-i="${i}">✕ Remove</button>` : `<span></span>`}
+        </div>`).join('') + `<button type="button" class="ptc-add-segment" id="btn-add-segment">+ Add Segment</button>`;
+    } else {
+      // One Way / Round Way — single Origin + Destination pair
+      if(routeSegments.length !== 1) routeSegments = [{ from: routeSegments[0]?.from || '', to: routeSegments[0]?.to || '' }];
+      wrap.innerHTML = `
+        <div class="ptc-route-segment" style="grid-template-columns:1fr 1fr;">
+          <input type="text" maxlength="3" class="mono route-seg-from" data-i="0" placeholder="e.g. DAC" value="${routeSegments[0].from}" />
+          <input type="text" maxlength="3" class="mono route-seg-to" data-i="0" placeholder="e.g. DXB" value="${routeSegments[0].to}" />
+        </div>`;
+    }
+    wireRouteBuilderInputs();
+    updateSectorFromBuilder();
+  }
+
+  function wireRouteBuilderInputs(){
+    document.querySelectorAll('#route-builder-t .route-seg-from').forEach(inp => {
+      inp.addEventListener('input', () => { routeSegments[+inp.dataset.i].from = inp.value.toUpperCase(); updateSectorFromBuilder(); });
+    });
+    document.querySelectorAll('#route-builder-t .route-seg-to').forEach(inp => {
+      inp.addEventListener('input', () => { routeSegments[+inp.dataset.i].to = inp.value.toUpperCase(); updateSectorFromBuilder(); });
+    });
+    document.querySelectorAll('#route-builder-t .ptc-seg-remove').forEach(btn => {
+      btn.addEventListener('click', () => { routeSegments.splice(+btn.dataset.i, 1); renderRouteBuilder(); });
+    });
+    const addBtn = $('btn-add-segment');
+    if(addBtn) addBtn.addEventListener('click', () => {
+      const last = routeSegments[routeSegments.length - 1];
+      routeSegments.push({ from: last ? last.to : '', to: '' });
+      renderRouteBuilder();
+    });
+  }
+
+  function updateSectorFromBuilder(){
+    const type = $('f-routetype-t').value;
+    const sectorField = $('f-sector-t');
+    if(!sectorField) return;
+    let codes = [];
+    if(type === 'MultiCity'){
+      routeSegments.forEach((seg, i) => {
+        if(i === 0 && seg.from) codes.push(seg.from);
+        if(seg.to) codes.push(seg.to);
+      });
+    } else {
+      const seg = routeSegments[0] || {};
+      if(seg.from) codes.push(seg.from);
+      if(seg.to) codes.push(seg.to);
+      if(type === 'RoundWay' && seg.from && seg.to) codes.push(seg.from);
+    }
+    if(codes.length) sectorField.value = codes.join('-');
+  }
+
+  if($('f-routetype-t')){
+    $('f-routetype-t').addEventListener('change', renderRouteBuilder);
+    renderRouteBuilder();
+  }
 
   // ---- Ticketing fare auto-calculation (OTA Markup model) ----
   // Airline Ticket Price = Base Fare + Tax

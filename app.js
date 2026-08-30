@@ -119,4 +119,12 @@
   document.querySelectorAll(".nav-links a, #mobileLinks a").forEach(a => {
     if (a.getAttribute("href") === currentPage) a.classList.add("active");
   });
+
+  // Sticky header: subtle shadow once the page is scrolled
+  const headerEl = document.querySelector(".header");
+  if (headerEl) {
+    const toggleScrolled = () => headerEl.classList.toggle("scrolled", window.scrollY > 8);
+    toggleScrolled();
+    window.addEventListener("scroll", toggleScrolled, { passive: true });
+  }
 })();
