@@ -114,6 +114,16 @@
     toggle.addEventListener("click", ()=>links.classList.toggle("open"));
   }
 
+  // AeroOps Desk nav label — shows "Login" until unlocked on this device/tab, then "AeroOps Desk"
+  function refreshAeroNavLabel() {
+    const unlocked = sessionStorage.getItem("aeroUnlocked") === "1";
+    document.querySelectorAll('a[href="aeroops.html"]').forEach(a => {
+      a.textContent = unlocked ? "AeroOps Desk" : "Login";
+    });
+  }
+  window.refreshAeroNavLabel = refreshAeroNavLabel;
+  refreshAeroNavLabel();
+
   // Highlight the current page in the nav
   const currentPage = (location.pathname.split("/").pop() || "index.html");
   document.querySelectorAll(".nav-links a, #mobileLinks a").forEach(a => {
