@@ -723,6 +723,172 @@
     font-size:13px;
   }
 
+  /* ============================================================
+     AeroOps Auth — "Aviation Operations Command Center" login.
+     Everything below is scoped under #cloud-auth-modal-backdrop
+     so it cannot collide with any other modal or page style.
+     Colors reuse the existing #ptc-root palette (--ink navy,
+     --brand teal, --booking aviation blue) — no new palette.
+     ============================================================ */
+  #cloud-auth-modal-backdrop{
+    background:
+      radial-gradient(1100px 620px at 12% -10%, rgba(46,111,149,.35), transparent 60%),
+      radial-gradient(900px 560px at 108% 108%, rgba(14,110,115,.30), transparent 55%),
+      linear-gradient(180deg, #0B2545 0%, #0E2E52 100%) !important;
+    position:relative;
+    overflow:hidden;
+    padding:24px;
+  }
+  #cloud-auth-modal-backdrop::before{
+    /* fine technical grid, extremely subtle */
+    content:"";
+    position:absolute; inset:0;
+    background-image:
+      linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px);
+    background-size:34px 34px;
+    -webkit-mask-image: radial-gradient(circle at 50% 40%, #000 0%, transparent 72%);
+            mask-image: radial-gradient(circle at 50% 40%, #000 0%, transparent 72%);
+    pointer-events:none;
+  }
+  #cloud-auth-modal-backdrop::after{
+    /* thin flight-path line, purely decorative */
+    content:"";
+    position:absolute; left:-10%; top:18%; width:60%; height:1px;
+    background:linear-gradient(90deg, transparent, rgba(255,255,255,.28), transparent);
+    transform:rotate(-6deg);
+    pointer-events:none;
+  }
+  .aero-auth-topbar{
+    position:absolute; top:22px; left:26px; right:26px;
+    display:flex; align-items:flex-start; justify-content:space-between;
+    font-family:inherit; z-index:1; pointer-events:none;
+  }
+  .aero-auth-topbar .brandmark{ font-size:12px; font-weight:800; letter-spacing:.14em; color:rgba(255,255,255,.85); }
+  .aero-auth-topbar .brandmark small{ display:block; margin-top:2px; font-size:9.5px; font-weight:600; letter-spacing:.16em; color:rgba(255,255,255,.45); }
+  .aero-auth-status{ font-size:9.5px; font-weight:700; letter-spacing:.14em; color:rgba(255,255,255,.6); text-align:right; }
+  .aero-auth-status .dot{ display:inline-block; width:6px; height:6px; border-radius:50%; background:#3DDC97; margin-right:6px; box-shadow:0 0 0 3px rgba(61,220,151,.18); }
+  .aero-auth-footer{
+    position:absolute; bottom:18px; left:0; right:0; text-align:center;
+    font-size:9.5px; font-weight:700; letter-spacing:.2em; color:rgba(255,255,255,.32);
+    z-index:1; pointer-events:none;
+  }
+
+  #cloud-auth-modal-backdrop .ptc-modal{
+    position:relative; z-index:1;
+    width:100%; max-width:432px;
+    background:var(--card);
+    border-radius:20px;
+    border:1px solid rgba(255,255,255,.08);
+    box-shadow:0 30px 70px rgba(4,16,34,.45);
+    padding:30px 28px 26px;
+    animation:aeroCardIn .32s ease both;
+  }
+  @keyframes aeroCardIn{ from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:translateY(0)} }
+
+  .aero-auth-brand{ display:flex; flex-direction:column; align-items:center; text-align:center; margin-bottom:18px; }
+  .aero-auth-brand .icon{
+    width:44px; height:44px; border-radius:12px;
+    background:linear-gradient(135deg, var(--ink), var(--booking));
+    display:flex; align-items:center; justify-content:center;
+    font-size:19px; color:#fff; margin-bottom:10px;
+    box-shadow:0 8px 18px rgba(11,37,69,.25);
+  }
+  .aero-auth-brand .name{ font-size:13px; font-weight:800; letter-spacing:.16em; color:var(--ink); }
+  .aero-auth-brand .tag{ font-size:11px; font-weight:600; color:var(--muted); margin-top:2px; letter-spacing:.02em; }
+
+  #cloud-auth-modal-backdrop h3{
+    font-size:22px !important; font-weight:800 !important; letter-spacing:-.01em;
+    text-align:center; margin:0 0 4px !important;
+  }
+  #cloud-auth-modal-backdrop #auth-view-signin > p,
+  #cloud-auth-modal-backdrop #auth-view-register > p,
+  #cloud-auth-modal-backdrop #auth-view-setpassword > p{
+    text-align:center !important; margin:0 0 20px !important;
+  }
+
+  #cloud-auth-modal-backdrop .ptc-field label{
+    font-size:11px !important; font-weight:700 !important; letter-spacing:.04em;
+    color:var(--ink-soft); text-transform:uppercase; display:block; margin-bottom:6px;
+  }
+  #cloud-auth-modal-backdrop input[type="email"],
+  #cloud-auth-modal-backdrop input[type="password"]{
+    height:48px !important; border-radius:11px !important;
+    border:1.5px solid var(--line) !important;
+    font-size:14.5px !important; background:var(--paper);
+    transition:border-color .18s ease, box-shadow .18s ease;
+  }
+  #cloud-auth-modal-backdrop input[type="email"]:focus,
+  #cloud-auth-modal-backdrop input[type="password"]:focus{
+    outline:none; border-color:var(--booking) !important;
+    box-shadow:0 0 0 3px rgba(46,111,149,.14);
+    background:var(--card);
+  }
+
+  #cloud-auth-modal-backdrop #btn-cloud-auth-signin,
+  #cloud-auth-modal-backdrop #btn-send-verify-link,
+  #cloud-auth-modal-backdrop #btn-set-password{
+    width:100% !important; height:50px !important; border-radius:11px !important;
+    font-size:14.5px !important; font-weight:700 !important; letter-spacing:.01em;
+    background:linear-gradient(135deg, var(--ink), var(--booking)) !important;
+    border:none !important; transition:transform .15s ease, box-shadow .15s ease, opacity .15s ease;
+    display:flex; align-items:center; justify-content:center; gap:8px;
+  }
+  #cloud-auth-modal-backdrop #btn-cloud-auth-signin:hover:not(:disabled),
+  #cloud-auth-modal-backdrop #btn-send-verify-link:hover:not(:disabled),
+  #cloud-auth-modal-backdrop #btn-set-password:hover:not(:disabled){
+    transform:translateY(-1px); box-shadow:0 10px 22px rgba(11,37,69,.28);
+  }
+  #cloud-auth-modal-backdrop button:disabled{ opacity:.65; cursor:not-allowed; transform:none !important; }
+  #auth-view-signin .ptc-actions{ margin-top:6px !important; flex-direction:column-reverse; align-items:stretch !important; gap:12px; }
+  #btn-cloud-auth-reset{ text-align:center !important; font-weight:600 !important; }
+
+  .aero-spinner{
+    width:14px; height:14px; border-radius:50%;
+    border:2px solid rgba(255,255,255,.35); border-top-color:#fff;
+    animation:aeroSpin .7s linear infinite;
+  }
+  @keyframes aeroSpin{ to{ transform:rotate(360deg); } }
+
+  #cloud-auth-error:not(:empty),
+  #reg-error:not(:empty),
+  #setpw-error:not(:empty){
+    display:flex; align-items:center; gap:8px;
+    background:var(--refund-soft); border:1px solid rgba(180,69,59,.25);
+    border-radius:10px; padding:9px 11px; margin-bottom:10px !important;
+  }
+  #cloud-auth-error:not(:empty)::before,
+  #reg-error:not(:empty)::before,
+  #setpw-error:not(:empty)::before{ content:"!"; flex:0 0 auto; width:16px; height:16px; border-radius:50%; background:var(--refund); color:#fff; font-size:11px; font-weight:800; display:flex; align-items:center; justify-content:center; }
+  #cloud-auth-reset-msg:not([style*="display: none"]){
+    display:flex !important; align-items:center; gap:8px;
+    background:var(--brand-soft); border:1px solid rgba(14,110,115,.25);
+    border-radius:10px; padding:9px 11px;
+  }
+  #cloud-auth-reset-msg:not([style*="display: none"])::before{ content:"✓"; flex:0 0 auto; width:16px; height:16px; border-radius:50%; background:var(--brand); color:#fff; font-size:10px; font-weight:800; display:flex; align-items:center; justify-content:center; }
+
+  #aero-pw-rules{ margin-top:14px; padding:12px 14px; background:var(--paper); border-radius:12px; border:1px solid var(--line); }
+  #aero-pw-rules p{ font-size:11px !important; font-weight:700 !important; color:var(--ink); margin:0 0 8px !important; text-transform:uppercase; letter-spacing:.04em; }
+  #aero-pw-rules ul{ list-style:none; margin:0; padding:0; display:grid; gap:6px; }
+  #aero-pw-rules li{ font-size:12.5px; color:var(--muted); display:flex; align-items:center; gap:8px; transition:color .15s ease; }
+  #aero-pw-rules li::before{ content:"✕"; font-size:10px; font-weight:800; color:var(--muted); width:15px; height:15px; border-radius:50%; background:var(--line); display:flex; align-items:center; justify-content:center; flex:0 0 auto; transition:.15s ease; }
+  #aero-pw-rules li.ok{ color:var(--ink); }
+  #aero-pw-rules li.ok::before{ content:"✓"; background:var(--brand); color:#fff; }
+
+  @media (max-width:480px){
+    #cloud-auth-modal-backdrop{ padding:16px; }
+    #cloud-auth-modal-backdrop .ptc-modal{ padding:24px 20px 20px; max-width:100%; }
+    .aero-auth-topbar{ left:16px; right:16px; top:14px; }
+    .aero-auth-footer{ bottom:10px; font-size:8.5px; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    #cloud-auth-modal-backdrop .ptc-modal{ animation:none; }
+    .aero-spinner{ animation:none; border-top-color:rgba(255,255,255,.35); }
+    #cloud-auth-modal-backdrop #btn-cloud-auth-signin:hover:not(:disabled),
+    #cloud-auth-modal-backdrop #btn-send-verify-link:hover:not(:disabled),
+    #cloud-auth-modal-backdrop #btn-set-password:hover:not(:disabled){ transform:none; }
+  }
+
 </style>
 </head><body><div class="site-shell">
 <header class="header"><div class="container nav-wrap"><div class="nav">
@@ -862,16 +1028,27 @@
       </div>
     </div>
 
-    <div class="ptc-modal-backdrop" id="cloud-auth-modal-backdrop" style="display:flex; background:var(--bg); z-index:5000;">
+    <div class="ptc-modal-backdrop" id="cloud-auth-modal-backdrop" style="display:flex; z-index:5000;">
+      <div class="aero-auth-topbar">
+        <div class="brandmark">AEROOPS<small>AVIATION OPERATIONS</small></div>
+        <div class="aero-auth-status"><span class="dot"></span>SECURE ACCESS</div>
+      </div>
+
       <div class="ptc-modal">
+
+        <div class="aero-auth-brand">
+          <div class="icon">✈</div>
+          <div class="name">AEROOPS</div>
+          <div class="tag">Aviation Operations Portal</div>
+        </div>
 
         <!-- ===== VIEW: SIGN IN ===== -->
         <div id="auth-view-signin">
-          <h3 style="margin:0 0 8px; font-size:16px; color:var(--ink);">AeroOps Desk — Private Access</h3>
-          <p id="signin-subtext" style="font-size:13px; color:var(--ink-soft); line-height:1.5; margin:0 0 14px;">Enter your Access Code to continue.</p>
-          <div class="ptc-field" id="signin-email-field" style="margin-bottom:10px; display:none;">
-            <label for="cloud-auth-email">Email</label>
-            <input type="email" id="cloud-auth-email" placeholder="you@example.com" autocomplete="username" />
+          <h3>Welcome back</h3>
+          <p id="signin-subtext">Sign in to continue to your AeroOps workspace.</p>
+          <div class="ptc-field" id="signin-email-field" style="margin-bottom:14px; display:none;">
+            <label for="cloud-auth-email">Registered Email</label>
+            <input type="email" id="cloud-auth-email" placeholder="name@example.com" autocomplete="username" />
           </div>
           <div class="ptc-field" style="margin-bottom:6px;">
             <label for="cloud-auth-password">Access Code</label>
@@ -880,77 +1057,79 @@
               <button type="button" class="ptc-eye-toggle" data-target="cloud-auth-password" aria-label="Show password"></button>
             </div>
           </div>
-          <div id="cloud-auth-error" style="color:var(--refund); font-size:12.5px; min-height:16px; margin-bottom:6px;"></div>
-          <div id="cloud-auth-reset-msg" style="color:#1E7A46; font-size:12.5px; min-height:16px; margin-bottom:6px; display:none;"></div>
-          <div class="ptc-actions" style="margin-top:8px; justify-content:space-between; flex-wrap:wrap;">
-            <button class="ptc-btn ptc-btn-ghost" id="btn-cloud-auth-reset" style="border:none; color:var(--ink-soft); font-size:12px; padding:8px 0;">Forgot Access Code?</button>
-            <button class="ptc-btn ptc-btn-primary" id="btn-cloud-auth-signin" style="background:#1E7A46;">Unlock</button>
+          <div id="cloud-auth-error" role="alert"></div>
+          <div id="cloud-auth-reset-msg" role="status" style="display:none;"></div>
+          <p style="text-align:center; margin:2px 0 16px;">
+            <a href="#" id="btn-cloud-auth-reset" style="font-size:12.5px; font-weight:600; color:var(--booking);">Forgot Access Code?</a>
+          </p>
+          <div class="ptc-actions" style="display:block;">
+            <button class="ptc-btn ptc-btn-primary" id="btn-cloud-auth-signin"><span id="signin-btn-label">SIGN IN →</span></button>
           </div>
-          <p style="font-size:11.5px; color:var(--ink-soft); margin:12px 0 0;">
-            <a href="#" id="link-go-register" style="color:var(--ink-soft);">First time here? Register with your email →</a><br>
-            <a href="#" id="link-use-different-email" style="color:var(--ink-soft); display:none;">Not your account? Sign in with a different email →</a>
+          <p style="font-size:12px; color:var(--muted); margin:16px 0 0; text-align:center;">
+            <a href="#" id="link-go-register" style="color:var(--muted); font-weight:600;">First time here? Register with your email →</a><br>
+            <a href="#" id="link-use-different-email" style="color:var(--muted); font-weight:600; display:none;">Not your account? Sign in with a different email →</a>
           </p>
         </div>
 
         <!-- ===== VIEW: REGISTER (step 1 — enter email) ===== -->
         <div id="auth-view-register" style="display:none;">
-          <h3 style="margin:0 0 8px; font-size:16px; color:var(--ink);">Register for AeroOps Desk</h3>
-          <p style="font-size:13px; color:var(--ink-soft); line-height:1.5; margin:0 0 14px;">Enter your email — we'll send a verification link before you set your Access Code.</p>
+          <h3>Register</h3>
+          <p>Enter your email — we'll send a verification link before you set your Access Code.</p>
           <div class="ptc-field" style="margin-bottom:10px;">
-            <label for="reg-email">Email</label>
-            <input type="email" id="reg-email" placeholder="you@example.com" autocomplete="username" />
+            <label for="reg-email">Registered Email</label>
+            <input type="email" id="reg-email" placeholder="name@example.com" autocomplete="username" />
           </div>
-          <div id="reg-error" style="color:var(--refund); font-size:12.5px; min-height:16px; margin-bottom:6px;"></div>
+          <div id="reg-error" role="alert"></div>
           <div class="ptc-actions" style="margin-top:8px; justify-content:space-between; flex-wrap:wrap;">
-            <button class="ptc-btn ptc-btn-ghost" id="link-back-to-signin" style="border:none; color:var(--ink-soft); font-size:12px; padding:8px 0;">← Back to Sign In</button>
-            <button class="ptc-btn ptc-btn-primary" id="btn-send-verify-link" style="background:#1E7A46;">Send Verification Link</button>
+            <button class="ptc-btn ptc-btn-ghost" id="link-back-to-signin" style="border:none; color:var(--muted); font-size:12px; padding:8px 0; font-weight:600;">← Back to Sign In</button>
+            <button class="ptc-btn ptc-btn-primary" id="btn-send-verify-link" style="width:auto;">Send Verification Link</button>
           </div>
         </div>
 
         <!-- ===== VIEW: LINK SENT ===== -->
         <div id="auth-view-sent" style="display:none; text-align:center;">
           <div style="font-size:34px; margin-bottom:10px;">📩</div>
-          <h3 style="margin:0 0 8px; font-size:16px; color:var(--ink);">Check your email</h3>
-          <p style="font-size:13px; color:var(--ink-soft); line-height:1.5; margin:0 0 14px;">
-            We sent a verification link to <strong id="sent-email-display"></strong>. Open it on this device to continue.
-          </p>
-          <button class="ptc-btn ptc-btn-ghost" id="link-back-to-signin-2" style="border-color:var(--line);">← Back to Sign In</button>
+          <h3>Check your email</h3>
+          <p>We sent a verification link to <strong id="sent-email-display"></strong>. Open it on this device to continue.</p>
+          <button class="ptc-btn ptc-btn-ghost" id="link-back-to-signin-2" style="border-color:var(--line); font-weight:600;">← Back to Sign In</button>
         </div>
 
-        <!-- ===== VIEW: SET PASSWORD (after clicking the email link) ===== -->
+        <!-- ===== VIEW: SET / RESET ACCESS CODE ===== -->
         <div id="auth-view-setpassword" style="display:none;">
-          <h3 style="margin:0 0 8px; font-size:16px; color:var(--ink);">Email verified — set your Access Code</h3>
-          <p style="font-size:13px; color:var(--ink-soft); line-height:1.5; margin:0 0 14px;">This is the only time you'll set this. You'll only need the code (not your email) to sign in from now on.</p>
+          <h3>Create New Access Code</h3>
+          <p>This is the only time you'll set this. You'll only need the code (not your email) to sign in from now on.</p>
           <div class="ptc-field" style="margin-bottom:10px;">
-            <label for="setpw-password">Access Code</label>
+            <label for="setpw-password">New Access Code</label>
             <div style="position:relative;">
               <input type="password" id="setpw-password" placeholder="At least 6 characters" style="width:100%; box-sizing:border-box; padding-right:42px;" />
               <button type="button" class="ptc-eye-toggle" data-target="setpw-password" aria-label="Show password"></button>
             </div>
           </div>
-          <div class="ptc-field" style="margin-bottom:6px;">
+          <div id="aero-pw-rules">
+            <p>Access Code requirements</p>
+            <ul>
+              <li id="pw-rule-length">At least 6 characters</li>
+              <li id="pw-rule-letter">At least one letter (a–z / A–Z)</li>
+              <li id="pw-rule-number">At least one number (0–9)</li>
+              <li id="pw-rule-special">At least one special character (e.g. ! @ # $ % *)</li>
+            </ul>
+          </div>
+          <div class="ptc-field" style="margin:14px 0 6px;">
             <label for="setpw-confirm">Confirm Access Code</label>
             <div style="position:relative;">
               <input type="password" id="setpw-confirm" placeholder="Re-enter the same code" style="width:100%; box-sizing:border-box; padding-right:42px;" />
               <button type="button" class="ptc-eye-toggle" data-target="setpw-confirm" aria-label="Show password"></button>
             </div>
           </div>
-          <div id="setpw-error" style="color:var(--refund); font-size:12.5px; min-height:16px; margin-bottom:6px;"></div>
-          <div class="ptc-actions" style="margin-top:8px; justify-content:flex-end;">
-            <button class="ptc-btn ptc-btn-primary" id="btn-set-password" style="background:#1E7A46;">Set Access Code &amp; Continue</button>
+          <div id="setpw-error" role="alert"></div>
+          <div class="ptc-actions" style="margin-top:8px; display:block;">
+            <button class="ptc-btn ptc-btn-primary" id="btn-set-password" disabled>UPDATE ACCESS CODE</button>
           </div>
         </div>
 
-        <div style="margin-top:14px; padding:12px 14px; background:var(--card,#F7F9FC); border-radius:10px; border:1px solid var(--line,#E3E7EE);">
-          <p style="font-size:11.5px; font-weight:700; color:var(--ink); margin:0 0 6px;">Access Code rules:</p>
-          <ul style="font-size:11.5px; color:var(--ink-soft); margin:0; padding-left:16px; line-height:1.7;">
-            <li>At least 6 characters</li>
-            <li>At least one letter (a–z / A–Z)</li>
-            <li>At least one number (0–9)</li>
-            <li>At least one special character (e.g. ! @ # $ % *)</li>
-          </ul>
-        </div>
       </div>
+      <div class="aero-auth-footer">AUTHORIZED PERSONNEL ONLY</div>
+
     </div>
 
     <div class="ptc-card" id="ptc-card">
@@ -2221,7 +2400,40 @@
   $('link-use-different-email').addEventListener('click', (e) => {
     e.preventDefault();
     localStorage.removeItem(REMEMBERED_EMAIL_KEY);
+    $('cloud-auth-email').value = '';
+    $('cloud-auth-password').value = '';
+    $('cloud-auth-error').textContent = '';
     setupSignInView();
+    $('cloud-auth-email').focus();
+  });
+
+  // Enter key submits the sign-in form from either field
+  ['cloud-auth-email','cloud-auth-password'].forEach(id => {
+    $(id).addEventListener('keydown', (e) => { if(e.key === 'Enter'){ e.preventDefault(); $('btn-cloud-auth-signin').click(); } });
+  });
+
+  // ---- Live Access Code rules checklist (setpassword/reset view only) ----
+  function updatePasswordRulesUI(){
+    const pw = $('setpw-password').value;
+    const confirm = $('setpw-confirm').value;
+    const rules = {
+      'pw-rule-length': pw.length >= 6,
+      'pw-rule-letter': /[a-zA-Z]/.test(pw),
+      'pw-rule-number': /[0-9]/.test(pw),
+      'pw-rule-special': /[^a-zA-Z0-9]/.test(pw)
+    };
+    let allOk = true;
+    Object.entries(rules).forEach(([id, ok]) => {
+      $(id).classList.toggle('ok', ok);
+      if(!ok) allOk = false;
+    });
+    const matches = pw.length > 0 && pw === confirm;
+    $('btn-set-password').disabled = !(allOk && matches);
+  }
+  $('setpw-password').addEventListener('input', updatePasswordRulesUI);
+  $('setpw-confirm').addEventListener('input', updatePasswordRulesUI);
+  ['setpw-password','setpw-confirm'].forEach(id => {
+    $(id).addEventListener('keydown', (e) => { if(e.key === 'Enter' && !$('btn-set-password').disabled){ e.preventDefault(); $('btn-set-password').click(); } });
   });
 
   function signInEmailForCurrentView(){
@@ -2234,12 +2446,23 @@
     const code = $('cloud-auth-password').value;
     $('cloud-auth-error').textContent = '';
     if(!email || !code){ $('cloud-auth-error').textContent = 'Enter your email and Access Code.'; return; }
+    const btn = $('btn-cloud-auth-signin');
+    btn.disabled = true;
+    $('signin-btn-label').innerHTML = '<span class="aero-spinner"></span> SIGNING IN...';
     firebase.auth().signInWithEmailAndPassword(email, code)
       .then(() => { localStorage.setItem(REMEMBERED_EMAIL_KEY, email); })
-      .catch(err => { $('cloud-auth-error').textContent = friendlyAuthError(err); });
+      .catch(err => {
+        $('cloud-auth-error').textContent = friendlyAuthError(err);
+        $('cloud-auth-password').value = ''; // clear the code after a failed attempt
+      })
+      .finally(() => {
+        btn.disabled = false;
+        $('signin-btn-label').textContent = 'SIGN IN →';
+      });
   });
 
-  $('btn-cloud-auth-reset').addEventListener('click', () => {
+  $('btn-cloud-auth-reset').addEventListener('click', (e) => {
+    e.preventDefault();
     const email = signInEmailForCurrentView();
     $('cloud-auth-error').textContent = '';
     $('cloud-auth-reset-msg').style.display = 'none';
@@ -2289,6 +2512,8 @@
         window.localStorage.removeItem('aeroops_pending_verify_email');
         history.replaceState(null, '', window.location.pathname);
         awaitingNewPassword = true;
+        $('setpw-password').value = ''; $('setpw-confirm').value = '';
+        updatePasswordRulesUI();
         showAuthView('setpassword');
       })
       .catch(err => {
@@ -2310,6 +2535,8 @@
         history.replaceState(null, '', window.location.pathname);
         $('auth-view-setpassword').querySelector('h3').textContent = 'Reset your Access Code';
         $('auth-view-setpassword').querySelector('p').textContent = 'Choose a new Access Code for ' + email + '.';
+        $('setpw-password').value = ''; $('setpw-confirm').value = '';
+        updatePasswordRulesUI();
         showAuthView('setpassword');
       })
       .catch(err => {
