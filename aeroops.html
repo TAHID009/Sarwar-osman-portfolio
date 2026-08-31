@@ -861,12 +861,13 @@
   #cloud-auth-error:not(:empty)::before,
   #reg-error:not(:empty)::before,
   #setpw-error:not(:empty)::before{ content:"!"; flex:0 0 auto; width:16px; height:16px; border-radius:50%; background:var(--refund); color:#fff; font-size:11px; font-weight:800; display:flex; align-items:center; justify-content:center; }
-  #cloud-auth-reset-msg:not([style*="display: none"]){
+  #cloud-auth-reset-msg{ display:none; }
+  #cloud-auth-reset-msg.aero-visible{
     display:flex !important; align-items:center; gap:8px;
     background:var(--brand-soft); border:1px solid rgba(14,110,115,.25);
     border-radius:10px; padding:9px 11px;
   }
-  #cloud-auth-reset-msg:not([style*="display: none"])::before{ content:"✓"; flex:0 0 auto; width:16px; height:16px; border-radius:50%; background:var(--brand); color:#fff; font-size:10px; font-weight:800; display:flex; align-items:center; justify-content:center; }
+  #cloud-auth-reset-msg.aero-visible::before{ content:"✓"; flex:0 0 auto; width:16px; height:16px; border-radius:50%; background:var(--brand); color:#fff; font-size:10px; font-weight:800; display:flex; align-items:center; justify-content:center; }
 
   #aero-pw-rules{ margin-top:14px; padding:12px 14px; background:var(--paper); border-radius:12px; border:1px solid var(--line); }
   #aero-pw-rules p{ font-size:11px !important; font-weight:700 !important; color:var(--ink); margin:0 0 8px !important; text-transform:uppercase; letter-spacing:.04em; }
@@ -1031,7 +1032,7 @@
 
     <div class="ptc-modal-backdrop" id="cloud-auth-modal-backdrop" style="display:flex; z-index:5000;">
       <div class="aero-auth-topbar">
-        <div class="brandmark">AEROOPS<small>AVIATION OPERATIONS</small></div>
+        <div class="brandmark">AEROOPS<small>WORK RECORD SYSTEM</small></div>
         <div class="aero-auth-status"><span class="dot"></span>SECURE ACCESS</div>
       </div>
 
@@ -1040,7 +1041,7 @@
         <div class="aero-auth-brand">
           <div class="icon">✈</div>
           <div class="name">AEROOPS</div>
-          <div class="tag">Aviation Operations Portal</div>
+          <div class="tag">Work Record System</div>
         </div>
 
         <!-- ===== VIEW: SIGN IN ===== -->
@@ -1059,7 +1060,7 @@
             </div>
           </div>
           <div id="cloud-auth-error" role="alert"></div>
-          <div id="cloud-auth-reset-msg" role="status" style="display:none;"></div>
+          <div id="cloud-auth-reset-msg" role="status"></div>
           <p style="text-align:center; margin:2px 0 16px;">
             <a href="#" id="btn-cloud-auth-reset" style="font-size:12.5px; font-weight:600; color:var(--booking);">Forgot Access Code?</a>
           </p>
@@ -2466,7 +2467,7 @@
     e.preventDefault();
     const email = signInEmailForCurrentView();
     $('cloud-auth-error').textContent = '';
-    $('cloud-auth-reset-msg').style.display = 'none';
+    $('cloud-auth-reset-msg').classList.remove('aero-visible');
     if(!email){ $('cloud-auth-error').textContent = 'Enter your email above first, then click "Forgot Access Code?"'; return; }
     const actionCodeSettings = {
       url: window.location.origin + window.location.pathname,
@@ -2475,7 +2476,7 @@
     firebase.auth().sendPasswordResetEmail(email, actionCodeSettings)
       .then(() => {
         $('cloud-auth-reset-msg').textContent = 'Reset link sent to ' + email + ' — open it, then set a new Access Code.';
-        $('cloud-auth-reset-msg').style.display = 'block';
+        $('cloud-auth-reset-msg').classList.add('aero-visible');
       })
       .catch(err => { $('cloud-auth-error').textContent = friendlyAuthError(err); });
   });
@@ -2566,7 +2567,7 @@
           setupSignInView();
           $('cloud-auth-password').value = '';
           $('cloud-auth-reset-msg').textContent = 'Access Code updated — sign in with your new code.';
-          $('cloud-auth-reset-msg').style.display = 'block';
+          $('cloud-auth-reset-msg').classList.add('aero-visible');
         })
         .catch(err => { $('setpw-error').textContent = friendlyAuthError(err); });
       return;
