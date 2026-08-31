@@ -735,8 +735,9 @@
       radial-gradient(1100px 620px at 12% -10%, rgba(46,111,149,.35), transparent 60%),
       radial-gradient(900px 560px at 108% 108%, rgba(14,110,115,.30), transparent 55%),
       linear-gradient(180deg, #0B2545 0%, #0E2E52 100%) !important;
-    position:relative;
-    overflow:hidden;
+    position:fixed !important;
+    inset:0 !important;
+    overflow-y:auto;
     padding:24px;
   }
   #cloud-auth-modal-backdrop::before{
