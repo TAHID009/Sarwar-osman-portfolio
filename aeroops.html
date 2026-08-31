@@ -902,7 +902,111 @@
   }
 
 </style>
-</head><body><div class="site-shell">
+</head><body>
+    <div class="ptc-modal-backdrop" id="cloud-auth-modal-backdrop" style="display:flex; z-index:5000;">
+      <div class="aero-auth-topbar">
+        <a class="brandmark" href="index.html" aria-label="Return to Home"><span>AEROOPS<small>WORK RECORD SYSTEM</small></span></a>
+        <div class="aero-auth-status"><span class="dot"></span>SECURE ACCESS</div>
+      </div>
+
+      <div class="ptc-modal">
+
+        <div class="aero-auth-brand">
+          <div class="icon">✈</div>
+          <div class="name">AEROOPS</div>
+          <div class="tag">Work Record System</div>
+        </div>
+
+        <!-- ===== VIEW: SIGN IN ===== -->
+        <div id="auth-view-signin">
+          <h3>Welcome back</h3>
+          <p id="signin-subtext">Sign in to continue to your AeroOps workspace.</p>
+          <div class="ptc-field" id="signin-email-field" style="margin-bottom:14px; display:none;">
+            <label for="cloud-auth-email">Registered Email</label>
+            <input type="email" id="cloud-auth-email" placeholder="name@example.com" autocomplete="username" />
+          </div>
+          <div class="ptc-field" style="margin-bottom:6px;">
+            <label for="cloud-auth-password">Access Code</label>
+            <div style="position:relative;">
+              <input type="password" id="cloud-auth-password" placeholder="Enter your Access Code" autocomplete="current-password" style="width:100%; box-sizing:border-box; padding-right:42px;" />
+              <button type="button" class="ptc-eye-toggle" data-target="cloud-auth-password" aria-label="Show password"></button>
+            </div>
+          </div>
+          <div id="cloud-auth-error" role="alert"></div>
+          <div id="cloud-auth-reset-msg" role="status"></div>
+          <p style="text-align:center; margin:2px 0 16px;">
+            <a href="#" id="btn-cloud-auth-reset" style="font-size:12.5px; font-weight:600; color:var(--booking);">Forgot Access Code?</a>
+          </p>
+          <div class="ptc-actions" style="display:block;">
+            <button class="ptc-btn ptc-btn-primary" id="btn-cloud-auth-signin"><span id="signin-btn-label">SIGN IN →</span></button>
+          </div>
+          <p style="font-size:12px; color:var(--muted); margin:16px 0 0; text-align:center;">
+            <a href="#" id="link-go-register" style="color:var(--muted); font-weight:600;">First time here? Register with your email →</a><br>
+            <a href="#" id="link-use-different-email" style="color:var(--muted); font-weight:600; display:none;">Not your account? Sign in with a different email →</a>
+          </p>
+        </div>
+
+        <!-- ===== VIEW: REGISTER (step 1 — enter email) ===== -->
+        <div id="auth-view-register" style="display:none;">
+          <h3>Register</h3>
+          <p>Enter your email — we'll send a verification link before you set your Access Code.</p>
+          <div class="ptc-field" style="margin-bottom:10px;">
+            <label for="reg-email">Registered Email</label>
+            <input type="email" id="reg-email" placeholder="name@example.com" autocomplete="username" />
+          </div>
+          <div id="reg-error" role="alert"></div>
+          <div class="ptc-actions" style="margin-top:8px; justify-content:space-between; flex-wrap:wrap;">
+            <button class="ptc-btn ptc-btn-ghost" id="link-back-to-signin" style="border:none; color:var(--muted); font-size:12px; padding:8px 0; font-weight:600;">← Back to Sign In</button>
+            <button class="ptc-btn ptc-btn-primary" id="btn-send-verify-link" style="width:auto;">Send Verification Link</button>
+          </div>
+        </div>
+
+        <!-- ===== VIEW: LINK SENT ===== -->
+        <div id="auth-view-sent" style="display:none; text-align:center;">
+          <div style="font-size:34px; margin-bottom:10px;">📩</div>
+          <h3>Check your email</h3>
+          <p>We sent a verification link to <strong id="sent-email-display"></strong>. Open it on this device to continue.</p>
+          <button class="ptc-btn ptc-btn-ghost" id="link-back-to-signin-2" style="border-color:var(--line); font-weight:600;">← Back to Sign In</button>
+        </div>
+
+        <!-- ===== VIEW: SET / RESET ACCESS CODE ===== -->
+        <div id="auth-view-setpassword" style="display:none;">
+          <h3>Create New Access Code</h3>
+          <p>This is the only time you'll set this. You'll only need the code (not your email) to sign in from now on.</p>
+          <div class="ptc-field" style="margin-bottom:10px;">
+            <label for="setpw-password">New Access Code</label>
+            <div style="position:relative;">
+              <input type="password" id="setpw-password" placeholder="At least 6 characters" style="width:100%; box-sizing:border-box; padding-right:42px;" />
+              <button type="button" class="ptc-eye-toggle" data-target="setpw-password" aria-label="Show password"></button>
+            </div>
+          </div>
+          <div id="aero-pw-rules">
+            <p>Access Code requirements</p>
+            <ul>
+              <li id="pw-rule-length">At least 6 characters</li>
+              <li id="pw-rule-letter">At least one letter (a–z / A–Z)</li>
+              <li id="pw-rule-number">At least one number (0–9)</li>
+              <li id="pw-rule-special">At least one special character (e.g. ! @ # $ % *)</li>
+            </ul>
+          </div>
+          <div class="ptc-field" style="margin:14px 0 6px;">
+            <label for="setpw-confirm">Confirm Access Code</label>
+            <div style="position:relative;">
+              <input type="password" id="setpw-confirm" placeholder="Re-enter the same code" style="width:100%; box-sizing:border-box; padding-right:42px;" />
+              <button type="button" class="ptc-eye-toggle" data-target="setpw-confirm" aria-label="Show password"></button>
+            </div>
+          </div>
+          <div id="setpw-error" role="alert"></div>
+          <div class="ptc-actions" style="margin-top:8px; display:block;">
+            <button class="ptc-btn ptc-btn-primary" id="btn-set-password" disabled>UPDATE ACCESS CODE</button>
+          </div>
+        </div>
+
+      </div>
+      <div class="aero-auth-footer">AUTHORIZED PERSONNEL ONLY</div>
+
+    </div>
+<div class="site-shell">
 <header class="header"><div class="container nav-wrap"><div class="nav">
 <a class="logo" href="index.html"><span class="logo-mark">S</span><span>SARWAR</span></a>
 <nav class="nav-links" aria-label="Primary navigation">
@@ -1040,109 +1144,6 @@
       </div>
     </div>
 
-    <div class="ptc-modal-backdrop" id="cloud-auth-modal-backdrop" style="display:flex; z-index:5000;">
-      <div class="aero-auth-topbar">
-        <a class="brandmark" href="index.html" aria-label="Return to Home"><span>AEROOPS<small>WORK RECORD SYSTEM</small></span></a>
-        <div class="aero-auth-status"><span class="dot"></span>SECURE ACCESS</div>
-      </div>
-
-      <div class="ptc-modal">
-
-        <div class="aero-auth-brand">
-          <div class="icon">✈</div>
-          <div class="name">AEROOPS</div>
-          <div class="tag">Work Record System</div>
-        </div>
-
-        <!-- ===== VIEW: SIGN IN ===== -->
-        <div id="auth-view-signin">
-          <h3>Welcome back</h3>
-          <p id="signin-subtext">Sign in to continue to your AeroOps workspace.</p>
-          <div class="ptc-field" id="signin-email-field" style="margin-bottom:14px; display:none;">
-            <label for="cloud-auth-email">Registered Email</label>
-            <input type="email" id="cloud-auth-email" placeholder="name@example.com" autocomplete="username" />
-          </div>
-          <div class="ptc-field" style="margin-bottom:6px;">
-            <label for="cloud-auth-password">Access Code</label>
-            <div style="position:relative;">
-              <input type="password" id="cloud-auth-password" placeholder="Enter your Access Code" autocomplete="current-password" style="width:100%; box-sizing:border-box; padding-right:42px;" />
-              <button type="button" class="ptc-eye-toggle" data-target="cloud-auth-password" aria-label="Show password"></button>
-            </div>
-          </div>
-          <div id="cloud-auth-error" role="alert"></div>
-          <div id="cloud-auth-reset-msg" role="status"></div>
-          <p style="text-align:center; margin:2px 0 16px;">
-            <a href="#" id="btn-cloud-auth-reset" style="font-size:12.5px; font-weight:600; color:var(--booking);">Forgot Access Code?</a>
-          </p>
-          <div class="ptc-actions" style="display:block;">
-            <button class="ptc-btn ptc-btn-primary" id="btn-cloud-auth-signin"><span id="signin-btn-label">SIGN IN →</span></button>
-          </div>
-          <p style="font-size:12px; color:var(--muted); margin:16px 0 0; text-align:center;">
-            <a href="#" id="link-go-register" style="color:var(--muted); font-weight:600;">First time here? Register with your email →</a><br>
-            <a href="#" id="link-use-different-email" style="color:var(--muted); font-weight:600; display:none;">Not your account? Sign in with a different email →</a>
-          </p>
-        </div>
-
-        <!-- ===== VIEW: REGISTER (step 1 — enter email) ===== -->
-        <div id="auth-view-register" style="display:none;">
-          <h3>Register</h3>
-          <p>Enter your email — we'll send a verification link before you set your Access Code.</p>
-          <div class="ptc-field" style="margin-bottom:10px;">
-            <label for="reg-email">Registered Email</label>
-            <input type="email" id="reg-email" placeholder="name@example.com" autocomplete="username" />
-          </div>
-          <div id="reg-error" role="alert"></div>
-          <div class="ptc-actions" style="margin-top:8px; justify-content:space-between; flex-wrap:wrap;">
-            <button class="ptc-btn ptc-btn-ghost" id="link-back-to-signin" style="border:none; color:var(--muted); font-size:12px; padding:8px 0; font-weight:600;">← Back to Sign In</button>
-            <button class="ptc-btn ptc-btn-primary" id="btn-send-verify-link" style="width:auto;">Send Verification Link</button>
-          </div>
-        </div>
-
-        <!-- ===== VIEW: LINK SENT ===== -->
-        <div id="auth-view-sent" style="display:none; text-align:center;">
-          <div style="font-size:34px; margin-bottom:10px;">📩</div>
-          <h3>Check your email</h3>
-          <p>We sent a verification link to <strong id="sent-email-display"></strong>. Open it on this device to continue.</p>
-          <button class="ptc-btn ptc-btn-ghost" id="link-back-to-signin-2" style="border-color:var(--line); font-weight:600;">← Back to Sign In</button>
-        </div>
-
-        <!-- ===== VIEW: SET / RESET ACCESS CODE ===== -->
-        <div id="auth-view-setpassword" style="display:none;">
-          <h3>Create New Access Code</h3>
-          <p>This is the only time you'll set this. You'll only need the code (not your email) to sign in from now on.</p>
-          <div class="ptc-field" style="margin-bottom:10px;">
-            <label for="setpw-password">New Access Code</label>
-            <div style="position:relative;">
-              <input type="password" id="setpw-password" placeholder="At least 6 characters" style="width:100%; box-sizing:border-box; padding-right:42px;" />
-              <button type="button" class="ptc-eye-toggle" data-target="setpw-password" aria-label="Show password"></button>
-            </div>
-          </div>
-          <div id="aero-pw-rules">
-            <p>Access Code requirements</p>
-            <ul>
-              <li id="pw-rule-length">At least 6 characters</li>
-              <li id="pw-rule-letter">At least one letter (a–z / A–Z)</li>
-              <li id="pw-rule-number">At least one number (0–9)</li>
-              <li id="pw-rule-special">At least one special character (e.g. ! @ # $ % *)</li>
-            </ul>
-          </div>
-          <div class="ptc-field" style="margin:14px 0 6px;">
-            <label for="setpw-confirm">Confirm Access Code</label>
-            <div style="position:relative;">
-              <input type="password" id="setpw-confirm" placeholder="Re-enter the same code" style="width:100%; box-sizing:border-box; padding-right:42px;" />
-              <button type="button" class="ptc-eye-toggle" data-target="setpw-confirm" aria-label="Show password"></button>
-            </div>
-          </div>
-          <div id="setpw-error" role="alert"></div>
-          <div class="ptc-actions" style="margin-top:8px; display:block;">
-            <button class="ptc-btn ptc-btn-primary" id="btn-set-password" disabled>UPDATE ACCESS CODE</button>
-          </div>
-        </div>
-
-      </div>
-      <div class="aero-auth-footer">AUTHORIZED PERSONNEL ONLY</div>
-
-    </div>
 
     <div class="ptc-card" id="ptc-card">
       <div class="ptc-editing-banner" id="ptc-editing-banner">
