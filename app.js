@@ -108,7 +108,25 @@
   const toggle = el("mobileToggle"), links = el("mobileLinks");
   if (toggle && links) {
     links.innerHTML = `<a href="index.html">Home</a><a href="about.html">About</a><a href="experience.html">Experience</a><a href="skills.html">Skills</a><a href="education.html">Education</a><a href="activities.html">Activities</a><a href="aeroops.html">AeroOps Desk</a><a href="contact.html">Contact</a>`;
-    toggle.addEventListener("click", ()=>links.classList.toggle("open"));
+    // The header is sticky and can be anywhere relative to the document depending
+    // on scroll, but #mobileLinks is a normal sibling below it in the page flow.
+    // Without this, opening the menu while scrolled down places it back up at the
+    // header's original (unstuck) spot in the document instead of under the header
+    // the user can actually see, so it looks like nothing happened until they
+    // scroll back to the top. Pinning it to the viewport and recalculating its
+    // position from the header's live bounding box every time it opens (and on
+    // resize) keeps it directly under the visible header no matter where the
+    // user has scrolled to.
+    function positionMobileMenu() {
+      const headerBox = document.querySelector(".header");
+      if (headerBox) links.style.top = (headerBox.getBoundingClientRect().bottom + 8) + "px";
+    }
+    toggle.addEventListener("click", () => {
+      const opening = !links.classList.contains("open");
+      if (opening) positionMobileMenu();
+      links.classList.toggle("open");
+    });
+    window.addEventListener("resize", () => { if (links.classList.contains("open")) positionMobileMenu(); });
   }
 
   // AeroOps Desk nav label — shows "Login" until unlocked on this device/tab, then "AeroOps Desk"
