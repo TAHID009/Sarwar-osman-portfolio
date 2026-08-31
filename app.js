@@ -47,7 +47,7 @@
   if (el("experienceFull")) {
     el("experienceFull").innerHTML = profile.experience.map(x=>`
       <article class="job-card">
-        <div class="job-date"><span class="timeline-dot"></span>${esc(x.period)}</div>
+        ${x.period ? `<div class="job-date"><span class="timeline-dot"></span>${esc(x.period)}</div>` : `<div class="job-date"></div>`}
         <div>
           <h3>${esc(x.role)}</h3>
           <h4>${esc(x.company)} · ${esc(x.location)}</h4>

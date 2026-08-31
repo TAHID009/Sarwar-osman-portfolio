@@ -16,7 +16,7 @@ const profile = {
   experience: [
     {
       period: "Aug 2026 – Present",
-      role: "Executive Reservation & Ticketing",
+      role: "Air Ticketing & Reservation Executive",
       company: "JF (Bangladesh) Limited – Finlay Travels",
       location: "Chattogram, Bangladesh",
       bullets: [
@@ -28,23 +28,13 @@ const profile = {
     },
     {
       period: "Nov 2023 – Jul 2026",
-      role: "Ticketing & Reservation Officer",
+      role: "Air Ticketing & Reservation Executive",
       company: "BeFresh PLC",
       location: "Chattogram, Bangladesh",
       bullets: [
         "Oversaw reservation and ticketing operations using GDS, NDC and OTA channels.",
         "Supported customers through booking, documentation, schedule changes and post-ticketing service.",
         "Applied fare rules and airline policies while processing operational requests."
-      ]
-    },
-    {
-      period: "Mar 2023 – Oct 2023",
-      role: "Air Ticketing & Reservation Executive",
-      company: "Travel Destination",
-      location: "Bangladesh",
-      bullets: [
-        "Worked on airline reservation and ticketing activities with customer-facing service.",
-        "Supported fare checking, booking, ticket issuance and post-sale assistance."
       ]
     },
     {
