@@ -2034,6 +2034,8 @@
   // so the apiKey alone (which is not a secret) can no longer grant access —
   // only a real account, password-protected, can.
   let awaitingNewPassword = false; // true right after email-link verification, until Access Code is set
+  let passwordResetOobCode = null; // set once a "Forgot Access Code?" link's code is verified
+  let passwordResetEmail = null;
 
   // ---- Inactivity auto-refresh: after 10 minutes with no interaction on an
   // authenticated AeroOps session, reload — which the reload-detector above
@@ -2092,6 +2094,7 @@
         // always starts signed out regardless of what happened before.
         auth.setPersistence(firebase.auth.Auth.Persistence.NONE).catch(() => {});
         checkForEmailLinkSignIn();
+        checkForPasswordResetLink();
         auth.onAuthStateChanged((user) => {
           cloudAuthUser = user;
           if(user){
@@ -2241,7 +2244,11 @@
     $('cloud-auth-error').textContent = '';
     $('cloud-auth-reset-msg').style.display = 'none';
     if(!email){ $('cloud-auth-error').textContent = 'Enter your email above first, then click "Forgot Access Code?"'; return; }
-    firebase.auth().sendPasswordResetEmail(email)
+    const actionCodeSettings = {
+      url: window.location.origin + window.location.pathname,
+      handleCodeInApp: true
+    };
+    firebase.auth().sendPasswordResetEmail(email, actionCodeSettings)
       .then(() => {
         $('cloud-auth-reset-msg').textContent = 'Reset link sent to ' + email + ' — open it, then set a new Access Code.';
         $('cloud-auth-reset-msg').style.display = 'block';
@@ -2290,6 +2297,27 @@
       });
   }
 
+  // ---- On page load: were we just brought back here by clicking a "Forgot Access Code?" reset link? ----
+  function checkForPasswordResetLink(){
+    const params = new URLSearchParams(window.location.search);
+    if(params.get('mode') !== 'resetPassword') return;
+    const oobCode = params.get('oobCode');
+    if(!oobCode) return;
+    firebase.auth().verifyPasswordResetCode(oobCode)
+      .then((email) => {
+        passwordResetOobCode = oobCode;
+        passwordResetEmail = email;
+        history.replaceState(null, '', window.location.pathname);
+        $('auth-view-setpassword').querySelector('h3').textContent = 'Reset your Access Code';
+        $('auth-view-setpassword').querySelector('p').textContent = 'Choose a new Access Code for ' + email + '.';
+        showAuthView('setpassword');
+      })
+      .catch(err => {
+        showAuthView('signin');
+        $('cloud-auth-error').textContent = friendlyAuthError(err);
+      });
+  }
+
   $('btn-set-password').addEventListener('click', () => {
     const pw = $('setpw-password').value;
     const confirm = $('setpw-confirm').value;
@@ -2297,6 +2325,25 @@
     const issues = accessCodeIssues(pw);
     if(issues.length){ $('setpw-error').textContent = 'Access Code needs: ' + issues.join(', ') + '.'; return; }
     if(pw !== confirm){ $('setpw-error').textContent = 'Codes don\'t match — re-enter both.'; return; }
+
+    if(passwordResetOobCode){
+      // Came from "Forgot Access Code?" — not signed in yet, just verified the reset link.
+      const oobCode = passwordResetOobCode, resetEmail = passwordResetEmail;
+      firebase.auth().confirmPasswordReset(oobCode, pw)
+        .then(() => {
+          passwordResetOobCode = null;
+          passwordResetEmail = null;
+          if(resetEmail) localStorage.setItem(REMEMBERED_EMAIL_KEY, resetEmail);
+          showAuthView('signin');
+          setupSignInView();
+          $('cloud-auth-password').value = '';
+          $('cloud-auth-reset-msg').textContent = 'Access Code updated — sign in with your new code.';
+          $('cloud-auth-reset-msg').style.display = 'block';
+        })
+        .catch(err => { $('setpw-error').textContent = friendlyAuthError(err); });
+      return;
+    }
+
     const user = firebase.auth().currentUser;
     if(!user){ $('setpw-error').textContent = 'Session expired — please register again.'; showAuthView('register'); return; }
     user.updatePassword(pw)
@@ -2320,6 +2367,8 @@
     if(code === 'auth/invalid-email') return 'That email address doesn\'t look valid.';
     if(code === 'auth/too-many-requests') return 'Too many attempts — wait a bit and try again.';
     if(code === 'auth/weak-password') return 'Access Code must be at least 6 characters.';
+    if(code === 'auth/expired-action-code') return 'This reset link has expired — request a new one.';
+    if(code === 'auth/invalid-action-code') return 'This reset link is invalid or has already been used — request a new one.';
     if(code === 'auth/operation-not-allowed') return 'Email link sign-in isn\'t enabled yet — turn it on in Firebase Console → Authentication → Sign-in method → Email Link.';
     if(code === 'auth/requires-recent-login') return 'For security, please sign in again before setting a new code.';
     console.error('Auth error', err);
