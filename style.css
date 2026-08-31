@@ -107,7 +107,7 @@ img{max-width:100%;display:block}
 .experience-list{display:grid;gap:18px}
 .job-card{display:grid;grid-template-columns:185px 1fr;gap:24px;background:#fff;border:1px solid var(--line);border-radius:22px;padding:24px 26px;transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease}
 .job-card:hover{transform:translateY(-3px);box-shadow:0 16px 38px rgba(11,61,99,.1);border-color:#d3e3f0}
-.job-date{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#8a94a3;font-weight:800}
+.job-date{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#8a94a3;font-weight:800;margin-bottom:2px}
 .job-card h3{font-size:18px;margin:0 0 4px}
 .job-card h4{font-size:12px;color:#2b5f8a;margin:0 0 12px}
 .job-card ul{margin:0;padding-left:18px;color:#626d7d;font-size:13px}
@@ -150,6 +150,8 @@ img{max-width:100%;display:block}
   .hero-grid{grid-template-columns:1fr}.hero-copy{padding:60px 42px 20px}.hero-visual{min-height:500px}
   .about-grid{grid-template-columns:1fr}.cards{grid-template-columns:1fr 1fr}.skill-grid{grid-template-columns:1fr 1fr}
   .footer-grid{grid-template-columns:1fr 1fr}
+  .job-card{grid-template-columns:1fr;gap:14px;padding:22px 24px}
+  .job-date{display:flex;align-items:center}
 }
 @media (max-width: 680px){
   .container{width:min(100% - 24px,1180px)}
@@ -157,7 +159,8 @@ img{max-width:100%;display:block}
   .hero{border-radius:22px}.hero-copy{padding:44px 22px 10px}.hero h1{font-size:43px}.hero-visual{padding:22px 18px 0;min-height:420px}.photo-card{height:390px}
   .floating-card{right:10px;bottom:24px}
   .section{padding:56px 0}.cards,.education-grid,.contact-grid,.skill-grid{grid-template-columns:1fr}
-  .fact-grid{grid-template-columns:1fr}.job-card{grid-template-columns:1fr;gap:10px}
+  .fact-grid{grid-template-columns:1fr}
+  .job-card{grid-template-columns:1fr;gap:10px;padding:18px 18px;border-radius:18px}.job-card h3{font-size:16px}.job-card ul{padding-left:16px}
   .contact-band{flex-direction:column;align-items:flex-start}.footer-grid{grid-template-columns:1fr}
 }
 
