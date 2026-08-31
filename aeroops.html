@@ -26,6 +26,11 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
 <style>
 
+  /* This page is large (big tables/dashboard) — the site-wide crossfade
+     transition (style.css) can catch it mid-layout and look shaky. Opt
+     this page out so entering/leaving AeroOps is a plain, instant swap. */
+  @view-transition{ navigation:none; }
+
   #ptc-root{
     --ink:#0B2545;
     --ink-soft:#3C5573;
