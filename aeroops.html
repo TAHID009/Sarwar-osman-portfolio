@@ -1349,6 +1349,8 @@
       <!-- ===== REFUND / VOID FIELDS ===== -->
       <div id="section-Refund" style="display:none;">
         <div class="ptc-section-label" id="refund-void-label">Refund Details</div>
+
+        <!-- 01 — Refund Information -->
         <div class="ptc-row">
           <div class="ptc-field">
             <label for="f-oldtkt-f">Ticket Number</label>
@@ -1358,42 +1360,104 @@
             <label for="f-mode-f">Refund Type</label>
             <select id="f-mode-f">
               <option value="" disabled selected>Select Type</option>
-              <option value="FULL">Full Refund</option>
-              <option value="PARTIAL">Partial Refund</option>
-              <option value="AS_PER_POLICY">As Per Policy</option>
+              <option value="FULL_UNUSED">Full Refund — Unused Ticket</option>
+              <option value="FULL_UNUSED_CHARGE">Full Refund — Unused Ticket with Airline Charge</option>
+              <option value="PARTIAL">Partial Refund — Partially Used Ticket</option>
+              <option value="TAX_ONLY">Tax Refund Only</option>
             </select>
           </div>
         </div>
-        <div class="ptc-row" id="refund-payable-row">
-          <div class="ptc-field" id="refund-payable-wrap">
-            <label for="f-payable-f">Ticket Payable Fare</label>
-            <input type="number" step="0.01" id="f-payable-f" class="mono ptc-refund-calc" placeholder="0.00" />
+
+        <!-- 02 — Fare & Tax Information -->
+        <div class="ptc-section-label" id="refund-faretax-label" style="font-size:12px; padding-top:10px; margin-top:2px;">Fare &amp; Tax Information</div>
+        <div class="ptc-row" id="refund-fare-row">
+          <div class="ptc-field" id="refund-totalfare-wrap">
+            <label for="f-reftotalfare-f">Total Fare</label>
+            <input type="number" step="0.01" id="f-reftotalfare-f" class="mono ptc-refund-calc" placeholder="0.00" />
           </div>
-          <div class="ptc-field" id="refund-discount-wrap">
-            <label for="f-discount-f">Discount Given</label>
-            <input type="number" step="0.01" id="f-discount-f" class="mono ptc-refund-calc" placeholder="0.00" />
+          <div class="ptc-field" id="refund-usedseg-wrap" style="display:none;">
+            <label for="f-usedseg-f">Used Segment Fare</label>
+            <input type="number" step="0.01" id="f-usedseg-f" class="mono ptc-refund-calc" placeholder="0.00" />
           </div>
         </div>
-        <div class="ptc-row" id="refund-charges-row">
+        <div class="ptc-row" id="refund-tax-row">
           <div class="ptc-field">
-            <label for="f-airline-f">Airline Charge</label>
-            <input type="number" step="0.01" id="f-airline-f" class="mono ptc-refund-calc" placeholder="0.00" />
+            <label for="f-reftotaltax-f">Total Tax</label>
+            <input type="number" step="0.01" id="f-reftotaltax-f" class="mono ptc-refund-calc" placeholder="0.00" />
           </div>
           <div class="ptc-field">
-            <label for="f-svc-f">Service Charge</label>
+            <label for="f-nonrefundtax-f">Non-Refundable Tax</label>
+            <input type="number" step="0.01" id="f-nonrefundtax-f" class="mono ptc-refund-calc" placeholder="0.00" value="0" />
+          </div>
+        </div>
+
+        <!-- 03 — Airline Charges -->
+        <div class="ptc-section-label" style="font-size:12px; padding-top:10px; margin-top:2px;">Airline Charges</div>
+        <div class="ptc-row" id="refund-charges-row">
+          <div class="ptc-field">
+            <label for="f-airline-f" id="f-airline-f-label">Airline Refund/Cancellation Fee</label>
+            <input type="number" step="0.01" id="f-airline-f" class="mono ptc-refund-calc" placeholder="0.00" value="0" />
+          </div>
+          <div class="ptc-field" id="refund-commission-wrap">
+            <label for="f-commission-f">Commission Adjustment</label>
+            <input type="number" step="0.01" id="f-commission-f" class="mono ptc-refund-calc" placeholder="0.00" value="0" />
+          </div>
+        </div>
+
+        <!-- 04 — Agency Service Charge -->
+        <div class="ptc-section-label" style="font-size:12px; padding-top:10px; margin-top:2px;">Agency Service Charge</div>
+        <div class="ptc-row" id="refund-svc-row">
+          <div class="ptc-field" id="refund-svctoggle-wrap">
+            <label>Service Charge Applied?
+              <span class="ptc-info" tabindex="0" aria-label="Service charge info">ⓘ<span class="ptc-tooltip">The agency service charge is separate from the airline refund. It never changes the Airline Refund amount above — it only affects the final Client Refund / Adjustment below.</span></span>
+            </label>
+            <div style="display:flex; gap:8px;">
+              <button type="button" class="ptc-btn ptc-btn-ghost ptc-adj-btn ptc-svc-btn" data-val="NO" id="btn-svc-no" style="flex:1; padding:9px 10px;">No</button>
+              <button type="button" class="ptc-btn ptc-btn-ghost ptc-adj-btn ptc-svc-btn" data-val="YES" id="btn-svc-yes" style="flex:1; padding:9px 10px;">Yes</button>
+            </div>
+            <input type="hidden" id="f-svcapplied-f" value="NO" />
+          </div>
+          <div class="ptc-field" id="refund-svcamt-wrap" style="display:none;">
+            <label for="f-svc-f" id="f-svc-f-label">Agency Service Charge</label>
             <input type="number" step="0.01" id="f-svc-f" class="mono ptc-refund-calc" placeholder="0.00" />
           </div>
         </div>
+
+        <!-- 05 — Refund Calculation (auto, live) -->
+        <div class="ptc-section-label" id="refund-calc-label" style="font-size:12px; padding-top:10px; margin-top:2px;">Refund Calculation</div>
+        <div class="ptc-row" id="refund-calcout-row">
+          <div class="ptc-field" id="refund-refoutfare-wrap">
+            <label for="f-refoutfare-f">Refundable Fare (auto)</label>
+            <input type="text" id="f-refoutfare-f" class="mono" readonly style="background:#F3F5F8; font-weight:700;" placeholder="0.00" />
+          </div>
+          <div class="ptc-field">
+            <label for="f-refouttax-f">Refundable Tax (auto)</label>
+            <input type="text" id="f-refouttax-f" class="mono" readonly style="background:#F3F5F8; font-weight:700;" placeholder="0.00" />
+          </div>
+        </div>
+        <div class="ptc-row" id="refund-airlinerefund-row">
+          <div class="ptc-field" style="grid-column: 1 / -1;">
+            <label for="f-airlinerefund-f">AIRLINE REFUND (auto)</label>
+            <input type="text" id="f-airlinerefund-f" class="mono" readonly style="background:#F3F5F8; font-weight:800; font-size:15px;" placeholder="0.00" />
+          </div>
+        </div>
+        <div id="refund-negative-warning" style="display:none; margin:2px 0 14px; padding:9px 12px; border-radius:8px; background:var(--refund-soft); border:1px solid rgba(180,69,59,.35); color:var(--refund); font-size:12.5px; font-weight:600;">
+          Refund calculation results in a negative amount. Please verify the fare, tax, airline charge, or commission adjustment.
+        </div>
+
+        <!-- 06 — Final Client Adjustment -->
+        <div class="ptc-section-label" style="font-size:12px; padding-top:10px; margin-top:2px;">Final Client Adjustment</div>
         <div class="ptc-row" id="refund-amounts-row">
           <div class="ptc-field">
-            <label for="f-charge-f" id="f-charge-f-label">Refund Charge</label>
+            <label for="f-charge-f" id="f-charge-f-label">Client Refund / Adjustment (auto)</label>
             <input type="number" step="0.01" id="f-charge-f" class="mono" placeholder="0.00" />
           </div>
-          <div class="ptc-field" id="tax-refund-wrap">
+          <div class="ptc-field" id="tax-refund-wrap" style="display:none;">
             <label for="f-tax-f">Tax Refund</label>
             <input type="number" step="0.01" id="f-tax-f" class="mono" placeholder="0.00" />
           </div>
         </div>
+
         <div class="ptc-row" id="refund-status-row">
           <div class="ptc-field" id="refund-status-wrap">
             <label for="f-status-f">Refund Status</label>
@@ -1405,7 +1469,7 @@
           </div>
           <div class="ptc-field" id="refund-adjustment-wrap">
             <label>Adjustment Given
-              <span class="ptc-info" tabindex="0" aria-label="Adjustment info">ⓘ<span class="ptc-tooltip">Mark "Yes" if, instead of a cash refund, the fare was adjusted/held against a future booking. Enter the adjusted amount when Yes is selected.</span></span>
+              <span class="ptc-info" tabindex="0" aria-label="Adjustment info">ⓘ<span class="ptc-tooltip">Mark "Yes" if, instead of a cash refund, the client refund was adjusted/held against a future booking. This is a record-keeping flag only — it does not change the calculated amounts above.</span></span>
             </label>
             <div style="display:flex; gap:8px;">
               <button type="button" class="ptc-btn ptc-btn-ghost ptc-adj-btn" data-val="NO" id="btn-adj-no" style="flex:1; padding:9px 10px;">No</button>
@@ -1495,9 +1559,18 @@
             <th>Airline Chg</th>
             <th>Service Chg</th>
             <th>Total Collection</th>
-            <th>Payable Fare</th>
-            <th>Refund Chg</th>
-            <th>Tax Refund</th>
+            <th>Payable Fare (legacy)</th>
+            <th>Refund Total Fare</th>
+            <th>Used Segment Fare</th>
+            <th>Refund Total Tax</th>
+            <th>Non-Refund Tax</th>
+            <th>Commission Adj.</th>
+            <th>Svc Applied</th>
+            <th>Refundable Fare</th>
+            <th>Refundable Tax</th>
+            <th>Airline Refund</th>
+            <th>Client Refund / Adj.</th>
+            <th>Tax Refund (legacy)</th>
             <th>Refund Type</th>
             <th>Refund Status</th>
             <th>Adjustment</th>
@@ -1848,9 +1921,18 @@
     { h:'AIRLINE CHARGE', f:'airlineCharge', n:true },
     { h:'SERVICE CHARGE', f:'svc', n:true },
     { h:'TOTAL COLLECTION', f:'totalCollection', n:true },
-    { h:'TICKET PAYABLE FARE', f:'payableFare', n:true },
-    { h:'REFUND CHARGE', f:'refundCharge', n:true },
-    { h:'TAX REFUND', f:'taxRefund', n:true },
+    { h:'TICKET PAYABLE FARE (LEGACY)', f:'payableFare', n:true },
+    { h:'REFUND TOTAL FARE', f:'refTotalFare', n:true },
+    { h:'USED SEGMENT FARE', f:'usedSegmentFare', n:true },
+    { h:'REFUND TOTAL TAX', f:'refTotalTax', n:true },
+    { h:'NON-REFUNDABLE TAX', f:'refNonRefundTax', n:true },
+    { h:'COMMISSION ADJUSTMENT', f:'commissionAdj', n:true },
+    { h:'SERVICE CHARGE APPLIED', f:'svcApplied' },
+    { h:'REFUNDABLE FARE', f:'refundableFare', n:true },
+    { h:'REFUNDABLE TAX', f:'refundableTax', n:true },
+    { h:'AIRLINE REFUND', f:'airlineRefund', n:true },
+    { h:'CLIENT REFUND / ADJUSTMENT', f:'refundCharge', n:true },
+    { h:'TAX REFUND (LEGACY)', f:'taxRefund', n:true },
     { h:'REFUND TYPE', f:'refundType' },
     { h:'REFUND STATUS', f:'refundStatus' },
     { h:'ADJUSTMENT GIVEN', f:'adjustmentGiven' },
@@ -1868,7 +1950,7 @@
   const SHEET_DEFS = [
     { name:'Ticketing', fields: COMMON_FIELDS.concat(['newTkt','sector','baseFare','taxFare','airlineTicketPrice','discount','markUp','markupAmount','totalFare','note']) },
     { name:'Reissue', fields: COMMON_FIELDS.concat(['oldTkt','newTkt','sector','code','fareDiff','airlineCharge','svc','totalCollection','note']) },
-    { name:'Refund', fields: COMMON_FIELDS.concat(['oldTkt','refundType','payableFare','airlineCharge','svc','discount','refundCharge','taxRefund','refundStatus','adjustmentGiven','adjustmentAmount','note']) },
+    { name:'Refund', fields: COMMON_FIELDS.concat(['oldTkt','refundType','refTotalFare','usedSegmentFare','refTotalTax','refNonRefundTax','airlineCharge','commissionAdj','refundableFare','refundableTax','airlineRefund','svcApplied','svc','refundCharge','taxRefund','refundStatus','adjustmentGiven','adjustmentAmount','note']) },
     { name:'Void', fields: COMMON_FIELDS.concat(['oldTkt','airlineCharge','svc','refundCharge','note']) },
   ];
 
@@ -2677,20 +2759,40 @@
       sections.Refund.style.display = 'block';
       const label = $('refund-void-label');
       const modeWrap = $('refund-mode-wrap');
+      const faretaxLabel = $('refund-faretax-label');
+      const fareRow = $('refund-fare-row');
+      const taxRow = $('refund-tax-row');
+      const airlineLabel = $('f-airline-f-label');
+      const commissionWrap = $('refund-commission-wrap');
+      const svcToggleWrap = $('refund-svctoggle-wrap');
+      const svcAmtWrap = $('refund-svcamt-wrap');
+      const svcAmtLabel = $('f-svc-f-label');
+      const calcLabel = $('refund-calc-label');
+      const calcOutRow = $('refund-calcout-row');
+      const airlineRefundRow = $('refund-airlinerefund-row');
+      const negWarning = $('refund-negative-warning');
       const taxWrap = $('tax-refund-wrap');
       const chargeLabel = $('f-charge-f-label');
       const chargeInput = $('f-charge-f');
       const statusWrap = $('refund-status-wrap');
       const adjWrap = $('refund-adjustment-wrap');
-      const payableWrap = $('refund-payable-wrap');
-      const discountWrap = $('refund-discount-wrap');
       if(type === 'Void'){
         label.textContent = 'Void Details';
         label.style.color = 'var(--accent)';
         modeWrap.style.display = 'none';
+        faretaxLabel.style.display = 'none';
+        fareRow.style.display = 'none';
+        taxRow.style.display = 'none';
+        airlineLabel.textContent = 'Airline Charge';
+        commissionWrap.style.display = 'none';
+        svcToggleWrap.style.display = 'none';
+        svcAmtWrap.style.display = 'block';
+        svcAmtLabel.textContent = 'Service Charge';
+        calcLabel.style.display = 'none';
+        calcOutRow.style.display = 'none';
+        airlineRefundRow.style.display = 'none';
+        negWarning.style.display = 'none';
         taxWrap.style.display = 'none';
-        payableWrap.style.display = 'none';
-        discountWrap.style.display = 'none';
         chargeLabel.textContent = 'Void Charge';
         statusWrap.style.display = 'none';
         adjWrap.style.display = 'none';
@@ -2702,21 +2804,64 @@
         label.textContent = 'Refund Details';
         label.style.color = 'var(--accent)';
         modeWrap.style.display = 'block';
-        taxWrap.style.display = 'block';
-        payableWrap.style.display = 'block';
-        discountWrap.style.display = 'block';
-        chargeLabel.textContent = 'Refund Charge (auto)';
+        faretaxLabel.style.display = 'block';
+        fareRow.style.display = 'grid';
+        taxRow.style.display = 'grid';
+        airlineLabel.textContent = 'Airline Refund/Cancellation Fee';
+        svcToggleWrap.style.display = 'block';
+        svcAmtLabel.textContent = 'Agency Service Charge';
+        calcLabel.style.display = 'block';
+        calcOutRow.style.display = 'grid';
+        airlineRefundRow.style.display = 'grid';
+        taxWrap.style.display = 'none';
+        chargeLabel.textContent = 'Client Refund / Adjustment (auto)';
         statusWrap.style.display = 'block';
         adjWrap.style.display = 'block';
         $('refund-adjamt-row').style.display = ($('f-adjgiven-f').value === 'YES') ? 'grid' : 'none';
         chargeInput.readOnly = true;
         chargeInput.style.background = '#F3F5F8';
-        chargeInput.style.fontWeight = '700';
-        if(typeof recalcRefundCharge === 'function') recalcRefundCharge();
+        chargeInput.style.fontWeight = '800';
+        applyRefundTypeFields();
+        if(typeof recalcRefund === 'function') recalcRefund();
       }
     }
     applyTypeStyling(type);
   }
+
+  // ---- Refund Type → dynamic field visibility ----
+  // Full Refund (Unused Ticket) / Full Refund (Unused Ticket + Airline Charge): fare + tax, no used-segment.
+  // Partial Refund: adds Used Segment Fare.
+  // Tax Refund Only: fare + used-segment hidden, commission hidden unless already entered.
+  function applyRefundTypeFields(){
+    const mode = $('f-mode-f').value;
+    const totalFareWrap = $('refund-totalfare-wrap');
+    const usedSegWrap = $('refund-usedseg-wrap');
+    const refoutFareWrap = $('refund-refoutfare-wrap');
+    const commissionWrap = $('refund-commission-wrap');
+
+    if(mode === 'TAX_ONLY'){
+      totalFareWrap.style.display = 'none';
+      usedSegWrap.style.display = 'none';
+      refoutFareWrap.style.display = 'none';
+      const hasCommission = (parseFloat($('f-commission-f').value) || 0) !== 0;
+      commissionWrap.style.display = hasCommission ? 'block' : 'none';
+    } else if(mode === 'PARTIAL'){
+      totalFareWrap.style.display = 'block';
+      usedSegWrap.style.display = 'block';
+      refoutFareWrap.style.display = 'block';
+      commissionWrap.style.display = 'block';
+    } else {
+      // FULL_UNUSED, FULL_UNUSED_CHARGE, or not yet selected
+      totalFareWrap.style.display = 'block';
+      usedSegWrap.style.display = 'none';
+      refoutFareWrap.style.display = 'block';
+      commissionWrap.style.display = 'block';
+    }
+  }
+  $('f-mode-f').addEventListener('change', () => {
+    applyRefundTypeFields();
+    if(typeof recalcRefund === 'function') recalcRefund();
+  });
 
   typeSelect.addEventListener('change', () => showSection(typeSelect.value));
   showSection(typeSelect.value);
@@ -2866,31 +3011,83 @@
   });
   recalcReissueTotal();
 
-  // ---- Refund charge auto-calculation: Ticket Payable Fare − Airline Charge − Service Charge − Discount − Adjustment (if given) ----
+  // ---- Airline Refund calculation engine ----
+  // Business hierarchy (never mixed):
+  //   Refundable Fare + Refundable Tax − Airline Refund/Cancellation Fee − Commission Adjustment = AIRLINE REFUND
+  //   AIRLINE REFUND − Agency Service Charge = CLIENT REFUND / ADJUSTMENT
   // Only applies when Transaction Type = Refund. For Void, the charge field stays a plain editable input.
-  function recalcRefundCharge(){
+  function recalcRefund(){
     if(typeSelect.value !== 'Refund') return;
-    const payable = parseFloat($('f-payable-f').value) || 0;
-    const airlineChg = parseFloat($('f-airline-f').value) || 0;
-    const svc = parseFloat($('f-svc-f').value) || 0;
-    const discount = parseFloat($('f-discount-f').value) || 0;
-    const adjAmt = ($('f-adjgiven-f').value === 'YES') ? (parseFloat($('f-adjamt-f').value) || 0) : 0;
-    const total = payable - airlineChg - svc - discount - adjAmt;
-    $('f-charge-f').value = total.toFixed(2);
+    const mode = $('f-mode-f').value;
+
+    const totalFare = parseFloat($('f-reftotalfare-f').value) || 0;
+    const totalTax = parseFloat($('f-reftotaltax-f').value) || 0;
+    let nonRefundTax = parseFloat($('f-nonrefundtax-f').value) || 0;
+    if(nonRefundTax < 0){ nonRefundTax = 0; $('f-nonrefundtax-f').value = 0; }
+    if(nonRefundTax > totalTax){ nonRefundTax = totalTax; $('f-nonrefundtax-f').value = nonRefundTax; }
+    const airlineFee = parseFloat($('f-airline-f').value) || 0;
+    const commission = (mode === 'TAX_ONLY') ? 0 : (parseFloat($('f-commission-f').value) || 0);
+
+    const refundableTax = totalTax - nonRefundTax;
+    let refundableFare = 0;
+    let airlineRefund = 0;
+
+    if(mode === 'TAX_ONLY'){
+      refundableFare = 0;
+      airlineRefund = refundableTax - airlineFee;
+    } else if(mode === 'PARTIAL'){
+      let usedSeg = parseFloat($('f-usedseg-f').value) || 0;
+      if(usedSeg < 0){ usedSeg = 0; $('f-usedseg-f').value = 0; }
+      if(usedSeg > totalFare){ usedSeg = totalFare; $('f-usedseg-f').value = usedSeg; }
+      refundableFare = totalFare - usedSeg;
+      airlineRefund = refundableFare + refundableTax - airlineFee - commission;
+    } else {
+      // FULL_UNUSED / FULL_UNUSED_CHARGE (airline fee is simply 0 for the plain unused case)
+      refundableFare = totalFare;
+      airlineRefund = refundableFare + refundableTax - airlineFee - commission;
+    }
+
+    $('f-refoutfare-f').value = refundableFare.toFixed(2);
+    $('f-refouttax-f').value = refundableTax.toFixed(2);
+    $('f-airlinerefund-f').value = airlineRefund.toFixed(2);
+    $('f-tax-f').value = refundableTax.toFixed(2);
+    $('refund-negative-warning').style.display = (airlineRefund < 0) ? 'block' : 'none';
+
+    const svcApplied = $('f-svcapplied-f').value === 'YES';
+    const svcAmt = svcApplied ? (parseFloat($('f-svc-f').value) || 0) : 0;
+    const clientRefund = airlineRefund - svcAmt;
+    $('f-charge-f').value = clientRefund.toFixed(2);
   }
   document.querySelectorAll('.ptc-refund-calc').forEach(el => {
-    el.addEventListener('input', recalcRefundCharge);
+    el.addEventListener('input', recalcRefund);
   });
-  $('f-adjamt-f').addEventListener('input', recalcRefundCharge);
 
-  // ---- Refund: Adjustment Given toggle ----
+  // ---- Refund: Agency Service Charge Applied toggle — independent of the airline refund calc ----
+  function setSvcApplied(val){
+    $('f-svcapplied-f').value = val;
+    $('btn-svc-no').classList.toggle('ptc-adj-active', val === 'NO');
+    $('btn-svc-yes').classList.toggle('ptc-adj-active', val === 'YES');
+    if(typeSelect.value === 'Void'){
+      $('refund-svcamt-wrap').style.display = 'block';
+    } else {
+      $('refund-svcamt-wrap').style.display = (val === 'YES') ? 'block' : 'none';
+      if(val === 'NO'){ $('f-svc-f').value = ''; }
+    }
+    recalcRefund();
+  }
+  $('btn-svc-no').addEventListener('click', () => setSvcApplied('NO'));
+  $('btn-svc-yes').addEventListener('click', () => setSvcApplied('YES'));
+  setSvcApplied('NO');
+
+  // ---- Refund: Adjustment Given toggle — a record-keeping flag only (instead of a cash refund,
+  // the client refund was held/adjusted against a future booking). It does NOT alter the
+  // calculated Airline Refund or Client Refund / Adjustment amounts above. ----
   function setAdjustmentGiven(val){
     $('f-adjgiven-f').value = val;
     $('btn-adj-no').classList.toggle('ptc-adj-active', val === 'NO');
     $('btn-adj-yes').classList.toggle('ptc-adj-active', val === 'YES');
     $('refund-adjamt-row').style.display = (val === 'YES' && typeSelect.value === 'Refund') ? 'grid' : 'none';
     if(val === 'NO'){ $('f-adjamt-f').value = ''; }
-    recalcRefundCharge();
   }
   $('btn-adj-no').addEventListener('click', () => setAdjustmentGiven('NO'));
   $('btn-adj-yes').addEventListener('click', () => setAdjustmentGiven('YES'));
@@ -2929,6 +3126,15 @@
       refundStatus: '',
       adjustmentGiven: '',
       adjustmentAmount: '',
+      refTotalFare: '',
+      usedSegmentFare: '',
+      refTotalTax: '',
+      refNonRefundTax: '',
+      commissionAdj: '',
+      svcApplied: '',
+      refundableFare: '',
+      refundableTax: '',
+      airlineRefund: '',
       code: '',
       note: val('f-note'),
     };
@@ -2955,17 +3161,47 @@
     } else if(type === 'Refund'){
       base.oldTkt = val('f-oldtkt-f');
       base.refundType = $('f-mode-f').value;
-      base.payableFare = num('f-payable-f');
-      base.discount = num('f-discount-f');
-      base.airlineCharge = num('f-airline-f');
-      base.svc = num('f-svc-f');
-      const payableN = Number(num('f-payable-f')) || 0;
-      const discountN = Number(num('f-discount-f')) || 0;
-      const airlineN = Number(num('f-airline-f')) || 0;
-      const svcN = Number(num('f-svc-f')) || 0;
-      const adjN = ($('f-adjgiven-f').value === 'YES') ? (Number(num('f-adjamt-f')) || 0) : 0;
-      base.refundCharge = payableN - airlineN - svcN - discountN - adjN; // Ticket Payable − Airline − Service − Discount − Adjustment
-      base.taxRefund = num('f-tax-f');
+      const mode = base.refundType;
+
+      const totalFare = Number(num('f-reftotalfare-f')) || 0;
+      const usedSeg = Number(num('f-usedseg-f')) || 0;
+      const totalTax = Number(num('f-reftotaltax-f')) || 0;
+      const nonRefundTax = Number(num('f-nonrefundtax-f')) || 0;
+      const airlineFee = Number(num('f-airline-f')) || 0;
+      const commission = (mode === 'TAX_ONLY') ? 0 : (Number(num('f-commission-f')) || 0);
+      const svcApplied = $('f-svcapplied-f').value === 'YES';
+      const svcAmt = svcApplied ? (Number(num('f-svc-f')) || 0) : 0;
+
+      // AIRLINE CALCULATION (never mixed with the agency service charge below)
+      const refundableTax = totalTax - nonRefundTax;
+      let refundableFare = 0;
+      let airlineRefund = 0;
+      if(mode === 'TAX_ONLY'){
+        refundableFare = 0;
+        airlineRefund = refundableTax - airlineFee;
+      } else if(mode === 'PARTIAL'){
+        refundableFare = totalFare - usedSeg;
+        airlineRefund = refundableFare + refundableTax - airlineFee - commission;
+      } else {
+        // FULL_UNUSED / FULL_UNUSED_CHARGE
+        refundableFare = totalFare;
+        airlineRefund = refundableFare + refundableTax - airlineFee - commission;
+      }
+      const clientRefund = airlineRefund - svcAmt; // agency service charge applied only here
+
+      base.refTotalFare = (mode === 'TAX_ONLY') ? '' : totalFare;
+      base.usedSegmentFare = (mode === 'PARTIAL') ? usedSeg : '';
+      base.refTotalTax = totalTax;
+      base.refNonRefundTax = nonRefundTax;
+      base.airlineCharge = airlineFee; // Airline Refund/Cancellation Fee
+      base.commissionAdj = commission;
+      base.svcApplied = svcApplied ? 'YES' : 'NO';
+      base.svc = svcAmt; // Agency Service Charge
+      base.refundableFare = refundableFare;
+      base.refundableTax = refundableTax;
+      base.airlineRefund = airlineRefund;
+      base.refundCharge = clientRefund; // Client Refund / Adjustment (final, after agency service charge)
+      base.taxRefund = refundableTax; // legacy column kept in sync with the new Refundable Tax
       base.refundStatus = $('f-status-f').value;
       base.adjustmentGiven = $('f-adjgiven-f').value;
       base.adjustmentAmount = $('f-adjgiven-f').value === 'YES' ? num('f-adjamt-f') : '';
@@ -2982,6 +3218,13 @@
     if(!entry.date) return 'Please enter a date.';
     if(!entry.pnrGds) return 'Please enter the GDS PNR.';
     if(!entry.pname) return 'Please enter the passenger name.';
+    if(entry.txn === 'Refund'){
+      if(!entry.refundType) return 'Please select a Refund Type.';
+      const ar = Number(entry.airlineRefund);
+      if(!isNaN(ar) && ar < 0){
+        return 'Refund calculation results in a negative amount. Please verify the fare, tax, airline charge, or commission adjustment.';
+      }
+    }
     return null;
   }
 
@@ -3052,7 +3295,7 @@
     }
 
     if(filtered.length === 0){
-      tbody.innerHTML = '<tr><td colspan="30" style="text-align:center; padding:20px; color:var(--muted);">No entries in this date range.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="41" style="text-align:center; padding:20px; color:var(--muted);">No entries in this date range.</td></tr>';
     }
 
     pageItems.forEach(({ e, idx }) => {
@@ -3085,9 +3328,18 @@
         <td class="mono">${fmtMoney(e.svc)}</td>
         <td class="mono">${fmtMoney(e.totalCollection)}</td>
         <td class="mono">${fmtMoney(e.payableFare)}</td>
+        <td class="mono">${fmtMoney(e.refTotalFare)}</td>
+        <td class="mono">${fmtMoney(e.usedSegmentFare)}</td>
+        <td class="mono">${fmtMoney(e.refTotalTax)}</td>
+        <td class="mono">${fmtMoney(e.refNonRefundTax)}</td>
+        <td class="mono">${fmtMoney(e.commissionAdj)}</td>
+        <td>${e.svcApplied || ''}</td>
+        <td class="mono">${fmtMoney(e.refundableFare)}</td>
+        <td class="mono">${fmtMoney(e.refundableTax)}</td>
+        <td class="mono">${fmtMoney(e.airlineRefund)}</td>
         <td class="mono">${fmtMoney(e.refundCharge)}</td>
         <td class="mono">${fmtMoney(e.taxRefund)}</td>
-        <td class="mono">${e.refundType || ''}</td>
+        <td>${refundTypeLabel(e.refundType)}</td>
         <td>${statusBadge}</td>
         <td>${e.adjustmentGiven || ''}</td>
         <td class="mono">${fmtMoney(e.adjustmentAmount)}</td>
@@ -3165,7 +3417,9 @@
     ['f-pnr-gds','f-pnr-air','f-pname','f-pnum','f-note','f-platform-other','f-airline-other',
      'f-newtkt-t','f-sector-t','f-basefare-t','f-taxfare-t','f-markup-t','f-atp-t','f-markupamt-t',
      'f-oldtkt-r','f-newtkt-r','f-sector-r','f-code-r','f-faredif-r','f-airline-r','f-svc-r',
-     'f-oldtkt-f','f-airline-f','f-svc-f','f-payable-f','f-discount-f','f-charge-f','f-tax-f','f-adjamt-f'
+     'f-oldtkt-f','f-airline-f','f-svc-f','f-charge-f','f-tax-f','f-adjamt-f',
+     'f-reftotalfare-f','f-usedseg-f','f-reftotaltax-f','f-nonrefundtax-f','f-commission-f',
+     'f-refoutfare-f','f-refouttax-f','f-airlinerefund-f'
     ].forEach(id => { const el = $(id); if(el) el.value = ''; });
     $('f-date').value = todayISO();
     $('f-mode-f').value = '';
@@ -3174,13 +3428,16 @@
     $('f-airline').value = '';
     $('f-platform-other').style.display = 'none';
     $('f-airline-other').style.display = 'none';
+    $('refund-negative-warning').style.display = 'none';
     typeSelect.value = '';
     showSection('');
     if($('f-routetype-t')){ $('f-routetype-t').value = ''; if(typeof renderRouteBuilder === 'function') renderRouteBuilder(); }
     if(typeof setAdjustmentGiven === 'function') setAdjustmentGiven('NO');
+    if(typeof setSvcApplied === 'function') setSvcApplied('NO');
     recalcTicketingFare();
     if(typeof recalcReissueTotal === 'function') recalcReissueTotal();
-    if(typeof recalcRefundCharge === 'function') recalcRefundCharge();
+    if(typeof applyRefundTypeFields === 'function') applyRefundTypeFields();
+    if(typeof recalcRefund === 'function') recalcRefund();
     const firstField = $('f-pnr-gds');
     if(firstField) firstField.focus();
   }
@@ -3211,6 +3468,18 @@
     const el = $(id);
     if(!el) return;
     el.value = (v === null || v === undefined) ? '' : v;
+  }
+
+  // Legacy refund types (FULL / PARTIAL / AS_PER_POLICY) map onto the four
+  // airline-refund-scenario types used going forward, so old records still open cleanly.
+  function normalizeRefundType(e){
+    const rt = e.refundType;
+    if(rt === 'FULL_UNUSED' || rt === 'FULL_UNUSED_CHARGE' || rt === 'PARTIAL' || rt === 'TAX_ONLY') return rt;
+    if(rt === 'FULL'){
+      return ((parseFloat(e.airlineCharge) || 0) > 0) ? 'FULL_UNUSED_CHARGE' : 'FULL_UNUSED';
+    }
+    if(rt === 'AS_PER_POLICY') return 'PARTIAL';
+    return 'FULL_UNUSED';
   }
 
   function populateForm(e){
@@ -3245,23 +3514,42 @@
       recalcReissueTotal();
     } else if(e.txn === 'Refund'){
       setVal('f-oldtkt-f', e.oldTkt);
-      $('f-mode-f').value = e.refundType || 'FULL';
-      setVal('f-airline-f', e.airlineCharge);
+      $('f-mode-f').value = normalizeRefundType(e);
+      applyRefundTypeFields();
+
+      setVal('f-reftotalfare-f', e.refTotalFare);
+      setVal('f-usedseg-f', e.usedSegmentFare);
+      setVal('f-reftotaltax-f', e.refTotalTax);
+      setVal('f-nonrefundtax-f', (e.refNonRefundTax !== '' && e.refNonRefundTax !== undefined && e.refNonRefundTax !== null) ? e.refNonRefundTax : 0);
+      setVal('f-airline-f', (e.airlineCharge !== '' && e.airlineCharge !== undefined && e.airlineCharge !== null) ? e.airlineCharge : 0);
+      setVal('f-commission-f', (e.commissionAdj !== '' && e.commissionAdj !== undefined && e.commissionAdj !== null) ? e.commissionAdj : 0);
+
+      // Older records have no explicit Service Charge Applied flag — infer it from
+      // whether a service charge amount was actually stored.
+      const legacySvcApplied = (e.svcApplied === 'YES' || e.svcApplied === 'NO')
+        ? e.svcApplied
+        : (((parseFloat(e.svc) || 0) > 0) ? 'YES' : 'NO');
+      setSvcApplied(legacySvcApplied);
       setVal('f-svc-f', e.svc);
-      // Legacy entries saved before this fix used "totalCollection" for what is now
-      // "Ticket Payable Fare" — fall back to it so old records still populate correctly.
-      const payableVal = (e.payableFare !== '' && e.payableFare !== undefined && e.payableFare !== null)
-        ? e.payableFare : e.totalCollection;
-      setVal('f-payable-f', payableVal);
-      setVal('f-discount-f', e.discount);
-      setVal('f-tax-f', e.taxRefund);
+
       $('f-status-f').value = e.refundStatus || 'PENDING';
       setAdjustmentGiven(e.adjustmentGiven === 'YES' ? 'YES' : 'NO');
       setVal('f-adjamt-f', e.adjustmentAmount);
-      // Recalculate from components; if this is a legacy entry with no fare breakdown at all,
-      // fall back to the stored value so it isn't overwritten with 0.00.
-      const hasBreakdown = payableVal !== '' && payableVal !== undefined && payableVal !== null;
-      if(hasBreakdown){ recalcRefundCharge(); } else { setVal('f-charge-f', e.refundCharge); }
+
+      // New-format records carry an explicit Airline Refund figure — recalc live from
+      // the components so the breakdown stays consistent as fields are edited. Legacy
+      // (pre-rebuild) records don't have that field: show their stored totals as-is
+      // rather than silently recomputing them under the new formula.
+      const isNewFormat = e.airlineRefund !== '' && e.airlineRefund !== undefined && e.airlineRefund !== null;
+      if(isNewFormat){
+        recalcRefund();
+      } else {
+        setVal('f-refoutfare-f', e.refundableFare);
+        setVal('f-refouttax-f', (e.refundableTax !== undefined && e.refundableTax !== '') ? e.refundableTax : e.taxRefund);
+        setVal('f-airlinerefund-f', e.refundCharge);
+        setVal('f-charge-f', e.refundCharge);
+        $('refund-negative-warning').style.display = 'none';
+      }
     } else if(e.txn === 'Void'){
       setVal('f-oldtkt-f', e.oldTkt);
       setVal('f-airline-f', e.airlineCharge);
@@ -3409,6 +3697,8 @@
   const FIELD_ORDER = ['date','pnrGds','pnrAirline','pname','pnum','ptype','platform','airline','txn','oldTkt','newTkt','sector',
                        'baseFare','taxFare','airlineTicketPrice','discount','markUp','markupAmount','totalFare',
                        'fareDiff','airlineCharge','svc','totalCollection','payableFare',
+                       'refTotalFare','usedSegmentFare','refTotalTax','refNonRefundTax','commissionAdj','svcApplied',
+                       'refundableFare','refundableTax','airlineRefund',
                        'refundCharge','taxRefund','refundType','refundStatus','adjustmentGiven','adjustmentAmount',
                        'code','note','createdAt','editedAt'];
   const HEADER_TO_FIELD = {
@@ -3420,12 +3710,20 @@
     'MARK UP':'markUp','OTA MARKUP %':'markUp','OTA MARKUP AMOUNT':'markupAmount',
     'TOTAL FARE':'totalFare','CUSTOMER SELLING PRICE':'totalFare',
     'FARE DIFFERENCE':'fareDiff','AIRLINE CHARGE':'airlineCharge','SERVICE CHARGE':'svc','TOTAL COLLECTION':'totalCollection',
-    'TICKET PAYABLE FARE':'payableFare',
-    'REFUND CHARGE':'refundCharge','TAX REFUND':'taxRefund','REFUND TYPE':'refundType','REFUND STATUS':'refundStatus',
+    'TICKET PAYABLE FARE':'payableFare','TICKET PAYABLE FARE (LEGACY)':'payableFare',
+    'REFUND TOTAL FARE':'refTotalFare','USED SEGMENT FARE':'usedSegmentFare','REFUND TOTAL TAX':'refTotalTax',
+    'NON-REFUNDABLE TAX':'refNonRefundTax','COMMISSION ADJUSTMENT':'commissionAdj','SERVICE CHARGE APPLIED':'svcApplied',
+    'REFUNDABLE FARE':'refundableFare','REFUNDABLE TAX':'refundableTax','AIRLINE REFUND':'airlineRefund',
+    'REFUND CHARGE':'refundCharge','CLIENT REFUND / ADJUSTMENT':'refundCharge',
+    'TAX REFUND':'taxRefund','TAX REFUND (LEGACY)':'taxRefund','REFUND TYPE':'refundType','REFUND STATUS':'refundStatus',
     'ADJUSTMENT GIVEN':'adjustmentGiven','ADJUSTMENT AMOUNT':'adjustmentAmount',
     'REISSUE CODE':'code','NOTE':'note','CREATED AT':'createdAt','LAST EDITED':'editedAt'
   };
-  const NUMERIC_FIELDS = ['baseFare','taxFare','airlineTicketPrice','discount','markUp','markupAmount','totalFare','fareDiff','airlineCharge','svc','totalCollection','payableFare','refundCharge','taxRefund','adjustmentAmount'];
+  const NUMERIC_FIELDS = ['baseFare','taxFare','airlineTicketPrice','discount','markUp','markupAmount','totalFare','fareDiff',
+                          'airlineCharge','svc','totalCollection','payableFare',
+                          'refTotalFare','usedSegmentFare','refTotalTax','refNonRefundTax','commissionAdj',
+                          'refundableFare','refundableTax','airlineRefund',
+                          'refundCharge','taxRefund','adjustmentAmount'];
 
   function parseCsvLine(line){
     const out = [];
@@ -3651,6 +3949,18 @@
   // ================= SEARCH =================
   let searchQuery = '';
 
+  const REFUND_TYPE_LABELS = {
+    FULL_UNUSED: 'Full Refund — Unused Ticket',
+    FULL_UNUSED_CHARGE: 'Full Refund — Unused Ticket with Airline Charge',
+    PARTIAL: 'Partial Refund — Partially Used Ticket',
+    TAX_ONLY: 'Tax Refund Only',
+    FULL: 'Full Refund (legacy)',
+    AS_PER_POLICY: 'As Per Policy (legacy)',
+  };
+  function refundTypeLabel(rt){
+    return REFUND_TYPE_LABELS[rt] || rt || '';
+  }
+
   function detailFields(e){
     const f = [
       ['Date', e.date],
@@ -3677,12 +3987,22 @@
         ['Service Charge', fmtMoney(e.svc)], ['Total Collected', fmtMoney(e.totalCollection)]
       );
     } else if(e.txn === 'Refund'){
+      f.push(['Ticket No.', e.oldTkt], ['Refund Type', refundTypeLabel(e.refundType)]);
+      if(e.refundType !== 'TAX_ONLY'){
+        f.push(['Total Fare', fmtMoney(e.refTotalFare)]);
+        if(e.refundType === 'PARTIAL') f.push(['Used Segment Fare', fmtMoney(e.usedSegmentFare)]);
+      }
       f.push(
-        ['Ticket No.', e.oldTkt], ['Refund Type', e.refundType],
-        ['Ticket Payable Fare', fmtMoney(e.payableFare)],
-        ['Airline Charge', fmtMoney(e.airlineCharge)], ['Service Charge', fmtMoney(e.svc)],
-        ['Discount Given', fmtMoney(e.discount)],
-        ['Refund Charge', fmtMoney(e.refundCharge)], ['Tax Refund', fmtMoney(e.taxRefund)],
+        ['Total Tax', fmtMoney(e.refTotalTax)],
+        ['Non-Refundable Tax', fmtMoney(e.refNonRefundTax)],
+        ['Refundable Fare', fmtMoney(e.refundableFare)],
+        ['Refundable Tax', fmtMoney(e.refundableTax)],
+        ['Airline Refund/Cancellation Fee', fmtMoney(e.airlineCharge)],
+        ['Commission Adjustment', fmtMoney(e.commissionAdj)],
+        ['AIRLINE REFUND', fmtMoney(e.airlineRefund)],
+        ['Service Charge Applied', e.svcApplied],
+        ['Agency Service Charge', fmtMoney(e.svc)],
+        ['CLIENT REFUND / ADJUSTMENT', fmtMoney(e.refundCharge)],
         ['Status', e.refundStatus], ['Adjustment Given', e.adjustmentGiven],
         ['Adjustment Amt', fmtMoney(e.adjustmentAmount)]
       );
@@ -3709,14 +4029,11 @@
   function quickSetAdjustment(idx, val){
     const e = entries[idx];
     if(!e || e.txn !== 'Refund') return;
+    // Adjustment Given is a record-keeping flag only (instead of a cash refund, the
+    // client refund was held/adjusted against a future booking) — it does not change
+    // the calculated Airline Refund or Client Refund / Adjustment amounts.
     e.adjustmentGiven = val;
     if(val === 'NO'){ e.adjustmentAmount = ''; }
-    const payable = parseFloat(e.payableFare) || 0;
-    const airlineChg = parseFloat(e.airlineCharge) || 0;
-    const svc = parseFloat(e.svc) || 0;
-    const discount = parseFloat(e.discount) || 0;
-    const adjAmt = (val === 'YES') ? (parseFloat(e.adjustmentAmount) || 0) : 0;
-    e.refundCharge = payable - airlineChg - svc - discount - adjAmt;
     e.editedAt = new Date().toISOString();
 
     if(isCloudConnected() && e._id){
