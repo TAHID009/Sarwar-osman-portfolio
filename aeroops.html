@@ -517,6 +517,151 @@
   .ptc-status-tag-paid{ background: #1E7A46; }
   .ptc-status-tag-partial{ background: var(--reissue); }
 
+  /* ============ OTA-style Payment & Settlement panel ============ */
+  .ptc-payment-panel{
+    background: linear-gradient(180deg, #F6FAF8 0%, #FFFFFF 60%);
+    border: 1px solid #DCEAE0;
+    border-radius: 12px;
+    padding: 16px 16px 6px;
+    margin-bottom: 16px;
+  }
+
+  .ptc-fare-summary{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  @media (max-width: 640px){ .ptc-fare-summary{ grid-template-columns: 1fr; } }
+
+  .ptc-fare-item{
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    padding: 10px 12px;
+  }
+  .ptc-fare-item-label{
+    display:block;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 700;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .ptc-fare-item input{
+    width:100%;
+    border:none;
+    background:transparent;
+    padding:0;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--ink);
+    font-family: 'SFMono-Regular', ui-monospace, monospace;
+  }
+  .ptc-fare-item input:focus{ outline:none; }
+  .ptc-fare-item-profit{
+    background: #EAF6EE;
+    border-color: #BFE3CB;
+  }
+  .ptc-fare-item-profit .ptc-fare-item-label{ color: #1E7A46; }
+  .ptc-fare-item-profit input{ color: #1E7A46; }
+
+  .ptc-method-select-native{
+    position: absolute;
+    opacity: 0;
+    width: 1px; height: 1px;
+    pointer-events: none;
+  }
+
+  .ptc-method-chips{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 6px;
+  }
+  .ptc-method-chip{
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 13px;
+    border-radius: 20px;
+    border: 1px solid var(--line);
+    background: #fff;
+    color: var(--ink-soft);
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all .15s ease;
+  }
+  .ptc-method-chip:hover{ border-color: #1E7A46; color: #1E7A46; }
+  .ptc-method-chip.ptc-method-chip-active{
+    background: #1E7A46;
+    border-color: #1E7A46;
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(30,122,70,0.28);
+  }
+
+  .ptc-settlement-panel{
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    padding: 14px 14px 12px;
+    margin: 4px 0 14px;
+  }
+  .ptc-settlement-top{
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .ptc-settlement-label{
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 700;
+    color: var(--muted);
+  }
+  .ptc-settlement-due{
+    font-size: 15px;
+    font-weight: 800;
+    font-family: 'SFMono-Regular', ui-monospace, monospace;
+    color: var(--refund);
+  }
+  .ptc-settlement-track{
+    height: 8px;
+    border-radius: 5px;
+    background: #EDF1F5;
+    overflow: hidden;
+    margin-bottom: 10px;
+  }
+  .ptc-settlement-fill{
+    height: 100%;
+    width: 0%;
+    border-radius: 5px;
+    background: #1E7A46;
+    transition: width .25s ease, background .25s ease;
+  }
+  .ptc-status-badge{
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #fff;
+    background: var(--void);
+  }
+  .ptc-status-badge.ptc-status-badge-paid{ background: #1E7A46; }
+  .ptc-status-badge.ptc-status-badge-partial{ background: var(--reissue); }
+  .ptc-status-badge.ptc-status-badge-due{ background: var(--refund); }
+
   .ptc-edit{
     background: none;
     border: none;
@@ -1111,7 +1256,7 @@
 
     <div class="ptc-tabs">
       <button class="ptc-tab active" id="tab-btn-entry" data-view="entry">🧾 Add Entry &amp; Log</button>
-      <button class="ptc-tab" id="tab-btn-sales" data-view="sales">💳 Sales &amp; Payments</button>
+      <button class="ptc-tab" id="tab-btn-sales" data-view="sales">💰 Revenue Desk</button>
     </div>
 
     <!-- ============ DASHBOARD VIEW ============ -->
@@ -1753,25 +1898,28 @@
           <div></div>
         </div>
 
-        <div class="ptc-section-label" style="color:#1E7A46;">Payment Information</div>
-        <div class="ptc-row">
-          <div class="ptc-field">
-            <label for="s-price">Selling Price</label>
-            <input type="number" step="0.01" id="s-price" class="mono ptc-sale-calc" placeholder="0.00" />
+        <div class="ptc-section-label" style="color:#1E7A46;">💰 Payment &amp; Settlement</div>
+
+        <div class="ptc-payment-panel">
+
+          <div class="ptc-fare-summary">
+            <div class="ptc-fare-item">
+              <span class="ptc-fare-item-label">Selling Price</span>
+              <input type="number" step="0.01" id="s-price" class="mono ptc-sale-calc" placeholder="0.00" />
+            </div>
+            <div class="ptc-fare-item">
+              <span class="ptc-fare-item-label">Net Cost (optional)</span>
+              <input type="number" step="0.01" id="s-cost" class="mono ptc-sale-calc" placeholder="0.00" />
+            </div>
+            <div class="ptc-fare-item ptc-fare-item-profit">
+              <span class="ptc-fare-item-label">Profit / Margin</span>
+              <input type="text" id="s-profit" class="mono" placeholder="0.00" readonly />
+            </div>
           </div>
-          <div class="ptc-field">
-            <label for="s-cost">Net Cost (optional)</label>
-            <input type="number" step="0.01" id="s-cost" class="mono ptc-sale-calc" placeholder="0.00" />
-          </div>
-        </div>
-        <div class="ptc-row">
-          <div class="ptc-field">
-            <label for="s-profit">Profit / Margin (auto)</label>
-            <input type="text" id="s-profit" class="mono" placeholder="0.00" readonly style="background:#F3F5F8; font-weight:700;" />
-          </div>
-          <div class="ptc-field">
+
+          <div class="ptc-field" style="margin-bottom:16px;">
             <label for="s-method">Payment Method</label>
-            <select id="s-method">
+            <select id="s-method" class="ptc-method-select-native" aria-hidden="true" tabindex="-1">
               <option value="" disabled selected>Select Type</option>
               <option value="CASH">Cash</option>
               <option value="BKASH">bKash</option>
@@ -1781,28 +1929,45 @@
               <option value="CARD">Card</option>
               <option value="OTHER">Other</option>
             </select>
+            <div class="ptc-method-chips" id="s-method-chips" role="group" aria-label="Payment method">
+              <button type="button" class="ptc-method-chip" data-method="CASH">💵 Cash</button>
+              <button type="button" class="ptc-method-chip" data-method="BKASH">📱 bKash</button>
+              <button type="button" class="ptc-method-chip" data-method="NAGAD">📱 Nagad</button>
+              <button type="button" class="ptc-method-chip" data-method="ROCKET">🚀 Rocket</button>
+              <button type="button" class="ptc-method-chip" data-method="BANK">🏦 Bank Transfer</button>
+              <button type="button" class="ptc-method-chip" data-method="CARD">💳 Card</button>
+              <button type="button" class="ptc-method-chip" data-method="OTHER">⋯ Other</button>
+            </div>
           </div>
+
+          <div class="ptc-row">
+            <div class="ptc-field">
+              <label for="s-paid">Amount Paid</label>
+              <input type="number" step="0.01" id="s-paid" class="mono ptc-sale-calc" placeholder="0.00" />
+            </div>
+            <div class="ptc-field" id="s-duedate-wrap">
+              <label for="s-duedate">Due Date</label>
+              <input type="date" id="s-duedate" />
+            </div>
+          </div>
+
+          <div class="ptc-settlement-panel">
+            <div class="ptc-settlement-top">
+              <span class="ptc-settlement-label">Collection Progress</span>
+              <span class="ptc-settlement-due">Due: <span id="s-due-display">0.00</span></span>
+            </div>
+            <div class="ptc-settlement-track">
+              <div class="ptc-settlement-fill" id="s-settlement-fill"></div>
+            </div>
+            <span class="ptc-status-badge" id="s-status-badge">—</span>
+          </div>
+
+          <!-- kept for calculation / storage, mirrored by the visual settlement panel above -->
+          <input type="hidden" id="s-due" />
+          <input type="hidden" id="s-status" />
+
         </div>
-        <div class="ptc-row">
-          <div class="ptc-field">
-            <label for="s-paid">Amount Paid</label>
-            <input type="number" step="0.01" id="s-paid" class="mono ptc-sale-calc" placeholder="0.00" />
-          </div>
-          <div class="ptc-field">
-            <label for="s-due">Amount Due (auto)</label>
-            <input type="text" id="s-due" class="mono" placeholder="0.00" readonly style="background:#F3F5F8; font-weight:700;" />
-          </div>
-        </div>
-        <div class="ptc-row">
-          <div class="ptc-field">
-            <label for="s-status">Payment Status (auto)</label>
-            <input type="text" id="s-status" class="mono" placeholder="—" readonly style="background:#F3F5F8; font-weight:700;" />
-          </div>
-          <div class="ptc-field" id="s-duedate-wrap">
-            <label for="s-duedate">Due Date</label>
-            <input type="date" id="s-duedate" />
-          </div>
-        </div>
+
         <div class="ptc-row" style="margin-top:4px;">
           <div class="ptc-field" style="grid-column: 1 / -1;">
             <label for="s-note">Note</label>
@@ -1818,7 +1983,7 @@
       </div>
 
       <div class="ptc-log-head">
-        <h2>Sales Log</h2>
+        <h2>Revenue Ledger</h2>
         <span class="ptc-count" id="sales-count">0 sales</span>
       </div>
 
@@ -4447,8 +4612,39 @@
     else if(price === 0) status = '—';
     $('s-status').value = status === '—' ? '—' : status;
     $('s-duedate-wrap').style.display = (status === 'PAID' || status === '—') ? 'none' : 'block';
+
+    // --- Visual settlement panel (progress bar + status badge) ---
+    const dueDisplay = $('s-due-display');
+    const fill = $('s-settlement-fill');
+    const badge = $('s-status-badge');
+    if(dueDisplay) dueDisplay.textContent = due.toFixed(2);
+    if(fill){
+      const pct = price > 0 ? Math.min((paid / price) * 100, 100) : 0;
+      fill.style.width = pct + '%';
+      fill.style.background = status === 'DUE' ? 'var(--refund)' : (status === 'PARTIAL' ? 'var(--reissue)' : '#1E7A46');
+    }
+    if(badge){
+      badge.className = 'ptc-status-badge' + (status === 'PAID' ? ' ptc-status-badge-paid' : status === 'PARTIAL' ? ' ptc-status-badge-partial' : status === 'DUE' ? ' ptc-status-badge-due' : '');
+      const badgeIcon = status === 'PAID' ? '✅' : status === 'PARTIAL' ? '🕒' : status === 'DUE' ? '⚠️' : '—';
+      badge.textContent = status === '—' ? '—' : (badgeIcon + ' ' + status);
+    }
   }
   document.querySelectorAll('.ptc-sale-calc').forEach(el => el.addEventListener('input', recalcSale));
+
+  // --- Payment method quick-select chips (mirrors hidden native <select id="s-method">) ---
+  function syncMethodChips(){
+    const val = $('s-method').value;
+    document.querySelectorAll('#s-method-chips .ptc-method-chip').forEach(chip => {
+      chip.classList.toggle('ptc-method-chip-active', chip.dataset.method === val);
+    });
+  }
+  document.querySelectorAll('#s-method-chips .ptc-method-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      $('s-method').value = chip.dataset.method;
+      syncMethodChips();
+    });
+  });
+  syncMethodChips();
   recalcSale();
 
   function persistSales(){
@@ -4501,6 +4697,7 @@
       .forEach(id => { const el = $(id); if(el) el.value = ''; });
     $('s-date').value = todayISOSales();
     $('s-method').value = '';
+    syncMethodChips();
     recalcSale();
     const first = $('s-pname');
     if(first) first.focus();
@@ -4602,6 +4799,7 @@
     $('s-cost').value = s.cost === '' || s.cost === undefined ? '' : s.cost;
     $('s-paid').value = s.paid === '' || s.paid === undefined ? '' : s.paid;
     $('s-method').value = s.method || 'CASH';
+    syncMethodChips();
     $('s-duedate').value = s.dueDate || '';
     $('s-note').value = s.note || '';
     recalcSale();
