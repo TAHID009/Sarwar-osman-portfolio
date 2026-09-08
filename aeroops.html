@@ -194,6 +194,17 @@
     border-color: #B9C4D2;
   }
 
+  /* Remove the native up/down spinner box on all number inputs across every section */
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button{
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type="number"]{
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+
   .ptc-type-select select{
     font-weight: 700;
     color: var(--accent);
@@ -1872,22 +1883,36 @@
         </div>
         <div class="ptc-row">
           <div class="ptc-field">
-            <label for="s-phone">Contact Number</label>
-            <input type="text" id="s-phone" class="mono" placeholder="e.g. 01XXXXXXXXX" />
+            <label for="s-ptype">Passenger Type</label>
+            <select id="s-ptype">
+              <option value="ADULT">Adult</option>
+              <option value="CHILD">Child</option>
+              <option value="INFANT">Infant</option>
+            </select>
           </div>
           <div class="ptc-field">
-            <label for="s-tkt">Ticket Number</label>
-            <input type="text" id="s-tkt" class="mono" placeholder="e.g. 1234567890123" />
+            <label for="s-phone">Contact Number</label>
+            <input type="text" id="s-phone" class="mono" placeholder="e.g. 01XXXXXXXXX" />
           </div>
         </div>
         <div class="ptc-row">
           <div class="ptc-field">
-            <label for="s-pnr">PNR</label>
-            <input type="text" id="s-pnr" class="mono" placeholder="e.g. ABC123" />
+            <label for="s-tkt">Ticket Number</label>
+            <input type="text" id="s-tkt" class="mono" placeholder="e.g. 1234567890123" />
           </div>
           <div class="ptc-field">
             <label for="s-sector">Sector / Route</label>
             <input type="text" id="s-sector" class="mono" placeholder="e.g. DAC-DXB-DAC" />
+          </div>
+        </div>
+        <div class="ptc-row">
+          <div class="ptc-field">
+            <label for="s-pnr-gds">GDS PNR</label>
+            <input type="text" id="s-pnr-gds" class="mono" placeholder="e.g. ABC123" />
+          </div>
+          <div class="ptc-field">
+            <label for="s-pnr-air">Airline PNR</label>
+            <input type="text" id="s-pnr-air" class="mono" placeholder="e.g. XYZ789" />
           </div>
         </div>
         <div class="ptc-row">
@@ -1993,9 +2018,11 @@
             <tr>
               <th>Date</th>
               <th>Customer</th>
+              <th>Type</th>
               <th>Contact</th>
               <th>Ticket No.</th>
-              <th>PNR</th>
+              <th>GDS PNR</th>
+              <th>Airline PNR</th>
               <th>Sector</th>
               <th>Airline</th>
               <th>Selling Price</th>
@@ -2050,6 +2077,15 @@
   const tagColor = { Ticketing:'#2E6F95', Reissue:'#C97F1E', Refund:'#B4453B', Void:'#6B7280' };
 
   const $ = (id) => document.getElementById(id);
+
+  // Disable "scroll to increase/decrease" on every number input across every
+  // section (entry, reissue, refund, sales, achievement, etc.) — scrolling the
+  // page while a number field happens to be focused should never change its value.
+  document.addEventListener('wheel', () => {
+    if(document.activeElement && document.activeElement.tagName === 'INPUT' && document.activeElement.type === 'number'){
+      document.activeElement.blur();
+    }
+  }, { passive: true });
 
   // ---- File System connection (writes directly to a real file on your PC) ----
   // The file handle itself is remembered across sessions via IndexedDB, so you
@@ -4639,10 +4675,21 @@
     });
   }
   document.querySelectorAll('#s-method-chips .ptc-method-chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-      $('s-method').value = chip.dataset.method;
+    chip.addEventListener('click', (e) => {
+      e.stopPropagation();
+      // clicking the already-selected method again unselects it
+      $('s-method').value = ($('s-method').value === chip.dataset.method) ? '' : chip.dataset.method;
       syncMethodChips();
     });
+  });
+  // clicking anywhere outside the payment panel clears the selected method
+  document.addEventListener('click', (e) => {
+    const panel = document.querySelector('.ptc-payment-panel');
+    if(!panel || !$('s-method').value) return;
+    if(!panel.contains(e.target)){
+      $('s-method').value = '';
+      syncMethodChips();
+    }
   });
   syncMethodChips();
   recalcSale();
@@ -4668,9 +4715,11 @@
     return {
       date: salesVal('s-date'),
       pname: salesVal('s-pname').toUpperCase(),
+      ptype: $('s-ptype').value || 'ADULT',
       phone: salesVal('s-phone'),
       tkt: salesVal('s-tkt').toUpperCase(),
-      pnr: salesVal('s-pnr').toUpperCase(),
+      pnrGds: salesVal('s-pnr-gds').toUpperCase(),
+      pnrAirline: salesVal('s-pnr-air').toUpperCase(),
       sector: salesVal('s-sector').toUpperCase(),
       airline: salesVal('s-airline').toUpperCase(),
       price: salesNum('s-price') || 0,
@@ -4693,9 +4742,10 @@
   }
 
   function clearSaleForm(){
-    ['s-pname','s-phone','s-tkt','s-pnr','s-sector','s-airline','s-price','s-cost','s-paid','s-duedate','s-note']
+    ['s-pname','s-phone','s-tkt','s-pnr-gds','s-pnr-air','s-sector','s-airline','s-price','s-cost','s-paid','s-duedate','s-note']
       .forEach(id => { const el = $(id); if(el) el.value = ''; });
     $('s-date').value = todayISOSales();
+    $('s-ptype').value = 'ADULT';
     $('s-method').value = '';
     syncMethodChips();
     recalcSale();
@@ -4749,9 +4799,11 @@
       tr.innerHTML = `
         <td>${s.date || ''}</td>
         <td>${s.pname || ''}</td>
+        <td>${s.ptype ? s.ptype.charAt(0) + s.ptype.slice(1).toLowerCase() : ''}</td>
         <td class="mono">${s.phone || ''}</td>
         <td class="mono">${s.tkt || ''}</td>
-        <td class="mono">${s.pnr || ''}</td>
+        <td class="mono">${s.pnrGds || ''}</td>
+        <td class="mono">${s.pnrAirline || ''}</td>
         <td class="mono">${s.sector || ''}</td>
         <td class="mono">${s.airline || ''}</td>
         <td class="mono">${fmtMoneySales(s.price)}</td>
@@ -4790,9 +4842,11 @@
   function populateSaleForm(s){
     $('s-date').value = s.date || todayISOSales();
     $('s-pname').value = s.pname || '';
+    $('s-ptype').value = s.ptype || 'ADULT';
     $('s-phone').value = s.phone || '';
     $('s-tkt').value = s.tkt || '';
-    $('s-pnr').value = s.pnr || '';
+    $('s-pnr-gds').value = s.pnrGds || s.pnr || '';
+    $('s-pnr-air').value = s.pnrAirline || '';
     $('s-sector').value = s.sector || '';
     $('s-airline').value = s.airline || '';
     $('s-price').value = s.price === '' || s.price === undefined ? '' : s.price;
@@ -4861,7 +4915,8 @@
   $('btn-sales-export').addEventListener('click', () => {
     if(typeof XLSX === 'undefined'){ toast('Export library failed to load — check your internet connection.'); return; }
     const cols = [
-      ['DATE','date'], ['CUSTOMER NAME','pname'], ['CONTACT','phone'], ['TICKET NUMBER','tkt'], ['PNR','pnr'],
+      ['DATE','date'], ['CUSTOMER NAME','pname'], ['PASSENGER TYPE','ptype'], ['CONTACT','phone'], ['TICKET NUMBER','tkt'],
+      ['GDS PNR','pnrGds'], ['AIRLINE PNR','pnrAirline'],
       ['SECTOR','sector'], ['AIRLINE','airline'], ['SELLING PRICE','price'], ['NET COST','cost'],
       ['PROFIT','profit'], ['PAYMENT METHOD','method'], ['AMOUNT PAID','paid'], ['AMOUNT DUE','due'],
       ['STATUS','status'], ['DUE DATE','dueDate'], ['NOTE','note'],
