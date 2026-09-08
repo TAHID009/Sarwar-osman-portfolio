@@ -546,10 +546,10 @@
   @media (max-width: 640px){ .ptc-fare-summary{ grid-template-columns: 1fr; } }
 
   .ptc-fare-item{
-    background: #fff;
-    border: 1px solid var(--line);
-    border-radius: 9px;
-    padding: 10px 12px;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 0;
   }
   .ptc-fare-item-label{
     display:block;
@@ -562,21 +562,22 @@
   }
   .ptc-fare-item input{
     width:100%;
-    border:none;
-    background:transparent;
-    padding:0;
-    font-size: 16px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background:#FCFDFE;
+    padding: 9px 10px;
+    font-size: 15px;
     font-weight: 700;
     color: var(--ink);
     font-family: 'SFMono-Regular', ui-monospace, monospace;
   }
-  .ptc-fare-item input:focus{ outline:none; }
+  .ptc-fare-item input:focus{ outline: 2px solid var(--accent); outline-offset: 1px; border-color: var(--accent); }
   .ptc-fare-item-profit{
-    background: #EAF6EE;
-    border-color: #BFE3CB;
+    background: transparent;
+    border: none;
   }
   .ptc-fare-item-profit .ptc-fare-item-label{ color: #1E7A46; }
-  .ptc-fare-item-profit input{ color: #1E7A46; }
+  .ptc-fare-item-profit input{ color: #1E7A46; border-color:#BFE3CB; background:#F5FBF7; }
 
   .ptc-method-select-native{
     position: absolute;
@@ -614,47 +615,25 @@
     box-shadow: 0 2px 8px rgba(30,122,70,0.28);
   }
 
-  .ptc-settlement-panel{
-    background: #fff;
-    border: 1px solid var(--line);
-    border-radius: 9px;
-    padding: 14px 14px 12px;
-    margin: 4px 0 14px;
-  }
-  .ptc-settlement-top{
+  .ptc-settlement-simple{
     display: flex;
-    justify-content: space-between;
-    align-items: baseline;
+    align-items: center;
+    gap: 14px;
     flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 8px;
+    padding: 10px 2px 14px;
   }
-  .ptc-settlement-label{
+  .ptc-settlement-simple-label{
     font-size: 11px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     font-weight: 700;
     color: var(--muted);
   }
-  .ptc-settlement-due{
-    font-size: 15px;
+  .ptc-settlement-simple-due{
+    font-size: 17px;
     font-weight: 800;
     font-family: 'SFMono-Regular', ui-monospace, monospace;
     color: var(--refund);
-  }
-  .ptc-settlement-track{
-    height: 8px;
-    border-radius: 5px;
-    background: #EDF1F5;
-    overflow: hidden;
-    margin-bottom: 10px;
-  }
-  .ptc-settlement-fill{
-    height: 100%;
-    width: 0%;
-    border-radius: 5px;
-    background: #1E7A46;
-    transition: width .25s ease, background .25s ease;
   }
   .ptc-status-badge{
     display: inline-flex;
@@ -672,6 +651,51 @@
   .ptc-status-badge.ptc-status-badge-paid{ background: #1E7A46; }
   .ptc-status-badge.ptc-status-badge-partial{ background: var(--reissue); }
   .ptc-status-badge.ptc-status-badge-due{ background: var(--refund); }
+
+  /* Due-payment visibility: highlighted rows in the Revenue Ledger + a quick "who owes" panel */
+  #sales-tbody tr.ptc-row-due{ background: var(--refund-soft); }
+  #sales-tbody tr.ptc-row-partial{ background: var(--reissue-soft); }
+
+  .ptc-due-panel{
+    border: 1px solid #F0D6D2;
+    background: var(--refund-soft);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 16px;
+  }
+  .ptc-due-panel-title{
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    font-weight: 700;
+    color: var(--refund);
+    margin-bottom: 8px;
+  }
+  .ptc-due-row{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 7px 0;
+    border-top: 1px dashed #EFC9C2;
+    font-size: 13px;
+  }
+  .ptc-due-row:first-of-type{ border-top: none; }
+  .ptc-due-row-who{ color: var(--ink); font-weight: 600; }
+  .ptc-due-row-pnr{ color: var(--muted); font-size: 12px; font-family: 'SFMono-Regular', ui-monospace, monospace; }
+  .ptc-due-row-amt{ font-weight: 800; font-family: 'SFMono-Regular', ui-monospace, monospace; color: var(--refund); white-space: nowrap; }
+  .ptc-due-row-goto{
+    border: none;
+    background: #fff;
+    color: var(--refund);
+    border: 1px solid #F0D6D2;
+    font-size: 11.5px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 14px;
+    cursor: pointer;
+  }
+  .ptc-due-row-goto:hover{ background: var(--refund); color: #fff; }
 
   .ptc-edit{
     background: none;
@@ -1864,6 +1888,8 @@
 
     <div class="ptc-view" id="view-sales">
 
+      <div class="ptc-due-panel" id="sales-due-panel" style="display:none;"></div>
+
       <div class="ptc-kpi-grid" id="sales-kpi-grid" style="margin-bottom:20px;"></div>
 
       <div class="ptc-card" id="sales-card" style="border-left-color:#1E7A46;">
@@ -1976,18 +2002,13 @@
             </div>
           </div>
 
-          <div class="ptc-settlement-panel">
-            <div class="ptc-settlement-top">
-              <span class="ptc-settlement-label">Collection Progress</span>
-              <span class="ptc-settlement-due">Due: <span id="s-due-display">0.00</span></span>
-            </div>
-            <div class="ptc-settlement-track">
-              <div class="ptc-settlement-fill" id="s-settlement-fill"></div>
-            </div>
+          <div class="ptc-settlement-simple">
+            <span class="ptc-settlement-simple-label">Amount Due</span>
+            <span class="ptc-settlement-simple-due" id="s-due-display">0.00</span>
             <span class="ptc-status-badge" id="s-status-badge">—</span>
           </div>
 
-          <!-- kept for calculation / storage, mirrored by the visual settlement panel above -->
+          <!-- kept for calculation / storage, mirrored by the simple due readout above -->
           <input type="hidden" id="s-due" />
           <input type="hidden" id="s-status" />
 
@@ -4649,16 +4670,10 @@
     $('s-status').value = status === '—' ? '—' : status;
     $('s-duedate-wrap').style.display = (status === 'PAID' || status === '—') ? 'none' : 'block';
 
-    // --- Visual settlement panel (progress bar + status badge) ---
+    // --- Simple due readout + status badge ---
     const dueDisplay = $('s-due-display');
-    const fill = $('s-settlement-fill');
     const badge = $('s-status-badge');
     if(dueDisplay) dueDisplay.textContent = due.toFixed(2);
-    if(fill){
-      const pct = price > 0 ? Math.min((paid / price) * 100, 100) : 0;
-      fill.style.width = pct + '%';
-      fill.style.background = status === 'DUE' ? 'var(--refund)' : (status === 'PARTIAL' ? 'var(--reissue)' : '#1E7A46');
-    }
     if(badge){
       badge.className = 'ptc-status-badge' + (status === 'PAID' ? ' ptc-status-badge-paid' : status === 'PARTIAL' ? ' ptc-status-badge-partial' : status === 'DUE' ? ' ptc-status-badge-due' : '');
       const badgeIcon = status === 'PAID' ? '✅' : status === 'PARTIAL' ? '🕒' : status === 'DUE' ? '⚠️' : '—';
@@ -4759,6 +4774,43 @@
     return 'ptc-status-tag-due';
   }
 
+  function renderDuePanel(){
+    const panel = $('sales-due-panel');
+    if(!panel) return;
+    const owing = salesEntries
+      .map((s, idx) => ({ s, idx }))
+      .filter(({s}) => s.status === 'DUE' || s.status === 'PARTIAL');
+
+    if(owing.length === 0){
+      panel.style.display = 'none';
+      panel.innerHTML = '';
+      return;
+    }
+    panel.style.display = 'block';
+    panel.innerHTML = `
+      <div class="ptc-due-panel-title">⚠️ Who owes payment — ${owing.length} ticket(s)</div>
+      ${owing.map(({s, idx}) => `
+        <div class="ptc-due-row">
+          <div>
+            <div class="ptc-due-row-who">${s.pname || 'Unnamed'}</div>
+            <div class="ptc-due-row-pnr">GDS ${s.pnrGds || '—'} · Airline ${s.pnrAirline || '—'}${s.tkt ? ' · Tkt ' + s.tkt : ''}</div>
+          </div>
+          <div style="display:flex; align-items:center; gap:10px;">
+            <span class="ptc-due-row-amt">${fmtMoneySales(s.due)}</span>
+            <button type="button" class="ptc-due-row-goto" data-idx="${idx}">Collect</button>
+          </div>
+        </div>
+      `).join('')}
+    `;
+    panel.querySelectorAll('.ptc-due-row-goto').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const i = parseInt(btn.getAttribute('data-idx'), 10);
+        startSaleEdit(i);
+        $('sales-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+  }
+
   function renderSalesKpis(){
     const grid = $('sales-kpi-grid');
     if(!grid) return;
@@ -4787,6 +4839,7 @@
     tbody.innerHTML = '';
     $('sales-count').textContent = salesEntries.length + (salesEntries.length === 1 ? ' sale' : ' sales');
     renderSalesKpis();
+    renderDuePanel();
 
     if(salesEntries.length === 0){
       empty.style.display = 'block';
@@ -4796,6 +4849,8 @@
 
     salesEntries.forEach((s, idx) => {
       const tr = document.createElement('tr');
+      if(s.status === 'DUE') tr.classList.add('ptc-row-due');
+      else if(s.status === 'PARTIAL') tr.classList.add('ptc-row-partial');
       tr.innerHTML = `
         <td>${s.date || ''}</td>
         <td>${s.pname || ''}</td>
