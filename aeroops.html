@@ -660,10 +660,10 @@
   .ptc-pax-count-item{
     flex: 1;
     text-align: center;
-    border: 1px solid var(--line);
+    border: none;
     border-radius: 6px;
     padding: 6px 4px 7px;
-    background: #FCFDFE;
+    background: transparent;
   }
   .ptc-pax-count-label{
     display: block;
@@ -685,7 +685,7 @@
     color: var(--ink);
   }
   .ptc-pax-count-item input:focus{ outline: none; }
-  .ptc-pax-count-item:focus-within{ border-color: var(--accent); }
+  .ptc-pax-count-item:focus-within{ background: var(--accent-soft); border-radius: 6px; }
 
   /* Revenue Ledger row actions — compact, professional icon buttons */
   .ptc-sales-actions{
@@ -1680,10 +1680,10 @@
             <label for="f-mode-f">Refund Type</label>
             <select id="f-mode-f">
               <option value="" disabled selected>Select Type</option>
-              <option value="FULL_UNUSED">Full Refund — Unused Ticket</option>
-              <option value="FULL_UNUSED_CHARGE">Full Refund — Unused Ticket with Airline Charge</option>
-              <option value="PARTIAL">Partial Refund — Partially Used Ticket</option>
-              <option value="TAX_ONLY">Tax Refund Only</option>
+              <option value="FULL_UNUSED">Full Refund</option>
+              <option value="FULL_UNUSED_CHARGE">Refund</option>
+              <option value="PARTIAL">Partial Refund</option>
+              <option value="TAX_ONLY">Tax Refund</option>
             </select>
           </div>
         </div>
@@ -4316,12 +4316,12 @@
   let searchQuery = '';
 
   const REFUND_TYPE_LABELS = {
-    FULL_UNUSED: 'Full Refund — Unused Ticket',
-    FULL_UNUSED_CHARGE: 'Full Refund — Unused Ticket with Airline Charge',
-    PARTIAL: 'Partial Refund — Partially Used Ticket',
-    TAX_ONLY: 'Tax Refund Only',
-    FULL: 'Full Refund (legacy)',
-    AS_PER_POLICY: 'As Per Policy (legacy)',
+    FULL_UNUSED: 'Full Refund',
+    FULL_UNUSED_CHARGE: 'Refund',
+    PARTIAL: 'Partial Refund',
+    TAX_ONLY: 'Tax Refund',
+    FULL: 'Full Refund',
+    AS_PER_POLICY: 'Partial Refund',
   };
   function refundTypeLabel(rt){
     return REFUND_TYPE_LABELS[rt] || rt || '';
