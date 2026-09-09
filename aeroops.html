@@ -652,6 +652,76 @@
   .ptc-status-badge.ptc-status-badge-partial{ background: var(--reissue); }
   .ptc-status-badge.ptc-status-badge-due{ background: var(--refund); }
 
+  /* Passenger count breakdown (one PNR can carry Adult/Child/Infant together) */
+  .ptc-pax-count{
+    display: flex;
+    gap: 8px;
+  }
+  .ptc-pax-count-item{
+    flex: 1;
+    text-align: center;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 6px 4px 7px;
+    background: #FCFDFE;
+  }
+  .ptc-pax-count-label{
+    display: block;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    font-weight: 700;
+    color: var(--muted);
+    margin-bottom: 3px;
+  }
+  .ptc-pax-count-item input{
+    width: 100%;
+    border: none;
+    background: transparent;
+    text-align: center;
+    padding: 0;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .ptc-pax-count-item input:focus{ outline: none; }
+  .ptc-pax-count-item:focus-within{ border-color: var(--accent); }
+
+  /* Revenue Ledger row actions — compact, professional icon buttons */
+  .ptc-sales-actions{
+    display: flex;
+    gap: 6px;
+    white-space: nowrap;
+  }
+  .ptc-sales-actions button{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    background: #FCFDFE;
+    color: var(--ink-soft);
+    font-size: 13.5px;
+    line-height: 1;
+    cursor: pointer;
+    transition: transform .1s ease, border-color .15s ease, background .15s ease, color .15s ease, box-shadow .15s ease;
+  }
+  .ptc-sales-actions button:active{ transform: scale(0.93); }
+  .ptc-sales-edit:hover{
+    border-color: var(--booking);
+    background: var(--booking-soft);
+    color: var(--booking);
+    box-shadow: 0 1px 4px rgba(46,111,149,0.18);
+  }
+  .ptc-sales-del:hover{
+    border-color: var(--refund);
+    background: var(--refund-soft);
+    color: var(--refund);
+    box-shadow: 0 1px 4px rgba(180,69,59,0.18);
+  }
+
   /* Due-payment visibility: highlighted rows in the Revenue Ledger + a quick "who owes" panel */
   #sales-tbody tr.ptc-row-due{ background: var(--refund-soft); }
   #sales-tbody tr.ptc-row-partial{ background: var(--reissue-soft); }
@@ -1909,12 +1979,21 @@
         </div>
         <div class="ptc-row">
           <div class="ptc-field">
-            <label for="s-ptype">Passenger Type</label>
-            <select id="s-ptype">
-              <option value="ADULT">Adult</option>
-              <option value="CHILD">Child</option>
-              <option value="INFANT">Infant</option>
-            </select>
+            <label>Passengers on this PNR</label>
+            <div class="ptc-pax-count">
+              <div class="ptc-pax-count-item">
+                <span class="ptc-pax-count-label">Adult</span>
+                <input type="number" min="0" step="1" id="s-pax-adt" class="mono" value="1" />
+              </div>
+              <div class="ptc-pax-count-item">
+                <span class="ptc-pax-count-label">Child</span>
+                <input type="number" min="0" step="1" id="s-pax-chd" class="mono" value="0" />
+              </div>
+              <div class="ptc-pax-count-item">
+                <span class="ptc-pax-count-label">Infant</span>
+                <input type="number" min="0" step="1" id="s-pax-inf" class="mono" value="0" />
+              </div>
+            </div>
           </div>
           <div class="ptc-field">
             <label for="s-phone">Contact Number</label>
@@ -2039,7 +2118,7 @@
             <tr>
               <th>Date</th>
               <th>Customer</th>
-              <th>Type</th>
+              <th>Pax</th>
               <th>Contact</th>
               <th>Ticket No.</th>
               <th>GDS PNR</th>
@@ -4730,7 +4809,9 @@
     return {
       date: salesVal('s-date'),
       pname: salesVal('s-pname').toUpperCase(),
-      ptype: $('s-ptype').value || 'ADULT',
+      paxAdult: parseInt($('s-pax-adt').value, 10) || 0,
+      paxChild: parseInt($('s-pax-chd').value, 10) || 0,
+      paxInfant: parseInt($('s-pax-inf').value, 10) || 0,
       phone: salesVal('s-phone'),
       tkt: salesVal('s-tkt').toUpperCase(),
       pnrGds: salesVal('s-pnr-gds').toUpperCase(),
@@ -4760,7 +4841,9 @@
     ['s-pname','s-phone','s-tkt','s-pnr-gds','s-pnr-air','s-sector','s-airline','s-price','s-cost','s-paid','s-duedate','s-note']
       .forEach(id => { const el = $(id); if(el) el.value = ''; });
     $('s-date').value = todayISOSales();
-    $('s-ptype').value = 'ADULT';
+    $('s-pax-adt').value = 1;
+    $('s-pax-chd').value = 0;
+    $('s-pax-inf').value = 0;
     $('s-method').value = '';
     syncMethodChips();
     recalcSale();
@@ -4772,6 +4855,20 @@
     if(status === 'PAID') return 'ptc-status-tag-paid';
     if(status === 'PARTIAL') return 'ptc-status-tag-partial';
     return 'ptc-status-tag-due';
+  }
+
+  function paxSummary(s){
+    // combined Adult/Child/Infant counts for one PNR
+    if(s.paxAdult !== undefined || s.paxChild !== undefined || s.paxInfant !== undefined){
+      const parts = [];
+      if(s.paxAdult) parts.push(s.paxAdult + ' ADT');
+      if(s.paxChild) parts.push(s.paxChild + ' CHD');
+      if(s.paxInfant) parts.push(s.paxInfant + ' INF');
+      return parts.join(' · ') || '—';
+    }
+    // fallback for older sales saved with a single passenger type
+    if(s.ptype) return '1 ' + s.ptype.slice(0,3);
+    return '—';
   }
 
   function renderDuePanel(){
@@ -4854,7 +4951,7 @@
       tr.innerHTML = `
         <td>${s.date || ''}</td>
         <td>${s.pname || ''}</td>
-        <td>${s.ptype ? s.ptype.charAt(0) + s.ptype.slice(1).toLowerCase() : ''}</td>
+        <td class="mono">${paxSummary(s)}</td>
         <td class="mono">${s.phone || ''}</td>
         <td class="mono">${s.tkt || ''}</td>
         <td class="mono">${s.pnrGds || ''}</td>
@@ -4870,7 +4967,12 @@
         <td><span class="ptc-tag ${sIcon(s.status)}">${s.status}</span></td>
         <td>${s.dueDate || ''}</td>
         <td>${s.note || ''}</td>
-        <td style="white-space:nowrap;"><button class="ptc-sales-edit" data-idx="${idx}">Edit</button><button class="ptc-sales-del" data-idx="${idx}">Remove</button></td>
+        <td>
+          <div class="ptc-sales-actions">
+            <button class="ptc-sales-edit" data-idx="${idx}" title="Edit sale" aria-label="Edit sale">✏️</button>
+            <button class="ptc-sales-del" data-idx="${idx}" title="Remove sale" aria-label="Remove sale">🗑️</button>
+          </div>
+        </td>
       `;
       tbody.appendChild(tr);
     });
@@ -4897,7 +4999,16 @@
   function populateSaleForm(s){
     $('s-date').value = s.date || todayISOSales();
     $('s-pname').value = s.pname || '';
-    $('s-ptype').value = s.ptype || 'ADULT';
+    if(s.paxAdult !== undefined || s.paxChild !== undefined || s.paxInfant !== undefined){
+      $('s-pax-adt').value = s.paxAdult || 0;
+      $('s-pax-chd').value = s.paxChild || 0;
+      $('s-pax-inf').value = s.paxInfant || 0;
+    } else {
+      // backward compatibility with sales saved under the old single passenger-type field
+      $('s-pax-adt').value = s.ptype === 'CHILD' || s.ptype === 'INFANT' ? 0 : 1;
+      $('s-pax-chd').value = s.ptype === 'CHILD' ? 1 : 0;
+      $('s-pax-inf').value = s.ptype === 'INFANT' ? 1 : 0;
+    }
     $('s-phone').value = s.phone || '';
     $('s-tkt').value = s.tkt || '';
     $('s-pnr-gds').value = s.pnrGds || s.pnr || '';
@@ -4970,7 +5081,7 @@
   $('btn-sales-export').addEventListener('click', () => {
     if(typeof XLSX === 'undefined'){ toast('Export library failed to load — check your internet connection.'); return; }
     const cols = [
-      ['DATE','date'], ['CUSTOMER NAME','pname'], ['PASSENGER TYPE','ptype'], ['CONTACT','phone'], ['TICKET NUMBER','tkt'],
+      ['DATE','date'], ['CUSTOMER NAME','pname'], ['ADULT','paxAdult'], ['CHILD','paxChild'], ['INFANT','paxInfant'], ['CONTACT','phone'], ['TICKET NUMBER','tkt'],
       ['GDS PNR','pnrGds'], ['AIRLINE PNR','pnrAirline'],
       ['SECTOR','sector'], ['AIRLINE','airline'], ['SELLING PRICE','price'], ['NET COST','cost'],
       ['PROFIT','profit'], ['PAYMENT METHOD','method'], ['AMOUNT PAID','paid'], ['AMOUNT DUE','due'],
