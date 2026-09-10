@@ -4410,12 +4410,11 @@
       );
     } else if(e.txn === 'Refund'){
       f.push(['Ticket No.', e.oldTkt], ['Refund Type', refundTypeLabel(e.refundType)]);
-      if(e.refundType !== 'TAX_ONLY'){
-        f.push(['Total Fare', fmtMoney(e.refTotalFare)]);
-        if(e.refundType === 'PARTIAL') f.push(['Used Segment Fare', fmtMoney(e.usedSegmentFare)]);
-      }
+      if(e.refundType === 'PARTIAL') f.push(['Used Segment Fare', fmtMoney(e.usedSegmentFare)]);
+      // Base Fare + Tax are shown together as the Fare Breakdown chart for every
+      // refund type except Tax Refund, which has no base fare — just the tax itself.
+      if(e.refundType === 'TAX_ONLY') f.push(['Tax', fmtMoney(e.refTotalTax)]);
       f.push(
-        ['Total Tax', fmtMoney(e.refTotalTax)],
         ['Non-Refundable Tax', fmtMoney(e.refNonRefundTax)],
         ['Refundable Fare', fmtMoney(e.refundableFare)],
         ['Refundable Tax', fmtMoney(e.refundableTax)],
@@ -4470,6 +4469,42 @@
     render();
   }
 
+  // Reusable "Fare Breakdown" chart: Base Fare + Tax = Total, with a proportional
+  // two-color bar. Used for Ticketing (Base Fare/Tax) and Refund (Base Fare/Tax of
+  // the original ticket) search-result cards.
+  function fareChartHtml(baseVal, taxVal, totalLabel){
+    const base = parseFloat(baseVal) || 0;
+    const tax = parseFloat(taxVal) || 0;
+    const total = base + tax;
+    const basePct = total > 0 ? (base / total) * 100 : 50;
+    const taxPct = total > 0 ? 100 - basePct : 50;
+    return `
+      <div class="ptc-fare-chart">
+        <div class="ptc-fare-chart-title">💰 Fare Breakdown</div>
+        <div class="ptc-fare-chart-bar">
+          <div class="ptc-fare-chart-seg-base" style="width:${basePct}%"></div>
+          <div class="ptc-fare-chart-seg-tax" style="width:${taxPct}%"></div>
+        </div>
+        <div class="ptc-fare-chart-equation">
+          <div class="ptc-fare-chart-item">
+            <span class="ptc-fare-chart-item-label"><span class="ptc-fare-dot" style="background:var(--brand);"></span>Base Fare</span>
+            <span class="ptc-fare-chart-item-value">${fmtMoney(base)}</span>
+          </div>
+          <span class="ptc-fare-chart-op">+</span>
+          <div class="ptc-fare-chart-item">
+            <span class="ptc-fare-chart-item-label"><span class="ptc-fare-dot" style="background:#E3A008;"></span>Tax</span>
+            <span class="ptc-fare-chart-item-value">${fmtMoney(tax)}</span>
+          </div>
+          <span class="ptc-fare-chart-op">=</span>
+          <div class="ptc-fare-chart-item ptc-fare-chart-total">
+            <span class="ptc-fare-chart-item-label">${totalLabel}</span>
+            <span class="ptc-fare-chart-item-value">${fmtMoney(total)}</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
   function renderSearchResults(){
     const wrap = $('ptc-search-results');
     const meta = $('ptc-search-meta');
@@ -4503,36 +4538,12 @@
       const e = entries[idx];
       const color = tagColor[e.txn] || '#6B7280';
       const fields = detailFields(e);
-      const baseAmt = parseFloat(e.baseFare) || 0;
-      const taxAmt = parseFloat(e.taxFare) || 0;
-      const fareTotal = baseAmt + taxAmt;
-      const basePct = fareTotal > 0 ? (baseAmt / fareTotal) * 100 : 50;
-      const taxPct = fareTotal > 0 ? 100 - basePct : 50;
-      const fareChartHtml = (e.txn === 'Ticketing') ? `
-        <div class="ptc-fare-chart">
-          <div class="ptc-fare-chart-title">💰 Fare Breakdown</div>
-          <div class="ptc-fare-chart-bar">
-            <div class="ptc-fare-chart-seg-base" style="width:${basePct}%"></div>
-            <div class="ptc-fare-chart-seg-tax" style="width:${taxPct}%"></div>
-          </div>
-          <div class="ptc-fare-chart-equation">
-            <div class="ptc-fare-chart-item">
-              <span class="ptc-fare-chart-item-label"><span class="ptc-fare-dot" style="background:var(--brand);"></span>Base Fare</span>
-              <span class="ptc-fare-chart-item-value">${fmtMoney(e.baseFare)}</span>
-            </div>
-            <span class="ptc-fare-chart-op">+</span>
-            <div class="ptc-fare-chart-item">
-              <span class="ptc-fare-chart-item-label"><span class="ptc-fare-dot" style="background:#E3A008;"></span>Tax</span>
-              <span class="ptc-fare-chart-item-value">${fmtMoney(e.taxFare)}</span>
-            </div>
-            <span class="ptc-fare-chart-op">=</span>
-            <div class="ptc-fare-chart-item ptc-fare-chart-total">
-              <span class="ptc-fare-chart-item-label">Total Fare</span>
-              <span class="ptc-fare-chart-item-value">${fmtMoney(e.airlineTicketPrice)}</span>
-            </div>
-          </div>
-        </div>
-      ` : '';
+      let chartHtml = '';
+      if(e.txn === 'Ticketing'){
+        chartHtml = fareChartHtml(e.baseFare, e.taxFare, 'Total Fare');
+      } else if(e.txn === 'Refund' && e.refundType !== 'TAX_ONLY'){
+        chartHtml = fareChartHtml(e.refTotalFare, e.refTotalTax, 'Total');
+      }
       return `
         <div class="ptc-detail-card" style="border-left-color:${color};">
           <div class="ptc-detail-card-head">
@@ -4542,7 +4553,7 @@
               ${e.editedAt ? `<div class="ptc-detail-sub" style="color:var(--reissue);">✏️ Last edited ${new Date(e.editedAt).toLocaleString()}</div>` : ''}
             </div>
           </div>
-          ${fareChartHtml}
+          ${chartHtml}
           <div class="ptc-detail-grid">
             ${fields.map(([label,value]) => `
               <div>
