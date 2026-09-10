@@ -1042,6 +1042,31 @@
     word-break:break-word;
   }
   .ptc-detail-actions{ margin-top:10px; display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+
+  /* "Client Refund" — final payable amount, called out separately from the grid */
+  .ptc-client-refund-callout{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #E9F6EE;
+    border: 1px solid #BFE3CB;
+    border-radius: 9px;
+    padding: 10px 14px;
+    margin-top: 12px;
+  }
+  .ptc-client-refund-callout-label{
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 800;
+    color: #1E7A46;
+  }
+  .ptc-client-refund-callout-value{
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 800;
+    font-size: 18px;
+    color: #1E7A46;
+  }
   .ptc-search-noresult{
     text-align:center;
     padding:20px;
@@ -4430,20 +4455,21 @@
       if(e.refundType === 'PARTIAL') f.push(['Used Segment Fare', fmtMoney(e.usedSegmentFare)]);
       // Base Fare + Tax are shown together as the Fare Breakdown chart for every
       // refund type except Tax Refund, which has no base fare — just the tax itself.
-      if(e.refundType === 'TAX_ONLY') f.push(['Tax', fmtMoney(e.refTotalTax)]);
+      if(e.refundType === 'TAX_ONLY'){
+        f.push(['Tax', fmtMoney(e.refTotalTax)]);
+      } else {
+        f.push(['Refundable Base Fare', fmtMoney(e.refundableFare)]);
+      }
       f.push(
-        ['Non-Refundable Tax', fmtMoney(e.refNonRefundTax)],
-        ['Refundable Fare', fmtMoney(e.refundableFare)],
         ['Refundable Tax', fmtMoney(e.refundableTax)],
-        ['Airline Refund/Cancellation Fee', fmtMoney(e.airlineCharge)],
-        ['Commission Adjustment', fmtMoney(e.commissionAdj)],
-        ['AIRLINE REFUND', fmtMoney(e.airlineRefund)],
-        ['Service Charge Applied', e.svcApplied],
-        ['Agency Service Charge', fmtMoney(e.svc)],
-        ['CLIENT REFUND / ADJUSTMENT', fmtMoney(e.refundCharge)],
-        ['Status', e.refundStatus], ['Adjustment Given', e.adjustmentGiven],
-        ['Adjustment Amt', fmtMoney(e.adjustmentAmount)]
+        ['Airline Penalty', fmtMoney(e.airlineCharge)],
+        ['Non-Refundable Tax', fmtMoney(e.refNonRefundTax)],
+        ['Airline Refund', fmtMoney(e.airlineRefund)]
       );
+      if(e.refundType !== 'TAX_ONLY') f.push(['Commission Amount', fmtMoney(e.commissionAdj)]);
+      f.push(['Service Charge', fmtMoney(e.svc)]);
+      // "Client Refund" — the final amount payable to the client — is shown as its
+      // own highlighted callout beneath the grid rather than buried as a plain row.
     } else if(e.txn === 'Void'){
       f.push(
         ['Ticket No.', e.oldTkt],
@@ -4587,6 +4613,12 @@
               </div>
             `).join('')}
           </div>
+          ${e.txn === 'Refund' ? `
+          <div class="ptc-client-refund-callout">
+            <span class="ptc-client-refund-callout-label">💵 Client Refund</span>
+            <span class="ptc-client-refund-callout-value">${fmtMoney(e.refundCharge)}</span>
+          </div>
+          ` : ''}
           <div class="ptc-detail-actions">
             ${e.txn === 'Refund' ? `
             <div style="display:flex; align-items:center; gap:8px; margin-right:auto;">
