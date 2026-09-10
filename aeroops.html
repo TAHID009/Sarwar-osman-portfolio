@@ -1078,10 +1078,21 @@
   .ptc-fare-chart-equation{
     display: flex;
     align-items: center;
-    gap: 12px;
+    justify-content: space-between;
+    gap: 10px;
     flex-wrap: wrap;
   }
-  .ptc-fare-chart-item{ display: flex; flex-direction: column; gap: 2px; }
+  .ptc-fare-chart-item{
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 7px 12px;
+    flex: 1;
+    min-width: 90px;
+  }
   .ptc-fare-chart-item-label{
     display: flex;
     align-items: center;
@@ -1091,6 +1102,7 @@
     letter-spacing: 0.4px;
     font-weight: 700;
     color: var(--muted);
+    white-space: nowrap;
   }
   .ptc-fare-dot{ width: 7px; height: 7px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
   .ptc-fare-chart-item-value{
@@ -1099,11 +1111,16 @@
     font-size: 15px;
     color: var(--ink);
   }
-  .ptc-fare-chart-op{ font-size: 16px; font-weight: 700; color: var(--muted); }
+  .ptc-fare-chart-op{ font-size: 16px; font-weight: 700; color: var(--muted); flex-shrink: 0; }
+  .ptc-fare-chart-item.ptc-fare-chart-total{
+    background: #E9F6EE;
+    border-color: #BFE3CB;
+  }
   .ptc-fare-chart-item.ptc-fare-chart-total .ptc-fare-chart-item-value{ color: #1E7A46; font-size: 17px; }
   .ptc-fare-chart-item.ptc-fare-chart-total .ptc-fare-chart-item-label{ color: #1E7A46; }
   @media (max-width: 480px){
-    .ptc-fare-chart-equation{ gap: 8px; }
+    .ptc-fare-chart-equation{ gap: 6px; }
+    .ptc-fare-chart-item{ min-width: 76px; padding: 6px 8px; }
     .ptc-fare-chart-item-value{ font-size: 13.5px; }
   }
 
@@ -4478,6 +4495,7 @@
     const total = base + tax;
     const basePct = total > 0 ? (base / total) * 100 : 50;
     const taxPct = total > 0 ? 100 - basePct : 50;
+    const fmt = (n) => n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     return `
       <div class="ptc-fare-chart">
         <div class="ptc-fare-chart-title">💰 Fare Breakdown</div>
@@ -4488,17 +4506,17 @@
         <div class="ptc-fare-chart-equation">
           <div class="ptc-fare-chart-item">
             <span class="ptc-fare-chart-item-label"><span class="ptc-fare-dot" style="background:var(--brand);"></span>Base Fare</span>
-            <span class="ptc-fare-chart-item-value">${fmtMoney(base)}</span>
+            <span class="ptc-fare-chart-item-value">${fmt(base)}</span>
           </div>
           <span class="ptc-fare-chart-op">+</span>
           <div class="ptc-fare-chart-item">
             <span class="ptc-fare-chart-item-label"><span class="ptc-fare-dot" style="background:#E3A008;"></span>Tax</span>
-            <span class="ptc-fare-chart-item-value">${fmtMoney(tax)}</span>
+            <span class="ptc-fare-chart-item-value">${fmt(tax)}</span>
           </div>
           <span class="ptc-fare-chart-op">=</span>
           <div class="ptc-fare-chart-item ptc-fare-chart-total">
             <span class="ptc-fare-chart-item-label">${totalLabel}</span>
-            <span class="ptc-fare-chart-item-value">${fmtMoney(total)}</span>
+            <span class="ptc-fare-chart-item-value">${fmt(total)}</span>
           </div>
         </div>
       </div>
@@ -4542,7 +4560,14 @@
       if(e.txn === 'Ticketing'){
         chartHtml = fareChartHtml(e.baseFare, e.taxFare, 'Total Fare');
       } else if(e.txn === 'Refund' && e.refundType !== 'TAX_ONLY'){
-        chartHtml = fareChartHtml(e.refTotalFare, e.refTotalTax, 'Total');
+        // refTotalFare stores the ORIGINAL ticket's fare + tax combined, not the base
+        // fare alone — use the dedicated refBaseFare field (falling back to
+        // refTotalFare − refTotalTax for older records saved before that field existed).
+        const refundTax = parseFloat(e.refTotalTax) || 0;
+        const refundBase = (e.refBaseFare !== undefined && e.refBaseFare !== '' && e.refBaseFare !== null)
+          ? parseFloat(e.refBaseFare) || 0
+          : (parseFloat(e.refTotalFare) || 0) - refundTax;
+        chartHtml = fareChartHtml(refundBase, refundTax, 'Total');
       }
       return `
         <div class="ptc-detail-card" style="border-left-color:${color};">
