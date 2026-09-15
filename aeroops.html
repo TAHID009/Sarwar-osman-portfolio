@@ -810,11 +810,17 @@
     align-items: center;
     justify-content: space-between;
     gap: 10px;
-    padding: 7px 0;
+    padding: 7px 8px;
+    margin: 0 -8px;
     border-top: 1px dashed #EFC9C2;
+    border-radius: 6px;
     font-size: 13px;
+    cursor: pointer;
+    transition: background .12s ease;
   }
   .ptc-due-row:first-of-type{ border-top: none; }
+  .ptc-due-row:hover{ background: rgba(180,69,59,0.06); }
+  .ptc-due-row:focus-visible{ outline: 2px solid var(--refund); outline-offset: -2px; }
   .ptc-due-row-who{ color: var(--ink); font-weight: 600; }
   .ptc-due-row-pnr{ color: var(--muted); font-size: 12px; font-family: 'SFMono-Regular', ui-monospace, monospace; }
   .ptc-due-row-amt{ font-weight: 800; font-family: 'SFMono-Regular', ui-monospace, monospace; color: var(--refund); white-space: nowrap; }
@@ -830,6 +836,14 @@
     cursor: pointer;
   }
   .ptc-due-row-goto:hover{ background: var(--refund); color: #fff; }
+  .ptc-due-row-view{
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--refund);
+    opacity: 0.55;
+    white-space: nowrap;
+  }
+  .ptc-due-row:hover .ptc-due-row-view{ opacity: 1; }
 
   .ptc-edit{
     background: none;
@@ -5256,7 +5270,7 @@
     panel.innerHTML = `
       <div class="ptc-due-panel-title">⚠️ Who owes payment — ${owing.length} ticket(s)</div>
       ${owing.map(({s, idx}) => `
-        <div class="ptc-due-row">
+        <div class="ptc-due-row" data-idx="${idx}" role="button" tabindex="0" title="Click to view full PNR details">
           <div>
             <div class="ptc-due-row-who">${s.pname || 'Unnamed'}</div>
             <div class="ptc-due-row-pnr">GDS ${s.pnrGds || '—'} · Airline ${s.pnrAirline || '—'}${s.tkt ? ' · Tkt ' + fmtTicketList(s.tkt) : ''}</div>
@@ -5264,12 +5278,30 @@
           <div style="display:flex; align-items:center; gap:10px;">
             <span class="ptc-due-row-amt">${fmtMoneySales(s.due)}</span>
             <button type="button" class="ptc-due-row-goto" data-idx="${idx}">Collect</button>
+            <span class="ptc-due-row-view" aria-hidden="true">Details ›</span>
           </div>
         </div>
       `).join('')}
     `;
+    panel.querySelectorAll('.ptc-due-row').forEach(row => {
+      row.addEventListener('click', () => {
+        const i = parseInt(row.getAttribute('data-idx'), 10);
+        const s = salesEntries[i];
+        if(!s) return;
+        const q = s.pnrGds || s.pnrAirline || (s.tkt ? s.tkt.split(',')[0] : '') || s.pname || '';
+        salesSearchQuery = q;
+        if($('sales-search')) $('sales-search').value = q;
+        renderSalesSearchResults();
+        const resultsWrap = $('sales-search-results');
+        if(resultsWrap) resultsWrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+      row.addEventListener('keydown', (e) => {
+        if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); row.click(); }
+      });
+    });
     panel.querySelectorAll('.ptc-due-row-goto').forEach(btn => {
-      btn.addEventListener('click', () => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
         const i = parseInt(btn.getAttribute('data-idx'), 10);
         startSaleEdit(i);
         $('sales-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
