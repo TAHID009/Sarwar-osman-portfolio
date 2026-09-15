@@ -1868,12 +1868,22 @@
         <div class="ptc-section-label" style="--sec-color:#C97F1E;">🔄 Reissue Details</div>
         <div class="ptc-row">
           <div class="ptc-field">
-            <label for="f-oldtkt-r">Old Ticket Number <span class="ptc-required">*</span></label>
-            <input type="text" id="f-oldtkt-r" class="mono" placeholder="13-digit ticket number" />
+            <label for="f-oldtkt-r-input">Old Ticket Number(s) <span class="ptc-required">*</span></label>
+            <div class="ptc-tkt-chip-input" id="f-oldtkt-r-wrap">
+              <div class="ptc-tkt-chips" id="f-oldtkt-r-chips"></div>
+              <input type="text" id="f-oldtkt-r-input" class="mono" inputmode="numeric" placeholder="13-digit ticket number, press Enter to add" />
+            </div>
+            <div class="ptc-field-hint" id="f-oldtkt-r-hint"></div>
+            <input type="hidden" id="f-oldtkt-r" />
           </div>
           <div class="ptc-field">
-            <label for="f-newtkt-r">New Ticket Number <span class="ptc-required">*</span></label>
-            <input type="text" id="f-newtkt-r" class="mono" placeholder="13-digit ticket number" />
+            <label for="f-newtkt-r-input">New Ticket Number(s) <span class="ptc-required">*</span></label>
+            <div class="ptc-tkt-chip-input" id="f-newtkt-r-wrap">
+              <div class="ptc-tkt-chips" id="f-newtkt-r-chips"></div>
+              <input type="text" id="f-newtkt-r-input" class="mono" inputmode="numeric" placeholder="13-digit ticket number, press Enter to add" />
+            </div>
+            <div class="ptc-field-hint" id="f-newtkt-r-hint"></div>
+            <input type="hidden" id="f-newtkt-r" />
           </div>
         </div>
         <div class="ptc-row">
@@ -1914,8 +1924,13 @@
 
         <div class="ptc-row">
           <div class="ptc-field">
-            <label for="f-oldtkt-f">Ticket Number <span class="ptc-required">*</span></label>
-            <input type="text" id="f-oldtkt-f" class="mono" placeholder="13-digit ticket number" />
+            <label for="f-oldtkt-f-input">Ticket Number(s) <span class="ptc-required">*</span></label>
+            <div class="ptc-tkt-chip-input" id="f-oldtkt-f-wrap">
+              <div class="ptc-tkt-chips" id="f-oldtkt-f-chips"></div>
+              <input type="text" id="f-oldtkt-f-input" class="mono" inputmode="numeric" placeholder="13-digit ticket number, press Enter to add" />
+            </div>
+            <div class="ptc-field-hint" id="f-oldtkt-f-hint"></div>
+            <input type="hidden" id="f-oldtkt-f" />
           </div>
           <div class="ptc-field" id="refund-mode-wrap">
             <label for="f-mode-f">Refund Type</label>
@@ -2494,34 +2509,51 @@
       hidden.value = arr.slice(0, MAX_TICKETS_PER_PNR).join(',');
       renderChips();
     }
-    function tryAdd(){
-      const digits = rawInput.value.replace(/\D/g, '');
-      if(!digits) return;
-      if(digits.length !== 13){
-        showHint('Ticket number must be exactly 13 digits.', true);
-        return;
-      }
+    // Accepts a raw string that may hold several ticket numbers at once, separated
+    // by comma, semicolon, space, or newline — handy for pasting a block of numbers
+    // straight out of a GDS screen or e-ticket, not just typing one at a time.
+    function addMany(raw){
+      const parts = raw.split(/[,;\s]+/).map(p => p.replace(/\D/g, '')).filter(Boolean);
+      if(!parts.length) return;
       const list = getTickets();
-      if(list.length >= MAX_TICKETS_PER_PNR){
-        showHint(`A PNR can have at most ${MAX_TICKETS_PER_PNR} ticket numbers.`, true);
-        rawInput.value = '';
-        return;
+      let addedAny = false;
+      let error = '';
+      for(const digits of parts){
+        if(list.length >= MAX_TICKETS_PER_PNR){
+          error = `A PNR can have at most ${MAX_TICKETS_PER_PNR} ticket numbers.`;
+          break;
+        }
+        if(digits.length !== 13){
+          error = `Ticket number "${digits}" must be exactly 13 digits.`;
+          continue;
+        }
+        if(list.includes(digits)) continue;
+        list.push(digits);
+        addedAny = true;
       }
-      if(list.includes(digits)){
-        showHint('That ticket number is already added.', true);
-        rawInput.value = '';
-        return;
-      }
-      list.push(digits);
-      setTickets(list);
+      if(addedAny) setTickets(list);
+      showHint(error || (defaultHint || ''), !!error);
+    }
+    function tryAdd(){
+      if(!rawInput.value.trim()) return;
+      addMany(rawInput.value);
       rawInput.value = '';
-      showHint(defaultHint || '', false);
     }
     rawInput.addEventListener('keydown', (e) => {
-      if(e.key === 'Enter' || e.key === ','){
+      if(e.key === 'Enter' || e.key === ',' || e.key === ';'){
         e.preventDefault();
         tryAdd();
       }
+    });
+    rawInput.addEventListener('paste', (e) => {
+      const text = (e.clipboardData || window.clipboardData).getData('text');
+      if(text && /[,;\s]/.test(text.trim())){
+        e.preventDefault();
+        addMany(text);
+        rawInput.value = '';
+      }
+      // a single pasted number (no separators) falls through to the normal input
+      // handler below, which strips non-digits and caps the length at 13
     });
     rawInput.addEventListener('blur', () => {
       if(rawInput.value.trim()) tryAdd();
@@ -2560,6 +2592,12 @@
 
   const entryNewTktChips = initTicketChipField('f-newtkt-t-input', 'f-newtkt-t-chips', 'f-newtkt-t', 'f-newtkt-t-hint',
     'One ticket per passenger — add each 13-digit ticket number, then press Enter.');
+  const entryOldTktReissueChips = initTicketChipField('f-oldtkt-r-input', 'f-oldtkt-r-chips', 'f-oldtkt-r', 'f-oldtkt-r-hint',
+    'Add each 13-digit ticket number — press Enter, or paste several separated by comma/semicolon.');
+  const entryNewTktReissueChips = initTicketChipField('f-newtkt-r-input', 'f-newtkt-r-chips', 'f-newtkt-r', 'f-newtkt-r-hint',
+    'Add each 13-digit ticket number — press Enter, or paste several separated by comma/semicolon.');
+  const entryOldTktRefundChips = initTicketChipField('f-oldtkt-f-input', 'f-oldtkt-f-chips', 'f-oldtkt-f', 'f-oldtkt-f-hint',
+    'Add each 13-digit ticket number — press Enter, or paste several separated by comma/semicolon.');
 
   // ---- File System connection (writes directly to a real file on your PC) ----
   // The file handle itself is remembered across sessions via IndexedDB, so you
@@ -3964,23 +4002,34 @@
     if(!entry.pname) return 'Please enter the passenger name.';
     if(!entry.airline) return 'Please select or enter the Airline.';
     const isTkt13 = (v) => /^\d{13}$/.test((v || '').toString());
+    // Validates a (possibly comma-joined) list of ticket numbers: each one must be
+    // exactly 13 digits, and a single PNR can carry at most 9 tickets.
+    const badTktList = (v, label) => {
+      const list = (v || '').toString().split(',').filter(Boolean);
+      const bad = list.find(t => !isTkt13(t));
+      if(bad) return `${label} "${bad}" is not a valid 13-digit ticket number.`;
+      if(list.length > 9) return `${label.replace(/ number$/, '')} — a PNR can have at most 9 ticket numbers.`;
+      return null;
+    };
     if(entry.txn === 'Ticketing'){
       if(!entry.sector) return 'Please enter the sector / route.';
       if(!entry.newTkt) return 'Please add at least one 13-digit ticket number.';
-      const bad = entry.newTkt.toString().split(',').filter(Boolean).find(t => !isTkt13(t));
-      if(bad) return `Ticket number "${bad}" is not a valid 13-digit ticket number.`;
-      if(entry.newTkt.toString().split(',').filter(Boolean).length > 9) return 'A PNR can have at most 9 ticket numbers.';
+      const err = badTktList(entry.newTkt, 'Ticket number');
+      if(err) return err;
     }
     if(entry.txn === 'Reissue'){
-      if(!entry.oldTkt) return 'Please enter the old ticket number.';
-      if(!isTkt13(entry.oldTkt)) return 'Old ticket number must be exactly 13 digits.';
-      if(!entry.newTkt) return 'Please enter the new ticket number.';
-      if(!isTkt13(entry.newTkt)) return 'New ticket number must be exactly 13 digits.';
+      if(!entry.oldTkt) return 'Please add at least one old ticket number.';
+      const errOld = badTktList(entry.oldTkt, 'Old ticket number');
+      if(errOld) return errOld;
+      if(!entry.newTkt) return 'Please add at least one new ticket number.';
+      const errNew = badTktList(entry.newTkt, 'New ticket number');
+      if(errNew) return errNew;
       if(!entry.sector) return 'Please enter the reissue sector.';
     }
     if(entry.txn === 'Refund' || entry.txn === 'Void'){
-      if(!entry.oldTkt) return 'Please enter the ticket number.';
-      if(!isTkt13(entry.oldTkt)) return 'Ticket number must be exactly 13 digits.';
+      if(!entry.oldTkt) return 'Please add at least one ticket number.';
+      const err = badTktList(entry.oldTkt, 'Ticket number');
+      if(err) return err;
     }
     if(entry.txn === 'Refund'){
       if(!entry.refundType) return 'Please select a Refund Type.';
@@ -4077,7 +4126,7 @@
         <td class="mono">${e.platform || ''}</td>
         <td class="mono">${e.airline || ''}</td>
         <td><span class="ptc-tag" style="background:${color}">${e.txn}</span></td>
-        <td class="mono">${e.oldTkt || ''}</td>
+        <td class="mono">${fmtTicketList(e.oldTkt)}</td>
         <td class="mono">${fmtTicketList(e.newTkt)}</td>
         <td class="mono">${e.sector || ''}</td>
         <td class="mono">${fmtMoney(e.baseFare)}</td>
@@ -4187,6 +4236,12 @@
     ].forEach(id => { const el = $(id); if(el) el.value = ''; });
     if(entryNewTktChips) entryNewTktChips.setTickets([]);
     if($('f-newtkt-t-input')) $('f-newtkt-t-input').value = '';
+    if(entryOldTktReissueChips) entryOldTktReissueChips.setTickets([]);
+    if($('f-oldtkt-r-input')) $('f-oldtkt-r-input').value = '';
+    if(entryNewTktReissueChips) entryNewTktReissueChips.setTickets([]);
+    if($('f-newtkt-r-input')) $('f-newtkt-r-input').value = '';
+    if(entryOldTktRefundChips) entryOldTktRefundChips.setTickets([]);
+    if($('f-oldtkt-f-input')) $('f-oldtkt-f-input').value = '';
     $('f-date').value = todayISO();
     $('f-mode-f').value = '';
     $('f-status-f').value = '';
@@ -4275,8 +4330,10 @@
       setVal('f-markup-t', e.markUp);
       showTicketingBreakdown();
     } else if(e.txn === 'Reissue'){
-      setVal('f-oldtkt-r', e.oldTkt);
-      setVal('f-newtkt-r', e.newTkt);
+      if(entryOldTktReissueChips) entryOldTktReissueChips.setTickets(e.oldTkt ? e.oldTkt.toString().split(',').filter(Boolean) : []);
+      else setVal('f-oldtkt-r', e.oldTkt);
+      if(entryNewTktReissueChips) entryNewTktReissueChips.setTickets(e.newTkt ? e.newTkt.toString().split(',').filter(Boolean) : []);
+      else setVal('f-newtkt-r', e.newTkt);
       setVal('f-sector-r', e.sector);
       setVal('f-code-r', e.code);
       setVal('f-faredif-r', e.fareDiff);
@@ -4284,7 +4341,8 @@
       setVal('f-svc-r', e.svc);
       recalcReissueTotal();
     } else if(e.txn === 'Refund'){
-      setVal('f-oldtkt-f', e.oldTkt);
+      if(entryOldTktRefundChips) entryOldTktRefundChips.setTickets(e.oldTkt ? e.oldTkt.toString().split(',').filter(Boolean) : []);
+      else setVal('f-oldtkt-f', e.oldTkt);
       $('f-mode-f').value = normalizeRefundType(e);
       applyRefundTypeFields();
 
@@ -4333,7 +4391,8 @@
         $('refund-negative-warning').style.display = 'none';
       }
     } else if(e.txn === 'Void'){
-      setVal('f-oldtkt-f', e.oldTkt);
+      if(entryOldTktRefundChips) entryOldTktRefundChips.setTickets(e.oldTkt ? e.oldTkt.toString().split(',').filter(Boolean) : []);
+      else setVal('f-oldtkt-f', e.oldTkt);
       setVal('f-airline-f', e.airlineCharge);
       setVal('f-svc-f', e.svc);
       setVal('f-charge-f', e.refundCharge);
@@ -4762,12 +4821,12 @@
       );
     } else if(e.txn === 'Reissue'){
       f.push(
-        ['Old Ticket', e.oldTkt], ['New Ticket', e.newTkt], ['Sector', e.sector], ['Reissue Code', e.code],
+        ['Old Ticket', fmtTicketList(e.oldTkt)], ['New Ticket', fmtTicketList(e.newTkt)], ['Sector', e.sector], ['Reissue Code', e.code],
         ['Fare Diff', fmtMoney(e.fareDiff)], ['Airline Charge', fmtMoney(e.airlineCharge)],
         ['Service Charge', fmtMoney(e.svc)], ['Total Collected', fmtMoney(e.totalCollection)]
       );
     } else if(e.txn === 'Refund'){
-      f.push(['Ticket No.', e.oldTkt], ['Refund Type', refundTypeLabel(e.refundType)]);
+      f.push(['Ticket No.', fmtTicketList(e.oldTkt)], ['Refund Type', refundTypeLabel(e.refundType)]);
       if(e.refundType === 'PARTIAL') f.push(['Used Segment Fare', fmtMoney(e.usedSegmentFare)]);
       // Base Fare + Tax are shown together as the Fare Breakdown chart for every
       // refund type except Tax Refund, which has no base fare — just the tax itself.
@@ -4788,7 +4847,7 @@
       // own highlighted callout beneath the grid rather than buried as a plain row.
     } else if(e.txn === 'Void'){
       f.push(
-        ['Ticket No.', e.oldTkt],
+        ['Ticket No.', fmtTicketList(e.oldTkt)],
         ['Airline Charge', fmtMoney(e.airlineCharge)], ['Service Charge', fmtMoney(e.svc)],
         ['Void Charge', fmtMoney(e.refundCharge)]
       );
