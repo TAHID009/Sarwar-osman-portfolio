@@ -269,22 +269,64 @@
     background: transparent !important;
   }
 
-  .ptc-type-select select{
+  /* Modern segmented control for Transaction Type — replaces the old plain dropdown */
+  .ptc-txn-tabs{
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-top: 4px;
+  }
+  @media (max-width: 640px){
+    .ptc-txn-tabs{ grid-template-columns: repeat(2, 1fr); }
+  }
+  .ptc-txn-tab{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 11px 10px;
+    border-radius: 10px;
+    border: 1.5px solid var(--line);
+    background: #fff;
+    color: var(--ink-soft);
+    font-size: 13px;
     font-weight: 700;
-    color: var(--accent);
-    border-color: var(--accent);
-    background: var(--accent-soft);
+    font-family: inherit;
+    cursor: pointer;
+    transition: all .15s ease;
+  }
+  .ptc-txn-tab:hover{
+    border-color: var(--txn-color, var(--accent));
+    color: var(--txn-color, var(--accent));
+    background: color-mix(in srgb, var(--txn-color, var(--accent)) 8%, #fff);
+  }
+  .ptc-txn-tab.ptc-txn-tab-active{
+    background: var(--txn-color, var(--accent));
+    border-color: var(--txn-color, var(--accent));
+    color: #fff;
+    box-shadow: 0 3px 10px color-mix(in srgb, var(--txn-color, var(--accent)) 35%, transparent);
   }
 
   .ptc-section-label{
-    font-size: 11px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 12px;
     text-transform: uppercase;
-    letter-spacing: 1.4px;
-    font-weight: 700;
-    color: var(--accent);
-    margin: 4px 0 12px;
-    padding-top: 10px;
-    border-top: 1px dashed var(--line);
+    letter-spacing: 1px;
+    font-weight: 800;
+    color: var(--ink);
+    margin: 22px 0 14px;
+    padding: 0;
+  }
+  .ptc-section-label::before{
+    content: '';
+    width: 4px;
+    height: 16px;
+    border-radius: 3px;
+    background: var(--sec-color, var(--accent));
+    display: inline-block;
+    flex-shrink: 0;
   }
 
   .ptc-link-toggle{
@@ -1651,20 +1693,29 @@
         <span id="ptc-editing-banner-text">Editing entry #1</span>
       </div>
       <div class="ptc-row">
-        <div class="ptc-field ptc-type-select">
-          <label for="f-type">Transaction Type</label>
-          <select id="f-type">
+        <div class="ptc-field" style="grid-column: 1 / -1;">
+          <label for="f-type">Transaction Type <span class="ptc-required">*</span></label>
+          <select id="f-type" class="ptc-method-select-native" aria-hidden="true" tabindex="-1">
             <option value="" disabled selected>Select Type</option>
             <option value="Ticketing">Ticketing</option>
             <option value="Reissue">Reissue</option>
             <option value="Refund">Refund</option>
             <option value="Void">Void</option>
           </select>
+          <div class="ptc-txn-tabs" id="f-type-tabs" role="group" aria-label="Transaction type">
+            <button type="button" class="ptc-txn-tab" data-type="Ticketing" style="--txn-color:#2E6F95;">✈️ Ticketing</button>
+            <button type="button" class="ptc-txn-tab" data-type="Reissue" style="--txn-color:#C97F1E;">🔄 Reissue</button>
+            <button type="button" class="ptc-txn-tab" data-type="Refund" style="--txn-color:#B4453B;">💸 Refund</button>
+            <button type="button" class="ptc-txn-tab" data-type="Void" style="--txn-color:#6B7280;">🚫 Void</button>
+          </div>
         </div>
+      </div>
+      <div class="ptc-row">
         <div class="ptc-field">
           <label for="f-date">Date</label>
           <input type="date" id="f-date" />
         </div>
+        <div></div>
       </div>
 
       <div class="ptc-row">
@@ -1742,7 +1793,7 @@
 
       <!-- ===== TICKETING FIELDS ===== -->
       <div id="section-Ticketing">
-        <div class="ptc-section-label">Ticketing Details</div>
+        <div class="ptc-section-label" style="--sec-color:#2E6F95;">✈️ Ticketing Details</div>
         <div class="ptc-row">
           <div class="ptc-field">
             <label for="f-newtkt-t-input">Ticket Number(s) <span class="ptc-required">*</span></label>
@@ -1809,7 +1860,7 @@
 
       <!-- ===== REISSUE FIELDS ===== -->
       <div id="section-Reissue" style="display:none;">
-        <div class="ptc-section-label">Reissue Details</div>
+        <div class="ptc-section-label" style="--sec-color:#C97F1E;">🔄 Reissue Details</div>
         <div class="ptc-row">
           <div class="ptc-field">
             <label for="f-oldtkt-r">Old Ticket Number <span class="ptc-required">*</span></label>
@@ -1854,7 +1905,7 @@
 
       <!-- ===== REFUND / VOID FIELDS ===== -->
       <div id="section-Refund" style="display:none;">
-        <div class="ptc-section-label" id="refund-void-label">Refund Details</div>
+        <div class="ptc-section-label" id="refund-void-label" style="--sec-color:#B4453B;">💸 Refund Details</div>
 
         <div class="ptc-row">
           <div class="ptc-field">
@@ -2134,7 +2185,7 @@
       </div>
 
       <div style="margin-top:14px;">
-        <div class="ptc-section-label" style="border-top:none; padding-top:0;">Breakdown by Type (this range)</div>
+        <div class="ptc-section-label">📊 Breakdown by Type (this range)</div>
         <div id="ach-breakdown" style="font-size:13px; color:var(--ink-soft);"></div>
       </div>
     </div>
@@ -2151,7 +2202,7 @@
         <div class="ptc-editing-banner" id="sales-editing-banner">
           <span id="sales-editing-banner-text">Editing sale #1</span>
         </div>
-        <div class="ptc-section-label" style="color:#1E7A46;">Ticket Sale Information</div>
+        <div class="ptc-section-label" style="--sec-color:#1E7A46;">🎫 Ticket Sale Information</div>
         <div class="ptc-row">
           <div class="ptc-field">
             <label for="s-date">Sale Date</label>
@@ -2221,7 +2272,7 @@
           </div>
         </div>
 
-        <div class="ptc-section-label" style="color:#1E7A46;">💰 Payment &amp; Settlement</div>
+        <div class="ptc-section-label" style="--sec-color:#1E7A46;">💰 Payment &amp; Settlement</div>
 
         <div class="ptc-payment-panel">
 
@@ -3427,8 +3478,8 @@
       const statusWrap = $('refund-status-wrap');
       const adjWrap = $('refund-adjustment-wrap');
       if(type === 'Void'){
-        label.textContent = 'Void Details';
-        label.style.color = 'var(--accent)';
+        label.textContent = '🚫 Void Details';
+        label.style.setProperty('--sec-color', '#6B7280');
         modeWrap.style.display = 'none';
         fareRow.style.display = 'none';
         taxRow.style.display = 'none';
@@ -3455,8 +3506,8 @@
         chargeInput.style.fontSize = '13.5px';
         chargeInput.style.color = 'var(--ink)';
       } else {
-        label.textContent = 'Refund Details';
-        label.style.color = 'var(--accent)';
+        label.textContent = '💸 Refund Details';
+        label.style.setProperty('--sec-color', '#B4453B');
         modeWrap.style.display = 'block';
         fareRow.style.display = 'grid';
         taxRow.style.display = 'grid';
@@ -3533,6 +3584,22 @@
 
   typeSelect.addEventListener('change', () => showSection(typeSelect.value));
   showSection(typeSelect.value);
+
+  // ---- Transaction Type segmented tabs (mirrors hidden native <select id="f-type">) ----
+  function syncTypeTabs(){
+    const val = typeSelect.value;
+    document.querySelectorAll('#f-type-tabs .ptc-txn-tab').forEach(tab => {
+      tab.classList.toggle('ptc-txn-tab-active', tab.getAttribute('data-type') === val);
+    });
+  }
+  document.querySelectorAll('#f-type-tabs .ptc-txn-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      typeSelect.value = tab.getAttribute('data-type');
+      typeSelect.dispatchEvent(new Event('change'));
+      syncTypeTabs();
+    });
+  });
+  syncTypeTabs();
 
   // ---- Platform / Airline "Other" manual entry toggle ----
   function wireOtherToggle(selectId, otherId){
@@ -4113,6 +4180,7 @@
     $('refund-refouttax-display').textContent = '0.00';
     if(typeof showRefundAdvanced === 'function') showRefundAdvanced(false);
     typeSelect.value = '';
+    if(typeof syncTypeTabs === 'function') syncTypeTabs();
     showSection('');
     if($('f-routetype-t')){ $('f-routetype-t').value = ''; if(typeof renderRouteBuilder === 'function') renderRouteBuilder(); }
     if(typeof setAdjustmentGiven === 'function') setAdjustmentGiven('NO');
@@ -4166,6 +4234,7 @@
 
   function populateForm(e){
     typeSelect.value = e.txn;
+    if(typeof syncTypeTabs === 'function') syncTypeTabs();
     showSection(e.txn);
 
     setVal('f-date', e.date || todayISO());
