@@ -205,6 +205,70 @@
     appearance: textfield;
   }
 
+  /* Required-field marker + inline validation hint, used across every form */
+  .ptc-required{ color: var(--refund); font-weight: 700; margin-left: 2px; }
+  .ptc-field-hint{ font-size: 11px; margin-top: 4px; min-height: 14px; color: var(--muted); }
+  .ptc-field-hint.ptc-field-hint-error{ color: var(--refund); font-weight: 600; }
+  .ptc-field.ptc-field-invalid input,
+  .ptc-field.ptc-field-invalid .ptc-tkt-chip-input{ border-color: var(--refund) !important; }
+
+  /* Multi ticket-number chip input — type a 13-digit number, press Enter to add it
+     as a chip; supports multiple ticket numbers under one PNR (group bookings). */
+  .ptc-tkt-chip-input{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 6px 8px;
+    background: #FCFDFE;
+    min-height: 40px;
+    box-sizing: border-box;
+  }
+  .ptc-tkt-chip-input:focus-within{
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+    border-color: var(--accent);
+  }
+  .ptc-tkt-chip{
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: #EEF3F8;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 3px 4px 3px 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .ptc-tkt-chip button{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px; height: 16px;
+    border: none;
+    background: none;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1;
+    cursor: pointer;
+    border-radius: 50%;
+  }
+  .ptc-tkt-chip button:hover{ color: var(--refund); background: var(--refund-soft); }
+  .ptc-tkt-chip-input input{
+    border: none !important;
+    outline: none !important;
+    flex: 1;
+    min-width: 140px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    padding: 4px 2px !important;
+    background: transparent !important;
+  }
+
   .ptc-type-select select{
     font-weight: 700;
     color: var(--accent);
@@ -1600,7 +1664,7 @@
 
       <div class="ptc-row">
         <div class="ptc-field">
-          <label for="f-pname">Passenger Name</label>
+          <label for="f-pname">Passenger Name <span class="ptc-required">*</span></label>
           <input type="text" id="f-pname" placeholder="e.g. JOHN DOE" />
         </div>
         <div class="ptc-field">
@@ -1665,8 +1729,13 @@
         <div class="ptc-section-label">Ticketing Details</div>
         <div class="ptc-row">
           <div class="ptc-field">
-            <label for="f-newtkt-t">New Ticket Number</label>
-            <input type="text" id="f-newtkt-t" class="mono" placeholder="e.g. 1234567890123" />
+            <label for="f-newtkt-t-input">Ticket Number(s) <span class="ptc-required">*</span></label>
+            <div class="ptc-tkt-chip-input" id="f-newtkt-t-wrap">
+              <div class="ptc-tkt-chips" id="f-newtkt-t-chips"></div>
+              <input type="text" id="f-newtkt-t-input" class="mono" inputmode="numeric" maxlength="13" placeholder="13-digit ticket number, press Enter to add" />
+            </div>
+            <div class="ptc-field-hint" id="f-newtkt-t-hint">One ticket per passenger — add each 13-digit ticket number, then press Enter.</div>
+            <input type="hidden" id="f-newtkt-t" />
           </div>
           <div class="ptc-field ptc-type-select">
             <label for="f-routetype-t">Route Type</label>
@@ -1681,7 +1750,7 @@
         <div id="route-builder-t" class="ptc-route-builder"></div>
         <div class="ptc-row">
           <div class="ptc-field">
-            <label for="f-sector-t">Sector / Route <span style="font-weight:400;color:var(--ink-soft);font-size:11px;">(auto-filled from Route Type above — edit manually if needed)</span></label>
+            <label for="f-sector-t">Sector / Route <span class="ptc-required">*</span> <span style="font-weight:400;color:var(--ink-soft);font-size:11px;">(auto-filled from Route Type above — edit manually if needed)</span></label>
             <input type="text" id="f-sector-t" class="mono" placeholder="e.g. DAC-DXB" />
           </div>
           <div></div>
@@ -1727,17 +1796,17 @@
         <div class="ptc-section-label">Reissue Details</div>
         <div class="ptc-row">
           <div class="ptc-field">
-            <label for="f-oldtkt-r">Old Ticket Number</label>
+            <label for="f-oldtkt-r">Old Ticket Number <span class="ptc-required">*</span></label>
             <input type="text" id="f-oldtkt-r" class="mono" placeholder="e.g. 1234567890123" />
           </div>
           <div class="ptc-field">
-            <label for="f-newtkt-r">New Ticket Number</label>
+            <label for="f-newtkt-r">New Ticket Number <span class="ptc-required">*</span></label>
             <input type="text" id="f-newtkt-r" class="mono" placeholder="e.g. 1234567890124" />
           </div>
         </div>
         <div class="ptc-row">
           <div class="ptc-field">
-            <label for="f-sector-r">Reissue Sector</label>
+            <label for="f-sector-r">Reissue Sector <span class="ptc-required">*</span></label>
             <input type="text" id="f-sector-r" class="mono" placeholder="e.g. DAC-DXB-DAC" />
           </div>
           <div class="ptc-field">
@@ -1773,7 +1842,7 @@
 
         <div class="ptc-row">
           <div class="ptc-field">
-            <label for="f-oldtkt-f">Ticket Number</label>
+            <label for="f-oldtkt-f">Ticket Number <span class="ptc-required">*</span></label>
             <input type="text" id="f-oldtkt-f" class="mono" placeholder="e.g. 1234567890123" />
           </div>
           <div class="ptc-field" id="refund-mode-wrap">
@@ -2073,7 +2142,7 @@
             <input type="date" id="s-date" />
           </div>
           <div class="ptc-field">
-            <label for="s-pname">Customer / Passenger Name</label>
+            <label for="s-pname">Customer / Passenger Name <span class="ptc-required">*</span></label>
             <input type="text" id="s-pname" placeholder="e.g. JOHN DOE" />
           </div>
         </div>
@@ -2102,11 +2171,16 @@
         </div>
         <div class="ptc-row">
           <div class="ptc-field">
-            <label for="s-tkt">Ticket Number</label>
-            <input type="text" id="s-tkt" class="mono" placeholder="e.g. 1234567890123" />
+            <label for="s-tkt-input">Ticket Number(s) <span class="ptc-required">*</span></label>
+            <div class="ptc-tkt-chip-input" id="s-tkt-wrap">
+              <div class="ptc-tkt-chips" id="s-tkt-chips"></div>
+              <input type="text" id="s-tkt-input" class="mono" inputmode="numeric" maxlength="13" placeholder="13-digit ticket number, press Enter to add" />
+            </div>
+            <div class="ptc-field-hint" id="s-tkt-hint">One ticket per passenger — add each 13-digit ticket number, then press Enter.</div>
+            <input type="hidden" id="s-tkt" />
           </div>
           <div class="ptc-field">
-            <label for="s-sector">Sector / Route</label>
+            <label for="s-sector">Sector / Route <span class="ptc-required">*</span></label>
             <input type="text" id="s-sector" class="mono" placeholder="e.g. DAC-DXB-DAC" />
           </div>
         </div>
@@ -2212,6 +2286,19 @@
         <span class="ptc-count" id="sales-count">0 sales</span>
       </div>
 
+      <div class="ptc-card" style="padding:14px 18px; margin-bottom:14px;">
+        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+          <div style="flex:1; min-width:260px; position:relative;">
+            <span style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--muted); font-size:14px;">🔍</span>
+            <input type="text" id="sales-search" placeholder="Search by GDS/Airline PNR, Ticket Number, or Passenger Name..."
+              style="width:100%; box-sizing:border-box; padding:10px 12px 10px 34px; border:1px solid var(--line); border-radius:8px; font-family:inherit; font-size:13px; color:var(--ink);" />
+          </div>
+          <button class="ptc-btn ptc-btn-ghost" id="btn-sales-search-clear" style="display:none;">Clear Search</button>
+        </div>
+        <div id="sales-search-meta" style="font-size:11.5px; color:var(--muted); margin-top:8px; display:none;"></div>
+        <div id="sales-search-results" style="margin-top:12px; display:none;"></div>
+      </div>
+
       <div class="ptc-table-wrap" id="sales-table-wrap">
         <table class="ptc-table" id="sales-table">
           <thead>
@@ -2286,6 +2373,85 @@
       document.activeElement.blur();
     }
   }, { passive: true });
+
+  // ---- Multi ticket-number chip input ----
+  // Reusable for any field where one PNR may cover several passengers, each with
+  // their own ticket number. Values are stored in a hidden input as a comma-joined
+  // list of 13-digit ticket numbers; the visible UI is a row of removable chips
+  // plus a text box that only accepts a number once it's exactly 13 digits.
+  function initTicketChipField(inputId, chipsId, hiddenId, hintId, defaultHint){
+    const rawInput = $(inputId);
+    const chipsWrap = $(chipsId);
+    const hidden = $(hiddenId);
+    const hint = $(hintId);
+    if(!rawInput || !chipsWrap || !hidden) return null;
+
+    function getTickets(){
+      return hidden.value ? hidden.value.split(',').filter(Boolean) : [];
+    }
+    function showHint(msg, isError){
+      if(!hint) return;
+      hint.textContent = msg;
+      hint.classList.toggle('ptc-field-hint-error', !!isError);
+    }
+    function renderChips(){
+      const list = getTickets();
+      chipsWrap.innerHTML = list.map((t, i) => `
+        <span class="ptc-tkt-chip">${t}<button type="button" data-i="${i}" aria-label="Remove ticket number">×</button></span>
+      `).join('');
+      chipsWrap.querySelectorAll('button').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const list2 = getTickets();
+          list2.splice(parseInt(btn.getAttribute('data-i'), 10), 1);
+          setTickets(list2);
+        });
+      });
+    }
+    function setTickets(arr){
+      hidden.value = arr.join(',');
+      renderChips();
+    }
+    function tryAdd(){
+      const digits = rawInput.value.replace(/\D/g, '');
+      if(!digits) return;
+      if(digits.length !== 13){
+        showHint('Ticket number must be exactly 13 digits.', true);
+        return;
+      }
+      const list = getTickets();
+      if(list.includes(digits)){
+        showHint('That ticket number is already added.', true);
+        rawInput.value = '';
+        return;
+      }
+      list.push(digits);
+      setTickets(list);
+      rawInput.value = '';
+      showHint(defaultHint || '', false);
+    }
+    rawInput.addEventListener('keydown', (e) => {
+      if(e.key === 'Enter' || e.key === ','){
+        e.preventDefault();
+        tryAdd();
+      }
+    });
+    rawInput.addEventListener('blur', () => {
+      if(rawInput.value.trim()) tryAdd();
+    });
+    rawInput.addEventListener('input', () => {
+      rawInput.value = rawInput.value.replace(/\D/g, '').slice(0, 13);
+      if(hint && hint.classList.contains('ptc-field-hint-error')) showHint(defaultHint || '', false);
+    });
+    renderChips();
+    return { getTickets, setTickets };
+  }
+
+  function fmtTicketList(v){
+    return (v || '').toString().split(',').filter(Boolean).join(', ');
+  }
+
+  const entryNewTktChips = initTicketChipField('f-newtkt-t-input', 'f-newtkt-t-chips', 'f-newtkt-t', 'f-newtkt-t-hint',
+    'One ticket per passenger — add each 13-digit ticket number, then press Enter.');
 
   // ---- File System connection (writes directly to a real file on your PC) ----
   // The file handle itself is remembered across sessions via IndexedDB, so you
@@ -3671,6 +3837,24 @@
     if(!entry.date) return 'Please enter a date.';
     if(!entry.pnrGds) return 'Please enter the GDS PNR.';
     if(!entry.pname) return 'Please enter the passenger name.';
+    const isTkt13 = (v) => /^\d{13}$/.test((v || '').toString());
+    if(entry.txn === 'Ticketing'){
+      if(!entry.sector) return 'Please enter the sector / route.';
+      if(!entry.newTkt) return 'Please add at least one 13-digit ticket number.';
+      const bad = entry.newTkt.toString().split(',').filter(Boolean).find(t => !isTkt13(t));
+      if(bad) return `Ticket number "${bad}" is not a valid 13-digit ticket number.`;
+    }
+    if(entry.txn === 'Reissue'){
+      if(!entry.oldTkt) return 'Please enter the old ticket number.';
+      if(!isTkt13(entry.oldTkt)) return 'Old ticket number must be exactly 13 digits.';
+      if(!entry.newTkt) return 'Please enter the new ticket number.';
+      if(!isTkt13(entry.newTkt)) return 'New ticket number must be exactly 13 digits.';
+      if(!entry.sector) return 'Please enter the reissue sector.';
+    }
+    if(entry.txn === 'Refund' || entry.txn === 'Void'){
+      if(!entry.oldTkt) return 'Please enter the ticket number.';
+      if(!isTkt13(entry.oldTkt)) return 'Ticket number must be exactly 13 digits.';
+    }
     if(entry.txn === 'Refund'){
       if(!entry.refundType) return 'Please select a Refund Type.';
       const ar = Number(entry.airlineRefund);
@@ -3767,7 +3951,7 @@
         <td class="mono">${e.airline || ''}</td>
         <td><span class="ptc-tag" style="background:${color}">${e.txn}</span></td>
         <td class="mono">${e.oldTkt || ''}</td>
-        <td class="mono">${e.newTkt || ''}</td>
+        <td class="mono">${fmtTicketList(e.newTkt)}</td>
         <td class="mono">${e.sector || ''}</td>
         <td class="mono">${fmtMoney(e.baseFare)}</td>
         <td class="mono">${fmtMoney(e.taxFare)}</td>
@@ -3874,6 +4058,8 @@
      'f-refbasefare-f','f-usedseg-f','f-reftotaltax-f','f-nonrefundtax-f','f-commission-f',
      'f-refoutfare-f','f-refouttax-f','f-airlinerefund-f'
     ].forEach(id => { const el = $(id); if(el) el.value = ''; });
+    if(entryNewTktChips) entryNewTktChips.setTickets([]);
+    if($('f-newtkt-t-input')) $('f-newtkt-t-input').value = '';
     $('f-date').value = todayISO();
     $('f-mode-f').value = '';
     $('f-status-f').value = '';
@@ -3951,7 +4137,8 @@
     setVal('f-note', e.note);
 
     if(e.txn === 'Ticketing'){
-      setVal('f-newtkt-t', e.newTkt);
+      if(entryNewTktChips) entryNewTktChips.setTickets(e.newTkt ? e.newTkt.toString().split(',').filter(Boolean) : []);
+      else setVal('f-newtkt-t', e.newTkt);
       setVal('f-sector-t', e.sector);
       setVal('f-basefare-t', e.baseFare);
       setVal('f-taxfare-t', e.taxFare);
@@ -4439,7 +4626,7 @@
     ];
     if(e.txn === 'Ticketing'){
       f.push(
-        ['Ticket No.', e.newTkt], ['Sector', e.sector],
+        ['Ticket No.', fmtTicketList(e.newTkt)], ['Sector', e.sector],
         ['Discount %', fmtPct(e.markUp)],
         ['Discount Amount', fmtMoney(e.markupAmount)],
         ['Payable Fare (Client Pays)', fmtMoney(e.totalFare)]
@@ -4515,7 +4702,11 @@
   // Reusable "Fare Breakdown" chart: Base Fare + Tax = Total, with a proportional
   // two-color bar. Used for Ticketing (Base Fare/Tax) and Refund (Base Fare/Tax of
   // the original ticket) search-result cards.
-  function fareChartHtml(baseVal, taxVal, totalLabel){
+  function fareChartHtml(baseVal, taxVal, totalLabel, opts){
+    opts = opts || {};
+    const baseLabel = opts.baseLabel || 'Base Fare';
+    const taxLabel = opts.taxLabel || 'Tax';
+    const chartTitle = opts.title || '💰 Fare Breakdown';
     const base = parseFloat(baseVal) || 0;
     const tax = parseFloat(taxVal) || 0;
     const total = base + tax;
@@ -4524,19 +4715,19 @@
     const fmt = (n) => n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     return `
       <div class="ptc-fare-chart">
-        <div class="ptc-fare-chart-title">💰 Fare Breakdown</div>
+        <div class="ptc-fare-chart-title">${chartTitle}</div>
         <div class="ptc-fare-chart-bar">
           <div class="ptc-fare-chart-seg-base" style="width:${basePct}%"></div>
           <div class="ptc-fare-chart-seg-tax" style="width:${taxPct}%"></div>
         </div>
         <div class="ptc-fare-chart-equation">
           <div class="ptc-fare-chart-item">
-            <span class="ptc-fare-chart-item-label"><span class="ptc-fare-dot" style="background:var(--brand);"></span>Base Fare</span>
+            <span class="ptc-fare-chart-item-label"><span class="ptc-fare-dot" style="background:var(--brand);"></span>${baseLabel}</span>
             <span class="ptc-fare-chart-item-value">${fmt(base)}</span>
           </div>
           <span class="ptc-fare-chart-op">+</span>
           <div class="ptc-fare-chart-item">
-            <span class="ptc-fare-chart-item-label"><span class="ptc-fare-dot" style="background:#E3A008;"></span>Tax</span>
+            <span class="ptc-fare-chart-item-label"><span class="ptc-fare-dot" style="background:#E3A008;"></span>${taxLabel}</span>
             <span class="ptc-fare-chart-item-value">${fmt(tax)}</span>
           </div>
           <span class="ptc-fare-chart-op">=</span>
@@ -4670,6 +4861,20 @@
     $('ptc-search').value = '';
     renderSearchResults();
   });
+
+  if($('sales-search')){
+    $('sales-search').addEventListener('input', (e) => {
+      salesSearchQuery = e.target.value;
+      renderSalesSearchResults();
+    });
+  }
+  if($('btn-sales-search-clear')){
+    $('btn-sales-search-clear').addEventListener('click', () => {
+      salesSearchQuery = '';
+      $('sales-search').value = '';
+      renderSalesSearchResults();
+    });
+  }
 
   // ================= DASHBOARD =================
   const moneyFields = { Ticketing:'totalFare', Reissue:'totalCollection', Refund:'refundCharge', Void:'refundCharge' };
@@ -4943,6 +5148,9 @@
   syncMethodChips();
   recalcSale();
 
+  const salesTktChips = initTicketChipField('s-tkt-input', 's-tkt-chips', 's-tkt', 's-tkt-hint',
+    'One ticket per passenger — add each 13-digit ticket number, then press Enter.');
+
   function persistSales(){
     try{ localStorage.setItem(SALES_STORE_KEY, JSON.stringify(salesEntries)); }
     catch(err){ console.error('Sales save failed', err); toast('Could not save sale — your browser storage may be full or blocked.'); }
@@ -4988,6 +5196,10 @@
   function validateSale(sale){
     if(!sale.date) return 'Please enter a sale date.';
     if(!sale.pname) return 'Please enter the customer/passenger name.';
+    if(!sale.sector) return 'Please enter the sector / route.';
+    if(!sale.tkt) return 'Please add at least one 13-digit ticket number.';
+    const badTkt = sale.tkt.toString().split(',').filter(Boolean).find(t => !/^\d{13}$/.test(t));
+    if(badTkt) return `Ticket number "${badTkt}" is not a valid 13-digit ticket number.`;
     if(!sale.price) return 'Please enter the selling price.';
     return null;
   }
@@ -4995,6 +5207,8 @@
   function clearSaleForm(){
     ['s-pname','s-phone','s-tkt','s-pnr-gds','s-pnr-air','s-sector','s-airline','s-price','s-cost','s-paid','s-duedate','s-note']
       .forEach(id => { const el = $(id); if(el) el.value = ''; });
+    if(salesTktChips) salesTktChips.setTickets([]);
+    if($('s-tkt-input')) $('s-tkt-input').value = '';
     $('s-date').value = todayISOSales();
     $('s-pax-adt').value = 1;
     $('s-pax-chd').value = 0;
@@ -5045,7 +5259,7 @@
         <div class="ptc-due-row">
           <div>
             <div class="ptc-due-row-who">${s.pname || 'Unnamed'}</div>
-            <div class="ptc-due-row-pnr">GDS ${s.pnrGds || '—'} · Airline ${s.pnrAirline || '—'}${s.tkt ? ' · Tkt ' + s.tkt : ''}</div>
+            <div class="ptc-due-row-pnr">GDS ${s.pnrGds || '—'} · Airline ${s.pnrAirline || '—'}${s.tkt ? ' · Tkt ' + fmtTicketList(s.tkt) : ''}</div>
           </div>
           <div style="display:flex; align-items:center; gap:10px;">
             <span class="ptc-due-row-amt">${fmtMoneySales(s.due)}</span>
@@ -5059,6 +5273,117 @@
         const i = parseInt(btn.getAttribute('data-idx'), 10);
         startSaleEdit(i);
         $('sales-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+  }
+
+  // ---- Revenue Ledger search — find a sale by GDS/Airline PNR, ticket number(s),
+  // or passenger name and show it as a detailed "chart" card instead of a table row. ----
+  let salesSearchQuery = '';
+  function matchesSalesQuery(s, q){
+    const hay = [s.pnrGds, s.pnrAirline, s.tkt, s.pname]
+      .map(v => (v || '').toString().toUpperCase()).join(' | ');
+    return hay.includes(q.toUpperCase());
+  }
+
+  function renderSalesSearchResults(){
+    const wrap = $('sales-search-results');
+    const meta = $('sales-search-meta');
+    const tableWrap = $('sales-table-wrap');
+    const duePanel = $('sales-due-panel');
+    const clearBtn = $('btn-sales-search-clear');
+    if(!wrap || !meta || !tableWrap || !clearBtn) return;
+
+    if(!salesSearchQuery.trim()){
+      wrap.style.display = 'none';
+      meta.style.display = 'none';
+      clearBtn.style.display = 'none';
+      tableWrap.style.display = '';
+      if(duePanel) duePanel.style.display = duePanel.innerHTML.trim() ? 'block' : 'none';
+      return;
+    }
+
+    clearBtn.style.display = 'inline-flex';
+    tableWrap.style.display = 'none';
+    if(duePanel) duePanel.style.display = 'none';
+
+    const matches = [];
+    salesEntries.forEach((s, idx) => { if(matchesSalesQuery(s, salesSearchQuery)) matches.push(idx); });
+
+    meta.style.display = 'block';
+    meta.textContent = matches.length + ' match' + (matches.length === 1 ? '' : 'es') + ' for "' + salesSearchQuery + '"';
+
+    wrap.style.display = 'block';
+    if(!matches.length){
+      wrap.innerHTML = '<div class="ptc-search-noresult">No sale found for that PNR / ticket number / name. Check the spelling or clear the search to browse the full ledger.</div>';
+      return;
+    }
+
+    wrap.innerHTML = matches.map(idx => {
+      const s = salesEntries[idx];
+      const netCost = parseFloat(s.cost) || 0;
+      const profit = parseFloat(s.profit) || (parseFloat(s.price) || 0) - netCost;
+      const chartHtml = fareChartHtml(netCost, profit, 'Selling Price', {
+        baseLabel: 'Net Cost', taxLabel: 'Profit', title: '📊 Revenue Breakdown'
+      });
+      const badgeClass = s.status === 'PAID' ? 'ptc-status-badge-paid' : s.status === 'PARTIAL' ? 'ptc-status-badge-partial' : s.status === 'DUE' ? 'ptc-status-badge-due' : '';
+      const badgeIcon = s.status === 'PAID' ? '✅' : s.status === 'PARTIAL' ? '🕒' : s.status === 'DUE' ? '⚠️' : '—';
+      const fields = [
+        ['Date', s.date], ['Passengers', paxSummary(s)], ['Contact', s.phone],
+        ['GDS PNR', s.pnrGds], ['Airline PNR', s.pnrAirline], ['Ticket No.', fmtTicketList(s.tkt)],
+        ['Sector', s.sector], ['Airline', s.airline], ['Payment Method', s.method],
+        ['Due Date', s.dueDate], ['Note', s.note],
+      ];
+      return `
+        <div class="ptc-detail-card" style="border-left-color:#1E7A46;">
+          <div class="ptc-detail-card-head">
+            <div>
+              <div class="ptc-detail-name">${s.pname || 'Unnamed'} <span class="ptc-tag" style="background:#1E7A46; font-size:10px;">SALE</span></div>
+              <div class="ptc-detail-sub">${s.date || ''} · GDS ${s.pnrGds || '—'} · Airline PNR ${s.pnrAirline || '—'}</div>
+            </div>
+          </div>
+          ${chartHtml}
+          <div class="ptc-settlement-simple">
+            <span class="ptc-settlement-simple-label">Paid</span>
+            <span class="ptc-settlement-simple-due" style="color:#1E7A46;">${fmtMoneySales(s.paid)}</span>
+            <span class="ptc-settlement-simple-label">Due</span>
+            <span class="ptc-settlement-simple-due">${fmtMoneySales(s.due)}</span>
+            <span class="ptc-status-badge ${badgeClass}">${badgeIcon} ${s.status || '—'}</span>
+          </div>
+          <div class="ptc-detail-grid">
+            ${fields.map(([label,value]) => `
+              <div>
+                <div class="ptc-detail-field-label">${label}</div>
+                <div class="ptc-detail-field-value">${(value === '' || value === undefined || value === null) ? '—' : value}</div>
+              </div>
+            `).join('')}
+          </div>
+          <div class="ptc-detail-actions">
+            <div class="ptc-sales-actions" style="margin-left:auto;">
+              <button class="ptc-sales-edit" data-idx="${idx}" title="Edit sale" aria-label="Edit sale">✏️</button>
+              <button class="ptc-sales-del" data-idx="${idx}" title="Remove sale" aria-label="Remove sale">🗑️</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    wrap.querySelectorAll('.ptc-sales-edit').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const i = parseInt(btn.getAttribute('data-idx'), 10);
+        startSaleEdit(i);
+        $('sales-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+    wrap.querySelectorAll('.ptc-sales-del').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const i = parseInt(btn.getAttribute('data-idx'), 10);
+        if(salesEditingIndex === i){ stopSaleEdit(); clearSaleForm(); }
+        else if(salesEditingIndex !== null && i < salesEditingIndex){ salesEditingIndex -= 1; }
+        salesEntries.splice(i, 1);
+        persistSales();
+        renderSales();
+        toast('Sale removed');
       });
     });
   }
@@ -5092,6 +5417,7 @@
     $('sales-count').textContent = salesEntries.length + (salesEntries.length === 1 ? ' sale' : ' sales');
     renderSalesKpis();
     renderDuePanel();
+    renderSalesSearchResults();
 
     if(salesEntries.length === 0){
       empty.style.display = 'block';
@@ -5108,7 +5434,7 @@
         <td>${s.pname || ''}</td>
         <td class="mono">${paxSummary(s)}</td>
         <td class="mono">${s.phone || ''}</td>
-        <td class="mono">${s.tkt || ''}</td>
+        <td class="mono">${fmtTicketList(s.tkt)}</td>
         <td class="mono">${s.pnrGds || ''}</td>
         <td class="mono">${s.pnrAirline || ''}</td>
         <td class="mono">${s.sector || ''}</td>
@@ -5165,7 +5491,8 @@
       $('s-pax-inf').value = s.ptype === 'INFANT' ? 1 : 0;
     }
     $('s-phone').value = s.phone || '';
-    $('s-tkt').value = s.tkt || '';
+    if(salesTktChips) salesTktChips.setTickets(s.tkt ? s.tkt.toString().split(',').filter(Boolean) : []);
+    else $('s-tkt').value = s.tkt || '';
     $('s-pnr-gds').value = s.pnrGds || s.pnr || '';
     $('s-pnr-air').value = s.pnrAirline || '';
     $('s-sector').value = s.sector || '';
