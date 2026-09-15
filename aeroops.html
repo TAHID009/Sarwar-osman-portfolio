@@ -398,6 +398,67 @@
     box-shadow: 0 4px 12px rgba(11,37,69,0.25);
   }
 
+  .ptc-required{ color: var(--refund); font-weight:700; margin-left:2px; }
+
+  .ptc-tkt-chip{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    font-weight:700;
+    padding:5px 6px 5px 10px;
+    border-radius:20px;
+  }
+  .ptc-tkt-chip button{
+    background:none;
+    border:none;
+    color: var(--accent);
+    font-size:14px;
+    line-height:1;
+    cursor:pointer;
+    padding:2px 4px;
+    border-radius:50%;
+  }
+  .ptc-tkt-chip button:hover{ background: rgba(0,0,0,0.08); }
+
+  /* The due-payment reminder is the one place a "box" earns its keep — everything
+     else in the sales view stays flat. Each item inside it is a plain row, not its
+     own nested box. */
+  .ptc-due-reminder{
+    background:#FBEEEA;
+    border:1px solid rgba(180,69,59,.3);
+    border-radius:10px;
+    padding:12px 14px 4px;
+    margin-bottom:18px;
+  }
+  .ptc-due-reminder-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    font-size:12.5px;
+    font-weight:800;
+    color: var(--refund);
+    margin-bottom:8px;
+  }
+  .ptc-due-reminder-item{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    flex-wrap:wrap;
+    padding:9px 4px;
+    border-top:1px solid rgba(180,69,59,.18);
+    cursor:pointer;
+  }
+  .ptc-due-reminder-item:hover{ background: rgba(180,69,59,.06); }
+  .ptc-due-reminder-info{ font-size:12.5px; color: var(--ink); }
+  .ptc-due-reminder-info b{ font-weight:800; }
+  .ptc-due-reminder-amt{ font-weight:800; color: var(--refund); font-family:'IBM Plex Mono', monospace; }
+
   .ptc-info:hover .ptc-tooltip,
   .ptc-info:focus .ptc-tooltip,
   .ptc-info.ptc-info-open .ptc-tooltip{
@@ -1587,6 +1648,13 @@
 
     <div class="ptc-view" id="view-sales">
 
+      <div class="ptc-due-reminder" id="sales-due-reminder" style="display:none;">
+        <div class="ptc-due-reminder-head">
+          <span>⚠ Payment Due Reminders (<span id="sales-due-count">0</span>)</span>
+        </div>
+        <div id="sales-due-list"></div>
+      </div>
+
       <div class="ptc-kpi-grid" id="sales-kpi-grid" style="margin-bottom:20px;"></div>
 
       <div class="ptc-card" id="sales-card" style="border-left-color:#1E7A46;">
@@ -1600,28 +1668,40 @@
             <input type="date" id="s-date" />
           </div>
           <div class="ptc-field">
-            <label for="s-pname">Customer / Passenger Name</label>
+            <label for="s-pname">Customer / Passenger Name<span class="ptc-required">*</span></label>
             <input type="text" id="s-pname" placeholder="e.g. JOHN DOE" />
           </div>
         </div>
         <div class="ptc-row">
           <div class="ptc-field">
+            <label for="s-contactperson">Contact Person Name</label>
+            <input type="text" id="s-contactperson" placeholder="e.g. JANE DOE (if different from passenger)" />
+          </div>
+          <div class="ptc-field">
             <label for="s-phone">Contact Number</label>
             <input type="text" id="s-phone" class="mono" placeholder="e.g. 01XXXXXXXXX" />
           </div>
-          <div class="ptc-field">
-            <label for="s-tkt">Ticket Number</label>
-            <input type="text" id="s-tkt" class="mono" placeholder="e.g. 1234567890123" />
+        </div>
+        <div class="ptc-row">
+          <div class="ptc-field" style="grid-column: 1 / -1;">
+            <label for="s-tkt-input">Ticket Number(s)<span class="ptc-required">*</span>
+              <span class="ptc-info" tabindex="0" aria-label="Ticket number info">ⓘ<span class="ptc-tooltip">Each ticket number must be exactly 13 digits. A PNR can carry more than one ticket — add as many as needed, there's no limit.</span></span>
+            </label>
+            <div style="display:flex; gap:8px;">
+              <input type="text" id="s-tkt-input" class="mono" placeholder="13-digit ticket number" inputmode="numeric" maxlength="13" style="flex:1;" />
+              <button type="button" class="ptc-btn ptc-btn-ghost" id="btn-tkt-add" style="padding:9px 16px; white-space:nowrap;">+ Add</button>
+            </div>
+            <div id="s-tkt-chips" style="display:flex; flex-wrap:wrap; gap:6px; margin-top:8px;"></div>
           </div>
         </div>
         <div class="ptc-row">
           <div class="ptc-field">
-            <label for="s-pnr">PNR</label>
+            <label for="s-pnr">PNR<span class="ptc-required">*</span></label>
             <input type="text" id="s-pnr" class="mono" placeholder="e.g. ABC123" />
           </div>
           <div class="ptc-field">
             <label for="s-sector">Sector / Route</label>
-            <input type="text" id="s-sector" class="mono" placeholder="e.g. DAC-DXB-DAC" />
+            <input type="text" id="s-sector" class="mono" placeholder="e.g. DAC-DXB-DAC" style="text-transform:uppercase;" />
           </div>
         </div>
         <div class="ptc-row">
@@ -1701,12 +1781,19 @@
         <span class="ptc-count" id="sales-count">0 sales</span>
       </div>
 
+      <div class="ptc-row" style="margin-bottom:12px;">
+        <div class="ptc-field" style="grid-column: 1 / -1;">
+          <input type="text" id="sales-search" class="mono" placeholder="🔍 Search sales by PNR, ticket number, name, or phone" />
+        </div>
+      </div>
+
       <div class="ptc-table-wrap" id="sales-table-wrap">
         <table class="ptc-table" id="sales-table">
           <thead>
             <tr>
               <th>Date</th>
               <th>Customer</th>
+              <th>Contact Person</th>
               <th>Contact</th>
               <th>Ticket No.</th>
               <th>PNR</th>
@@ -4038,7 +4125,10 @@
   // day-to-day ledger of what you sold, to whom, and whether they've paid in full.
   let salesEntries = [];
   let salesEditingIndex = null;
+  let currentTktList = [];
+  let salesSearchQuery = '';
   const SALES_STORE_KEY = 'pnr_sales_v1';
+  const TKT_RE = /^\d{13}$/;
 
   function salesVal(id){ return $(id).value.trim(); }
   function salesNum(id){ const v = $(id).value; return v === '' ? '' : parseFloat(v); }
@@ -4049,6 +4139,61 @@
     if(v === '' || v === null || v === undefined || isNaN(v)) return '';
     return Number(v).toFixed(2);
   }
+
+  // Normalizes a sale's stored ticket number(s) to an array — older records saved
+  // a single string before multi-ticket support existed.
+  function saleTktList(s){
+    if(Array.isArray(s.tkt)) return s.tkt;
+    if(s.tkt) return [s.tkt];
+    return [];
+  }
+
+  // ---- Ticket Number(s): unlimited 13-digit chip input ----
+  function renderTktChips(){
+    const box = $('s-tkt-chips');
+    box.innerHTML = currentTktList.map((t, i) => `
+      <span class="ptc-tkt-chip">${t}<button type="button" data-i="${i}" aria-label="Remove ticket number">×</button></span>
+    `).join('');
+    box.querySelectorAll('button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        currentTktList.splice(parseInt(btn.getAttribute('data-i'), 10), 1);
+        renderTktChips();
+      });
+    });
+  }
+  function addTktFromInput(){
+    const input = $('s-tkt-input');
+    const v = input.value.trim();
+    if(!v) return;
+    if(!TKT_RE.test(v)){
+      toast('Ticket number must be exactly 13 digits.');
+      return;
+    }
+    if(currentTktList.includes(v)){
+      toast('That ticket number is already added.');
+      input.value = '';
+      return;
+    }
+    currentTktList.push(v);
+    input.value = '';
+    renderTktChips();
+    input.focus();
+  }
+  $('btn-tkt-add').addEventListener('click', addTktFromInput);
+  $('s-tkt-input').addEventListener('keydown', (ev) => {
+    if(ev.key === 'Enter'){ ev.preventDefault(); addTktFromInput(); }
+  });
+  $('s-tkt-input').addEventListener('input', () => {
+    $('s-tkt-input').value = $('s-tkt-input').value.replace(/\D/g, '').slice(0, 13);
+  });
+
+  // ---- Route / Sector: live auto-capitalize as you type ----
+  $('s-sector').addEventListener('input', () => {
+    const el = $('s-sector');
+    const pos = el.selectionStart;
+    el.value = el.value.toUpperCase();
+    el.setSelectionRange(pos, pos);
+  });
 
   // ---- Auto-calc: Profit = Selling Price − Net Cost; Due = Selling Price − Amount Paid; Status derived from Due ----
   function recalcSale(){
@@ -4090,8 +4235,9 @@
     return {
       date: salesVal('s-date'),
       pname: salesVal('s-pname').toUpperCase(),
+      contactPerson: salesVal('s-contactperson').toUpperCase(),
       phone: salesVal('s-phone'),
-      tkt: salesVal('s-tkt').toUpperCase(),
+      tkt: currentTktList.slice(),
       pnr: salesVal('s-pnr').toUpperCase(),
       sector: salesVal('s-sector').toUpperCase(),
       airline: salesVal('s-airline').toUpperCase(),
@@ -4110,13 +4256,18 @@
   function validateSale(sale){
     if(!sale.date) return 'Please enter a sale date.';
     if(!sale.pname) return 'Please enter the customer/passenger name.';
+    if(!sale.pnr) return 'Please enter the PNR.';
+    if(!sale.tkt || !sale.tkt.length) return 'Please add at least one 13-digit ticket number.';
     if(!sale.price) return 'Please enter the selling price.';
     return null;
   }
 
   function clearSaleForm(){
-    ['s-pname','s-phone','s-tkt','s-pnr','s-sector','s-airline','s-price','s-cost','s-paid','s-duedate','s-note']
+    ['s-pname','s-contactperson','s-phone','s-pnr','s-sector','s-airline','s-price','s-cost','s-paid','s-duedate','s-note']
       .forEach(id => { const el = $(id); if(el) el.value = ''; });
+    $('s-tkt-input').value = '';
+    currentTktList = [];
+    renderTktChips();
     $('s-date').value = todayISOSales();
     $('s-method').value = '';
     recalcSale();
@@ -4152,26 +4303,101 @@
     `).join('');
   }
 
+  // ---- Payment Due Reminders — every sale still owed money, oldest due date first.
+  // Click a row to open it in the edit form; "Mark as Collected" settles it in place. ----
+  function renderDueReminders(){
+    const wrap = $('sales-due-reminder');
+    const list = $('sales-due-list');
+    const dueSales = [];
+    salesEntries.forEach((s, idx) => { if(s.status === 'DUE' || s.status === 'PARTIAL') dueSales.push({ s, idx }); });
+    dueSales.sort((a, b) => (a.s.dueDate || '9999-99-99').localeCompare(b.s.dueDate || '9999-99-99'));
+
+    if(!dueSales.length){ wrap.style.display = 'none'; list.innerHTML = ''; return; }
+    wrap.style.display = 'block';
+    $('sales-due-count').textContent = dueSales.length;
+    list.innerHTML = dueSales.map(({ s, idx }) => `
+      <div class="ptc-due-reminder-item" data-idx="${idx}">
+        <div class="ptc-due-reminder-info">
+          <b>${s.pname || 'Unnamed'}</b> · PNR ${s.pnr || '—'} · Tkt ${saleTktList(s).join(', ') || '—'}
+          ${s.dueDate ? ` · Due by ${s.dueDate}` : ''}
+        </div>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span class="ptc-due-reminder-amt">${fmtMoneySales(s.due)}</span>
+          <button type="button" class="ptc-btn ptc-btn-ghost ptc-due-collect" data-idx="${idx}" style="padding:6px 12px; font-size:12px;">Mark as Collected</button>
+        </div>
+      </div>
+    `).join('');
+
+    list.querySelectorAll('.ptc-due-reminder-item').forEach(row => {
+      row.addEventListener('click', (ev) => {
+        if(ev.target.closest('.ptc-due-collect')) return;
+        startSaleEdit(parseInt(row.getAttribute('data-idx'), 10));
+      });
+    });
+    list.querySelectorAll('.ptc-due-collect').forEach(btn => {
+      btn.addEventListener('click', (ev) => {
+        ev.stopPropagation();
+        markSaleCollected(parseInt(btn.getAttribute('data-idx'), 10));
+      });
+    });
+  }
+
+  // Settles a sale in one click: full amount paid, due cleared, status → PAID.
+  function markSaleCollected(idx){
+    const s = salesEntries[idx];
+    if(!s) return;
+    s.paid = Number(s.price) || 0;
+    s.due = 0;
+    s.status = 'PAID';
+    s.dueDate = '';
+    if(salesEditingIndex === idx){ populateSaleForm(s); }
+    persistSales();
+    renderSales();
+    toast('Payment marked as collected');
+  }
+
+  function salesMatchesQuery(s, q){
+    const hay = [s.pnr, ...saleTktList(s), s.pname, s.contactPerson, s.phone]
+      .map(v => (v || '').toString().toUpperCase()).join(' | ');
+    return hay.includes(q.toUpperCase());
+  }
+
   function renderSales(){
     const tbody = $('sales-tbody');
     const empty = $('sales-empty');
     tbody.innerHTML = '';
-    $('sales-count').textContent = salesEntries.length + (salesEntries.length === 1 ? ' sale' : ' sales');
     renderSalesKpis();
+    renderDueReminders();
+
+    const q = salesSearchQuery.trim();
+    const visible = [];
+    salesEntries.forEach((s, idx) => { if(!q || salesMatchesQuery(s, q)) visible.push(idx); });
+
+    $('sales-count').textContent = q
+      ? visible.length + ' of ' + salesEntries.length + ' sales'
+      : salesEntries.length + (salesEntries.length === 1 ? ' sale' : ' sales');
 
     if(salesEntries.length === 0){
       empty.style.display = 'block';
+      empty.textContent = 'No sales recorded yet — fill the form above and click "Add Sale".';
+      return;
+    }
+    if(!visible.length){
+      empty.style.display = 'block';
+      empty.textContent = 'No sales match "' + salesSearchQuery + '". Check the spelling or clear the search.';
       return;
     }
     empty.style.display = 'none';
 
-    salesEntries.forEach((s, idx) => {
+    visible.forEach((idx) => {
+      const s = salesEntries[idx];
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td>${s.date || ''}</td>
         <td>${s.pname || ''}</td>
+        <td>${s.contactPerson || ''}</td>
         <td class="mono">${s.phone || ''}</td>
-        <td class="mono">${s.tkt || ''}</td>
+        <td class="mono">${saleTktList(s).join(', ')}</td>
         <td class="mono">${s.pnr || ''}</td>
         <td class="mono">${s.sector || ''}</td>
         <td class="mono">${s.airline || ''}</td>
@@ -4208,11 +4434,18 @@
     });
   }
 
+  $('sales-search').addEventListener('input', () => {
+    salesSearchQuery = $('sales-search').value;
+    renderSales();
+  });
+
   function populateSaleForm(s){
     $('s-date').value = s.date || todayISOSales();
     $('s-pname').value = s.pname || '';
+    $('s-contactperson').value = s.contactPerson || '';
     $('s-phone').value = s.phone || '';
-    $('s-tkt').value = s.tkt || '';
+    currentTktList = saleTktList(s).slice();
+    renderTktChips();
     $('s-pnr').value = s.pnr || '';
     $('s-sector').value = s.sector || '';
     $('s-airline').value = s.airline || '';
@@ -4234,7 +4467,7 @@
     const banner = $('sales-editing-banner');
     banner.classList.add('show');
     $('sales-editing-banner-text').textContent =
-      'Editing sale: ' + (salesEntries[i].pname || salesEntries[i].tkt || '') + ' — update the fields below, then click "Save Changes".';
+      'Editing sale: ' + (salesEntries[i].pname || saleTktList(salesEntries[i])[0] || '') + ' — update the fields below, then click "Save Changes".';
     $('sales-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
     toast('Editing sale — click "Save Changes" when done');
   }
@@ -4281,12 +4514,15 @@
   $('btn-sales-export').addEventListener('click', () => {
     if(typeof XLSX === 'undefined'){ toast('Export library failed to load — check your internet connection.'); return; }
     const cols = [
-      ['DATE','date'], ['CUSTOMER NAME','pname'], ['CONTACT','phone'], ['TICKET NUMBER','tkt'], ['PNR','pnr'],
-      ['SECTOR','sector'], ['AIRLINE','airline'], ['SELLING PRICE','price'], ['NET COST','cost'],
-      ['PROFIT','profit'], ['PAYMENT METHOD','method'], ['AMOUNT PAID','paid'], ['AMOUNT DUE','due'],
-      ['STATUS','status'], ['DUE DATE','dueDate'], ['NOTE','note'],
+      ['DATE','date'], ['CUSTOMER NAME','pname'], ['CONTACT PERSON','contactPerson'], ['CONTACT','phone'],
+      ['TICKET NUMBER(S)','tkt'], ['PNR','pnr'], ['SECTOR','sector'], ['AIRLINE','airline'],
+      ['SELLING PRICE','price'], ['NET COST','cost'], ['PROFIT','profit'], ['PAYMENT METHOD','method'],
+      ['AMOUNT PAID','paid'], ['AMOUNT DUE','due'], ['STATUS','status'], ['DUE DATE','dueDate'], ['NOTE','note'],
     ];
-    const rows = [cols.map(c => c[0]), ...salesEntries.map(s => cols.map(c => s[c[1]] ?? ''))];
+    const rows = [cols.map(c => c[0]), ...salesEntries.map(s => cols.map(c => {
+      if(c[1] === 'tkt') return saleTktList(s).join(', ');
+      return s[c[1]] ?? '';
+    }))];
     const ws = XLSX.utils.aoa_to_sheet(rows);
     ws['!cols'] = cols.map(() => ({ wch: 16 }));
     const wb = XLSX.utils.book_new();
