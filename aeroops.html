@@ -268,6 +268,11 @@
     padding: 4px 2px !important;
     background: transparent !important;
   }
+  .ptc-tkt-chip-input input:disabled{
+    color: var(--muted) !important;
+    font-style: italic;
+    cursor: not-allowed;
+  }
 
   /* Modern segmented control for Transaction Type — replaces the old plain dropdown */
   .ptc-txn-tabs{
@@ -2455,6 +2460,8 @@
     const hidden = $(hiddenId);
     const hint = $(hintId);
     if(!rawInput || !chipsWrap || !hidden) return null;
+    const MAX_TICKETS_PER_PNR = 9;
+    const basePlaceholder = rawInput.getAttribute('placeholder') || '13-digit ticket number, press Enter to add';
 
     function getTickets(){
       return hidden.value ? hidden.value.split(',').filter(Boolean) : [];
@@ -2463,6 +2470,11 @@
       if(!hint) return;
       hint.textContent = msg;
       hint.classList.toggle('ptc-field-hint-error', !!isError);
+    }
+    function updateInputState(){
+      const atMax = getTickets().length >= MAX_TICKETS_PER_PNR;
+      rawInput.disabled = atMax;
+      rawInput.placeholder = atMax ? `Maximum ${MAX_TICKETS_PER_PNR} ticket numbers per PNR reached` : basePlaceholder;
     }
     function renderChips(){
       const list = getTickets();
@@ -2476,9 +2488,10 @@
           setTickets(list2);
         });
       });
+      updateInputState();
     }
     function setTickets(arr){
-      hidden.value = arr.join(',');
+      hidden.value = arr.slice(0, MAX_TICKETS_PER_PNR).join(',');
       renderChips();
     }
     function tryAdd(){
@@ -2489,6 +2502,11 @@
         return;
       }
       const list = getTickets();
+      if(list.length >= MAX_TICKETS_PER_PNR){
+        showHint(`A PNR can have at most ${MAX_TICKETS_PER_PNR} ticket numbers.`, true);
+        rawInput.value = '';
+        return;
+      }
       if(list.includes(digits)){
         showHint('That ticket number is already added.', true);
         rawInput.value = '';
@@ -3951,6 +3969,7 @@
       if(!entry.newTkt) return 'Please add at least one 13-digit ticket number.';
       const bad = entry.newTkt.toString().split(',').filter(Boolean).find(t => !isTkt13(t));
       if(bad) return `Ticket number "${bad}" is not a valid 13-digit ticket number.`;
+      if(entry.newTkt.toString().split(',').filter(Boolean).length > 9) return 'A PNR can have at most 9 ticket numbers.';
     }
     if(entry.txn === 'Reissue'){
       if(!entry.oldTkt) return 'Please enter the old ticket number.';
@@ -5314,6 +5333,7 @@
     if(!sale.tkt) return 'Please add at least one 13-digit ticket number.';
     const badTkt = sale.tkt.toString().split(',').filter(Boolean).find(t => !/^\d{13}$/.test(t));
     if(badTkt) return `Ticket number "${badTkt}" is not a valid 13-digit ticket number.`;
+    if(sale.tkt.toString().split(',').filter(Boolean).length > 9) return 'A PNR can have at most 9 ticket numbers.';
     if(!sale.price) return 'Please enter the selling price.';
     return null;
   }
