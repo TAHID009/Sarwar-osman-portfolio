@@ -194,6 +194,81 @@
     border-color: #B9C4D2;
   }
 
+  /* Remove the native up/down spinner box on all number inputs across every section */
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button{
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type="number"]{
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+
+  /* Required-field marker + inline validation hint, used across every form */
+  .ptc-required{ color: var(--refund); font-weight: 700; margin-left: 2px; }
+  .ptc-field-hint{ font-size: 11px; margin-top: 4px; min-height: 14px; color: var(--muted); }
+  .ptc-field-hint.ptc-field-hint-error{ color: var(--refund); font-weight: 600; }
+  .ptc-field.ptc-field-invalid input,
+  .ptc-field.ptc-field-invalid .ptc-tkt-chip-input{ border-color: var(--refund) !important; }
+
+  /* Multi ticket-number chip input — type a 13-digit number, press Enter to add it
+     as a chip; supports multiple ticket numbers under one PNR (group bookings). */
+  .ptc-tkt-chip-input{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 6px 8px;
+    background: #FCFDFE;
+    min-height: 40px;
+    box-sizing: border-box;
+  }
+  .ptc-tkt-chip-input:focus-within{
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+    border-color: var(--accent);
+  }
+  .ptc-tkt-chip{
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: #EEF3F8;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 3px 4px 3px 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .ptc-tkt-chip button{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px; height: 16px;
+    border: none;
+    background: none;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1;
+    cursor: pointer;
+    border-radius: 50%;
+  }
+  .ptc-tkt-chip button:hover{ color: var(--refund); background: var(--refund-soft); }
+  .ptc-tkt-chip-input input{
+    border: none !important;
+    outline: none !important;
+    flex: 1;
+    min-width: 140px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    padding: 4px 2px !important;
+    background: transparent !important;
+  }
+
   .ptc-type-select select{
     font-weight: 700;
     color: var(--accent);
@@ -210,6 +285,77 @@
     margin: 4px 0 12px;
     padding-top: 10px;
     border-top: 1px dashed var(--line);
+  }
+
+  .ptc-link-toggle{
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: none;
+    border: none;
+    color: var(--accent);
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0 0 14px;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .ptc-refund-result{
+    background: #F8FAFC;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px 16px 6px;
+    margin-bottom: 14px;
+  }
+  .ptc-refund-result-breakdown{
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    font-size: 12px;
+    color: var(--muted);
+    padding-bottom: 10px;
+  }
+  .ptc-refund-result-breakdown b{
+    color: var(--ink-soft);
+    font-weight: 700;
+    font-family: 'SFMono-Regular', ui-monospace, monospace;
+  }
+  .ptc-refund-result-line{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 0;
+    border-top: 1px dashed var(--line);
+  }
+  .ptc-refund-result-line label{
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--ink-soft);
+    letter-spacing: .3px;
+  }
+  .ptc-refund-result-line input{
+    border: none;
+    background: transparent;
+    text-align: right;
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--ink-soft);
+    width: 140px;
+    padding: 0;
+  }
+  .ptc-refund-result-line.ptc-refund-result-final{
+    border-top: 1px solid var(--line);
+  }
+  .ptc-refund-result-line.ptc-refund-result-final label{
+    color: var(--accent);
+    font-size: 13px;
+  }
+  .ptc-refund-result-line.ptc-refund-result-final input{
+    color: var(--accent);
+    font-size: 18px;
   }
 
   .ptc-actions{
@@ -398,67 +544,6 @@
     box-shadow: 0 4px 12px rgba(11,37,69,0.25);
   }
 
-  .ptc-required{ color: var(--refund); font-weight:700; margin-left:2px; }
-
-  .ptc-tkt-chip{
-    display:inline-flex;
-    align-items:center;
-    gap:6px;
-    background: var(--accent-soft);
-    color: var(--accent);
-    font-family:'IBM Plex Mono', monospace;
-    font-size:12px;
-    font-weight:700;
-    padding:5px 6px 5px 10px;
-    border-radius:20px;
-  }
-  .ptc-tkt-chip button{
-    background:none;
-    border:none;
-    color: var(--accent);
-    font-size:14px;
-    line-height:1;
-    cursor:pointer;
-    padding:2px 4px;
-    border-radius:50%;
-  }
-  .ptc-tkt-chip button:hover{ background: rgba(0,0,0,0.08); }
-
-  /* The due-payment reminder is the one place a "box" earns its keep — everything
-     else in the sales view stays flat. Each item inside it is a plain row, not its
-     own nested box. */
-  .ptc-due-reminder{
-    background:#FBEEEA;
-    border:1px solid rgba(180,69,59,.3);
-    border-radius:10px;
-    padding:12px 14px 4px;
-    margin-bottom:18px;
-  }
-  .ptc-due-reminder-head{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:8px;
-    font-size:12.5px;
-    font-weight:800;
-    color: var(--refund);
-    margin-bottom:8px;
-  }
-  .ptc-due-reminder-item{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:10px;
-    flex-wrap:wrap;
-    padding:9px 4px;
-    border-top:1px solid rgba(180,69,59,.18);
-    cursor:pointer;
-  }
-  .ptc-due-reminder-item:hover{ background: rgba(180,69,59,.06); }
-  .ptc-due-reminder-info{ font-size:12.5px; color: var(--ink); }
-  .ptc-due-reminder-info b{ font-weight:800; }
-  .ptc-due-reminder-amt{ font-weight:800; color: var(--refund); font-family:'IBM Plex Mono', monospace; }
-
   .ptc-info:hover .ptc-tooltip,
   .ptc-info:focus .ptc-tooltip,
   .ptc-info.ptc-info-open .ptc-tooltip{
@@ -506,6 +591,261 @@
   .ptc-status-tag-due{ background: var(--refund); }
   .ptc-status-tag-paid{ background: #1E7A46; }
   .ptc-status-tag-partial{ background: var(--reissue); }
+
+  /* ============ OTA-style Payment & Settlement panel ============ */
+  .ptc-payment-panel{
+    background: linear-gradient(180deg, #F6FAF8 0%, #FFFFFF 60%);
+    border: 1px solid #DCEAE0;
+    border-radius: 12px;
+    padding: 16px 16px 6px;
+    margin-bottom: 16px;
+  }
+
+  .ptc-fare-summary{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  @media (max-width: 640px){ .ptc-fare-summary{ grid-template-columns: 1fr; } }
+
+  .ptc-fare-item{
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+  }
+  .ptc-fare-item-label{
+    display:block;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 700;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .ptc-fare-item input{
+    width:100%;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background:#FCFDFE;
+    padding: 9px 10px;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ink);
+    font-family: 'SFMono-Regular', ui-monospace, monospace;
+  }
+  .ptc-fare-item input:focus{ outline: 2px solid var(--accent); outline-offset: 1px; border-color: var(--accent); }
+  .ptc-fare-item-profit{
+    background: transparent;
+    border: none;
+  }
+  .ptc-fare-item-profit .ptc-fare-item-label{ color: #1E7A46; }
+  .ptc-fare-item-profit input{ color: #1E7A46; border-color:#BFE3CB; background:#F5FBF7; }
+
+  .ptc-method-select-native{
+    position: absolute;
+    opacity: 0;
+    width: 1px; height: 1px;
+    pointer-events: none;
+  }
+
+  .ptc-method-chips{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 6px;
+  }
+  .ptc-method-chip{
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 13px;
+    border-radius: 20px;
+    border: 1px solid var(--line);
+    background: #fff;
+    color: var(--ink-soft);
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all .15s ease;
+  }
+  .ptc-method-chip:hover{ border-color: #1E7A46; color: #1E7A46; }
+  .ptc-method-chip.ptc-method-chip-active{
+    background: #1E7A46;
+    border-color: #1E7A46;
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(30,122,70,0.28);
+  }
+
+  .ptc-settlement-simple{
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    padding: 10px 2px 14px;
+  }
+  .ptc-settlement-simple-label{
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 700;
+    color: var(--muted);
+  }
+  .ptc-settlement-simple-due{
+    font-size: 17px;
+    font-weight: 800;
+    font-family: 'SFMono-Regular', ui-monospace, monospace;
+    color: var(--refund);
+  }
+  .ptc-status-badge{
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #fff;
+    background: var(--void);
+  }
+  .ptc-status-badge.ptc-status-badge-paid{ background: #1E7A46; }
+  .ptc-status-badge.ptc-status-badge-partial{ background: var(--reissue); }
+  .ptc-status-badge.ptc-status-badge-due{ background: var(--refund); }
+
+  /* Passenger count breakdown (one PNR can carry Adult/Child/Infant together) */
+  .ptc-pax-count{
+    display: flex;
+    gap: 8px;
+  }
+  .ptc-pax-count-item{
+    flex: 1;
+    text-align: center;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 4px 7px;
+    background: transparent;
+  }
+  .ptc-pax-count-label{
+    display: block;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    font-weight: 700;
+    color: var(--muted);
+    margin-bottom: 3px;
+  }
+  .ptc-pax-count-item input{
+    width: 100%;
+    border: none;
+    background: transparent;
+    text-align: center;
+    padding: 0;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .ptc-pax-count-item input:focus{ outline: none; }
+  .ptc-pax-count-item:focus-within{ background: var(--accent-soft); border-radius: 6px; }
+
+  /* Revenue Ledger row actions — compact, professional icon buttons */
+  .ptc-sales-actions{
+    display: flex;
+    gap: 6px;
+    white-space: nowrap;
+  }
+  .ptc-sales-actions button{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    background: #FCFDFE;
+    color: var(--ink-soft);
+    font-size: 13.5px;
+    line-height: 1;
+    cursor: pointer;
+    transition: transform .1s ease, border-color .15s ease, background .15s ease, color .15s ease, box-shadow .15s ease;
+  }
+  .ptc-sales-actions button:active{ transform: scale(0.93); }
+  .ptc-sales-edit:hover{
+    border-color: var(--booking);
+    background: var(--booking-soft);
+    color: var(--booking);
+    box-shadow: 0 1px 4px rgba(46,111,149,0.18);
+  }
+  .ptc-sales-del:hover{
+    border-color: var(--refund);
+    background: var(--refund-soft);
+    color: var(--refund);
+    box-shadow: 0 1px 4px rgba(180,69,59,0.18);
+  }
+
+  /* Due-payment visibility: highlighted rows in the Revenue Ledger + a quick "who owes" panel */
+  #sales-tbody tr.ptc-row-due{ background: var(--refund-soft); }
+  #sales-tbody tr.ptc-row-partial{ background: var(--reissue-soft); }
+
+  .ptc-due-panel{
+    border: 1px solid #F0D6D2;
+    background: var(--refund-soft);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 16px;
+  }
+  .ptc-due-panel-title{
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    font-weight: 700;
+    color: var(--refund);
+    margin-bottom: 8px;
+  }
+  .ptc-due-row{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 7px 8px;
+    margin: 0 -8px;
+    border-top: 1px dashed #EFC9C2;
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background .12s ease;
+  }
+  .ptc-due-row:first-of-type{ border-top: none; }
+  .ptc-due-row:hover{ background: rgba(180,69,59,0.06); }
+  .ptc-due-row:focus-visible{ outline: 2px solid var(--refund); outline-offset: -2px; }
+  .ptc-due-row-who{ color: var(--ink); font-weight: 600; }
+  .ptc-due-row-pnr{ color: var(--muted); font-size: 12px; font-family: 'SFMono-Regular', ui-monospace, monospace; }
+  .ptc-due-row-resp{ color: var(--ink-soft); font-size: 12px; font-weight: 600; margin-top: 2px; }
+  .ptc-due-row-resp-missing{ color: var(--muted); font-weight: 500; font-style: italic; }
+  .ptc-due-row-amt{ font-weight: 800; font-family: 'SFMono-Regular', ui-monospace, monospace; color: var(--refund); white-space: nowrap; }
+  .ptc-due-row-goto{
+    border: none;
+    background: #fff;
+    color: var(--refund);
+    border: 1px solid #F0D6D2;
+    font-size: 11.5px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 14px;
+    cursor: pointer;
+  }
+  .ptc-due-row-goto:hover{ background: var(--refund); color: #fff; }
+  .ptc-due-row-view{
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--refund);
+    opacity: 0.55;
+    white-space: nowrap;
+  }
+  .ptc-due-row:hover .ptc-due-row-view{ opacity: 1; }
 
   .ptc-edit{
     background: none;
@@ -782,11 +1122,111 @@
     word-break:break-word;
   }
   .ptc-detail-actions{ margin-top:10px; display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+
+  /* "Client Refund" — final payable amount, called out separately from the grid */
+  .ptc-client-refund-callout{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #E9F6EE;
+    border: 1px solid #BFE3CB;
+    border-radius: 9px;
+    padding: 10px 14px;
+    margin-top: 12px;
+  }
+  .ptc-client-refund-callout-label{
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 800;
+    color: #1E7A46;
+  }
+  .ptc-client-refund-callout-value{
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 800;
+    font-size: 18px;
+    color: #1E7A46;
+  }
   .ptc-search-noresult{
     text-align:center;
     padding:20px;
     color:var(--muted);
     font-size:13px;
+  }
+
+  /* ===== Fare Breakdown chart — Base Fare + Tax = Total Fare ===== */
+  .ptc-fare-chart{
+    background: linear-gradient(135deg, #F2F9F6 0%, #EEF5FA 100%);
+    border: 1px solid #DCEAE0;
+    border-radius: 10px;
+    padding: 12px 14px 14px;
+    margin-bottom: 12px;
+  }
+  .ptc-fare-chart-title{
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    font-weight: 800;
+    color: var(--brand);
+    margin-bottom: 10px;
+  }
+  .ptc-fare-chart-bar{
+    display: flex;
+    height: 8px;
+    border-radius: 5px;
+    overflow: hidden;
+    background: #E7ECF1;
+    margin-bottom: 12px;
+  }
+  .ptc-fare-chart-seg-base{ height: 100%; background: var(--brand); }
+  .ptc-fare-chart-seg-tax{ height: 100%; background: #E3A008; }
+  .ptc-fare-chart-equation{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .ptc-fare-chart-item{
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 7px 12px;
+    flex: 1;
+    min-width: 90px;
+  }
+  .ptc-fare-chart-item-label{
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    font-weight: 700;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .ptc-fare-dot{ width: 7px; height: 7px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+  .ptc-fare-chart-item-value{
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--ink);
+  }
+  .ptc-fare-chart-op{ font-size: 16px; font-weight: 700; color: var(--muted); flex-shrink: 0; }
+  .ptc-fare-chart-item.ptc-fare-chart-total{
+    background: #E9F6EE;
+    border-color: #BFE3CB;
+  }
+  .ptc-fare-chart-item.ptc-fare-chart-total .ptc-fare-chart-item-value{ color: #1E7A46; font-size: 17px; }
+  .ptc-fare-chart-item.ptc-fare-chart-total .ptc-fare-chart-item-label{ color: #1E7A46; }
+  @media (max-width: 480px){
+    .ptc-fare-chart-equation{ gap: 6px; }
+    .ptc-fare-chart-item{ min-width: 76px; padding: 6px 8px; }
+    .ptc-fare-chart-item-value{ font-size: 13.5px; }
   }
 
   /* ============================================================
@@ -1101,7 +1541,7 @@
 
     <div class="ptc-tabs">
       <button class="ptc-tab active" id="tab-btn-entry" data-view="entry">🧾 Add Entry &amp; Log</button>
-      <button class="ptc-tab" id="tab-btn-sales" data-view="sales">💳 Sales &amp; Payments</button>
+      <button class="ptc-tab" id="tab-btn-sales" data-view="sales">💰 Revenue Desk</button>
     </div>
 
     <!-- ============ DASHBOARD VIEW ============ -->
@@ -1229,18 +1669,18 @@
 
       <div class="ptc-row">
         <div class="ptc-field">
-          <label for="f-pnr-gds">GDS PNR</label>
+          <label for="f-pnr-gds">GDS PNR <span class="ptc-required">*</span></label>
           <input type="text" id="f-pnr-gds" class="mono" placeholder="e.g. ABC123" />
         </div>
         <div class="ptc-field">
-          <label for="f-pnr-air">Airline PNR</label>
+          <label for="f-pnr-air">Airline PNR <span class="ptc-required">*</span></label>
           <input type="text" id="f-pnr-air" class="mono" placeholder="e.g. XYZ789" />
         </div>
       </div>
 
       <div class="ptc-row">
         <div class="ptc-field">
-          <label for="f-pname">Passenger Name</label>
+          <label for="f-pname">Passenger Name <span class="ptc-required">*</span></label>
           <input type="text" id="f-pname" placeholder="e.g. JOHN DOE" />
         </div>
         <div class="ptc-field">
@@ -1264,7 +1704,7 @@
           <input type="text" id="f-platform-other" class="mono" placeholder="Type platform name" style="display:none; margin-top:6px;" />
         </div>
         <div class="ptc-field">
-          <label for="f-airline">Airline Code</label>
+          <label for="f-airline">Airline Code <span class="ptc-required">*</span></label>
           <select id="f-airline">
             <option value="" disabled selected>Select Type</option>
             <option value="BG">BG — Biman Bangladesh Airlines</option>
@@ -1305,8 +1745,13 @@
         <div class="ptc-section-label">Ticketing Details</div>
         <div class="ptc-row">
           <div class="ptc-field">
-            <label for="f-newtkt-t">New Ticket Number</label>
-            <input type="text" id="f-newtkt-t" class="mono" placeholder="e.g. 1234567890123" />
+            <label for="f-newtkt-t-input">Ticket Number(s) <span class="ptc-required">*</span></label>
+            <div class="ptc-tkt-chip-input" id="f-newtkt-t-wrap">
+              <div class="ptc-tkt-chips" id="f-newtkt-t-chips"></div>
+              <input type="text" id="f-newtkt-t-input" class="mono" inputmode="numeric" maxlength="13" placeholder="13-digit ticket number, press Enter to add" />
+            </div>
+            <div class="ptc-field-hint" id="f-newtkt-t-hint"></div>
+            <input type="hidden" id="f-newtkt-t" />
           </div>
           <div class="ptc-field ptc-type-select">
             <label for="f-routetype-t">Route Type</label>
@@ -1321,7 +1766,7 @@
         <div id="route-builder-t" class="ptc-route-builder"></div>
         <div class="ptc-row">
           <div class="ptc-field">
-            <label for="f-sector-t">Sector / Route <span style="font-weight:400;color:var(--ink-soft);font-size:11px;">(auto-filled from Route Type above — edit manually if needed)</span></label>
+            <label for="f-sector-t">Sector / Route <span class="ptc-required">*</span></label>
             <input type="text" id="f-sector-t" class="mono" placeholder="e.g. DAC-DXB" />
           </div>
           <div></div>
@@ -1367,17 +1812,17 @@
         <div class="ptc-section-label">Reissue Details</div>
         <div class="ptc-row">
           <div class="ptc-field">
-            <label for="f-oldtkt-r">Old Ticket Number</label>
+            <label for="f-oldtkt-r">Old Ticket Number <span class="ptc-required">*</span></label>
             <input type="text" id="f-oldtkt-r" class="mono" placeholder="e.g. 1234567890123" />
           </div>
           <div class="ptc-field">
-            <label for="f-newtkt-r">New Ticket Number</label>
+            <label for="f-newtkt-r">New Ticket Number <span class="ptc-required">*</span></label>
             <input type="text" id="f-newtkt-r" class="mono" placeholder="e.g. 1234567890124" />
           </div>
         </div>
         <div class="ptc-row">
           <div class="ptc-field">
-            <label for="f-sector-r">Reissue Sector</label>
+            <label for="f-sector-r">Reissue Sector <span class="ptc-required">*</span></label>
             <input type="text" id="f-sector-r" class="mono" placeholder="e.g. DAC-DXB-DAC" />
           </div>
           <div class="ptc-field">
@@ -1410,51 +1855,91 @@
       <!-- ===== REFUND / VOID FIELDS ===== -->
       <div id="section-Refund" style="display:none;">
         <div class="ptc-section-label" id="refund-void-label">Refund Details</div>
+
         <div class="ptc-row">
           <div class="ptc-field">
-            <label for="f-oldtkt-f">Ticket Number</label>
+            <label for="f-oldtkt-f">Ticket Number <span class="ptc-required">*</span></label>
             <input type="text" id="f-oldtkt-f" class="mono" placeholder="e.g. 1234567890123" />
           </div>
           <div class="ptc-field" id="refund-mode-wrap">
             <label for="f-mode-f">Refund Type</label>
             <select id="f-mode-f">
               <option value="" disabled selected>Select Type</option>
-              <option value="FULL">Full Refund</option>
+              <option value="FULL_UNUSED">Full Refund</option>
+              <option value="FULL_UNUSED_CHARGE">Refund</option>
               <option value="PARTIAL">Partial Refund</option>
-              <option value="AS_PER_POLICY">As Per Policy</option>
+              <option value="TAX_ONLY">Tax Refund</option>
             </select>
           </div>
         </div>
-        <div class="ptc-row" id="refund-payable-row">
-          <div class="ptc-field" id="refund-payable-wrap">
-            <label for="f-payable-f">Ticket Payable Fare</label>
-            <input type="number" step="0.01" id="f-payable-f" class="mono ptc-refund-calc" placeholder="0.00" />
+
+        <div class="ptc-row" id="refund-fare-row">
+          <div class="ptc-field" id="refund-totalfare-wrap">
+            <label for="f-refbasefare-f">Base Fare</label>
+            <input type="number" step="0.01" id="f-refbasefare-f" class="mono ptc-refund-calc" placeholder="0.00" />
           </div>
-          <div class="ptc-field" id="refund-discount-wrap">
-            <label for="f-discount-f">Discount Given</label>
-            <input type="number" step="0.01" id="f-discount-f" class="mono ptc-refund-calc" placeholder="0.00" />
+          <div class="ptc-field" id="refund-usedseg-wrap" style="display:none;">
+            <label for="f-usedseg-f">Used Segment Fare</label>
+            <input type="number" step="0.01" id="f-usedseg-f" class="mono ptc-refund-calc" placeholder="0.00" />
           </div>
         </div>
-        <div class="ptc-row" id="refund-charges-row">
+        <div class="ptc-row" id="refund-tax-row">
           <div class="ptc-field">
-            <label for="f-airline-f">Airline Charge</label>
-            <input type="number" step="0.01" id="f-airline-f" class="mono ptc-refund-calc" placeholder="0.00" />
+            <label for="f-reftotaltax-f">Tax</label>
+            <input type="number" step="0.01" id="f-reftotaltax-f" class="mono ptc-refund-calc" placeholder="0.00" />
           </div>
           <div class="ptc-field">
-            <label for="f-svc-f">Service Charge</label>
+            <label for="f-airline-f" id="f-airline-f-label">Airline Refund/Cancellation Fee</label>
+            <input type="number" step="0.01" id="f-airline-f" class="mono ptc-refund-calc" placeholder="0.00" value="0" />
+          </div>
+        </div>
+
+        <button type="button" class="ptc-link-toggle" id="btn-refund-advanced">+ Non-refundable tax / commission adjustment</button>
+        <div class="ptc-row" id="refund-advanced-row" style="display:none;">
+          <div class="ptc-field">
+            <label for="f-nonrefundtax-f">Non-Refundable Tax</label>
+            <input type="number" step="0.01" id="f-nonrefundtax-f" class="mono ptc-refund-calc" placeholder="0.00" value="0" />
+          </div>
+          <div class="ptc-field" id="refund-commission-wrap">
+            <label for="f-commission-f">Commission Adjustment</label>
+            <input type="number" step="0.01" id="f-commission-f" class="mono ptc-refund-calc" placeholder="0.00" value="0" />
+          </div>
+        </div>
+
+        <div class="ptc-row" id="refund-svc-row">
+          <div class="ptc-field" style="grid-column: 1 / -1;">
+            <label for="f-svc-f"><span id="f-svc-f-label-text">Agency Service Charge</span>
+              <span class="ptc-info" tabindex="0" aria-label="Service charge info">ⓘ<span class="ptc-tooltip">Separate from the airline refund — leave at 0.00 if none applies. Only affects the final Client Refund / Adjustment below, never the Airline Refund.</span></span>
+            </label>
             <input type="number" step="0.01" id="f-svc-f" class="mono ptc-refund-calc" placeholder="0.00" />
           </div>
         </div>
-        <div class="ptc-row" id="refund-amounts-row">
-          <div class="ptc-field">
-            <label for="f-charge-f" id="f-charge-f-label">Refund Charge</label>
+
+        <div id="refund-negative-warning" style="display:none; margin:2px 0 14px; padding:9px 12px; border-radius:8px; background:var(--refund-soft); border:1px solid rgba(180,69,59,.35); color:var(--refund); font-size:12.5px; font-weight:600;">
+          Refund calculation results in a negative amount. Please verify the fare, tax, airline charge, or commission adjustment.
+        </div>
+
+        <div class="ptc-refund-result" id="refund-result-panel">
+          <div class="ptc-refund-result-breakdown" id="refund-calcout-row">
+            <span>Refundable Fare <b id="refund-refoutfare-display">0.00</b></span>
+            <span>Refundable Tax <b id="refund-refouttax-display">0.00</b></span>
+            <input type="hidden" id="f-refoutfare-f" />
+            <input type="hidden" id="f-refouttax-f" />
+          </div>
+          <div class="ptc-refund-result-line" id="refund-airlinerefund-row">
+            <label for="f-airlinerefund-f">Airline Refund</label>
+            <input type="text" id="f-airlinerefund-f" class="mono" readonly placeholder="0.00" />
+          </div>
+          <div class="ptc-refund-result-line ptc-refund-result-final" id="refund-amounts-row">
+            <label for="f-charge-f" id="f-charge-f-label">Client Refund / Adjustment</label>
             <input type="number" step="0.01" id="f-charge-f" class="mono" placeholder="0.00" />
           </div>
-          <div class="ptc-field" id="tax-refund-wrap">
-            <label for="f-tax-f">Tax Refund</label>
-            <input type="number" step="0.01" id="f-tax-f" class="mono" placeholder="0.00" />
-          </div>
         </div>
+        <div class="ptc-field" id="tax-refund-wrap" style="display:none;">
+          <label for="f-tax-f">Tax Refund</label>
+          <input type="number" step="0.01" id="f-tax-f" class="mono" placeholder="0.00" />
+        </div>
+
         <div class="ptc-row" id="refund-status-row">
           <div class="ptc-field" id="refund-status-wrap">
             <label for="f-status-f">Refund Status</label>
@@ -1466,7 +1951,7 @@
           </div>
           <div class="ptc-field" id="refund-adjustment-wrap">
             <label>Adjustment Given
-              <span class="ptc-info" tabindex="0" aria-label="Adjustment info">ⓘ<span class="ptc-tooltip">Mark "Yes" if, instead of a cash refund, the fare was adjusted/held against a future booking. Enter the adjusted amount when Yes is selected.</span></span>
+              <span class="ptc-info" tabindex="0" aria-label="Adjustment info">ⓘ<span class="ptc-tooltip">Mark "Yes" if, instead of a cash refund, the client refund was adjusted/held against a future booking. This is a record-keeping flag only — it does not change the calculated amounts above.</span></span>
             </label>
             <div style="display:flex; gap:8px;">
               <button type="button" class="ptc-btn ptc-btn-ghost ptc-adj-btn" data-val="NO" id="btn-adj-no" style="flex:1; padding:9px 10px;">No</button>
@@ -1483,6 +1968,7 @@
           <div></div>
         </div>
       </div>
+
 
 
       <div class="ptc-row" style="margin-top:4px;">
@@ -1556,9 +2042,18 @@
             <th>Airline Chg</th>
             <th>Service Chg</th>
             <th>Total Collection</th>
-            <th>Payable Fare</th>
-            <th>Refund Chg</th>
-            <th>Tax Refund</th>
+            <th>Payable Fare (legacy)</th>
+            <th>Refund Total Fare</th>
+            <th>Used Segment Fare</th>
+            <th>Refund Total Tax</th>
+            <th>Non-Refund Tax</th>
+            <th>Commission Adj.</th>
+            <th>Svc Applied</th>
+            <th>Refundable Fare</th>
+            <th>Refundable Tax</th>
+            <th>Airline Refund</th>
+            <th>Client Refund / Adj.</th>
+            <th>Tax Refund (legacy)</th>
             <th>Refund Type</th>
             <th>Refund Status</th>
             <th>Adjustment</th>
@@ -1648,12 +2143,7 @@
 
     <div class="ptc-view" id="view-sales">
 
-      <div class="ptc-due-reminder" id="sales-due-reminder" style="display:none;">
-        <div class="ptc-due-reminder-head">
-          <span>⚠ Payment Due Reminders (<span id="sales-due-count">0</span>)</span>
-        </div>
-        <div id="sales-due-list"></div>
-      </div>
+      <div class="ptc-due-panel" id="sales-due-panel" style="display:none;"></div>
 
       <div class="ptc-kpi-grid" id="sales-kpi-grid" style="margin-bottom:20px;"></div>
 
@@ -1668,14 +2158,27 @@
             <input type="date" id="s-date" />
           </div>
           <div class="ptc-field">
-            <label for="s-pname">Customer / Passenger Name<span class="ptc-required">*</span></label>
+            <label for="s-pname">Customer / Passenger Name <span class="ptc-required">*</span></label>
             <input type="text" id="s-pname" placeholder="e.g. JOHN DOE" />
           </div>
         </div>
         <div class="ptc-row">
           <div class="ptc-field">
-            <label for="s-contactperson">Contact Person Name</label>
-            <input type="text" id="s-contactperson" placeholder="e.g. JANE DOE (if different from passenger)" />
+            <label>Passengers on this PNR</label>
+            <div class="ptc-pax-count">
+              <div class="ptc-pax-count-item">
+                <span class="ptc-pax-count-label">Adult</span>
+                <input type="number" min="0" step="1" id="s-pax-adt" class="mono" value="1" />
+              </div>
+              <div class="ptc-pax-count-item">
+                <span class="ptc-pax-count-label">Child</span>
+                <input type="number" min="0" step="1" id="s-pax-chd" class="mono" value="0" />
+              </div>
+              <div class="ptc-pax-count-item">
+                <span class="ptc-pax-count-label">Infant</span>
+                <input type="number" min="0" step="1" id="s-pax-inf" class="mono" value="0" />
+              </div>
+            </div>
           </div>
           <div class="ptc-field">
             <label for="s-phone">Contact Number</label>
@@ -1683,54 +2186,63 @@
           </div>
         </div>
         <div class="ptc-row">
-          <div class="ptc-field" style="grid-column: 1 / -1;">
-            <label for="s-tkt-input">Ticket Number(s)<span class="ptc-required">*</span>
-              <span class="ptc-info" tabindex="0" aria-label="Ticket number info">ⓘ<span class="ptc-tooltip">Each ticket number must be exactly 13 digits. A PNR can carry more than one ticket — add as many as needed, there's no limit.</span></span>
-            </label>
-            <div style="display:flex; gap:8px;">
-              <input type="text" id="s-tkt-input" class="mono" placeholder="13-digit ticket number" inputmode="numeric" maxlength="13" style="flex:1;" />
-              <button type="button" class="ptc-btn ptc-btn-ghost" id="btn-tkt-add" style="padding:9px 16px; white-space:nowrap;">+ Add</button>
+          <div class="ptc-field">
+            <label for="s-tkt-input">Ticket Number(s) <span class="ptc-required">*</span></label>
+            <div class="ptc-tkt-chip-input" id="s-tkt-wrap">
+              <div class="ptc-tkt-chips" id="s-tkt-chips"></div>
+              <input type="text" id="s-tkt-input" class="mono" inputmode="numeric" maxlength="13" placeholder="13-digit ticket number, press Enter to add" />
             </div>
-            <div id="s-tkt-chips" style="display:flex; flex-wrap:wrap; gap:6px; margin-top:8px;"></div>
+            <div class="ptc-field-hint" id="s-tkt-hint"></div>
+            <input type="hidden" id="s-tkt" />
+          </div>
+          <div class="ptc-field">
+            <label for="s-sector">Sector / Route <span class="ptc-required">*</span></label>
+            <input type="text" id="s-sector" class="mono" placeholder="e.g. DAC-DXB-DAC" />
           </div>
         </div>
         <div class="ptc-row">
           <div class="ptc-field">
-            <label for="s-pnr">PNR<span class="ptc-required">*</span></label>
-            <input type="text" id="s-pnr" class="mono" placeholder="e.g. ABC123" />
+            <label for="s-pnr-gds">GDS PNR <span class="ptc-required">*</span></label>
+            <input type="text" id="s-pnr-gds" class="mono" placeholder="e.g. ABC123" />
           </div>
           <div class="ptc-field">
-            <label for="s-sector">Sector / Route</label>
-            <input type="text" id="s-sector" class="mono" placeholder="e.g. DAC-DXB-DAC" style="text-transform:uppercase;" />
+            <label for="s-pnr-air">Airline PNR <span class="ptc-required">*</span></label>
+            <input type="text" id="s-pnr-air" class="mono" placeholder="e.g. XYZ789" />
           </div>
         </div>
         <div class="ptc-row">
           <div class="ptc-field">
-            <label for="s-airline">Airline</label>
+            <label for="s-airline">Airline <span class="ptc-required">*</span></label>
             <input type="text" id="s-airline" class="mono" placeholder="e.g. EK" />
           </div>
-          <div></div>
+          <div class="ptc-field">
+            <label for="s-responsible">Responsible Person</label>
+            <input type="text" id="s-responsible" placeholder="e.g. staff/agent handling this booking" />
+          </div>
         </div>
 
-        <div class="ptc-section-label" style="color:#1E7A46;">Payment Information</div>
-        <div class="ptc-row">
-          <div class="ptc-field">
-            <label for="s-price">Selling Price</label>
-            <input type="number" step="0.01" id="s-price" class="mono ptc-sale-calc" placeholder="0.00" />
+        <div class="ptc-section-label" style="color:#1E7A46;">💰 Payment &amp; Settlement</div>
+
+        <div class="ptc-payment-panel">
+
+          <div class="ptc-fare-summary">
+            <div class="ptc-fare-item">
+              <span class="ptc-fare-item-label">Selling Price</span>
+              <input type="number" step="0.01" id="s-price" class="mono ptc-sale-calc" placeholder="0.00" />
+            </div>
+            <div class="ptc-fare-item">
+              <span class="ptc-fare-item-label">Net Cost (optional)</span>
+              <input type="number" step="0.01" id="s-cost" class="mono ptc-sale-calc" placeholder="0.00" />
+            </div>
+            <div class="ptc-fare-item ptc-fare-item-profit">
+              <span class="ptc-fare-item-label">Profit / Margin</span>
+              <input type="text" id="s-profit" class="mono" placeholder="0.00" readonly />
+            </div>
           </div>
-          <div class="ptc-field">
-            <label for="s-cost">Net Cost (optional)</label>
-            <input type="number" step="0.01" id="s-cost" class="mono ptc-sale-calc" placeholder="0.00" />
-          </div>
-        </div>
-        <div class="ptc-row">
-          <div class="ptc-field">
-            <label for="s-profit">Profit / Margin (auto)</label>
-            <input type="text" id="s-profit" class="mono" placeholder="0.00" readonly style="background:#F3F5F8; font-weight:700;" />
-          </div>
-          <div class="ptc-field">
+
+          <div class="ptc-field" style="margin-bottom:16px;">
             <label for="s-method">Payment Method</label>
-            <select id="s-method">
+            <select id="s-method" class="ptc-method-select-native" aria-hidden="true" tabindex="-1">
               <option value="" disabled selected>Select Type</option>
               <option value="CASH">Cash</option>
               <option value="BKASH">bKash</option>
@@ -1740,28 +2252,40 @@
               <option value="CARD">Card</option>
               <option value="OTHER">Other</option>
             </select>
+            <div class="ptc-method-chips" id="s-method-chips" role="group" aria-label="Payment method">
+              <button type="button" class="ptc-method-chip" data-method="CASH">💵 Cash</button>
+              <button type="button" class="ptc-method-chip" data-method="BKASH">📱 bKash</button>
+              <button type="button" class="ptc-method-chip" data-method="NAGAD">📱 Nagad</button>
+              <button type="button" class="ptc-method-chip" data-method="ROCKET">🚀 Rocket</button>
+              <button type="button" class="ptc-method-chip" data-method="BANK">🏦 Bank Transfer</button>
+              <button type="button" class="ptc-method-chip" data-method="CARD">💳 Card</button>
+              <button type="button" class="ptc-method-chip" data-method="OTHER">⋯ Other</button>
+            </div>
           </div>
+
+          <div class="ptc-row">
+            <div class="ptc-field">
+              <label for="s-paid">Amount Paid</label>
+              <input type="number" step="0.01" id="s-paid" class="mono ptc-sale-calc" placeholder="0.00" />
+            </div>
+            <div class="ptc-field" id="s-duedate-wrap">
+              <label for="s-duedate">Due Date</label>
+              <input type="date" id="s-duedate" />
+            </div>
+          </div>
+
+          <div class="ptc-settlement-simple">
+            <span class="ptc-settlement-simple-label">Amount Due</span>
+            <span class="ptc-settlement-simple-due" id="s-due-display">0.00</span>
+            <span class="ptc-status-badge" id="s-status-badge">—</span>
+          </div>
+
+          <!-- kept for calculation / storage, mirrored by the simple due readout above -->
+          <input type="hidden" id="s-due" />
+          <input type="hidden" id="s-status" />
+
         </div>
-        <div class="ptc-row">
-          <div class="ptc-field">
-            <label for="s-paid">Amount Paid</label>
-            <input type="number" step="0.01" id="s-paid" class="mono ptc-sale-calc" placeholder="0.00" />
-          </div>
-          <div class="ptc-field">
-            <label for="s-due">Amount Due (auto)</label>
-            <input type="text" id="s-due" class="mono" placeholder="0.00" readonly style="background:#F3F5F8; font-weight:700;" />
-          </div>
-        </div>
-        <div class="ptc-row">
-          <div class="ptc-field">
-            <label for="s-status">Payment Status (auto)</label>
-            <input type="text" id="s-status" class="mono" placeholder="—" readonly style="background:#F3F5F8; font-weight:700;" />
-          </div>
-          <div class="ptc-field" id="s-duedate-wrap">
-            <label for="s-duedate">Due Date</label>
-            <input type="date" id="s-duedate" />
-          </div>
-        </div>
+
         <div class="ptc-row" style="margin-top:4px;">
           <div class="ptc-field" style="grid-column: 1 / -1;">
             <label for="s-note">Note</label>
@@ -1777,14 +2301,21 @@
       </div>
 
       <div class="ptc-log-head">
-        <h2>Sales Log</h2>
+        <h2>Revenue Ledger</h2>
         <span class="ptc-count" id="sales-count">0 sales</span>
       </div>
 
-      <div class="ptc-row" style="margin-bottom:12px;">
-        <div class="ptc-field" style="grid-column: 1 / -1;">
-          <input type="text" id="sales-search" class="mono" placeholder="🔍 Search sales by PNR, ticket number, name, or phone" />
+      <div class="ptc-card" style="padding:14px 18px; margin-bottom:14px;">
+        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+          <div style="flex:1; min-width:260px; position:relative;">
+            <span style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--muted); font-size:14px;">🔍</span>
+            <input type="text" id="sales-search" placeholder="Search by GDS/Airline PNR, Ticket Number, or Passenger Name..."
+              style="width:100%; box-sizing:border-box; padding:10px 12px 10px 34px; border:1px solid var(--line); border-radius:8px; font-family:inherit; font-size:13px; color:var(--ink);" />
+          </div>
+          <button class="ptc-btn ptc-btn-ghost" id="btn-sales-search-clear" style="display:none;">Clear Search</button>
         </div>
+        <div id="sales-search-meta" style="font-size:11.5px; color:var(--muted); margin-top:8px; display:none;"></div>
+        <div id="sales-search-results" style="margin-top:12px; display:none;"></div>
       </div>
 
       <div class="ptc-table-wrap" id="sales-table-wrap">
@@ -1793,10 +2324,11 @@
             <tr>
               <th>Date</th>
               <th>Customer</th>
-              <th>Contact Person</th>
+              <th>Pax</th>
               <th>Contact</th>
               <th>Ticket No.</th>
-              <th>PNR</th>
+              <th>GDS PNR</th>
+              <th>Airline PNR</th>
               <th>Sector</th>
               <th>Airline</th>
               <th>Selling Price</th>
@@ -1851,6 +2383,114 @@
   const tagColor = { Ticketing:'#2E6F95', Reissue:'#C97F1E', Refund:'#B4453B', Void:'#6B7280' };
 
   const $ = (id) => document.getElementById(id);
+
+  // Disable "scroll to increase/decrease" on every number input across every
+  // section (entry, reissue, refund, sales, achievement, etc.) — scrolling the
+  // page while a number field happens to be focused should never change its value.
+  document.addEventListener('wheel', () => {
+    if(document.activeElement && document.activeElement.tagName === 'INPUT' && document.activeElement.type === 'number'){
+      document.activeElement.blur();
+    }
+  }, { passive: true });
+
+  // ---- Multi ticket-number chip input ----
+  // Reusable for any field where one PNR may cover several passengers, each with
+  // their own ticket number. Values are stored in a hidden input as a comma-joined
+  // list of 13-digit ticket numbers; the visible UI is a row of removable chips
+  // plus a text box that only accepts a number once it's exactly 13 digits.
+  function initTicketChipField(inputId, chipsId, hiddenId, hintId, defaultHint){
+    const rawInput = $(inputId);
+    const chipsWrap = $(chipsId);
+    const hidden = $(hiddenId);
+    const hint = $(hintId);
+    if(!rawInput || !chipsWrap || !hidden) return null;
+
+    function getTickets(){
+      return hidden.value ? hidden.value.split(',').filter(Boolean) : [];
+    }
+    function showHint(msg, isError){
+      if(!hint) return;
+      hint.textContent = msg;
+      hint.classList.toggle('ptc-field-hint-error', !!isError);
+    }
+    function renderChips(){
+      const list = getTickets();
+      chipsWrap.innerHTML = list.map((t, i) => `
+        <span class="ptc-tkt-chip">${t}<button type="button" data-i="${i}" aria-label="Remove ticket number">×</button></span>
+      `).join('');
+      chipsWrap.querySelectorAll('button').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const list2 = getTickets();
+          list2.splice(parseInt(btn.getAttribute('data-i'), 10), 1);
+          setTickets(list2);
+        });
+      });
+    }
+    function setTickets(arr){
+      hidden.value = arr.join(',');
+      renderChips();
+    }
+    function tryAdd(){
+      const digits = rawInput.value.replace(/\D/g, '');
+      if(!digits) return;
+      if(digits.length !== 13){
+        showHint('Ticket number must be exactly 13 digits.', true);
+        return;
+      }
+      const list = getTickets();
+      if(list.includes(digits)){
+        showHint('That ticket number is already added.', true);
+        rawInput.value = '';
+        return;
+      }
+      list.push(digits);
+      setTickets(list);
+      rawInput.value = '';
+      showHint(defaultHint || '', false);
+    }
+    rawInput.addEventListener('keydown', (e) => {
+      if(e.key === 'Enter' || e.key === ','){
+        e.preventDefault();
+        tryAdd();
+      }
+    });
+    rawInput.addEventListener('blur', () => {
+      if(rawInput.value.trim()) tryAdd();
+    });
+    rawInput.addEventListener('input', () => {
+      rawInput.value = rawInput.value.replace(/\D/g, '').slice(0, 13);
+      if(hint && hint.classList.contains('ptc-field-hint-error')) showHint(defaultHint || '', false);
+    });
+    renderChips();
+    return { getTickets, setTickets };
+  }
+
+  function fmtTicketList(v){
+    return (v || '').toString().split(',').filter(Boolean).join(', ');
+  }
+
+  // Auto-capitalize PNR, Airline, and Route/Sector fields as the person types —
+  // these are always written in uppercase in the industry, so this saves a keystroke
+  // and keeps the ledger consistent no matter how the person typed it in.
+  function autoUppercase(id){
+    const el = $(id);
+    if(!el) return;
+    el.addEventListener('input', () => {
+      const start = el.selectionStart, end = el.selectionEnd;
+      const upper = el.value.toUpperCase();
+      if(upper !== el.value){
+        el.value = upper;
+        try{ el.setSelectionRange(start, end); }catch(err){}
+      }
+    });
+  }
+  [
+    'f-pnr-gds', 'f-pnr-air', 'f-airline-other', 'f-sector-t', 'f-sector-r',
+    's-pnr-gds', 's-pnr-air', 's-airline', 's-sector',
+  ].forEach(autoUppercase);
+
+  const entryNewTktChips = initTicketChipField('f-newtkt-t-input', 'f-newtkt-t-chips', 'f-newtkt-t', 'f-newtkt-t-hint',
+    'One ticket per passenger — add each 13-digit ticket number, then press Enter.');
 
   // ---- File System connection (writes directly to a real file on your PC) ----
   // The file handle itself is remembered across sessions via IndexedDB, so you
@@ -1935,9 +2575,18 @@
     { h:'AIRLINE CHARGE', f:'airlineCharge', n:true },
     { h:'SERVICE CHARGE', f:'svc', n:true },
     { h:'TOTAL COLLECTION', f:'totalCollection', n:true },
-    { h:'TICKET PAYABLE FARE', f:'payableFare', n:true },
-    { h:'REFUND CHARGE', f:'refundCharge', n:true },
-    { h:'TAX REFUND', f:'taxRefund', n:true },
+    { h:'TICKET PAYABLE FARE (LEGACY)', f:'payableFare', n:true },
+    { h:'REFUND TOTAL FARE', f:'refTotalFare', n:true },
+    { h:'USED SEGMENT FARE', f:'usedSegmentFare', n:true },
+    { h:'REFUND TOTAL TAX', f:'refTotalTax', n:true },
+    { h:'NON-REFUNDABLE TAX', f:'refNonRefundTax', n:true },
+    { h:'COMMISSION ADJUSTMENT', f:'commissionAdj', n:true },
+    { h:'SERVICE CHARGE APPLIED', f:'svcApplied' },
+    { h:'REFUNDABLE FARE', f:'refundableFare', n:true },
+    { h:'REFUNDABLE TAX', f:'refundableTax', n:true },
+    { h:'AIRLINE REFUND', f:'airlineRefund', n:true },
+    { h:'CLIENT REFUND / ADJUSTMENT', f:'refundCharge', n:true },
+    { h:'TAX REFUND (LEGACY)', f:'taxRefund', n:true },
     { h:'REFUND TYPE', f:'refundType' },
     { h:'REFUND STATUS', f:'refundStatus' },
     { h:'ADJUSTMENT GIVEN', f:'adjustmentGiven' },
@@ -1955,7 +2604,7 @@
   const SHEET_DEFS = [
     { name:'Ticketing', fields: COMMON_FIELDS.concat(['newTkt','sector','baseFare','taxFare','airlineTicketPrice','discount','markUp','markupAmount','totalFare','note']) },
     { name:'Reissue', fields: COMMON_FIELDS.concat(['oldTkt','newTkt','sector','code','fareDiff','airlineCharge','svc','totalCollection','note']) },
-    { name:'Refund', fields: COMMON_FIELDS.concat(['oldTkt','refundType','payableFare','airlineCharge','svc','discount','refundCharge','taxRefund','refundStatus','adjustmentGiven','adjustmentAmount','note']) },
+    { name:'Refund', fields: COMMON_FIELDS.concat(['oldTkt','refundType','refTotalFare','usedSegmentFare','refTotalTax','refNonRefundTax','airlineCharge','commissionAdj','refundableFare','refundableTax','airlineRefund','svcApplied','svc','refundCharge','taxRefund','refundStatus','adjustmentGiven','adjustmentAmount','note']) },
     { name:'Void', fields: COMMON_FIELDS.concat(['oldTkt','airlineCharge','svc','refundCharge','note']) },
   ];
 
@@ -2764,46 +3413,123 @@
       sections.Refund.style.display = 'block';
       const label = $('refund-void-label');
       const modeWrap = $('refund-mode-wrap');
+      const fareRow = $('refund-fare-row');
+      const taxRow = $('refund-tax-row');
+      const airlineLabel = $('f-airline-f-label');
+      const advancedToggle = $('btn-refund-advanced');
+      const svcLabel = $('f-svc-f-label-text');
+      const calcOutRow = $('refund-calcout-row');
+      const airlineRefundRow = $('refund-airlinerefund-row');
+      const negWarning = $('refund-negative-warning');
       const taxWrap = $('tax-refund-wrap');
       const chargeLabel = $('f-charge-f-label');
       const chargeInput = $('f-charge-f');
       const statusWrap = $('refund-status-wrap');
       const adjWrap = $('refund-adjustment-wrap');
-      const payableWrap = $('refund-payable-wrap');
-      const discountWrap = $('refund-discount-wrap');
       if(type === 'Void'){
         label.textContent = 'Void Details';
         label.style.color = 'var(--accent)';
         modeWrap.style.display = 'none';
+        fareRow.style.display = 'none';
+        taxRow.style.display = 'none';
+        airlineLabel.textContent = 'Airline Charge';
+        advancedToggle.style.display = 'none';
+        showRefundAdvanced(false);
+        svcLabel.textContent = 'Service Charge';
+        calcOutRow.style.display = 'none';
+        airlineRefundRow.style.display = 'none';
+        negWarning.style.display = 'none';
         taxWrap.style.display = 'none';
-        payableWrap.style.display = 'none';
-        discountWrap.style.display = 'none';
         chargeLabel.textContent = 'Void Charge';
         statusWrap.style.display = 'none';
         adjWrap.style.display = 'none';
         $('refund-adjamt-row').style.display = 'none';
         chargeInput.readOnly = false;
         chargeInput.style.background = '#FCFDFE';
+        chargeInput.style.textAlign = 'left';
+        chargeInput.style.border = '1px solid var(--line)';
+        chargeInput.style.borderRadius = '8px';
+        chargeInput.style.padding = '9px 12px';
+        chargeInput.style.width = '100%';
         chargeInput.style.fontWeight = '400';
+        chargeInput.style.fontSize = '13.5px';
+        chargeInput.style.color = 'var(--ink)';
       } else {
         label.textContent = 'Refund Details';
         label.style.color = 'var(--accent)';
         modeWrap.style.display = 'block';
-        taxWrap.style.display = 'block';
-        payableWrap.style.display = 'block';
-        discountWrap.style.display = 'block';
-        chargeLabel.textContent = 'Refund Charge (auto)';
+        fareRow.style.display = 'grid';
+        taxRow.style.display = 'grid';
+        airlineLabel.textContent = 'Airline Refund/Cancellation Fee';
+        advancedToggle.style.display = 'inline-flex';
+        svcLabel.textContent = 'Agency Service Charge';
+        calcOutRow.style.display = 'flex';
+        airlineRefundRow.style.display = 'flex';
+        taxWrap.style.display = 'none';
+        chargeLabel.textContent = 'Client Refund / Adjustment';
         statusWrap.style.display = 'block';
         adjWrap.style.display = 'block';
         $('refund-adjamt-row').style.display = ($('f-adjgiven-f').value === 'YES') ? 'grid' : 'none';
         chargeInput.readOnly = true;
-        chargeInput.style.background = '#F3F5F8';
-        chargeInput.style.fontWeight = '700';
-        if(typeof recalcRefundCharge === 'function') recalcRefundCharge();
+        chargeInput.style.background = 'transparent';
+        chargeInput.style.textAlign = 'right';
+        chargeInput.style.border = 'none';
+        chargeInput.style.borderRadius = '0';
+        chargeInput.style.padding = '0';
+        chargeInput.style.width = '140px';
+        chargeInput.style.fontWeight = '800';
+        chargeInput.style.fontSize = '18px';
+        chargeInput.style.color = 'var(--accent)';
+        applyRefundTypeFields();
+        if(typeof recalcRefund === 'function') recalcRefund();
       }
     }
     applyTypeStyling(type);
   }
+
+  // ---- Refund: "advanced" fields (Non-Refundable Tax / Commission Adjustment) are
+  // collapsed by default since they're 0 in most day-to-day refunds. ----
+  function showRefundAdvanced(show){
+    $('refund-advanced-row').style.display = show ? 'grid' : 'none';
+    $('btn-refund-advanced').textContent = show
+      ? '− Hide non-refundable tax / commission adjustment'
+      : '+ Non-refundable tax / commission adjustment';
+  }
+  $('btn-refund-advanced').addEventListener('click', () => {
+    const isOpen = $('refund-advanced-row').style.display !== 'none';
+    showRefundAdvanced(!isOpen);
+  });
+
+  // ---- Refund Type → dynamic field visibility ----
+  // Full Refund (Unused Ticket) / Full Refund (Unused Ticket + Airline Charge): fare + tax, no used-segment.
+  // Partial Refund: adds Used Segment Fare.
+  // Tax Refund Only: fare + used-segment hidden, commission hidden unless already entered.
+  function applyRefundTypeFields(){
+    const mode = $('f-mode-f').value;
+    const totalFareWrap = $('refund-totalfare-wrap');
+    const usedSegWrap = $('refund-usedseg-wrap');
+    const commissionWrap = $('refund-commission-wrap');
+
+    if(mode === 'TAX_ONLY'){
+      totalFareWrap.style.display = 'none';
+      usedSegWrap.style.display = 'none';
+      const hasCommission = (parseFloat($('f-commission-f').value) || 0) !== 0;
+      commissionWrap.style.display = hasCommission ? 'block' : 'none';
+    } else if(mode === 'PARTIAL'){
+      totalFareWrap.style.display = 'block';
+      usedSegWrap.style.display = 'block';
+      commissionWrap.style.display = 'block';
+    } else {
+      // FULL_UNUSED, FULL_UNUSED_CHARGE, or not yet selected
+      totalFareWrap.style.display = 'block';
+      usedSegWrap.style.display = 'none';
+      commissionWrap.style.display = 'block';
+    }
+  }
+  $('f-mode-f').addEventListener('change', () => {
+    applyRefundTypeFields();
+    if(typeof recalcRefund === 'function') recalcRefund();
+  });
 
   typeSelect.addEventListener('change', () => showSection(typeSelect.value));
   showSection(typeSelect.value);
@@ -2953,31 +3679,70 @@
   });
   recalcReissueTotal();
 
-  // ---- Refund charge auto-calculation: Ticket Payable Fare − Airline Charge − Service Charge − Discount − Adjustment (if given) ----
+  // ---- Airline Refund calculation engine ----
+  // Business hierarchy (never mixed):
+  //   Refundable Fare + Refundable Tax − Airline Refund/Cancellation Fee − Commission Adjustment = AIRLINE REFUND
+  //   AIRLINE REFUND − Agency Service Charge = CLIENT REFUND / ADJUSTMENT
   // Only applies when Transaction Type = Refund. For Void, the charge field stays a plain editable input.
-  function recalcRefundCharge(){
+  function recalcRefund(){
     if(typeSelect.value !== 'Refund') return;
-    const payable = parseFloat($('f-payable-f').value) || 0;
-    const airlineChg = parseFloat($('f-airline-f').value) || 0;
-    const svc = parseFloat($('f-svc-f').value) || 0;
-    const discount = parseFloat($('f-discount-f').value) || 0;
-    const adjAmt = ($('f-adjgiven-f').value === 'YES') ? (parseFloat($('f-adjamt-f').value) || 0) : 0;
-    const total = payable - airlineChg - svc - discount - adjAmt;
-    $('f-charge-f').value = total.toFixed(2);
+    const mode = $('f-mode-f').value;
+
+    const baseFare = parseFloat($('f-refbasefare-f').value) || 0;
+    const totalTax = parseFloat($('f-reftotaltax-f').value) || 0;
+    // Base Fare + Tax = Total Fare is just the ticket's face-value total (kept for
+    // audit/export only) — the airline refund math below always uses Fare and Tax
+    // as separate terms, per Refundable Fare + Refundable Tax − Fee − Commission.
+    let nonRefundTax = parseFloat($('f-nonrefundtax-f').value) || 0;
+    if(nonRefundTax < 0){ nonRefundTax = 0; $('f-nonrefundtax-f').value = 0; }
+    if(nonRefundTax > totalTax){ nonRefundTax = totalTax; $('f-nonrefundtax-f').value = nonRefundTax; }
+    const airlineFee = parseFloat($('f-airline-f').value) || 0;
+    const commission = (mode === 'TAX_ONLY') ? 0 : (parseFloat($('f-commission-f').value) || 0);
+
+    const refundableTax = totalTax - nonRefundTax;
+    let refundableFare = 0;
+    let airlineRefund = 0;
+
+    if(mode === 'TAX_ONLY'){
+      refundableFare = 0;
+      airlineRefund = refundableTax - airlineFee;
+    } else if(mode === 'PARTIAL'){
+      let usedSeg = parseFloat($('f-usedseg-f').value) || 0;
+      if(usedSeg < 0){ usedSeg = 0; $('f-usedseg-f').value = 0; }
+      if(usedSeg > baseFare){ usedSeg = baseFare; $('f-usedseg-f').value = usedSeg; }
+      refundableFare = baseFare - usedSeg;
+      airlineRefund = refundableFare + refundableTax - airlineFee - commission;
+    } else {
+      // FULL_UNUSED / FULL_UNUSED_CHARGE (airline fee is simply 0 for the plain unused case)
+      refundableFare = baseFare;
+      airlineRefund = refundableFare + refundableTax - airlineFee - commission;
+    }
+
+    $('f-refoutfare-f').value = refundableFare.toFixed(2);
+    $('f-refouttax-f').value = refundableTax.toFixed(2);
+    $('refund-refoutfare-display').textContent = refundableFare.toFixed(2);
+    $('refund-refouttax-display').textContent = refundableTax.toFixed(2);
+    $('f-airlinerefund-f').value = airlineRefund.toFixed(2);
+    $('f-tax-f').value = refundableTax.toFixed(2);
+    $('refund-negative-warning').style.display = (airlineRefund < 0) ? 'block' : 'none';
+
+    // Agency Service Charge is just a plain amount box now — type a number to apply it, leave at 0 to skip.
+    const svcAmt = parseFloat($('f-svc-f').value) || 0;
+    const clientRefund = airlineRefund - svcAmt;
+    $('f-charge-f').value = clientRefund.toFixed(2);
   }
   document.querySelectorAll('.ptc-refund-calc').forEach(el => {
-    el.addEventListener('input', recalcRefundCharge);
+    el.addEventListener('input', recalcRefund);
   });
-  $('f-adjamt-f').addEventListener('input', recalcRefundCharge);
-
-  // ---- Refund: Adjustment Given toggle ----
+  // ---- Refund: Adjustment Given toggle — a record-keeping flag only (instead of a cash refund,
+  // the client refund was held/adjusted against a future booking). It does NOT alter the
+  // calculated Airline Refund or Client Refund / Adjustment amounts above. ----
   function setAdjustmentGiven(val){
     $('f-adjgiven-f').value = val;
     $('btn-adj-no').classList.toggle('ptc-adj-active', val === 'NO');
     $('btn-adj-yes').classList.toggle('ptc-adj-active', val === 'YES');
     $('refund-adjamt-row').style.display = (val === 'YES' && typeSelect.value === 'Refund') ? 'grid' : 'none';
     if(val === 'NO'){ $('f-adjamt-f').value = ''; }
-    recalcRefundCharge();
   }
   $('btn-adj-no').addEventListener('click', () => setAdjustmentGiven('NO'));
   $('btn-adj-yes').addEventListener('click', () => setAdjustmentGiven('YES'));
@@ -3016,6 +3781,16 @@
       refundStatus: '',
       adjustmentGiven: '',
       adjustmentAmount: '',
+      refBaseFare: '',
+      refTotalFare: '',
+      usedSegmentFare: '',
+      refTotalTax: '',
+      refNonRefundTax: '',
+      commissionAdj: '',
+      svcApplied: '',
+      refundableFare: '',
+      refundableTax: '',
+      airlineRefund: '',
       code: '',
       note: val('f-note'),
     };
@@ -3042,17 +3817,49 @@
     } else if(type === 'Refund'){
       base.oldTkt = val('f-oldtkt-f');
       base.refundType = $('f-mode-f').value;
-      base.payableFare = num('f-payable-f');
-      base.discount = num('f-discount-f');
-      base.airlineCharge = num('f-airline-f');
-      base.svc = num('f-svc-f');
-      const payableN = Number(num('f-payable-f')) || 0;
-      const discountN = Number(num('f-discount-f')) || 0;
-      const airlineN = Number(num('f-airline-f')) || 0;
-      const svcN = Number(num('f-svc-f')) || 0;
-      const adjN = ($('f-adjgiven-f').value === 'YES') ? (Number(num('f-adjamt-f')) || 0) : 0;
-      base.refundCharge = payableN - airlineN - svcN - discountN - adjN; // Ticket Payable − Airline − Service − Discount − Adjustment
-      base.taxRefund = num('f-tax-f');
+      const mode = base.refundType;
+
+      const baseFare = Number(num('f-refbasefare-f')) || 0;
+      const usedSeg = Number(num('f-usedseg-f')) || 0;
+      const totalTax = Number(num('f-reftotaltax-f')) || 0;
+      const totalFare = baseFare + totalTax; // Base Fare + Tax = Total Fare — kept for audit/export only
+      const nonRefundTax = Number(num('f-nonrefundtax-f')) || 0;
+      const airlineFee = Number(num('f-airline-f')) || 0;
+      const commission = (mode === 'TAX_ONLY') ? 0 : (Number(num('f-commission-f')) || 0);
+      const svcAmt = Number(num('f-svc-f')) || 0; // plain amount box — 0 means no service charge
+
+      // AIRLINE CALCULATION (never mixed with the agency service charge below).
+      // Uses Fare and Tax as separate terms — never the blended Base Fare + Tax total.
+      const refundableTax = totalTax - nonRefundTax;
+      let refundableFare = 0;
+      let airlineRefund = 0;
+      if(mode === 'TAX_ONLY'){
+        refundableFare = 0;
+        airlineRefund = refundableTax - airlineFee;
+      } else if(mode === 'PARTIAL'){
+        refundableFare = baseFare - usedSeg;
+        airlineRefund = refundableFare + refundableTax - airlineFee - commission;
+      } else {
+        // FULL_UNUSED / FULL_UNUSED_CHARGE
+        refundableFare = baseFare;
+        airlineRefund = refundableFare + refundableTax - airlineFee - commission;
+      }
+      const clientRefund = airlineRefund - svcAmt; // agency service charge applied only here
+
+      base.refBaseFare = (mode === 'TAX_ONLY') ? '' : baseFare;
+      base.refTotalFare = (mode === 'TAX_ONLY') ? '' : totalFare;
+      base.usedSegmentFare = (mode === 'PARTIAL') ? usedSeg : '';
+      base.refTotalTax = totalTax;
+      base.refNonRefundTax = nonRefundTax;
+      base.airlineCharge = airlineFee; // Airline Refund/Cancellation Fee
+      base.commissionAdj = commission;
+      base.svcApplied = svcAmt !== 0 ? 'YES' : 'NO';
+      base.svc = svcAmt; // Agency Service Charge
+      base.refundableFare = refundableFare;
+      base.refundableTax = refundableTax;
+      base.airlineRefund = airlineRefund;
+      base.refundCharge = clientRefund; // Client Refund / Adjustment (final, after agency service charge)
+      base.taxRefund = refundableTax; // legacy column kept in sync with the new Refundable Tax
       base.refundStatus = $('f-status-f').value;
       base.adjustmentGiven = $('f-adjgiven-f').value;
       base.adjustmentAmount = $('f-adjgiven-f').value === 'YES' ? num('f-adjamt-f') : '';
@@ -3068,7 +3875,34 @@
   function validate(entry){
     if(!entry.date) return 'Please enter a date.';
     if(!entry.pnrGds) return 'Please enter the GDS PNR.';
+    if(!entry.pnrAirline) return 'Please enter the Airline PNR.';
     if(!entry.pname) return 'Please enter the passenger name.';
+    if(!entry.airline) return 'Please select or enter the Airline.';
+    const isTkt13 = (v) => /^\d{13}$/.test((v || '').toString());
+    if(entry.txn === 'Ticketing'){
+      if(!entry.sector) return 'Please enter the sector / route.';
+      if(!entry.newTkt) return 'Please add at least one 13-digit ticket number.';
+      const bad = entry.newTkt.toString().split(',').filter(Boolean).find(t => !isTkt13(t));
+      if(bad) return `Ticket number "${bad}" is not a valid 13-digit ticket number.`;
+    }
+    if(entry.txn === 'Reissue'){
+      if(!entry.oldTkt) return 'Please enter the old ticket number.';
+      if(!isTkt13(entry.oldTkt)) return 'Old ticket number must be exactly 13 digits.';
+      if(!entry.newTkt) return 'Please enter the new ticket number.';
+      if(!isTkt13(entry.newTkt)) return 'New ticket number must be exactly 13 digits.';
+      if(!entry.sector) return 'Please enter the reissue sector.';
+    }
+    if(entry.txn === 'Refund' || entry.txn === 'Void'){
+      if(!entry.oldTkt) return 'Please enter the ticket number.';
+      if(!isTkt13(entry.oldTkt)) return 'Ticket number must be exactly 13 digits.';
+    }
+    if(entry.txn === 'Refund'){
+      if(!entry.refundType) return 'Please select a Refund Type.';
+      const ar = Number(entry.airlineRefund);
+      if(!isNaN(ar) && ar < 0){
+        return 'Refund calculation results in a negative amount. Please verify the fare, tax, airline charge, or commission adjustment.';
+      }
+    }
     return null;
   }
 
@@ -3139,7 +3973,7 @@
     }
 
     if(filtered.length === 0){
-      tbody.innerHTML = '<tr><td colspan="30" style="text-align:center; padding:20px; color:var(--muted);">No entries in this date range.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="41" style="text-align:center; padding:20px; color:var(--muted);">No entries in this date range.</td></tr>';
     }
 
     pageItems.forEach(({ e, idx }) => {
@@ -3158,7 +3992,7 @@
         <td class="mono">${e.airline || ''}</td>
         <td><span class="ptc-tag" style="background:${color}">${e.txn}</span></td>
         <td class="mono">${e.oldTkt || ''}</td>
-        <td class="mono">${e.newTkt || ''}</td>
+        <td class="mono">${fmtTicketList(e.newTkt)}</td>
         <td class="mono">${e.sector || ''}</td>
         <td class="mono">${fmtMoney(e.baseFare)}</td>
         <td class="mono">${fmtMoney(e.taxFare)}</td>
@@ -3172,9 +4006,18 @@
         <td class="mono">${fmtMoney(e.svc)}</td>
         <td class="mono">${fmtMoney(e.totalCollection)}</td>
         <td class="mono">${fmtMoney(e.payableFare)}</td>
+        <td class="mono">${fmtMoney(e.refTotalFare)}</td>
+        <td class="mono">${fmtMoney(e.usedSegmentFare)}</td>
+        <td class="mono">${fmtMoney(e.refTotalTax)}</td>
+        <td class="mono">${fmtMoney(e.refNonRefundTax)}</td>
+        <td class="mono">${fmtMoney(e.commissionAdj)}</td>
+        <td>${e.svcApplied || ''}</td>
+        <td class="mono">${fmtMoney(e.refundableFare)}</td>
+        <td class="mono">${fmtMoney(e.refundableTax)}</td>
+        <td class="mono">${fmtMoney(e.airlineRefund)}</td>
         <td class="mono">${fmtMoney(e.refundCharge)}</td>
         <td class="mono">${fmtMoney(e.taxRefund)}</td>
-        <td class="mono">${e.refundType || ''}</td>
+        <td>${refundTypeLabel(e.refundType)}</td>
         <td>${statusBadge}</td>
         <td>${e.adjustmentGiven || ''}</td>
         <td class="mono">${fmtMoney(e.adjustmentAmount)}</td>
@@ -3252,8 +4095,12 @@
     ['f-pnr-gds','f-pnr-air','f-pname','f-pnum','f-note','f-platform-other','f-airline-other',
      'f-newtkt-t','f-sector-t','f-basefare-t','f-taxfare-t','f-markup-t','f-atp-t','f-markupamt-t',
      'f-oldtkt-r','f-newtkt-r','f-sector-r','f-code-r','f-faredif-r','f-airline-r','f-svc-r',
-     'f-oldtkt-f','f-airline-f','f-svc-f','f-payable-f','f-discount-f','f-charge-f','f-tax-f','f-adjamt-f'
+     'f-oldtkt-f','f-airline-f','f-svc-f','f-charge-f','f-tax-f','f-adjamt-f',
+     'f-refbasefare-f','f-usedseg-f','f-reftotaltax-f','f-nonrefundtax-f','f-commission-f',
+     'f-refoutfare-f','f-refouttax-f','f-airlinerefund-f'
     ].forEach(id => { const el = $(id); if(el) el.value = ''; });
+    if(entryNewTktChips) entryNewTktChips.setTickets([]);
+    if($('f-newtkt-t-input')) $('f-newtkt-t-input').value = '';
     $('f-date').value = todayISO();
     $('f-mode-f').value = '';
     $('f-status-f').value = '';
@@ -3261,13 +4108,18 @@
     $('f-airline').value = '';
     $('f-platform-other').style.display = 'none';
     $('f-airline-other').style.display = 'none';
+    $('refund-negative-warning').style.display = 'none';
+    $('refund-refoutfare-display').textContent = '0.00';
+    $('refund-refouttax-display').textContent = '0.00';
+    if(typeof showRefundAdvanced === 'function') showRefundAdvanced(false);
     typeSelect.value = '';
     showSection('');
     if($('f-routetype-t')){ $('f-routetype-t').value = ''; if(typeof renderRouteBuilder === 'function') renderRouteBuilder(); }
     if(typeof setAdjustmentGiven === 'function') setAdjustmentGiven('NO');
     recalcTicketingFare();
     if(typeof recalcReissueTotal === 'function') recalcReissueTotal();
-    if(typeof recalcRefundCharge === 'function') recalcRefundCharge();
+    if(typeof applyRefundTypeFields === 'function') applyRefundTypeFields();
+    if(typeof recalcRefund === 'function') recalcRefund();
     const firstField = $('f-pnr-gds');
     if(firstField) firstField.focus();
   }
@@ -3300,6 +4152,18 @@
     el.value = (v === null || v === undefined) ? '' : v;
   }
 
+  // Legacy refund types (FULL / PARTIAL / AS_PER_POLICY) map onto the four
+  // airline-refund-scenario types used going forward, so old records still open cleanly.
+  function normalizeRefundType(e){
+    const rt = e.refundType;
+    if(rt === 'FULL_UNUSED' || rt === 'FULL_UNUSED_CHARGE' || rt === 'PARTIAL' || rt === 'TAX_ONLY') return rt;
+    if(rt === 'FULL'){
+      return ((parseFloat(e.airlineCharge) || 0) > 0) ? 'FULL_UNUSED_CHARGE' : 'FULL_UNUSED';
+    }
+    if(rt === 'AS_PER_POLICY') return 'PARTIAL';
+    return 'FULL_UNUSED';
+  }
+
   function populateForm(e){
     typeSelect.value = e.txn;
     showSection(e.txn);
@@ -3314,7 +4178,8 @@
     setVal('f-note', e.note);
 
     if(e.txn === 'Ticketing'){
-      setVal('f-newtkt-t', e.newTkt);
+      if(entryNewTktChips) entryNewTktChips.setTickets(e.newTkt ? e.newTkt.toString().split(',').filter(Boolean) : []);
+      else setVal('f-newtkt-t', e.newTkt);
       setVal('f-sector-t', e.sector);
       setVal('f-basefare-t', e.baseFare);
       setVal('f-taxfare-t', e.taxFare);
@@ -3332,23 +4197,53 @@
       recalcReissueTotal();
     } else if(e.txn === 'Refund'){
       setVal('f-oldtkt-f', e.oldTkt);
-      $('f-mode-f').value = e.refundType || 'FULL';
-      setVal('f-airline-f', e.airlineCharge);
+      $('f-mode-f').value = normalizeRefundType(e);
+      applyRefundTypeFields();
+
+      // Base Fare: use the stored value directly for new records. Records saved under
+      // the previous single "Total Fare" input only have refTotalFare — derive Base
+      // Fare from it (Total Fare − Tax) so those still open cleanly.
+      let baseFareVal = '';
+      if(e.refBaseFare !== undefined && e.refBaseFare !== '' && e.refBaseFare !== null){
+        baseFareVal = e.refBaseFare;
+      } else if(e.refTotalFare !== undefined && e.refTotalFare !== '' && e.refTotalFare !== null){
+        baseFareVal = (parseFloat(e.refTotalFare) || 0) - (parseFloat(e.refTotalTax) || 0);
+      }
+      setVal('f-refbasefare-f', baseFareVal);
+      setVal('f-usedseg-f', e.usedSegmentFare);
+      setVal('f-reftotaltax-f', e.refTotalTax);
+      const nonRefundTaxVal = (e.refNonRefundTax !== '' && e.refNonRefundTax !== undefined && e.refNonRefundTax !== null) ? e.refNonRefundTax : 0;
+      const commissionVal = (e.commissionAdj !== '' && e.commissionAdj !== undefined && e.commissionAdj !== null) ? e.commissionAdj : 0;
+      setVal('f-nonrefundtax-f', nonRefundTaxVal);
+      setVal('f-airline-f', (e.airlineCharge !== '' && e.airlineCharge !== undefined && e.airlineCharge !== null) ? e.airlineCharge : 0);
+      setVal('f-commission-f', commissionVal);
+      // Auto-expand the advanced row so an existing non-zero value isn't hidden from view.
+      showRefundAdvanced((parseFloat(nonRefundTaxVal) || 0) !== 0 || (parseFloat(commissionVal) || 0) !== 0);
+
       setVal('f-svc-f', e.svc);
-      // Legacy entries saved before this fix used "totalCollection" for what is now
-      // "Ticket Payable Fare" — fall back to it so old records still populate correctly.
-      const payableVal = (e.payableFare !== '' && e.payableFare !== undefined && e.payableFare !== null)
-        ? e.payableFare : e.totalCollection;
-      setVal('f-payable-f', payableVal);
-      setVal('f-discount-f', e.discount);
-      setVal('f-tax-f', e.taxRefund);
+
       $('f-status-f').value = e.refundStatus || 'PENDING';
       setAdjustmentGiven(e.adjustmentGiven === 'YES' ? 'YES' : 'NO');
       setVal('f-adjamt-f', e.adjustmentAmount);
-      // Recalculate from components; if this is a legacy entry with no fare breakdown at all,
-      // fall back to the stored value so it isn't overwritten with 0.00.
-      const hasBreakdown = payableVal !== '' && payableVal !== undefined && payableVal !== null;
-      if(hasBreakdown){ recalcRefundCharge(); } else { setVal('f-charge-f', e.refundCharge); }
+
+      // New-format records carry an explicit Airline Refund figure — recalc live from
+      // the components so the breakdown stays consistent as fields are edited. Legacy
+      // (pre-rebuild) records don't have that field: show their stored totals as-is
+      // rather than silently recomputing them under the new formula.
+      const isNewFormat = e.airlineRefund !== '' && e.airlineRefund !== undefined && e.airlineRefund !== null;
+      if(isNewFormat){
+        recalcRefund();
+      } else {
+        const legacyFare = (e.refundableFare !== undefined && e.refundableFare !== '') ? e.refundableFare : '';
+        const legacyTax = (e.refundableTax !== undefined && e.refundableTax !== '') ? e.refundableTax : e.taxRefund;
+        setVal('f-refoutfare-f', legacyFare);
+        setVal('f-refouttax-f', legacyTax);
+        $('refund-refoutfare-display').textContent = fmtMoney(legacyFare) || '0.00';
+        $('refund-refouttax-display').textContent = fmtMoney(legacyTax) || '0.00';
+        setVal('f-airlinerefund-f', e.refundCharge);
+        setVal('f-charge-f', e.refundCharge);
+        $('refund-negative-warning').style.display = 'none';
+      }
     } else if(e.txn === 'Void'){
       setVal('f-oldtkt-f', e.oldTkt);
       setVal('f-airline-f', e.airlineCharge);
@@ -3496,6 +4391,8 @@
   const FIELD_ORDER = ['date','pnrGds','pnrAirline','pname','pnum','ptype','platform','airline','txn','oldTkt','newTkt','sector',
                        'baseFare','taxFare','airlineTicketPrice','discount','markUp','markupAmount','totalFare',
                        'fareDiff','airlineCharge','svc','totalCollection','payableFare',
+                       'refTotalFare','usedSegmentFare','refTotalTax','refNonRefundTax','commissionAdj','svcApplied',
+                       'refundableFare','refundableTax','airlineRefund',
                        'refundCharge','taxRefund','refundType','refundStatus','adjustmentGiven','adjustmentAmount',
                        'code','note','createdAt','editedAt'];
   const HEADER_TO_FIELD = {
@@ -3507,12 +4404,20 @@
     'MARK UP':'markUp','OTA MARKUP %':'markUp','OTA MARKUP AMOUNT':'markupAmount',
     'TOTAL FARE':'totalFare','CUSTOMER SELLING PRICE':'totalFare',
     'FARE DIFFERENCE':'fareDiff','AIRLINE CHARGE':'airlineCharge','SERVICE CHARGE':'svc','TOTAL COLLECTION':'totalCollection',
-    'TICKET PAYABLE FARE':'payableFare',
-    'REFUND CHARGE':'refundCharge','TAX REFUND':'taxRefund','REFUND TYPE':'refundType','REFUND STATUS':'refundStatus',
+    'TICKET PAYABLE FARE':'payableFare','TICKET PAYABLE FARE (LEGACY)':'payableFare',
+    'REFUND TOTAL FARE':'refTotalFare','USED SEGMENT FARE':'usedSegmentFare','REFUND TOTAL TAX':'refTotalTax',
+    'NON-REFUNDABLE TAX':'refNonRefundTax','COMMISSION ADJUSTMENT':'commissionAdj','SERVICE CHARGE APPLIED':'svcApplied',
+    'REFUNDABLE FARE':'refundableFare','REFUNDABLE TAX':'refundableTax','AIRLINE REFUND':'airlineRefund',
+    'REFUND CHARGE':'refundCharge','CLIENT REFUND / ADJUSTMENT':'refundCharge',
+    'TAX REFUND':'taxRefund','TAX REFUND (LEGACY)':'taxRefund','REFUND TYPE':'refundType','REFUND STATUS':'refundStatus',
     'ADJUSTMENT GIVEN':'adjustmentGiven','ADJUSTMENT AMOUNT':'adjustmentAmount',
     'REISSUE CODE':'code','NOTE':'note','CREATED AT':'createdAt','LAST EDITED':'editedAt'
   };
-  const NUMERIC_FIELDS = ['baseFare','taxFare','airlineTicketPrice','discount','markUp','markupAmount','totalFare','fareDiff','airlineCharge','svc','totalCollection','payableFare','refundCharge','taxRefund','adjustmentAmount'];
+  const NUMERIC_FIELDS = ['baseFare','taxFare','airlineTicketPrice','discount','markUp','markupAmount','totalFare','fareDiff',
+                          'airlineCharge','svc','totalCollection','payableFare',
+                          'refTotalFare','usedSegmentFare','refTotalTax','refNonRefundTax','commissionAdj',
+                          'refundableFare','refundableTax','airlineRefund',
+                          'refundCharge','taxRefund','adjustmentAmount'];
 
   function parseCsvLine(line){
     const out = [];
@@ -3738,6 +4643,18 @@
   // ================= SEARCH =================
   let searchQuery = '';
 
+  const REFUND_TYPE_LABELS = {
+    FULL_UNUSED: 'Full Refund',
+    FULL_UNUSED_CHARGE: 'Refund',
+    PARTIAL: 'Partial Refund',
+    TAX_ONLY: 'Tax Refund',
+    FULL: 'Full Refund',
+    AS_PER_POLICY: 'Partial Refund',
+  };
+  function refundTypeLabel(rt){
+    return REFUND_TYPE_LABELS[rt] || rt || '';
+  }
+
   function detailFields(e){
     const f = [
       ['Date', e.date],
@@ -3750,9 +4667,7 @@
     ];
     if(e.txn === 'Ticketing'){
       f.push(
-        ['Ticket No.', e.newTkt], ['Sector', e.sector],
-        ['Base Fare', fmtMoney(e.baseFare)], ['Tax', fmtMoney(e.taxFare)],
-        ['Total Fare', fmtMoney(e.airlineTicketPrice)],
+        ['Ticket No.', fmtTicketList(e.newTkt)], ['Sector', e.sector],
         ['Discount %', fmtPct(e.markUp)],
         ['Discount Amount', fmtMoney(e.markupAmount)],
         ['Payable Fare (Client Pays)', fmtMoney(e.totalFare)]
@@ -3764,15 +4679,25 @@
         ['Service Charge', fmtMoney(e.svc)], ['Total Collected', fmtMoney(e.totalCollection)]
       );
     } else if(e.txn === 'Refund'){
+      f.push(['Ticket No.', e.oldTkt], ['Refund Type', refundTypeLabel(e.refundType)]);
+      if(e.refundType === 'PARTIAL') f.push(['Used Segment Fare', fmtMoney(e.usedSegmentFare)]);
+      // Base Fare + Tax are shown together as the Fare Breakdown chart for every
+      // refund type except Tax Refund, which has no base fare — just the tax itself.
+      if(e.refundType === 'TAX_ONLY'){
+        f.push(['Tax', fmtMoney(e.refTotalTax)]);
+      } else {
+        f.push(['Refundable Base Fare', fmtMoney(e.refundableFare)]);
+      }
       f.push(
-        ['Ticket No.', e.oldTkt], ['Refund Type', e.refundType],
-        ['Ticket Payable Fare', fmtMoney(e.payableFare)],
-        ['Airline Charge', fmtMoney(e.airlineCharge)], ['Service Charge', fmtMoney(e.svc)],
-        ['Discount Given', fmtMoney(e.discount)],
-        ['Refund Charge', fmtMoney(e.refundCharge)], ['Tax Refund', fmtMoney(e.taxRefund)],
-        ['Status', e.refundStatus], ['Adjustment Given', e.adjustmentGiven],
-        ['Adjustment Amt', fmtMoney(e.adjustmentAmount)]
+        ['Refundable Tax', fmtMoney(e.refundableTax)],
+        ['Airline Penalty', fmtMoney(e.airlineCharge)],
+        ['Non-Refundable Tax', fmtMoney(e.refNonRefundTax)],
+        ['Airline Refund', fmtMoney(e.airlineRefund)]
       );
+      if(e.refundType !== 'TAX_ONLY') f.push(['Commission Amount', fmtMoney(e.commissionAdj)]);
+      f.push(['Service Charge', fmtMoney(e.svc)]);
+      // "Client Refund" — the final amount payable to the client — is shown as its
+      // own highlighted callout beneath the grid rather than buried as a plain row.
     } else if(e.txn === 'Void'){
       f.push(
         ['Ticket No.', e.oldTkt],
@@ -3796,14 +4721,11 @@
   function quickSetAdjustment(idx, val){
     const e = entries[idx];
     if(!e || e.txn !== 'Refund') return;
+    // Adjustment Given is a record-keeping flag only (instead of a cash refund, the
+    // client refund was held/adjusted against a future booking) — it does not change
+    // the calculated Airline Refund or Client Refund / Adjustment amounts.
     e.adjustmentGiven = val;
     if(val === 'NO'){ e.adjustmentAmount = ''; }
-    const payable = parseFloat(e.payableFare) || 0;
-    const airlineChg = parseFloat(e.airlineCharge) || 0;
-    const svc = parseFloat(e.svc) || 0;
-    const discount = parseFloat(e.discount) || 0;
-    const adjAmt = (val === 'YES') ? (parseFloat(e.adjustmentAmount) || 0) : 0;
-    e.refundCharge = payable - airlineChg - svc - discount - adjAmt;
     e.editedAt = new Date().toISOString();
 
     if(isCloudConnected() && e._id){
@@ -3816,6 +4738,47 @@
       toast('Adjustment status updated');
     }
     render();
+  }
+
+  // Reusable "Fare Breakdown" chart: Base Fare + Tax = Total, with a proportional
+  // two-color bar. Used for Ticketing (Base Fare/Tax) and Refund (Base Fare/Tax of
+  // the original ticket) search-result cards.
+  function fareChartHtml(baseVal, taxVal, totalLabel, opts){
+    opts = opts || {};
+    const baseLabel = opts.baseLabel || 'Base Fare';
+    const taxLabel = opts.taxLabel || 'Tax';
+    const chartTitle = opts.title || '💰 Fare Breakdown';
+    const base = parseFloat(baseVal) || 0;
+    const tax = parseFloat(taxVal) || 0;
+    const total = base + tax;
+    const basePct = total > 0 ? (base / total) * 100 : 50;
+    const taxPct = total > 0 ? 100 - basePct : 50;
+    const fmt = (n) => n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    return `
+      <div class="ptc-fare-chart">
+        <div class="ptc-fare-chart-title">${chartTitle}</div>
+        <div class="ptc-fare-chart-bar">
+          <div class="ptc-fare-chart-seg-base" style="width:${basePct}%"></div>
+          <div class="ptc-fare-chart-seg-tax" style="width:${taxPct}%"></div>
+        </div>
+        <div class="ptc-fare-chart-equation">
+          <div class="ptc-fare-chart-item">
+            <span class="ptc-fare-chart-item-label"><span class="ptc-fare-dot" style="background:var(--brand);"></span>${baseLabel}</span>
+            <span class="ptc-fare-chart-item-value">${fmt(base)}</span>
+          </div>
+          <span class="ptc-fare-chart-op">+</span>
+          <div class="ptc-fare-chart-item">
+            <span class="ptc-fare-chart-item-label"><span class="ptc-fare-dot" style="background:#E3A008;"></span>${taxLabel}</span>
+            <span class="ptc-fare-chart-item-value">${fmt(tax)}</span>
+          </div>
+          <span class="ptc-fare-chart-op">=</span>
+          <div class="ptc-fare-chart-item ptc-fare-chart-total">
+            <span class="ptc-fare-chart-item-label">${totalLabel}</span>
+            <span class="ptc-fare-chart-item-value">${fmt(total)}</span>
+          </div>
+        </div>
+      </div>
+    `;
   }
 
   function renderSearchResults(){
@@ -3851,6 +4814,19 @@
       const e = entries[idx];
       const color = tagColor[e.txn] || '#6B7280';
       const fields = detailFields(e);
+      let chartHtml = '';
+      if(e.txn === 'Ticketing'){
+        chartHtml = fareChartHtml(e.baseFare, e.taxFare, 'Total Fare');
+      } else if(e.txn === 'Refund' && e.refundType !== 'TAX_ONLY'){
+        // refTotalFare stores the ORIGINAL ticket's fare + tax combined, not the base
+        // fare alone — use the dedicated refBaseFare field (falling back to
+        // refTotalFare − refTotalTax for older records saved before that field existed).
+        const refundTax = parseFloat(e.refTotalTax) || 0;
+        const refundBase = (e.refBaseFare !== undefined && e.refBaseFare !== '' && e.refBaseFare !== null)
+          ? parseFloat(e.refBaseFare) || 0
+          : (parseFloat(e.refTotalFare) || 0) - refundTax;
+        chartHtml = fareChartHtml(refundBase, refundTax, 'Total');
+      }
       return `
         <div class="ptc-detail-card" style="border-left-color:${color};">
           <div class="ptc-detail-card-head">
@@ -3860,6 +4836,7 @@
               ${e.editedAt ? `<div class="ptc-detail-sub" style="color:var(--reissue);">✏️ Last edited ${new Date(e.editedAt).toLocaleString()}</div>` : ''}
             </div>
           </div>
+          ${chartHtml}
           <div class="ptc-detail-grid">
             ${fields.map(([label,value]) => `
               <div>
@@ -3868,6 +4845,12 @@
               </div>
             `).join('')}
           </div>
+          ${e.txn === 'Refund' ? `
+          <div class="ptc-client-refund-callout">
+            <span class="ptc-client-refund-callout-label">💵 Client Refund</span>
+            <span class="ptc-client-refund-callout-value">${fmtMoney(e.refundCharge)}</span>
+          </div>
+          ` : ''}
           <div class="ptc-detail-actions">
             ${e.txn === 'Refund' ? `
             <div style="display:flex; align-items:center; gap:8px; margin-right:auto;">
@@ -3919,6 +4902,20 @@
     $('ptc-search').value = '';
     renderSearchResults();
   });
+
+  if($('sales-search')){
+    $('sales-search').addEventListener('input', (e) => {
+      salesSearchQuery = e.target.value;
+      renderSalesSearchResults();
+    });
+  }
+  if($('btn-sales-search-clear')){
+    $('btn-sales-search-clear').addEventListener('click', () => {
+      salesSearchQuery = '';
+      $('sales-search').value = '';
+      renderSalesSearchResults();
+    });
+  }
 
   // ================= DASHBOARD =================
   const moneyFields = { Ticketing:'totalFare', Reissue:'totalCollection', Refund:'refundCharge', Void:'refundCharge' };
@@ -4125,10 +5122,7 @@
   // day-to-day ledger of what you sold, to whom, and whether they've paid in full.
   let salesEntries = [];
   let salesEditingIndex = null;
-  let currentTktList = [];
-  let salesSearchQuery = '';
   const SALES_STORE_KEY = 'pnr_sales_v1';
-  const TKT_RE = /^\d{13}$/;
 
   function salesVal(id){ return $(id).value.trim(); }
   function salesNum(id){ const v = $(id).value; return v === '' ? '' : parseFloat(v); }
@@ -4139,61 +5133,6 @@
     if(v === '' || v === null || v === undefined || isNaN(v)) return '';
     return Number(v).toFixed(2);
   }
-
-  // Normalizes a sale's stored ticket number(s) to an array — older records saved
-  // a single string before multi-ticket support existed.
-  function saleTktList(s){
-    if(Array.isArray(s.tkt)) return s.tkt;
-    if(s.tkt) return [s.tkt];
-    return [];
-  }
-
-  // ---- Ticket Number(s): unlimited 13-digit chip input ----
-  function renderTktChips(){
-    const box = $('s-tkt-chips');
-    box.innerHTML = currentTktList.map((t, i) => `
-      <span class="ptc-tkt-chip">${t}<button type="button" data-i="${i}" aria-label="Remove ticket number">×</button></span>
-    `).join('');
-    box.querySelectorAll('button').forEach(btn => {
-      btn.addEventListener('click', () => {
-        currentTktList.splice(parseInt(btn.getAttribute('data-i'), 10), 1);
-        renderTktChips();
-      });
-    });
-  }
-  function addTktFromInput(){
-    const input = $('s-tkt-input');
-    const v = input.value.trim();
-    if(!v) return;
-    if(!TKT_RE.test(v)){
-      toast('Ticket number must be exactly 13 digits.');
-      return;
-    }
-    if(currentTktList.includes(v)){
-      toast('That ticket number is already added.');
-      input.value = '';
-      return;
-    }
-    currentTktList.push(v);
-    input.value = '';
-    renderTktChips();
-    input.focus();
-  }
-  $('btn-tkt-add').addEventListener('click', addTktFromInput);
-  $('s-tkt-input').addEventListener('keydown', (ev) => {
-    if(ev.key === 'Enter'){ ev.preventDefault(); addTktFromInput(); }
-  });
-  $('s-tkt-input').addEventListener('input', () => {
-    $('s-tkt-input').value = $('s-tkt-input').value.replace(/\D/g, '').slice(0, 13);
-  });
-
-  // ---- Route / Sector: live auto-capitalize as you type ----
-  $('s-sector').addEventListener('input', () => {
-    const el = $('s-sector');
-    const pos = el.selectionStart;
-    el.value = el.value.toUpperCase();
-    el.setSelectionRange(pos, pos);
-  });
 
   // ---- Auto-calc: Profit = Selling Price − Net Cost; Due = Selling Price − Amount Paid; Status derived from Due ----
   function recalcSale(){
@@ -4210,9 +5149,48 @@
     else if(price === 0) status = '—';
     $('s-status').value = status === '—' ? '—' : status;
     $('s-duedate-wrap').style.display = (status === 'PAID' || status === '—') ? 'none' : 'block';
+
+    // --- Simple due readout + status badge ---
+    const dueDisplay = $('s-due-display');
+    const badge = $('s-status-badge');
+    if(dueDisplay) dueDisplay.textContent = due.toFixed(2);
+    if(badge){
+      badge.className = 'ptc-status-badge' + (status === 'PAID' ? ' ptc-status-badge-paid' : status === 'PARTIAL' ? ' ptc-status-badge-partial' : status === 'DUE' ? ' ptc-status-badge-due' : '');
+      const badgeIcon = status === 'PAID' ? '✅' : status === 'PARTIAL' ? '🕒' : status === 'DUE' ? '⚠️' : '—';
+      badge.textContent = status === '—' ? '—' : (badgeIcon + ' ' + status);
+    }
   }
   document.querySelectorAll('.ptc-sale-calc').forEach(el => el.addEventListener('input', recalcSale));
+
+  // --- Payment method quick-select chips (mirrors hidden native <select id="s-method">) ---
+  function syncMethodChips(){
+    const val = $('s-method').value;
+    document.querySelectorAll('#s-method-chips .ptc-method-chip').forEach(chip => {
+      chip.classList.toggle('ptc-method-chip-active', chip.dataset.method === val);
+    });
+  }
+  document.querySelectorAll('#s-method-chips .ptc-method-chip').forEach(chip => {
+    chip.addEventListener('click', (e) => {
+      e.stopPropagation();
+      // clicking the already-selected method again unselects it
+      $('s-method').value = ($('s-method').value === chip.dataset.method) ? '' : chip.dataset.method;
+      syncMethodChips();
+    });
+  });
+  // clicking anywhere outside the payment panel clears the selected method
+  document.addEventListener('click', (e) => {
+    const panel = document.querySelector('.ptc-payment-panel');
+    if(!panel || !$('s-method').value) return;
+    if(!panel.contains(e.target)){
+      $('s-method').value = '';
+      syncMethodChips();
+    }
+  });
+  syncMethodChips();
   recalcSale();
+
+  const salesTktChips = initTicketChipField('s-tkt-input', 's-tkt-chips', 's-tkt', 's-tkt-hint',
+    'One ticket per passenger — add each 13-digit ticket number, then press Enter.');
 
   function persistSales(){
     try{ localStorage.setItem(SALES_STORE_KEY, JSON.stringify(salesEntries)); }
@@ -4235,10 +5213,14 @@
     return {
       date: salesVal('s-date'),
       pname: salesVal('s-pname').toUpperCase(),
-      contactPerson: salesVal('s-contactperson').toUpperCase(),
+      paxAdult: parseInt($('s-pax-adt').value, 10) || 0,
+      paxChild: parseInt($('s-pax-chd').value, 10) || 0,
+      paxInfant: parseInt($('s-pax-inf').value, 10) || 0,
       phone: salesVal('s-phone'),
-      tkt: currentTktList.slice(),
-      pnr: salesVal('s-pnr').toUpperCase(),
+      responsible: salesVal('s-responsible'),
+      tkt: salesVal('s-tkt').toUpperCase(),
+      pnrGds: salesVal('s-pnr-gds').toUpperCase(),
+      pnrAirline: salesVal('s-pnr-air').toUpperCase(),
       sector: salesVal('s-sector').toUpperCase(),
       airline: salesVal('s-airline').toUpperCase(),
       price: salesNum('s-price') || 0,
@@ -4256,20 +5238,28 @@
   function validateSale(sale){
     if(!sale.date) return 'Please enter a sale date.';
     if(!sale.pname) return 'Please enter the customer/passenger name.';
-    if(!sale.pnr) return 'Please enter the PNR.';
-    if(!sale.tkt || !sale.tkt.length) return 'Please add at least one 13-digit ticket number.';
+    if(!sale.pnrGds) return 'Please enter the GDS PNR.';
+    if(!sale.pnrAirline) return 'Please enter the Airline PNR.';
+    if(!sale.airline) return 'Please enter the Airline.';
+    if(!sale.sector) return 'Please enter the sector / route.';
+    if(!sale.tkt) return 'Please add at least one 13-digit ticket number.';
+    const badTkt = sale.tkt.toString().split(',').filter(Boolean).find(t => !/^\d{13}$/.test(t));
+    if(badTkt) return `Ticket number "${badTkt}" is not a valid 13-digit ticket number.`;
     if(!sale.price) return 'Please enter the selling price.';
     return null;
   }
 
   function clearSaleForm(){
-    ['s-pname','s-contactperson','s-phone','s-pnr','s-sector','s-airline','s-price','s-cost','s-paid','s-duedate','s-note']
+    ['s-pname','s-phone','s-responsible','s-tkt','s-pnr-gds','s-pnr-air','s-sector','s-airline','s-price','s-cost','s-paid','s-duedate','s-note']
       .forEach(id => { const el = $(id); if(el) el.value = ''; });
-    $('s-tkt-input').value = '';
-    currentTktList = [];
-    renderTktChips();
+    if(salesTktChips) salesTktChips.setTickets([]);
+    if($('s-tkt-input')) $('s-tkt-input').value = '';
     $('s-date').value = todayISOSales();
+    $('s-pax-adt').value = 1;
+    $('s-pax-chd').value = 0;
+    $('s-pax-inf').value = 0;
     $('s-method').value = '';
+    syncMethodChips();
     recalcSale();
     const first = $('s-pname');
     if(first) first.focus();
@@ -4279,6 +5269,188 @@
     if(status === 'PAID') return 'ptc-status-tag-paid';
     if(status === 'PARTIAL') return 'ptc-status-tag-partial';
     return 'ptc-status-tag-due';
+  }
+
+  function paxSummary(s){
+    // combined Adult/Child/Infant counts for one PNR
+    if(s.paxAdult !== undefined || s.paxChild !== undefined || s.paxInfant !== undefined){
+      const parts = [];
+      if(s.paxAdult) parts.push(s.paxAdult + ' ADT');
+      if(s.paxChild) parts.push(s.paxChild + ' CHD');
+      if(s.paxInfant) parts.push(s.paxInfant + ' INF');
+      return parts.join(' · ') || '—';
+    }
+    // fallback for older sales saved with a single passenger type
+    if(s.ptype) return '1 ' + s.ptype.slice(0,3);
+    return '—';
+  }
+
+  function renderDuePanel(){
+    const panel = $('sales-due-panel');
+    if(!panel) return;
+    const owing = salesEntries
+      .map((s, idx) => ({ s, idx }))
+      .filter(({s}) => s.status === 'DUE' || s.status === 'PARTIAL');
+
+    if(owing.length === 0){
+      panel.style.display = 'none';
+      panel.innerHTML = '';
+      return;
+    }
+    panel.style.display = 'block';
+    panel.innerHTML = `
+      <div class="ptc-due-panel-title">⚠️ Who owes payment — ${owing.length} ticket(s)</div>
+      ${owing.map(({s, idx}) => `
+        <div class="ptc-due-row" data-idx="${idx}" role="button" tabindex="0" title="Click to view full PNR details">
+          <div>
+            <div class="ptc-due-row-who">${s.pname || 'Unnamed'}</div>
+            <div class="ptc-due-row-pnr">GDS ${s.pnrGds || '—'} · Airline ${s.pnrAirline || '—'}${s.tkt ? ' · Tkt ' + fmtTicketList(s.tkt) : ''}</div>
+            <div class="ptc-due-row-resp">👤 ${s.responsible ? s.responsible : '<span class="ptc-due-row-resp-missing">No responsible person set</span>'}</div>
+          </div>
+          <div style="display:flex; align-items:center; gap:10px;">
+            <span class="ptc-due-row-amt">${fmtMoneySales(s.due)}</span>
+            <button type="button" class="ptc-due-row-goto" data-idx="${idx}">Collect</button>
+            <span class="ptc-due-row-view" aria-hidden="true">Details ›</span>
+          </div>
+        </div>
+      `).join('')}
+    `;
+    panel.querySelectorAll('.ptc-due-row').forEach(row => {
+      row.addEventListener('click', () => {
+        const i = parseInt(row.getAttribute('data-idx'), 10);
+        const s = salesEntries[i];
+        if(!s) return;
+        const q = s.pnrGds || s.pnrAirline || (s.tkt ? s.tkt.split(',')[0] : '') || s.pname || '';
+        salesSearchQuery = q;
+        if($('sales-search')) $('sales-search').value = q;
+        renderSalesSearchResults();
+        const resultsWrap = $('sales-search-results');
+        if(resultsWrap) resultsWrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+      row.addEventListener('keydown', (e) => {
+        if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); row.click(); }
+      });
+    });
+    panel.querySelectorAll('.ptc-due-row-goto').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const i = parseInt(btn.getAttribute('data-idx'), 10);
+        startSaleEdit(i);
+        $('sales-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+  }
+
+  // ---- Revenue Ledger search — find a sale by GDS/Airline PNR, ticket number(s),
+  // or passenger name and show it as a detailed "chart" card instead of a table row. ----
+  let salesSearchQuery = '';
+  function matchesSalesQuery(s, q){
+    const hay = [s.pnrGds, s.pnrAirline, s.tkt, s.pname]
+      .map(v => (v || '').toString().toUpperCase()).join(' | ');
+    return hay.includes(q.toUpperCase());
+  }
+
+  function renderSalesSearchResults(){
+    const wrap = $('sales-search-results');
+    const meta = $('sales-search-meta');
+    const tableWrap = $('sales-table-wrap');
+    const duePanel = $('sales-due-panel');
+    const clearBtn = $('btn-sales-search-clear');
+    if(!wrap || !meta || !tableWrap || !clearBtn) return;
+
+    if(!salesSearchQuery.trim()){
+      wrap.style.display = 'none';
+      meta.style.display = 'none';
+      clearBtn.style.display = 'none';
+      tableWrap.style.display = '';
+      if(duePanel) duePanel.style.display = duePanel.innerHTML.trim() ? 'block' : 'none';
+      return;
+    }
+
+    clearBtn.style.display = 'inline-flex';
+    tableWrap.style.display = 'none';
+    if(duePanel) duePanel.style.display = 'none';
+
+    const matches = [];
+    salesEntries.forEach((s, idx) => { if(matchesSalesQuery(s, salesSearchQuery)) matches.push(idx); });
+
+    meta.style.display = 'block';
+    meta.textContent = matches.length + ' match' + (matches.length === 1 ? '' : 'es') + ' for "' + salesSearchQuery + '"';
+
+    wrap.style.display = 'block';
+    if(!matches.length){
+      wrap.innerHTML = '<div class="ptc-search-noresult">No sale found for that PNR / ticket number / name. Check the spelling or clear the search to browse the full ledger.</div>';
+      return;
+    }
+
+    wrap.innerHTML = matches.map(idx => {
+      const s = salesEntries[idx];
+      const netCost = parseFloat(s.cost) || 0;
+      const profit = parseFloat(s.profit) || (parseFloat(s.price) || 0) - netCost;
+      const chartHtml = fareChartHtml(netCost, profit, 'Selling Price', {
+        baseLabel: 'Net Cost', taxLabel: 'Profit', title: '📊 Revenue Breakdown'
+      });
+      const badgeClass = s.status === 'PAID' ? 'ptc-status-badge-paid' : s.status === 'PARTIAL' ? 'ptc-status-badge-partial' : s.status === 'DUE' ? 'ptc-status-badge-due' : '';
+      const badgeIcon = s.status === 'PAID' ? '✅' : s.status === 'PARTIAL' ? '🕒' : s.status === 'DUE' ? '⚠️' : '—';
+      const fields = [
+        ['Date', s.date], ['Passengers', paxSummary(s)], ['Contact', s.phone],
+        ['Responsible Person', s.responsible],
+        ['GDS PNR', s.pnrGds], ['Airline PNR', s.pnrAirline], ['Ticket No.', fmtTicketList(s.tkt)],
+        ['Sector', s.sector], ['Airline', s.airline], ['Payment Method', s.method],
+        ['Due Date', s.dueDate], ['Note', s.note],
+      ];
+      return `
+        <div class="ptc-detail-card" style="border-left-color:#1E7A46;">
+          <div class="ptc-detail-card-head">
+            <div>
+              <div class="ptc-detail-name">${s.pname || 'Unnamed'} <span class="ptc-tag" style="background:#1E7A46; font-size:10px;">SALE</span></div>
+              <div class="ptc-detail-sub">${s.date || ''} · GDS ${s.pnrGds || '—'} · Airline PNR ${s.pnrAirline || '—'}</div>
+            </div>
+          </div>
+          ${chartHtml}
+          <div class="ptc-settlement-simple">
+            <span class="ptc-settlement-simple-label">Paid</span>
+            <span class="ptc-settlement-simple-due" style="color:#1E7A46;">${fmtMoneySales(s.paid)}</span>
+            <span class="ptc-settlement-simple-label">Due</span>
+            <span class="ptc-settlement-simple-due">${fmtMoneySales(s.due)}</span>
+            <span class="ptc-status-badge ${badgeClass}">${badgeIcon} ${s.status || '—'}</span>
+          </div>
+          <div class="ptc-detail-grid">
+            ${fields.map(([label,value]) => `
+              <div>
+                <div class="ptc-detail-field-label">${label}</div>
+                <div class="ptc-detail-field-value">${(value === '' || value === undefined || value === null) ? '—' : value}</div>
+              </div>
+            `).join('')}
+          </div>
+          <div class="ptc-detail-actions">
+            <div class="ptc-sales-actions" style="margin-left:auto;">
+              <button class="ptc-sales-edit" data-idx="${idx}" title="Edit sale" aria-label="Edit sale">✏️</button>
+              <button class="ptc-sales-del" data-idx="${idx}" title="Remove sale" aria-label="Remove sale">🗑️</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    wrap.querySelectorAll('.ptc-sales-edit').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const i = parseInt(btn.getAttribute('data-idx'), 10);
+        startSaleEdit(i);
+        $('sales-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+    wrap.querySelectorAll('.ptc-sales-del').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const i = parseInt(btn.getAttribute('data-idx'), 10);
+        if(salesEditingIndex === i){ stopSaleEdit(); clearSaleForm(); }
+        else if(salesEditingIndex !== null && i < salesEditingIndex){ salesEditingIndex -= 1; }
+        salesEntries.splice(i, 1);
+        persistSales();
+        renderSales();
+        toast('Sale removed');
+      });
+    });
   }
 
   function renderSalesKpis(){
@@ -4303,102 +5475,33 @@
     `).join('');
   }
 
-  // ---- Payment Due Reminders — every sale still owed money, oldest due date first.
-  // Click a row to open it in the edit form; "Mark as Collected" settles it in place. ----
-  function renderDueReminders(){
-    const wrap = $('sales-due-reminder');
-    const list = $('sales-due-list');
-    const dueSales = [];
-    salesEntries.forEach((s, idx) => { if(s.status === 'DUE' || s.status === 'PARTIAL') dueSales.push({ s, idx }); });
-    dueSales.sort((a, b) => (a.s.dueDate || '9999-99-99').localeCompare(b.s.dueDate || '9999-99-99'));
-
-    if(!dueSales.length){ wrap.style.display = 'none'; list.innerHTML = ''; return; }
-    wrap.style.display = 'block';
-    $('sales-due-count').textContent = dueSales.length;
-    list.innerHTML = dueSales.map(({ s, idx }) => `
-      <div class="ptc-due-reminder-item" data-idx="${idx}">
-        <div class="ptc-due-reminder-info">
-          <b>${s.pname || 'Unnamed'}</b> · PNR ${s.pnr || '—'} · Tkt ${saleTktList(s).join(', ') || '—'}
-          ${s.dueDate ? ` · Due by ${s.dueDate}` : ''}
-        </div>
-        <div style="display:flex; align-items:center; gap:10px;">
-          <span class="ptc-due-reminder-amt">${fmtMoneySales(s.due)}</span>
-          <button type="button" class="ptc-btn ptc-btn-ghost ptc-due-collect" data-idx="${idx}" style="padding:6px 12px; font-size:12px;">Mark as Collected</button>
-        </div>
-      </div>
-    `).join('');
-
-    list.querySelectorAll('.ptc-due-reminder-item').forEach(row => {
-      row.addEventListener('click', (ev) => {
-        if(ev.target.closest('.ptc-due-collect')) return;
-        startSaleEdit(parseInt(row.getAttribute('data-idx'), 10));
-      });
-    });
-    list.querySelectorAll('.ptc-due-collect').forEach(btn => {
-      btn.addEventListener('click', (ev) => {
-        ev.stopPropagation();
-        markSaleCollected(parseInt(btn.getAttribute('data-idx'), 10));
-      });
-    });
-  }
-
-  // Settles a sale in one click: full amount paid, due cleared, status → PAID.
-  function markSaleCollected(idx){
-    const s = salesEntries[idx];
-    if(!s) return;
-    s.paid = Number(s.price) || 0;
-    s.due = 0;
-    s.status = 'PAID';
-    s.dueDate = '';
-    if(salesEditingIndex === idx){ populateSaleForm(s); }
-    persistSales();
-    renderSales();
-    toast('Payment marked as collected');
-  }
-
-  function salesMatchesQuery(s, q){
-    const hay = [s.pnr, ...saleTktList(s), s.pname, s.contactPerson, s.phone]
-      .map(v => (v || '').toString().toUpperCase()).join(' | ');
-    return hay.includes(q.toUpperCase());
-  }
-
   function renderSales(){
     const tbody = $('sales-tbody');
     const empty = $('sales-empty');
     tbody.innerHTML = '';
+    $('sales-count').textContent = salesEntries.length + (salesEntries.length === 1 ? ' sale' : ' sales');
     renderSalesKpis();
-    renderDueReminders();
-
-    const q = salesSearchQuery.trim();
-    const visible = [];
-    salesEntries.forEach((s, idx) => { if(!q || salesMatchesQuery(s, q)) visible.push(idx); });
-
-    $('sales-count').textContent = q
-      ? visible.length + ' of ' + salesEntries.length + ' sales'
-      : salesEntries.length + (salesEntries.length === 1 ? ' sale' : ' sales');
+    renderDuePanel();
+    renderSalesSearchResults();
 
     if(salesEntries.length === 0){
       empty.style.display = 'block';
-      empty.textContent = 'No sales recorded yet — fill the form above and click "Add Sale".';
-      return;
-    }
-    if(!visible.length){
-      empty.style.display = 'block';
-      empty.textContent = 'No sales match "' + salesSearchQuery + '". Check the spelling or clear the search.';
       return;
     }
     empty.style.display = 'none';
 
-    visible.forEach((idx) => {
-      const s = salesEntries[idx];
+    salesEntries.forEach((s, idx) => {
       const tr = document.createElement('tr');
+      if(s.status === 'DUE') tr.classList.add('ptc-row-due');
+      else if(s.status === 'PARTIAL') tr.classList.add('ptc-row-partial');
       tr.innerHTML = `
         <td>${s.date || ''}</td>
         <td>${s.pname || ''}</td>
-        <td>${s.contactPerson || ''}</td>
+        <td class="mono">${paxSummary(s)}</td>
         <td class="mono">${s.phone || ''}</td>
-        <td class="mono">${saleTktList(s).join(', ')}</td>
-        <td class="mono">${s.pnr || ''}</td>
+        <td class="mono">${fmtTicketList(s.tkt)}</td>
+        <td class="mono">${s.pnrGds || ''}</td>
+        <td class="mono">${s.pnrAirline || ''}</td>
         <td class="mono">${s.sector || ''}</td>
         <td class="mono">${s.airline || ''}</td>
         <td class="mono">${fmtMoneySales(s.price)}</td>
@@ -4410,7 +5513,12 @@
         <td><span class="ptc-tag ${sIcon(s.status)}">${s.status}</span></td>
         <td>${s.dueDate || ''}</td>
         <td>${s.note || ''}</td>
-        <td style="white-space:nowrap;"><button class="ptc-sales-edit" data-idx="${idx}">Edit</button><button class="ptc-sales-del" data-idx="${idx}">Remove</button></td>
+        <td>
+          <div class="ptc-sales-actions">
+            <button class="ptc-sales-edit" data-idx="${idx}" title="Edit sale" aria-label="Edit sale">✏️</button>
+            <button class="ptc-sales-del" data-idx="${idx}" title="Remove sale" aria-label="Remove sale">🗑️</button>
+          </div>
+        </td>
       `;
       tbody.appendChild(tr);
     });
@@ -4434,25 +5542,32 @@
     });
   }
 
-  $('sales-search').addEventListener('input', () => {
-    salesSearchQuery = $('sales-search').value;
-    renderSales();
-  });
-
   function populateSaleForm(s){
     $('s-date').value = s.date || todayISOSales();
     $('s-pname').value = s.pname || '';
-    $('s-contactperson').value = s.contactPerson || '';
+    if(s.paxAdult !== undefined || s.paxChild !== undefined || s.paxInfant !== undefined){
+      $('s-pax-adt').value = s.paxAdult || 0;
+      $('s-pax-chd').value = s.paxChild || 0;
+      $('s-pax-inf').value = s.paxInfant || 0;
+    } else {
+      // backward compatibility with sales saved under the old single passenger-type field
+      $('s-pax-adt').value = s.ptype === 'CHILD' || s.ptype === 'INFANT' ? 0 : 1;
+      $('s-pax-chd').value = s.ptype === 'CHILD' ? 1 : 0;
+      $('s-pax-inf').value = s.ptype === 'INFANT' ? 1 : 0;
+    }
     $('s-phone').value = s.phone || '';
-    currentTktList = saleTktList(s).slice();
-    renderTktChips();
-    $('s-pnr').value = s.pnr || '';
+    $('s-responsible').value = s.responsible || '';
+    if(salesTktChips) salesTktChips.setTickets(s.tkt ? s.tkt.toString().split(',').filter(Boolean) : []);
+    else $('s-tkt').value = s.tkt || '';
+    $('s-pnr-gds').value = s.pnrGds || s.pnr || '';
+    $('s-pnr-air').value = s.pnrAirline || '';
     $('s-sector').value = s.sector || '';
     $('s-airline').value = s.airline || '';
     $('s-price').value = s.price === '' || s.price === undefined ? '' : s.price;
     $('s-cost').value = s.cost === '' || s.cost === undefined ? '' : s.cost;
     $('s-paid').value = s.paid === '' || s.paid === undefined ? '' : s.paid;
     $('s-method').value = s.method || 'CASH';
+    syncMethodChips();
     $('s-duedate').value = s.dueDate || '';
     $('s-note').value = s.note || '';
     recalcSale();
@@ -4467,7 +5582,7 @@
     const banner = $('sales-editing-banner');
     banner.classList.add('show');
     $('sales-editing-banner-text').textContent =
-      'Editing sale: ' + (salesEntries[i].pname || saleTktList(salesEntries[i])[0] || '') + ' — update the fields below, then click "Save Changes".';
+      'Editing sale: ' + (salesEntries[i].pname || salesEntries[i].tkt || '') + ' — update the fields below, then click "Save Changes".';
     $('sales-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
     toast('Editing sale — click "Save Changes" when done');
   }
@@ -4514,15 +5629,13 @@
   $('btn-sales-export').addEventListener('click', () => {
     if(typeof XLSX === 'undefined'){ toast('Export library failed to load — check your internet connection.'); return; }
     const cols = [
-      ['DATE','date'], ['CUSTOMER NAME','pname'], ['CONTACT PERSON','contactPerson'], ['CONTACT','phone'],
-      ['TICKET NUMBER(S)','tkt'], ['PNR','pnr'], ['SECTOR','sector'], ['AIRLINE','airline'],
-      ['SELLING PRICE','price'], ['NET COST','cost'], ['PROFIT','profit'], ['PAYMENT METHOD','method'],
-      ['AMOUNT PAID','paid'], ['AMOUNT DUE','due'], ['STATUS','status'], ['DUE DATE','dueDate'], ['NOTE','note'],
+      ['DATE','date'], ['CUSTOMER NAME','pname'], ['ADULT','paxAdult'], ['CHILD','paxChild'], ['INFANT','paxInfant'], ['CONTACT','phone'], ['RESPONSIBLE PERSON','responsible'], ['TICKET NUMBER','tkt'],
+      ['GDS PNR','pnrGds'], ['AIRLINE PNR','pnrAirline'],
+      ['SECTOR','sector'], ['AIRLINE','airline'], ['SELLING PRICE','price'], ['NET COST','cost'],
+      ['PROFIT','profit'], ['PAYMENT METHOD','method'], ['AMOUNT PAID','paid'], ['AMOUNT DUE','due'],
+      ['STATUS','status'], ['DUE DATE','dueDate'], ['NOTE','note'],
     ];
-    const rows = [cols.map(c => c[0]), ...salesEntries.map(s => cols.map(c => {
-      if(c[1] === 'tkt') return saleTktList(s).join(', ');
-      return s[c[1]] ?? '';
-    }))];
+    const rows = [cols.map(c => c[0]), ...salesEntries.map(s => cols.map(c => s[c[1]] ?? ''))];
     const ws = XLSX.utils.aoa_to_sheet(rows);
     ws['!cols'] = cols.map(() => ({ wch: 16 }));
     const wb = XLSX.utils.book_new();
