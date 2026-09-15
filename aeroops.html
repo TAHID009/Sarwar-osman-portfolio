@@ -823,6 +823,8 @@
   .ptc-due-row:focus-visible{ outline: 2px solid var(--refund); outline-offset: -2px; }
   .ptc-due-row-who{ color: var(--ink); font-weight: 600; }
   .ptc-due-row-pnr{ color: var(--muted); font-size: 12px; font-family: 'SFMono-Regular', ui-monospace, monospace; }
+  .ptc-due-row-resp{ color: var(--ink-soft); font-size: 12px; font-weight: 600; margin-top: 2px; }
+  .ptc-due-row-resp-missing{ color: var(--muted); font-weight: 500; font-style: italic; }
   .ptc-due-row-amt{ font-weight: 800; font-family: 'SFMono-Regular', ui-monospace, monospace; color: var(--refund); white-space: nowrap; }
   .ptc-due-row-goto{
     border: none;
@@ -1667,11 +1669,11 @@
 
       <div class="ptc-row">
         <div class="ptc-field">
-          <label for="f-pnr-gds">GDS PNR</label>
+          <label for="f-pnr-gds">GDS PNR <span class="ptc-required">*</span></label>
           <input type="text" id="f-pnr-gds" class="mono" placeholder="e.g. ABC123" />
         </div>
         <div class="ptc-field">
-          <label for="f-pnr-air">Airline PNR</label>
+          <label for="f-pnr-air">Airline PNR <span class="ptc-required">*</span></label>
           <input type="text" id="f-pnr-air" class="mono" placeholder="e.g. XYZ789" />
         </div>
       </div>
@@ -1702,7 +1704,7 @@
           <input type="text" id="f-platform-other" class="mono" placeholder="Type platform name" style="display:none; margin-top:6px;" />
         </div>
         <div class="ptc-field">
-          <label for="f-airline">Airline Code</label>
+          <label for="f-airline">Airline Code <span class="ptc-required">*</span></label>
           <select id="f-airline">
             <option value="" disabled selected>Select Type</option>
             <option value="BG">BG — Biman Bangladesh Airlines</option>
@@ -2200,20 +2202,23 @@
         </div>
         <div class="ptc-row">
           <div class="ptc-field">
-            <label for="s-pnr-gds">GDS PNR</label>
+            <label for="s-pnr-gds">GDS PNR <span class="ptc-required">*</span></label>
             <input type="text" id="s-pnr-gds" class="mono" placeholder="e.g. ABC123" />
           </div>
           <div class="ptc-field">
-            <label for="s-pnr-air">Airline PNR</label>
+            <label for="s-pnr-air">Airline PNR <span class="ptc-required">*</span></label>
             <input type="text" id="s-pnr-air" class="mono" placeholder="e.g. XYZ789" />
           </div>
         </div>
         <div class="ptc-row">
           <div class="ptc-field">
-            <label for="s-airline">Airline</label>
+            <label for="s-airline">Airline <span class="ptc-required">*</span></label>
             <input type="text" id="s-airline" class="mono" placeholder="e.g. EK" />
           </div>
-          <div></div>
+          <div class="ptc-field">
+            <label for="s-responsible">Responsible Person <span style="font-weight:400;color:var(--ink-soft);font-size:11px;">(who to contact for this due)</span></label>
+            <input type="text" id="s-responsible" placeholder="e.g. staff/agent handling this booking" />
+          </div>
         </div>
 
         <div class="ptc-section-label" style="color:#1E7A46;">💰 Payment &amp; Settlement</div>
@@ -2463,6 +2468,26 @@
   function fmtTicketList(v){
     return (v || '').toString().split(',').filter(Boolean).join(', ');
   }
+
+  // Auto-capitalize PNR, Airline, and Route/Sector fields as the person types —
+  // these are always written in uppercase in the industry, so this saves a keystroke
+  // and keeps the ledger consistent no matter how the person typed it in.
+  function autoUppercase(id){
+    const el = $(id);
+    if(!el) return;
+    el.addEventListener('input', () => {
+      const start = el.selectionStart, end = el.selectionEnd;
+      const upper = el.value.toUpperCase();
+      if(upper !== el.value){
+        el.value = upper;
+        try{ el.setSelectionRange(start, end); }catch(err){}
+      }
+    });
+  }
+  [
+    'f-pnr-gds', 'f-pnr-air', 'f-airline-other', 'f-sector-t', 'f-sector-r',
+    's-pnr-gds', 's-pnr-air', 's-airline', 's-sector',
+  ].forEach(autoUppercase);
 
   const entryNewTktChips = initTicketChipField('f-newtkt-t-input', 'f-newtkt-t-chips', 'f-newtkt-t', 'f-newtkt-t-hint',
     'One ticket per passenger — add each 13-digit ticket number, then press Enter.');
@@ -3850,7 +3875,9 @@
   function validate(entry){
     if(!entry.date) return 'Please enter a date.';
     if(!entry.pnrGds) return 'Please enter the GDS PNR.';
+    if(!entry.pnrAirline) return 'Please enter the Airline PNR.';
     if(!entry.pname) return 'Please enter the passenger name.';
+    if(!entry.airline) return 'Please select or enter the Airline.';
     const isTkt13 = (v) => /^\d{13}$/.test((v || '').toString());
     if(entry.txn === 'Ticketing'){
       if(!entry.sector) return 'Please enter the sector / route.';
@@ -5190,6 +5217,7 @@
       paxChild: parseInt($('s-pax-chd').value, 10) || 0,
       paxInfant: parseInt($('s-pax-inf').value, 10) || 0,
       phone: salesVal('s-phone'),
+      responsible: salesVal('s-responsible'),
       tkt: salesVal('s-tkt').toUpperCase(),
       pnrGds: salesVal('s-pnr-gds').toUpperCase(),
       pnrAirline: salesVal('s-pnr-air').toUpperCase(),
@@ -5210,6 +5238,9 @@
   function validateSale(sale){
     if(!sale.date) return 'Please enter a sale date.';
     if(!sale.pname) return 'Please enter the customer/passenger name.';
+    if(!sale.pnrGds) return 'Please enter the GDS PNR.';
+    if(!sale.pnrAirline) return 'Please enter the Airline PNR.';
+    if(!sale.airline) return 'Please enter the Airline.';
     if(!sale.sector) return 'Please enter the sector / route.';
     if(!sale.tkt) return 'Please add at least one 13-digit ticket number.';
     const badTkt = sale.tkt.toString().split(',').filter(Boolean).find(t => !/^\d{13}$/.test(t));
@@ -5219,7 +5250,7 @@
   }
 
   function clearSaleForm(){
-    ['s-pname','s-phone','s-tkt','s-pnr-gds','s-pnr-air','s-sector','s-airline','s-price','s-cost','s-paid','s-duedate','s-note']
+    ['s-pname','s-phone','s-responsible','s-tkt','s-pnr-gds','s-pnr-air','s-sector','s-airline','s-price','s-cost','s-paid','s-duedate','s-note']
       .forEach(id => { const el = $(id); if(el) el.value = ''; });
     if(salesTktChips) salesTktChips.setTickets([]);
     if($('s-tkt-input')) $('s-tkt-input').value = '';
@@ -5274,6 +5305,7 @@
           <div>
             <div class="ptc-due-row-who">${s.pname || 'Unnamed'}</div>
             <div class="ptc-due-row-pnr">GDS ${s.pnrGds || '—'} · Airline ${s.pnrAirline || '—'}${s.tkt ? ' · Tkt ' + fmtTicketList(s.tkt) : ''}</div>
+            <div class="ptc-due-row-resp">👤 ${s.responsible ? s.responsible : '<span class="ptc-due-row-resp-missing">No responsible person set</span>'}</div>
           </div>
           <div style="display:flex; align-items:center; gap:10px;">
             <span class="ptc-due-row-amt">${fmtMoneySales(s.due)}</span>
@@ -5362,6 +5394,7 @@
       const badgeIcon = s.status === 'PAID' ? '✅' : s.status === 'PARTIAL' ? '🕒' : s.status === 'DUE' ? '⚠️' : '—';
       const fields = [
         ['Date', s.date], ['Passengers', paxSummary(s)], ['Contact', s.phone],
+        ['Responsible Person', s.responsible],
         ['GDS PNR', s.pnrGds], ['Airline PNR', s.pnrAirline], ['Ticket No.', fmtTicketList(s.tkt)],
         ['Sector', s.sector], ['Airline', s.airline], ['Payment Method', s.method],
         ['Due Date', s.dueDate], ['Note', s.note],
@@ -5523,6 +5556,7 @@
       $('s-pax-inf').value = s.ptype === 'INFANT' ? 1 : 0;
     }
     $('s-phone').value = s.phone || '';
+    $('s-responsible').value = s.responsible || '';
     if(salesTktChips) salesTktChips.setTickets(s.tkt ? s.tkt.toString().split(',').filter(Boolean) : []);
     else $('s-tkt').value = s.tkt || '';
     $('s-pnr-gds').value = s.pnrGds || s.pnr || '';
@@ -5595,7 +5629,7 @@
   $('btn-sales-export').addEventListener('click', () => {
     if(typeof XLSX === 'undefined'){ toast('Export library failed to load — check your internet connection.'); return; }
     const cols = [
-      ['DATE','date'], ['CUSTOMER NAME','pname'], ['ADULT','paxAdult'], ['CHILD','paxChild'], ['INFANT','paxInfant'], ['CONTACT','phone'], ['TICKET NUMBER','tkt'],
+      ['DATE','date'], ['CUSTOMER NAME','pname'], ['ADULT','paxAdult'], ['CHILD','paxChild'], ['INFANT','paxInfant'], ['CONTACT','phone'], ['RESPONSIBLE PERSON','responsible'], ['TICKET NUMBER','tkt'],
       ['GDS PNR','pnrGds'], ['AIRLINE PNR','pnrAirline'],
       ['SECTOR','sector'], ['AIRLINE','airline'], ['SELLING PRICE','price'], ['NET COST','cost'],
       ['PROFIT','profit'], ['PAYMENT METHOD','method'], ['AMOUNT PAID','paid'], ['AMOUNT DUE','due'],
