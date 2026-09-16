@@ -502,7 +502,30 @@
     font-size: 11px;
     text-transform: uppercase;
     letter-spacing: 0.4px;
+    position: sticky;
+    top: 0;
+    z-index: 2;
   }
+
+  /* Compact / Full view toggle — hides the less-essential columns by default so
+     the log reads as a clean, professional summary instead of a 40-column wall
+     of mostly-empty type-specific fields. */
+  table.ptc-table.ptc-compact .ptc-col-secondary{ display: none; }
+  .ptc-view-toggle{
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid var(--line);
+    background: #fff;
+    color: var(--ink-soft);
+    font-size: 12px;
+    font-weight: 700;
+    padding: 7px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all .15s ease;
+  }
+  .ptc-view-toggle:hover{ border-color: var(--accent); color: var(--accent); }
 
   table.ptc-table td{
     padding: 8px 10px;
@@ -2059,6 +2082,7 @@
     <div class="ptc-log-head">
       <h2>Entries Log</h2>
       <span class="ptc-count" id="ptc-count">0 entries</span>
+      <button type="button" class="ptc-view-toggle" id="btn-toggle-compact">📋 Show Full Details</button>
     </div>
 
     <div class="ptc-card" style="padding:14px 18px; margin-bottom:14px;">
@@ -2088,48 +2112,48 @@
     </div>
 
     <div class="ptc-table-wrap" id="ptc-table-wrap">
-      <table class="ptc-table" id="ptc-table">
+      <table class="ptc-table ptc-compact" id="ptc-table">
         <thead>
           <tr>
             <th>Date</th>
             <th>GDS PNR</th>
             <th>Airline PNR</th>
             <th>Passenger</th>
-            <th>Type</th>
-            <th>Platform</th>
+            <th class="ptc-col-secondary">Type</th>
+            <th class="ptc-col-secondary">Platform</th>
             <th>Airline</th>
             <th>Txn</th>
             <th>Old Tkt</th>
             <th>New Tkt</th>
             <th>Sector</th>
-            <th>Base Fare</th>
-            <th>Tax Fare</th>
-            <th>Total Fare</th>
-            <th>Discount (legacy)</th>
-            <th>Discount %</th>
-            <th>Discount Amt</th>
+            <th class="ptc-col-secondary">Base Fare</th>
+            <th class="ptc-col-secondary">Tax Fare</th>
+            <th class="ptc-col-secondary">Total Fare</th>
+            <th class="ptc-col-secondary">Discount (legacy)</th>
+            <th class="ptc-col-secondary">Discount %</th>
+            <th class="ptc-col-secondary">Discount Amt</th>
             <th>Payable Fare</th>
             <th>Fare Diff</th>
-            <th>Airline Chg</th>
-            <th>Service Chg</th>
-            <th>Total Collection</th>
-            <th>Payable Fare (legacy)</th>
-            <th>Refund Total Fare</th>
-            <th>Used Segment Fare</th>
-            <th>Refund Total Tax</th>
-            <th>Non-Refund Tax</th>
-            <th>Commission Adj.</th>
-            <th>Svc Applied</th>
-            <th>Refundable Fare</th>
-            <th>Refundable Tax</th>
-            <th>Airline Refund</th>
+            <th class="ptc-col-secondary">Airline Chg</th>
+            <th class="ptc-col-secondary">Service Chg</th>
+            <th class="ptc-col-secondary">Total Collection</th>
+            <th class="ptc-col-secondary">Payable Fare (legacy)</th>
+            <th class="ptc-col-secondary">Refund Total Fare</th>
+            <th class="ptc-col-secondary">Used Segment Fare</th>
+            <th class="ptc-col-secondary">Refund Total Tax</th>
+            <th class="ptc-col-secondary">Non-Refund Tax</th>
+            <th class="ptc-col-secondary">Commission Adj.</th>
+            <th class="ptc-col-secondary">Svc Applied</th>
+            <th class="ptc-col-secondary">Refundable Fare</th>
+            <th class="ptc-col-secondary">Refundable Tax</th>
+            <th class="ptc-col-secondary">Airline Refund</th>
             <th>Client Refund / Adj.</th>
-            <th>Tax Refund (legacy)</th>
+            <th class="ptc-col-secondary">Tax Refund (legacy)</th>
             <th>Refund Type</th>
             <th>Refund Status</th>
-            <th>Adjustment</th>
-            <th>Adj. Amount</th>
-            <th>Code</th>
+            <th class="ptc-col-secondary">Adjustment</th>
+            <th class="ptc-col-secondary">Adj. Amount</th>
+            <th class="ptc-col-secondary">Code</th>
             <th>Note</th>
             <th></th>
           </tr>
@@ -2217,6 +2241,18 @@
       <div class="ptc-due-panel" id="sales-due-panel" style="display:none;"></div>
 
       <div class="ptc-kpi-grid" id="sales-kpi-grid" style="margin-bottom:20px;"></div>
+
+      <div class="ptc-dash-grid" style="margin-bottom:20px;">
+        <div class="ptc-panel">
+          <h3>Revenue Trend <span style="font-weight:400; text-transform:none; letter-spacing:0;">last 6 months</span></h3>
+          <div class="ptc-panel-canvas-wrap"><canvas id="chart-sales-trend"></canvas></div>
+        </div>
+        <div class="ptc-panel">
+          <h3>Payment Status Mix</h3>
+          <div class="ptc-panel-canvas-wrap"><canvas id="chart-sales-status"></canvas></div>
+          <div class="ptc-legend-row" id="chart-sales-status-legend"></div>
+        </div>
+      </div>
 
       <div class="ptc-card" id="sales-card" style="border-left-color:#1E7A46;">
         <div class="ptc-editing-banner" id="sales-editing-banner">
@@ -2374,6 +2410,7 @@
       <div class="ptc-log-head">
         <h2>Revenue Ledger</h2>
         <span class="ptc-count" id="sales-count">0 sales</span>
+        <button type="button" class="ptc-view-toggle" id="btn-toggle-sales-compact">📋 Show Full Details</button>
       </div>
 
       <div class="ptc-card" style="padding:14px 18px; margin-bottom:14px;">
@@ -2390,26 +2427,26 @@
       </div>
 
       <div class="ptc-table-wrap" id="sales-table-wrap">
-        <table class="ptc-table" id="sales-table">
+        <table class="ptc-table ptc-compact" id="sales-table">
           <thead>
             <tr>
               <th>Date</th>
               <th>Customer</th>
-              <th>Pax</th>
-              <th>Contact</th>
+              <th class="ptc-col-secondary">Pax</th>
+              <th class="ptc-col-secondary">Contact</th>
               <th>Ticket No.</th>
               <th>GDS PNR</th>
               <th>Airline PNR</th>
               <th>Sector</th>
               <th>Airline</th>
               <th>Selling Price</th>
-              <th>Net Cost</th>
-              <th>Profit</th>
-              <th>Method</th>
+              <th class="ptc-col-secondary">Net Cost</th>
+              <th class="ptc-col-secondary">Profit</th>
+              <th class="ptc-col-secondary">Method</th>
               <th>Paid</th>
               <th>Due</th>
               <th>Status</th>
-              <th>Due Date</th>
+              <th class="ptc-col-secondary">Due Date</th>
               <th>Note</th>
               <th></th>
             </tr>
@@ -4108,7 +4145,11 @@
     }
 
     if(filtered.length === 0){
-      tbody.innerHTML = '<tr><td colspan="41" style="text-align:center; padding:20px; color:var(--muted);">No entries in this date range.</td></tr>';
+      // colspan must match however many columns are actually visible right now,
+      // which changes between compact and full view.
+      const visibleCols = $('ptc-table').querySelectorAll('thead th:not(.ptc-col-secondary)').length;
+      const spanCols = $('ptc-table').classList.contains('ptc-compact') ? visibleCols : 41;
+      tbody.innerHTML = '<tr><td colspan="' + spanCols + '" style="text-align:center; padding:20px; color:var(--muted);">No entries in this date range.</td></tr>';
     }
 
     pageItems.forEach(({ e, idx }) => {
@@ -4122,41 +4163,41 @@
         <td class="mono">${e.pnrGds || ''}</td>
         <td class="mono">${e.pnrAirline || ''}</td>
         <td>${e.pname || ''}</td>
-        <td>${e.ptype || ''}</td>
-        <td class="mono">${e.platform || ''}</td>
+        <td class="ptc-col-secondary">${e.ptype || ''}</td>
+        <td class="mono ptc-col-secondary">${e.platform || ''}</td>
         <td class="mono">${e.airline || ''}</td>
         <td><span class="ptc-tag" style="background:${color}">${e.txn}</span></td>
         <td class="mono">${fmtTicketList(e.oldTkt)}</td>
         <td class="mono">${fmtTicketList(e.newTkt)}</td>
         <td class="mono">${e.sector || ''}</td>
-        <td class="mono">${fmtMoney(e.baseFare)}</td>
-        <td class="mono">${fmtMoney(e.taxFare)}</td>
-        <td class="mono">${fmtMoney(e.airlineTicketPrice)}</td>
-        <td class="mono">${fmtMoney(e.discount)}</td>
-        <td class="mono">${fmtPct(e.markUp)}</td>
-        <td class="mono">${fmtMoney(e.markupAmount)}</td>
+        <td class="mono ptc-col-secondary">${fmtMoney(e.baseFare)}</td>
+        <td class="mono ptc-col-secondary">${fmtMoney(e.taxFare)}</td>
+        <td class="mono ptc-col-secondary">${fmtMoney(e.airlineTicketPrice)}</td>
+        <td class="mono ptc-col-secondary">${fmtMoney(e.discount)}</td>
+        <td class="mono ptc-col-secondary">${fmtPct(e.markUp)}</td>
+        <td class="mono ptc-col-secondary">${fmtMoney(e.markupAmount)}</td>
         <td class="mono">${fmtMoney(e.totalFare)}</td>
         <td class="mono">${fmtMoney(e.fareDiff)}</td>
-        <td class="mono">${fmtMoney(e.airlineCharge)}</td>
-        <td class="mono">${fmtMoney(e.svc)}</td>
-        <td class="mono">${fmtMoney(e.totalCollection)}</td>
-        <td class="mono">${fmtMoney(e.payableFare)}</td>
-        <td class="mono">${fmtMoney(e.refTotalFare)}</td>
-        <td class="mono">${fmtMoney(e.usedSegmentFare)}</td>
-        <td class="mono">${fmtMoney(e.refTotalTax)}</td>
-        <td class="mono">${fmtMoney(e.refNonRefundTax)}</td>
-        <td class="mono">${fmtMoney(e.commissionAdj)}</td>
-        <td>${e.svcApplied || ''}</td>
-        <td class="mono">${fmtMoney(e.refundableFare)}</td>
-        <td class="mono">${fmtMoney(e.refundableTax)}</td>
-        <td class="mono">${fmtMoney(e.airlineRefund)}</td>
+        <td class="mono ptc-col-secondary">${fmtMoney(e.airlineCharge)}</td>
+        <td class="mono ptc-col-secondary">${fmtMoney(e.svc)}</td>
+        <td class="mono ptc-col-secondary">${fmtMoney(e.totalCollection)}</td>
+        <td class="mono ptc-col-secondary">${fmtMoney(e.payableFare)}</td>
+        <td class="mono ptc-col-secondary">${fmtMoney(e.refTotalFare)}</td>
+        <td class="mono ptc-col-secondary">${fmtMoney(e.usedSegmentFare)}</td>
+        <td class="mono ptc-col-secondary">${fmtMoney(e.refTotalTax)}</td>
+        <td class="mono ptc-col-secondary">${fmtMoney(e.refNonRefundTax)}</td>
+        <td class="mono ptc-col-secondary">${fmtMoney(e.commissionAdj)}</td>
+        <td class="ptc-col-secondary">${e.svcApplied || ''}</td>
+        <td class="mono ptc-col-secondary">${fmtMoney(e.refundableFare)}</td>
+        <td class="mono ptc-col-secondary">${fmtMoney(e.refundableTax)}</td>
+        <td class="mono ptc-col-secondary">${fmtMoney(e.airlineRefund)}</td>
         <td class="mono">${fmtMoney(e.refundCharge)}</td>
-        <td class="mono">${fmtMoney(e.taxRefund)}</td>
+        <td class="mono ptc-col-secondary">${fmtMoney(e.taxRefund)}</td>
         <td>${refundTypeLabel(e.refundType)}</td>
         <td>${statusBadge}</td>
-        <td>${e.adjustmentGiven || ''}</td>
-        <td class="mono">${fmtMoney(e.adjustmentAmount)}</td>
-        <td class="mono">${e.code || ''}</td>
+        <td class="ptc-col-secondary">${e.adjustmentGiven || ''}</td>
+        <td class="mono ptc-col-secondary">${fmtMoney(e.adjustmentAmount)}</td>
+        <td class="mono ptc-col-secondary">${e.code || ''}</td>
         <td>${e.note || ''}</td>
         <td style="white-space:nowrap;">${e.editedAt ? `<span title="Last edited ${new Date(e.editedAt).toLocaleString()}" style="margin-right:6px; font-size:12px; cursor:help;">✏️</span>` : ''}<button class="ptc-edit" data-idx="${idx}">Edit</button><button class="ptc-del" data-idx="${idx}">Remove</button></td>
       `;
@@ -5064,6 +5105,30 @@
     });
   }
 
+  // ---- Compact / Full view toggle for the Entries Log table ----
+  // Keeps the ledger readable by default (only the columns that matter across
+  // every transaction type) while still letting anyone drill into every raw
+  // field when they actually need it.
+  function initCompactToggle(tableId, btnId, storageKey, labelBase){
+    const table = $(tableId);
+    const btn = $(btnId);
+    if(!table || !btn) return;
+    let compact = true;
+    try{ const saved = localStorage.getItem(storageKey); if(saved !== null) compact = saved === '1'; }catch(err){}
+    function apply(){
+      table.classList.toggle('ptc-compact', compact);
+      btn.textContent = compact ? `📋 Show Full ${labelBase}` : `🗂️ Show Compact ${labelBase}`;
+    }
+    apply();
+    btn.addEventListener('click', () => {
+      compact = !compact;
+      apply();
+      try{ localStorage.setItem(storageKey, compact ? '1' : '0'); }catch(err){}
+    });
+  }
+  initCompactToggle('ptc-table', 'btn-toggle-compact', 'ptc_entries_compact', 'Details');
+  initCompactToggle('sales-table', 'btn-toggle-sales-compact', 'ptc_sales_compact', 'Details');
+
   // ================= DASHBOARD =================
   const moneyFields = { Ticketing:'totalFare', Reissue:'totalCollection', Refund:'refundCharge', Void:'refundCharge' };
   let charts = {};
@@ -5601,6 +5666,66 @@
     });
   }
 
+  function renderSalesCharts(){
+    const chartsAvailable = (typeof Chart !== 'undefined');
+    if(!chartsAvailable) return;
+    const now = new Date();
+
+    // ---- Revenue trend (last 6 months): total sold vs. total collected ----
+    const months = [];
+    for(let i=5; i>=0; i--){
+      const d = new Date(now.getFullYear(), now.getMonth()-i, 1);
+      months.push({ key: d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'), label: d.toLocaleString(undefined,{month:'short'}) });
+    }
+    const byMonth = months.map(m => {
+      const rows = salesEntries.filter(s => (s.date||'').slice(0,7) === m.key);
+      return {
+        sold: rows.reduce((sum,s) => sum + (Number(s.price)||0), 0),
+        collected: rows.reduce((sum,s) => sum + (Number(s.paid)||0), 0),
+      };
+    });
+    try {
+      destroyChart('salesTrend');
+      charts.salesTrend = new Chart($('chart-sales-trend'), {
+        type: 'line',
+        data: {
+          labels: months.map(m=>m.label),
+          datasets: [
+            { label:'Sold', data: byMonth.map(m=>m.sold), borderColor:'#1E7A46', backgroundColor:'rgba(30,122,70,0.1)', fill:true, tension:0.3 },
+            { label:'Collected', data: byMonth.map(m=>m.collected), borderColor:'#2E6F95', backgroundColor:'rgba(46,111,149,0.1)', fill:true, tension:0.3 },
+          ]
+        },
+        options: {
+          responsive:true, maintainAspectRatio:false,
+          plugins:{ legend:{ position:'bottom', labels:{ boxWidth:9, font:{size:11} } } },
+          scales:{ x:{ grid:{ display:false } }, y:{ beginAtZero:true } }
+        }
+      });
+    } catch(err){ console.error('Sales trend chart failed', err); }
+
+    // ---- Payment status mix (donut, by count) ----
+    const statusCounts = { PAID:0, PARTIAL:0, DUE:0 };
+    salesEntries.forEach(s => { if(statusCounts.hasOwnProperty(s.status)) statusCounts[s.status]++; });
+    const statusColor = { PAID:'#1E7A46', PARTIAL:'var(--reissue)', DUE:'var(--refund)' };
+    const resolvedColor = (c) => c.startsWith('var(') ? getComputedStyle(document.documentElement).getPropertyValue(c.slice(4,-1)).trim() : c;
+    try {
+      destroyChart('salesStatus');
+      charts.salesStatus = new Chart($('chart-sales-status'), {
+        type: 'doughnut',
+        data: {
+          labels: Object.keys(statusCounts),
+          datasets: [{ data: Object.values(statusCounts), backgroundColor: Object.keys(statusCounts).map(k=>resolvedColor(statusColor[k])), borderWidth:2, borderColor:'#fff' }]
+        },
+        options: { responsive:true, maintainAspectRatio:false, cutout:'68%', plugins:{ legend:{ display:false } } }
+      });
+    } catch(err){ console.error('Sales status chart failed', err); }
+    try {
+      $('chart-sales-status-legend').innerHTML = Object.keys(statusCounts).map(k =>
+        `<span><span class="ptc-legend-dot" style="background:${resolvedColor(statusColor[k])}"></span>${k} (${statusCounts[k]})</span>`
+      ).join('');
+    } catch(err){ console.error('Sales status legend failed', err); }
+  }
+
   function renderSalesKpis(){
     const grid = $('sales-kpi-grid');
     if(!grid) return;
@@ -5629,6 +5754,7 @@
     tbody.innerHTML = '';
     $('sales-count').textContent = salesEntries.length + (salesEntries.length === 1 ? ' sale' : ' sales');
     renderSalesKpis();
+    renderSalesCharts();
     renderDuePanel();
     renderSalesSearchResults();
 
@@ -5645,21 +5771,21 @@
       tr.innerHTML = `
         <td>${s.date || ''}</td>
         <td>${s.pname || ''}</td>
-        <td class="mono">${paxSummary(s)}</td>
-        <td class="mono">${s.phone || ''}</td>
+        <td class="mono ptc-col-secondary">${paxSummary(s)}</td>
+        <td class="mono ptc-col-secondary">${s.phone || ''}</td>
         <td class="mono">${fmtTicketList(s.tkt)}</td>
         <td class="mono">${s.pnrGds || ''}</td>
         <td class="mono">${s.pnrAirline || ''}</td>
         <td class="mono">${s.sector || ''}</td>
         <td class="mono">${s.airline || ''}</td>
         <td class="mono">${fmtMoneySales(s.price)}</td>
-        <td class="mono">${fmtMoneySales(s.cost)}</td>
-        <td class="mono">${fmtMoneySales(s.profit)}</td>
-        <td>${s.method || ''}</td>
+        <td class="mono ptc-col-secondary">${fmtMoneySales(s.cost)}</td>
+        <td class="mono ptc-col-secondary">${fmtMoneySales(s.profit)}</td>
+        <td class="ptc-col-secondary">${s.method || ''}</td>
         <td class="mono">${fmtMoneySales(s.paid)}</td>
         <td class="mono">${fmtMoneySales(s.due)}</td>
         <td><span class="ptc-tag ${sIcon(s.status)}">${s.status}</span></td>
-        <td>${s.dueDate || ''}</td>
+        <td class="ptc-col-secondary">${s.dueDate || ''}</td>
         <td>${s.note || ''}</td>
         <td>
           <div class="ptc-sales-actions">
