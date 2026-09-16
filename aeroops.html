@@ -459,19 +459,109 @@
     color: var(--muted);
   }
 
-  .ach-progress-track{
-    height: 9px;
-    background: #E7ECF2;
-    border-radius: 5px;
+  /* ===== Business Impact panel ===== */
+  .ptc-impact-periods{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .ptc-impact-period{
+    padding: 7px 14px;
+    border-radius: 18px;
+    border: 1px solid var(--line);
+    background: #fff;
+    color: var(--ink-soft);
+    font-size: 12.5px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all .15s ease;
+  }
+  .ptc-impact-period:hover{ border-color: var(--accent); color: var(--accent); }
+  .ptc-impact-period.ptc-impact-period-active{
+    background: var(--ink);
+    border-color: var(--ink);
+    color: #fff;
+  }
+
+  .ptc-impact-grid{
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin: 6px 0 4px;
+  }
+  @media (max-width: 860px){ .ptc-impact-grid{ grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 460px){ .ptc-impact-grid{ grid-template-columns: 1fr; } }
+
+  .ptc-impact-stat{
+    border: 1px solid var(--line);
+    border-top: 3px solid var(--stat-color, var(--accent));
+    border-radius: 9px;
+    padding: 12px 14px;
+    background: #fff;
+  }
+  .ptc-impact-stat-label{
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 700;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .ptc-impact-stat-value{
+    font-size: 23px;
+    font-weight: 800;
+    margin: 5px 0 2px;
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--ink);
+  }
+  .ptc-impact-stat-sub{ font-size: 11.5px; color: var(--muted); }
+  .ptc-impact-delta{
+    font-size: 12px;
+    font-weight: 800;
+    padding: 2px 7px;
+    border-radius: 10px;
+    display: inline-block;
+  }
+  .ptc-impact-delta-up{ background: #E9F6EE; color: #1E7A46; }
+  .ptc-impact-delta-down{ background: var(--refund-soft); color: var(--refund); }
+  .ptc-impact-delta-flat{ background: #EDF1F5; color: var(--muted); }
+
+  /* Share-of-value bars */
+  .ptc-contrib-row{
+    display: grid;
+    grid-template-columns: 110px 1fr 150px;
+    align-items: center;
+    gap: 12px;
+    padding: 7px 0;
+    font-size: 12.5px;
+  }
+  @media (max-width: 560px){
+    .ptc-contrib-row{ grid-template-columns: 90px 1fr; }
+    .ptc-contrib-row .ptc-contrib-amt{ grid-column: 1 / -1; text-align: right; }
+  }
+  .ptc-contrib-name{ font-weight: 700; color: var(--ink); display:flex; align-items:center; gap:6px; }
+  .ptc-contrib-track{
+    height: 10px;
+    background: #EDF1F5;
+    border-radius: 6px;
     overflow: hidden;
   }
-  .ach-progress-fill{
+  .ptc-contrib-fill{
     height: 100%;
-    border-radius: 5px;
-    width: 0%;
-    background: linear-gradient(90deg, #2E6F95, #3D8AB8);
-    transition: width 0.4s ease, background 0.3s ease;
+    border-radius: 6px;
+    transition: width .4s ease;
   }
+  .ptc-contrib-amt{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--ink-soft);
+    text-align: right;
+    white-space: nowrap;
+  }
+  .ptc-contrib-amt b{ color: var(--ink); }
 
   .ptc-table-wrap{
     overflow-x: auto;
@@ -2181,57 +2271,39 @@
     </div>
 
     <div class="ptc-log-head" style="margin-top:28px;">
-      <h2>Weekly Achievement</h2>
+      <h2>Business Impact</h2>
       <button class="ptc-btn ptc-btn-ghost" id="btn-open-dashboard" style="padding:6px 14px; font-size:12px;">📊 View Full Dashboard</button>
     </div>
     <div class="ptc-count" id="ach-range-label" style="margin-bottom:10px; display:block;"></div>
-    <div style="text-align:right; margin-bottom:10px;">
-      <button class="ptc-btn ptc-btn-ghost" id="btn-this-week" style="padding:6px 14px; font-size:12px;">Reset to Last 7 Days</button>
-    </div>
 
     <div class="ptc-card" id="ach-card" style="border-left-color:#0B2545;">
-      <div class="ptc-row">
+
+      <div class="ptc-impact-periods" id="impact-periods">
+        <button type="button" class="ptc-impact-period" data-period="7">Last 7 Days</button>
+        <button type="button" class="ptc-impact-period" data-period="30">Last 30 Days</button>
+        <button type="button" class="ptc-impact-period" data-period="90">Last 90 Days</button>
+        <button type="button" class="ptc-impact-period" data-period="all">All Time</button>
+      </div>
+
+      <div class="ptc-row" style="margin-top:14px;">
         <div class="ptc-field">
-          <label for="ach-start">Week Start</label>
+          <label for="ach-start">From</label>
           <input type="date" id="ach-start" />
         </div>
         <div class="ptc-field">
-          <label for="ach-end">Week End</label>
+          <label for="ach-end">To</label>
           <input type="date" id="ach-end" />
         </div>
       </div>
-      <div class="ptc-row">
-        <div class="ptc-field">
-          <label for="ach-value-target">Fare / Charge Value Target
-            <span class="ptc-info" tabindex="0" aria-label="What counts as value">ⓘ<span class="ptc-tooltip">Adds up: Total Fare (Ticketing) + Fare Difference/Airline Charge/Service Charge (Reissue) + Refund or Void Charge (Refund/Void) — the amounts that reflect your processed work, not raw pass-through fare alone.</span></span>
-          </label>
-          <input type="number" step="0.01" id="ach-value-target" class="mono" placeholder="0.00" />
-        </div>
-        <div class="ptc-field">
-          <label for="ach-count-target">Transaction Count Target</label>
-          <input type="number" step="1" id="ach-count-target" class="mono" placeholder="0" />
-        </div>
-      </div>
 
-      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;" id="ach-results">
-        <div class="ach-metric" style="border:1px solid var(--line); border-radius:8px; padding:14px;">
-          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.6px; color:var(--muted); font-weight:600;">Value Achievement</div>
-          <div style="font-size:28px; font-weight:700; margin:4px 0;" id="ach-value-pct">0%</div>
-          <div class="ach-progress-track"><div class="ach-progress-fill" id="ach-value-bar"></div></div>
-          <div style="font-size:12.5px; color:var(--muted); margin-top:8px;" id="ach-value-detail">Actual 0.00 / Target 0.00</div>
-        </div>
-        <div class="ach-metric" style="border:1px solid var(--line); border-radius:8px; padding:14px;">
-          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.6px; color:var(--muted); font-weight:600;">Transaction Achievement</div>
-          <div style="font-size:28px; font-weight:700; margin:4px 0;" id="ach-count-pct">0%</div>
-          <div class="ach-progress-track"><div class="ach-progress-fill" id="ach-count-bar"></div></div>
-          <div style="font-size:12.5px; color:var(--muted); margin-top:8px;" id="ach-count-detail">Actual 0 / Target 0</div>
-        </div>
-      </div>
+      <div class="ptc-impact-grid" id="impact-headline"></div>
 
-      <div style="margin-top:14px;">
-        <div class="ptc-section-label">📊 Breakdown by Type (this range)</div>
-        <div id="ach-breakdown" style="font-size:13px; color:var(--ink-soft);"></div>
-      </div>
+      <div class="ptc-section-label">📊 Value Contribution by Type</div>
+      <div id="impact-contribution"></div>
+
+      <div class="ptc-section-label">⚖️ Operational Health</div>
+      <div class="ptc-impact-grid" id="impact-health"></div>
+
     </div>
 
     </div><!-- /view-entry -->
@@ -4693,8 +4765,12 @@
     if(isCsv){ reader.readAsText(file); } else { reader.readAsArrayBuffer(file); }
   });
 
-  // ---- Weekly Achievement ----
-  const ACH_TARGETS_KEY = 'wrd_weekly_targets_v1';
+  // ---- Business Impact ----
+  // Replaces the old manual-target "Weekly Achievement" panel. Every number here
+  // is derived from the entries themselves, so it works with zero configuration
+  // and answers "how much did this period actually move the company?"
+  const IMPACT_PERIOD_KEY = 'wrd_impact_period_v1';
+  let impactPeriod = '30';
 
   function isoDaysAgo(n){
     const d = new Date();
@@ -4713,38 +4789,45 @@
     return 0;
   }
 
-  function pctColor(pct){
-    if(pct >= 100) return 'var(--booking)';
-    if(pct >= 70) return 'var(--reissue)';
-    return 'var(--refund)';
+  // Money the agency actually earns, as opposed to fare collected on the airline's
+  // behalf: markup on ticketing, plus service charges on reissue/refund/void.
+  function entryEarnings(e){
+    if(e.txn === 'Ticketing') return parseFloat(e.markupAmount) || 0;
+    if(e.txn === 'Reissue') return parseFloat(e.svc) || 0;
+    if(e.txn === 'Refund' || e.txn === 'Void') return parseFloat(e.svc) || 0;
+    return 0;
   }
 
-  function saveAchTargets(){
-    try{
-      localStorage.setItem(ACH_TARGETS_KEY, JSON.stringify({
-        valueTarget: $('ach-value-target').value,
-        countTarget: $('ach-count-target').value,
-        start: $('ach-start').value,
-        end: $('ach-end').value,
-      }));
-    }catch(err){ /* ignore */ }
+  function inRange(e, start, end){
+    if(!e.date) return false;
+    if(start && e.date < start) return false;
+    if(end && e.date > end) return false;
+    return true;
   }
 
-  function loadAchTargets(){
-    let saved = null;
-    try{
-      const raw = localStorage.getItem(ACH_TARGETS_KEY);
-      if(raw) saved = JSON.parse(raw);
-    }catch(err){ saved = null; }
+  function fmtImpactMoney(v){
+    const n = Number(v) || 0;
+    return n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
 
-    // Date range always resets to "the last 7 days" on every fresh open —
-    // so it moves forward automatically each time you open the file,
-    // without you needing to edit the dates by hand.
-    $('ach-start').value = isoDaysAgo(6);
-    $('ach-end').value = isoDaysAgo(0);
-    // Targets persist, since your weekly goal is usually the same each week.
-    $('ach-value-target').value = (saved && saved.valueTarget) || '';
-    $('ach-count-target').value = (saved && saved.countTarget) || '';
+  function deltaBadge(curr, prev){
+    if(!prev){
+      return curr ? '<span class="ptc-impact-delta ptc-impact-delta-flat">New</span>' : '<span class="ptc-impact-delta ptc-impact-delta-flat">—</span>';
+    }
+    const pct = ((curr - prev) / Math.abs(prev)) * 100;
+    const cls = pct > 0.05 ? 'ptc-impact-delta-up' : (pct < -0.05 ? 'ptc-impact-delta-down' : 'ptc-impact-delta-flat');
+    const arrow = pct > 0.05 ? '▲' : (pct < -0.05 ? '▼' : '■');
+    return `<span class="ptc-impact-delta ${cls}">${arrow} ${Math.abs(pct).toFixed(1)}%</span>`;
+  }
+
+  function statCard(label, value, sub, color){
+    return `
+      <div class="ptc-impact-stat" style="--stat-color:${color};">
+        <div class="ptc-impact-stat-label">${label}</div>
+        <div class="ptc-impact-stat-value">${value}</div>
+        <div class="ptc-impact-stat-sub">${sub}</div>
+      </div>
+    `;
   }
 
   function recalcAchievement(){
@@ -4753,67 +4836,136 @@
     if(!startEl || !endEl) return; // panel not in DOM yet
     const start = startEl.value;
     const end = endEl.value;
-    $('ach-range-label').textContent = start && end ? (start + ' → ' + end) : '';
+    const label = $('ach-range-label');
+    if(label) label.textContent = start && end ? (start + ' → ' + end) : 'All recorded entries';
 
-    const filtered = entries.filter(e => {
-      if(!e.date) return false;
-      if(start && e.date < start) return false;
-      if(end && e.date > end) return false;
-      return true;
+    const current = entries.filter(e => inRange(e, start, end));
+
+    // Previous window of identical length, for a like-for-like comparison.
+    let previous = [];
+    if(start && end){
+      const s = new Date(start), en = new Date(end);
+      const days = Math.max(1, Math.round((en - s) / 86400000) + 1);
+      const prevEnd = new Date(s); prevEnd.setDate(prevEnd.getDate() - 1);
+      const prevStart = new Date(prevEnd); prevStart.setDate(prevStart.getDate() - (days - 1));
+      const ps = prevStart.toISOString().slice(0,10);
+      const pe = prevEnd.toISOString().slice(0,10);
+      previous = entries.filter(e => inRange(e, ps, pe));
+    }
+
+    const sumVal = (arr) => arr.reduce((t,e) => t + entryValue(e), 0);
+    const sumEarn = (arr) => arr.reduce((t,e) => t + entryEarnings(e), 0);
+
+    const currValue = sumVal(current);
+    const prevValue = sumVal(previous);
+    const currEarn = sumEarn(current);
+    const prevEarn = sumEarn(previous);
+    const allTimeValue = sumVal(entries);
+
+    // Share of the company's entire recorded history that this period represents.
+    const shareOfAll = allTimeValue > 0 ? (currValue / allTimeValue * 100) : 0;
+    const margin = currValue > 0 ? (currEarn / currValue * 100) : 0;
+
+    $('impact-headline').innerHTML = [
+      statCard('Business Volume', fmtImpactMoney(currValue),
+        `${deltaBadge(currValue, prevValue)} vs previous period`, 'var(--booking)'),
+      statCard('Agency Earnings', fmtImpactMoney(currEarn),
+        `${deltaBadge(currEarn, prevEarn)} markup + service charges`, '#1E7A46'),
+      statCard('Share of All-Time', shareOfAll.toFixed(1) + '%',
+        `of ${fmtImpactMoney(allTimeValue)} total recorded`, 'var(--reissue)'),
+      statCard('Transactions', String(current.length),
+        `${deltaBadge(current.length, previous.length)} vs ${previous.length} previous`, 'var(--ink-soft)'),
+    ].join('');
+
+    // ---- Value contribution by transaction type ----
+    const types = ['Ticketing','Reissue','Refund','Void'];
+    const byType = {};
+    types.forEach(t => {
+      const rows = current.filter(e => e.txn === t);
+      byType[t] = { count: rows.length, value: sumVal(rows) };
     });
+    const contribEl = $('impact-contribution');
+    if(current.length === 0){
+      contribEl.innerHTML = '<div style="font-size:12.5px; color:var(--muted); padding:6px 0;">No entries in this period yet — add entries or widen the date range.</div>';
+    } else {
+      contribEl.innerHTML = types.map(t => {
+        const pct = currValue > 0 ? (byType[t].value / currValue * 100) : 0;
+        return `
+          <div class="ptc-contrib-row">
+            <span class="ptc-contrib-name"><span class="ptc-fare-dot" style="background:${tagColor[t]}"></span>${t}</span>
+            <span class="ptc-contrib-track"><span class="ptc-contrib-fill" style="width:${Math.min(100, pct)}%; background:${tagColor[t]};"></span></span>
+            <span class="ptc-contrib-amt"><b>${pct.toFixed(1)}%</b> · ${fmtImpactMoney(byType[t].value)} · ${byType[t].count} txn</span>
+          </div>
+        `;
+      }).join('');
+    }
 
-    const valueActual = filtered.reduce((sum, e) => sum + entryValue(e), 0);
-    const countActual = filtered.length;
+    // ---- Operational health ----
+    const refundVoidCount = current.filter(e => e.txn === 'Refund' || e.txn === 'Void').length;
+    const refundRate = current.length > 0 ? (refundVoidCount / current.length * 100) : 0;
+    const pendingRefunds = current.filter(e => e.txn === 'Refund' && e.refundStatus && e.refundStatus !== 'REFUNDED').length;
+    const avgValue = current.length > 0 ? (currValue / current.length) : 0;
 
-    const valueTarget = parseFloat($('ach-value-target').value) || 0;
-    const countTarget = parseFloat($('ach-count-target').value) || 0;
+    // Outstanding client dues from the Revenue Desk, scoped to the same window.
+    let dueAmount = 0, dueCount = 0;
+    try{
+      const salesInRange = (typeof salesEntries !== 'undefined' ? salesEntries : []).filter(s => inRange(s, start, end));
+      salesInRange.forEach(s => {
+        const d = Number(s.due) || 0;
+        if(d > 0){ dueAmount += d; dueCount++; }
+      });
+    }catch(err){ /* sales not loaded yet */ }
 
-    const valuePct = valueTarget > 0 ? (valueActual / valueTarget * 100) : 0;
-    const countPct = countTarget > 0 ? (countActual / countTarget * 100) : 0;
-
-    const vPctEl = $('ach-value-pct');
-    vPctEl.textContent = valuePct.toFixed(1) + '%';
-    vPctEl.style.color = valueTarget > 0 ? pctColor(valuePct) : 'var(--muted)';
-    $('ach-value-detail').textContent = 'Actual ' + valueActual.toFixed(2) + ' / Target ' + valueTarget.toFixed(2);
-    const vBar = $('ach-value-bar');
-    vBar.style.width = Math.max(0, Math.min(100, valuePct)) + '%';
-    vBar.style.background = valueTarget > 0 ? pctColor(valuePct) : '#C7D0DB';
-
-    const cPctEl = $('ach-count-pct');
-    cPctEl.textContent = countPct.toFixed(1) + '%';
-    cPctEl.style.color = countTarget > 0 ? pctColor(countPct) : 'var(--muted)';
-    $('ach-count-detail').textContent = 'Actual ' + countActual + ' / Target ' + countTarget;
-    const cBar = $('ach-count-bar');
-    cBar.style.width = Math.max(0, Math.min(100, countPct)) + '%';
-    cBar.style.background = countTarget > 0 ? pctColor(countPct) : '#C7D0DB';
-
-    // breakdown by type
-    const byType = { Ticketing: 0, Reissue: 0, Refund: 0, Void: 0 };
-    filtered.forEach(e => { if(byType.hasOwnProperty(e.txn)) byType[e.txn]++; });
-    const breakdownEl = $('ach-breakdown');
-    breakdownEl.innerHTML = Object.keys(byType).map(t =>
-      `<span class="ptc-tag" style="background:${tagColor[t]}; margin-right:8px;">${t}: ${byType[t]}</span>`
-    ).join('');
+    $('impact-health').innerHTML = [
+      statCard('Refund / Void Rate', refundRate.toFixed(1) + '%',
+        `${refundVoidCount} of ${current.length} transactions`, refundRate > 20 ? 'var(--refund)' : 'var(--void)'),
+      statCard('Avg. Transaction Value', fmtImpactMoney(avgValue),
+        'Per recorded transaction', 'var(--booking)'),
+      statCard('Pending Refunds', String(pendingRefunds),
+        'Awaiting airline settlement', pendingRefunds > 0 ? 'var(--reissue)' : 'var(--void)'),
+      statCard('Outstanding Dues', fmtImpactMoney(dueAmount),
+        `${dueCount} unpaid sale(s) in range`, dueAmount > 0 ? 'var(--refund)' : '#1E7A46'),
+    ].join('');
   }
 
-  ['ach-start','ach-end','ach-value-target','ach-count-target'].forEach(id => {
+  function applyImpactPeriod(period, skipSave){
+    impactPeriod = period;
+    if(period === 'all'){
+      const dated = entries.map(e => e.date).filter(Boolean).sort();
+      $('ach-start').value = dated.length ? dated[0] : '';
+      $('ach-end').value = dated.length ? dated[dated.length - 1] : '';
+    } else {
+      $('ach-start').value = isoDaysAgo(parseInt(period, 10) - 1);
+      $('ach-end').value = isoDaysAgo(0);
+    }
+    document.querySelectorAll('#impact-periods .ptc-impact-period').forEach(btn => {
+      btn.classList.toggle('ptc-impact-period-active', btn.getAttribute('data-period') === period);
+    });
+    if(!skipSave){ try{ localStorage.setItem(IMPACT_PERIOD_KEY, period); }catch(err){} }
+    recalcAchievement();
+  }
+
+  document.querySelectorAll('#impact-periods .ptc-impact-period').forEach(btn => {
+    btn.addEventListener('click', () => applyImpactPeriod(btn.getAttribute('data-period')));
+  });
+
+  // Editing the dates by hand switches the panel to a custom range.
+  ['ach-start','ach-end'].forEach(id => {
     const el = $(id);
     if(el){
-      el.addEventListener('input', () => { saveAchTargets(); recalcAchievement(); });
-      el.addEventListener('change', () => { saveAchTargets(); recalcAchievement(); });
+      el.addEventListener('change', () => {
+        document.querySelectorAll('#impact-periods .ptc-impact-period').forEach(b => b.classList.remove('ptc-impact-period-active'));
+        recalcAchievement();
+      });
     }
   });
 
-  $('btn-this-week').addEventListener('click', () => {
-    $('ach-start').value = isoDaysAgo(6);
-    $('ach-end').value = isoDaysAgo(0);
-    saveAchTargets();
-    recalcAchievement();
-    toast('Reset to the last 7 days');
-  });
-
-  loadAchTargets();
-  recalcAchievement();
+  try{
+    const savedPeriod = localStorage.getItem(IMPACT_PERIOD_KEY);
+    applyImpactPeriod(savedPeriod || '30', true);
+  }catch(err){
+    applyImpactPeriod('30', true);
+  }
 
   // ---- Info tooltip: tap-to-toggle on touch devices, hover works natively via CSS ----
   document.querySelectorAll('.ptc-info').forEach(icon => {
