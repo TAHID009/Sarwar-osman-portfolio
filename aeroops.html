@@ -312,6 +312,81 @@
     box-shadow: 0 3px 10px color-mix(in srgb, var(--txn-color, var(--accent)) 35%, transparent);
   }
 
+  .ptc-refund-step{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin: 24px 0 12px;
+  }
+  .ptc-refund-step:first-of-type{ margin-top: 18px; }
+  .ptc-refund-step-num{
+    flex-shrink:0;
+    width:22px; height:22px;
+    border-radius:50%;
+    background: var(--refund);
+    color:#fff;
+    font-size:11.5px;
+    font-weight:800;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .ptc-refund-step-text{ display:flex; align-items:baseline; gap:8px; flex-wrap:wrap; }
+  .ptc-refund-step-title{ font-size:12px; text-transform:uppercase; letter-spacing:1px; font-weight:800; color:var(--ink); }
+  .ptc-refund-step-sub{ font-size:11.5px; color:var(--muted); font-weight:500; }
+
+  .ptc-refund-reference{
+    font-size:11.5px;
+    color:var(--muted);
+    margin:-8px 0 14px;
+  }
+  .ptc-refund-reference b{ color:var(--ink-soft); font-family:'SFMono-Regular', ui-monospace, monospace; }
+  .ptc-refund-reference button{
+    background:none; border:none; padding:0; margin-left:6px;
+    color:var(--refund); font-weight:700; font-size:11.5px;
+    text-decoration:underline; cursor:pointer;
+  }
+
+  .ptc-refund-calcbox{
+    background: var(--refund-soft);
+    border: 1px solid rgba(180,69,59,.25);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 14px;
+  }
+  .ptc-refund-calcbox-title{
+    font-size:11px; text-transform:uppercase; letter-spacing:1px; font-weight:800;
+    color:var(--refund); margin-bottom:12px; display:flex; align-items:center; gap:6px;
+  }
+  .ptc-refund-calcbox-row{
+    display:grid;
+    grid-template-columns: 1fr auto 1fr auto 1fr;
+    align-items:end;
+    gap:8px;
+    margin-bottom:10px;
+  }
+  .ptc-refund-calcbox-row:last-child{ margin-bottom:0; }
+  .ptc-refund-calcbox-op{
+    font-size:16px; font-weight:800; color:var(--muted);
+    padding-bottom:9px; text-align:center;
+  }
+  .ptc-refund-calcbox-chip{
+    background:#fff; border:1px solid var(--line); border-radius:8px; padding:8px 10px;
+  }
+  .ptc-refund-calcbox-chip label{
+    display:flex; align-items:center; gap:5px;
+    font-size:10.5px; text-transform:uppercase; letter-spacing:.5px; font-weight:700; color:var(--muted);
+    margin-bottom:4px;
+  }
+  .ptc-refund-calcbox-chip .mono{ font-size:14px; font-weight:700; color:var(--ink); }
+  .ptc-refund-calcbox-chip.ptc-refund-calcbox-result{
+    background: var(--brand-soft); border-color: rgba(14,110,115,.3);
+  }
+  .ptc-refund-calcbox-chip.ptc-refund-calcbox-result label{ color: var(--accent); }
+  .ptc-refund-calcbox-chip.ptc-refund-calcbox-result .mono{ color: var(--accent); font-size:15px; }
+  @media (max-width: 560px){
+    .ptc-refund-calcbox-row{ grid-template-columns: 1fr; }
+    .ptc-refund-calcbox-op{ padding:2px 0; }
+  }
+
   .ptc-section-label{
     display: flex;
     align-items: center;
@@ -542,7 +617,29 @@
     .ptc-contrib-row{ grid-template-columns: 90px 1fr; }
     .ptc-contrib-row .ptc-contrib-amt{ grid-column: 1 / -1; text-align: right; }
   }
-  .ptc-contrib-name{ font-weight: 700; color: var(--ink); display:flex; align-items:center; gap:6px; }
+  .ptc-contrib-name{ font-weight: 700; color: var(--ink); display:flex; align-items:center; gap:6px; position:relative; cursor:default; }
+  .ptc-contrib-name .ptc-contrib-tooltip{
+    display: none;
+    position: absolute;
+    bottom: 130%;
+    left: 0;
+    min-width: 150px;
+    background: var(--ink);
+    color: #fff;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11.5px;
+    font-weight: 400;
+    line-height: 1.5;
+    padding: 8px 10px;
+    border-radius: 6px;
+    z-index: 20;
+    white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(11,37,69,0.25);
+  }
+  .ptc-contrib-name:hover .ptc-contrib-tooltip,
+  .ptc-contrib-name:focus .ptc-contrib-tooltip{
+    display: block;
+  }
   .ptc-contrib-track{
     display: block;
     width: 100%;
@@ -1150,7 +1247,7 @@
 
   .ptc-kpi-grid{
     display:grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
     gap:14px;
     margin-bottom:18px;
   }
@@ -2061,75 +2158,89 @@
           </div>
         </div>
 
+        <!-- STEP 1 — the ticket's full face-value total, before anything is deducted -->
+        <div class="ptc-refund-step" id="refund-step1-total">
+          <span class="ptc-refund-step-num">1</span>
+          <span class="ptc-refund-step-text"><span class="ptc-refund-step-title">Total Fare</span><span class="ptc-refund-step-sub">the full round-trip ticket, as issued</span></span>
+        </div>
         <div class="ptc-row" id="refund-fare-row">
           <div class="ptc-field" id="refund-totalfare-wrap">
             <label for="f-refbasefare-f">Base Fare</label>
             <input type="number" step="0.01" id="f-refbasefare-f" class="mono ptc-refund-calc" placeholder="0.00" />
           </div>
-          <div class="ptc-field" id="refund-usedseg-wrap" style="display:none;">
-            <label for="f-usedseg-f">Used Segment Fare</label>
-            <input type="number" step="0.01" id="f-usedseg-f" class="mono ptc-refund-calc" placeholder="0.00" />
-            <div class="ptc-field-hint" id="usedseg-reference-hint">
-              Reference (full fare, if the whole segment was used): <b id="usedseg-reference-value">0.00</b>
-              <button type="button" id="btn-usedseg-use-reference" class="ptc-link-toggle" style="padding:0; margin-left:6px; font-size:11.5px;">Use this value</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="ptc-fare-chart" id="refund-partial-breakdown" style="display:none;">
-          <div class="ptc-fare-chart-title" style="color:var(--refund);">🧮 Partial Refund Calculation</div>
-          <div class="ptc-fare-chart-equation" style="margin-bottom:12px;">
-            <div class="ptc-fare-chart-item">
-              <span class="ptc-fare-chart-item-label"><span class="ptc-fare-dot" style="background:var(--brand);"></span>Base Fare</span>
-              <span class="ptc-fare-chart-item-value" id="pr-basefare-display">0.00</span>
-            </div>
-            <span class="ptc-fare-chart-op">−</span>
-            <div class="ptc-fare-chart-item">
-              <span class="ptc-fare-chart-item-label"><span class="ptc-fare-dot" style="background:#E3A008;"></span>Used Segment</span>
-              <span class="ptc-fare-chart-item-value" id="pr-usedseg-display">0.00</span>
-            </div>
-            <span class="ptc-fare-chart-op">=</span>
-            <div class="ptc-fare-chart-item ptc-fare-chart-total">
-              <span class="ptc-fare-chart-item-label">Refundable Fare</span>
-              <span class="ptc-fare-chart-item-value" id="pr-fare-display">0.00</span>
-            </div>
-          </div>
-          <div class="ptc-fare-chart-equation">
-            <div class="ptc-fare-chart-item">
-              <span class="ptc-fare-chart-item-label"><span class="ptc-fare-dot" style="background:var(--brand);"></span>Tax</span>
-              <span class="ptc-fare-chart-item-value" id="pr-tax-display">0.00</span>
-            </div>
-            <span class="ptc-fare-chart-op">−</span>
-            <div class="ptc-fare-chart-item">
-              <span class="ptc-fare-chart-item-label"><span class="ptc-fare-dot" style="background:#E3A008;"></span>Non-Refund Tax</span>
-              <span class="ptc-fare-chart-item-value" id="pr-nonrefundtax-display">0.00</span>
-            </div>
-            <span class="ptc-fare-chart-op">=</span>
-            <div class="ptc-fare-chart-item ptc-fare-chart-total">
-              <span class="ptc-fare-chart-item-label">Refundable Tax</span>
-              <span class="ptc-fare-chart-item-value" id="pr-taxout-display">0.00</span>
-            </div>
-          </div>
-        </div>
-        <div class="ptc-row" id="refund-tax-row">
           <div class="ptc-field">
             <label for="f-reftotaltax-f">Tax</label>
             <input type="number" step="0.01" id="f-reftotaltax-f" class="mono ptc-refund-calc" placeholder="0.00" />
           </div>
-          <div class="ptc-field">
+        </div>
+
+        <!-- STEP 2 — what the airline keeps for cancelling, before anything else is worked out -->
+        <div class="ptc-refund-step" id="refund-step2-penalty">
+          <span class="ptc-refund-step-num">2</span>
+          <span class="ptc-refund-step-text"><span class="ptc-refund-step-title">Penalty</span><span class="ptc-refund-step-sub">airline's cancellation fee</span></span>
+        </div>
+        <div class="ptc-row" id="refund-tax-row">
+          <div class="ptc-field" style="grid-column: 1 / -1;">
             <label for="f-airline-f" id="f-airline-f-label">Airline Refund/Cancellation Fee</label>
             <input type="number" step="0.01" id="f-airline-f" class="mono ptc-refund-calc" placeholder="0.00" value="0" />
           </div>
         </div>
 
-        <button type="button" class="ptc-link-toggle" id="btn-refund-advanced">+ Non-refundable tax / commission adjustment</button>
-        <div class="ptc-row" id="refund-advanced-row" style="display:none;">
+        <!-- STEP 3 (Partial Refund only) — the portion of the ticket already flown -->
+        <div class="ptc-refund-step" id="refund-step3-usedseg" style="display:none;">
+          <span class="ptc-refund-step-num">3</span>
+          <span class="ptc-refund-step-text"><span class="ptc-refund-step-title">Used Segment</span><span class="ptc-refund-step-sub">the part of the ticket already flown — not refundable</span></span>
+        </div>
+        <div class="ptc-row" id="refund-usedseg-wrap-row" style="display:none;">
+          <div class="ptc-field" id="refund-usedseg-wrap">
+            <label for="f-usedseg-f">Used Segment Base Fare</label>
+            <input type="number" step="0.01" id="f-usedseg-f" class="mono ptc-refund-calc" placeholder="0.00" />
+            <div class="ptc-refund-reference" id="refund-usedseg-reference" style="display:none;">
+              Reference (full fare, if the whole segment was used): <b id="refund-usedseg-reference-val">0.00</b>
+              <button type="button" id="btn-usedseg-use-reference">Use this value</button>
+            </div>
+          </div>
           <div class="ptc-field">
-            <label for="f-nonrefundtax-f">Non-Refundable Tax</label>
+            <label for="f-usedsegtax-f">Used Segment Tax</label>
+            <input type="number" step="0.01" id="f-usedsegtax-f" class="mono ptc-refund-calc" placeholder="0.00" />
+          </div>
+        </div>
+        <div class="ptc-field" id="refund-usedsegtotal-wrap" style="display:none;">
+          <label for="refund-usedsegtotal-f">Total Used Segment Fare <span style="font-weight:400;">(base + tax)</span></label>
+          <input type="text" id="refund-usedsegtotal-f" class="mono" readonly style="background:var(--refund-soft); font-weight:700; cursor:default;" value="0.00" />
+        </div>
+
+        <!-- Live calculation preview — updates as Steps 1–3 are filled in -->
+        <div class="ptc-refund-calcbox" id="refund-calcbox" style="display:none;">
+          <div class="ptc-refund-calcbox-title">🧮 Partial Refund Calculation</div>
+          <div class="ptc-refund-calcbox-row">
+            <div class="ptc-refund-calcbox-chip"><label><span class="ptc-fare-dot" style="background:var(--booking);"></span>Base Fare</label><div class="mono" id="calcbox-basefare">0.00</div></div>
+            <div class="ptc-refund-calcbox-op">−</div>
+            <div class="ptc-refund-calcbox-chip"><label><span class="ptc-fare-dot" style="background:var(--reissue);"></span>Used Segment</label><div class="mono" id="calcbox-usedseg">0.00</div></div>
+            <div class="ptc-refund-calcbox-op">=</div>
+            <div class="ptc-refund-calcbox-chip ptc-refund-calcbox-result"><label>Refundable Fare</label><div class="mono" id="calcbox-reffare">0.00</div></div>
+          </div>
+          <div class="ptc-refund-calcbox-row">
+            <div class="ptc-refund-calcbox-chip"><label><span class="ptc-fare-dot" style="background:var(--booking);"></span>Tax</label><div class="mono" id="calcbox-tax">0.00</div></div>
+            <div class="ptc-refund-calcbox-op">−</div>
+            <div class="ptc-refund-calcbox-chip"><label><span class="ptc-fare-dot" style="background:var(--reissue);"></span>Used Seg. + Non-Refund Tax</label><div class="mono" id="calcbox-nonrefundtax">0.00</div></div>
+            <div class="ptc-refund-calcbox-op">=</div>
+            <div class="ptc-refund-calcbox-chip ptc-refund-calcbox-result"><label>Refundable Tax</label><div class="mono" id="calcbox-reftax">0.00</div></div>
+          </div>
+        </div>
+
+        <!-- STEP 4 — everything the agency deducts before paying the client back -->
+        <div class="ptc-refund-step" id="refund-step4-deductions">
+          <span class="ptc-refund-step-num">4</span>
+          <span class="ptc-refund-step-text"><span class="ptc-refund-step-title">Deductions &amp; Charges</span><span class="ptc-refund-step-sub">non-refundable tax, commission/discount, agency service charge</span></span>
+        </div>
+        <div class="ptc-row" id="refund-advanced-row">
+          <div class="ptc-field">
+            <label for="f-nonrefundtax-f">Non-Refundable Tax <span style="font-weight:400;">(beyond the used segment)</span></label>
             <input type="number" step="0.01" id="f-nonrefundtax-f" class="mono ptc-refund-calc" placeholder="0.00" value="0" />
           </div>
           <div class="ptc-field" id="refund-commission-wrap">
-            <label for="f-commission-f">Commission Adjustment</label>
+            <label for="f-commission-f">Commission Adjustment / Discount</label>
             <input type="number" step="0.01" id="f-commission-f" class="mono ptc-refund-calc" placeholder="0.00" value="0" />
           </div>
         </div>
@@ -2144,9 +2255,14 @@
         </div>
 
         <div id="refund-negative-warning" style="display:none; margin:2px 0 14px; padding:9px 12px; border-radius:8px; background:var(--refund-soft); border:1px solid rgba(180,69,59,.35); color:var(--refund); font-size:12.5px; font-weight:600;">
-          Refund calculation results in a negative amount. Please verify the fare, tax, airline charge, or commission adjustment.
+          Please double-check the amounts below — either the refund works out negative, or Used Segment / Non-Refundable figures exceed the fare or tax they're being deducted from.
         </div>
 
+        <!-- STEP 5 — the result -->
+        <div class="ptc-refund-step" id="refund-step5-result">
+          <span class="ptc-refund-step-num">5</span>
+          <span class="ptc-refund-step-text"><span class="ptc-refund-step-title">Result</span></span>
+        </div>
         <div class="ptc-refund-result" id="refund-result-panel">
           <div class="ptc-refund-result-breakdown" id="refund-calcout-row">
             <span>Refundable Fare <b id="refund-refoutfare-display">0.00</b></span>
@@ -2358,7 +2474,12 @@
 
       <div class="ptc-kpi-grid" id="sales-kpi-grid" style="margin-bottom:20px;"></div>
 
-      <div class="ptc-dash-grid" style="margin-bottom:20px;">
+      <div class="ptc-log-head" style="margin-bottom:10px;">
+        <span></span>
+        <button class="ptc-btn ptc-btn-ghost" id="btn-toggle-sales-charts" style="padding:6px 14px; font-size:12px;">📊 Show Charts</button>
+      </div>
+
+      <div class="ptc-dash-grid" id="sales-charts-wrap" style="margin-bottom:20px; display:none;">
         <div class="ptc-panel">
           <h3>Revenue Trend <span style="font-weight:400; text-transform:none; letter-spacing:0;">last 6 months</span></h3>
           <div class="ptc-panel-canvas-wrap"><canvas id="chart-sales-trend"></canvas></div>
@@ -2838,6 +2959,7 @@
     { h:'TICKET PAYABLE FARE (LEGACY)', f:'payableFare', n:true },
     { h:'REFUND TOTAL FARE', f:'refTotalFare', n:true },
     { h:'USED SEGMENT FARE', f:'usedSegmentFare', n:true },
+    { h:'USED SEGMENT TAX', f:'usedSegmentTax', n:true },
     { h:'REFUND TOTAL TAX', f:'refTotalTax', n:true },
     { h:'NON-REFUNDABLE TAX', f:'refNonRefundTax', n:true },
     { h:'COMMISSION ADJUSTMENT', f:'commissionAdj', n:true },
@@ -2864,7 +2986,7 @@
   const SHEET_DEFS = [
     { name:'Ticketing', fields: COMMON_FIELDS.concat(['newTkt','sector','baseFare','taxFare','airlineTicketPrice','discount','markUp','markupAmount','totalFare','note']) },
     { name:'Reissue', fields: COMMON_FIELDS.concat(['oldTkt','newTkt','sector','code','fareDiff','airlineCharge','svc','totalCollection','note']) },
-    { name:'Refund', fields: COMMON_FIELDS.concat(['oldTkt','refundType','refTotalFare','usedSegmentFare','refTotalTax','refNonRefundTax','airlineCharge','commissionAdj','refundableFare','refundableTax','airlineRefund','svcApplied','svc','refundCharge','taxRefund','refundStatus','adjustmentGiven','adjustmentAmount','note']) },
+    { name:'Refund', fields: COMMON_FIELDS.concat(['oldTkt','refundType','refTotalFare','usedSegmentFare','usedSegmentTax','refTotalTax','refNonRefundTax','airlineCharge','commissionAdj','refundableFare','refundableTax','airlineRefund','svcApplied','svc','refundCharge','taxRefund','refundStatus','adjustmentGiven','adjustmentAmount','note']) },
     { name:'Void', fields: COMMON_FIELDS.concat(['oldTkt','airlineCharge','svc','refundCharge','note']) },
   ];
 
@@ -3113,8 +3235,10 @@
   // ---- Live Cloud Sync (Firebase Firestore + Auth) — works on any device, any browser ----
   const CLOUD_CONFIG_KEY = 'wrd_cloud_config_v1';
   const CLOUD_COLLECTION = 'work_record_entries';
+  const SALES_COLLECTION = 'work_record_sales';
   let cloudDb = null;
   let cloudUnsub = null;
+  let salesCloudUnsub = null;
   let cloudAuthUser = null;
   let cloudPendingConfig = null;
 
@@ -3186,6 +3310,15 @@
     return full;
   }
 
+  // ---- Revenue Desk (sales) cloud sync — same pattern as the entries log above ----
+  const SALES_FIELD_ORDER = ['date','pname','paxAdult','paxChild','paxInfant','phone','responsible','tkt','pnrGds','pnrAirline','sector','airline','price','cost','profit','method','paid','due','status','dueDate','note'];
+  function expandSalesCloudDoc(id, data){
+    const full = {};
+    SALES_FIELD_ORDER.forEach(f => { full[f] = (data[f] !== undefined ? data[f] : ''); });
+    full._id = id;
+    return full;
+  }
+
   function subscribeCloud(){
     if(!cloudDb) return;
     if(cloudUnsub) cloudUnsub();
@@ -3214,6 +3347,36 @@
     }, (err) => {
       console.error('Cloud sync error', err);
       toast('Cloud sync interrupted — check your internet connection or that you\'re still signed in.');
+    });
+  }
+
+  function subscribeSalesCloud(){
+    if(!cloudDb) return;
+    if(salesCloudUnsub) salesCloudUnsub();
+    salesCloudUnsub = cloudDb.collection(SALES_COLLECTION).onSnapshot((snap) => {
+      const list = [];
+      snap.forEach(doc => list.push(expandSalesCloudDoc(doc.id, doc.data())));
+
+      if(snap.empty && salesEntries.length > 0 && !cloudDb.__salesMigrated){
+        cloudDb.__salesMigrated = true;
+        if(confirm('Your cloud database has no Revenue Desk sales yet, but this browser has ' + salesEntries.length + ' saved sale(s). Upload them to the cloud now?')){
+          const batch = cloudDb.batch();
+          salesEntries.forEach(s => {
+            const id = s._id || (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(16).slice(2));
+            batch.set(cloudDb.collection(SALES_COLLECTION).doc(id), trimForCloud(Object.assign({}, s, { _id: id })));
+          });
+          batch.commit().catch(err => { console.error('Sales migration failed', err); toast('Could not upload existing sales to the cloud.'); });
+          return; // the commit will trigger another snapshot with the real data
+        }
+      }
+
+      list.sort((a,b) => (b.date||'').localeCompare(a.date||''));
+      salesEntries = list;
+      persistSales();
+      renderSales();
+    }, (err) => {
+      console.error('Sales cloud sync error', err);
+      toast('Revenue Desk cloud sync interrupted — check your internet connection or that you\'re still signed in.');
     });
   }
 
@@ -3292,10 +3455,12 @@
             localStorage.setItem(CLOUD_CONFIG_KEY, JSON.stringify(config));
             setCloudStatus('connected');
             subscribeCloud();
+            subscribeSalesCloud();
             armInactivityWatch();
           } else {
             cloudDb = null;
             if(cloudUnsub){ cloudUnsub(); cloudUnsub = null; }
+            if(salesCloudUnsub){ salesCloudUnsub(); salesCloudUnsub = null; }
             setCloudStatus('idle');
             $('cloud-auth-error').textContent = '';
             $('cloud-auth-modal-backdrop').style.display = 'flex';
@@ -3316,6 +3481,7 @@
 
   function disconnectCloud(){
     if(cloudUnsub){ cloudUnsub(); cloudUnsub = null; }
+    if(salesCloudUnsub){ salesCloudUnsub(); salesCloudUnsub = null; }
     cloudDb = null;
     cloudAuthUser = null;
     localStorage.removeItem(CLOUD_CONFIG_KEY);
@@ -3676,7 +3842,11 @@
       const fareRow = $('refund-fare-row');
       const taxRow = $('refund-tax-row');
       const airlineLabel = $('f-airline-f-label');
-      const advancedToggle = $('btn-refund-advanced');
+      const step1 = $('refund-step1-total');
+      const step2 = $('refund-step2-penalty');
+      const step4 = $('refund-step4-deductions');
+      const step5 = $('refund-step5-result');
+      const advancedRow = $('refund-advanced-row');
       const svcLabel = $('f-svc-f-label-text');
       const calcOutRow = $('refund-calcout-row');
       const airlineRefundRow = $('refund-airlinerefund-row');
@@ -3693,8 +3863,11 @@
         fareRow.style.display = 'none';
         taxRow.style.display = 'none';
         airlineLabel.textContent = 'Airline Charge';
-        advancedToggle.style.display = 'none';
-        showRefundAdvanced(false);
+        step1.style.display = 'none';
+        step2.style.display = 'none';
+        step4.style.display = 'none';
+        step5.style.display = 'none';
+        advancedRow.style.display = 'none';
         svcLabel.textContent = 'Service Charge';
         calcOutRow.style.display = 'none';
         airlineRefundRow.style.display = 'none';
@@ -3721,7 +3894,11 @@
         fareRow.style.display = 'grid';
         taxRow.style.display = 'grid';
         airlineLabel.textContent = 'Airline Refund/Cancellation Fee';
-        advancedToggle.style.display = 'inline-flex';
+        step1.style.display = 'flex';
+        step2.style.display = 'flex';
+        step4.style.display = 'flex';
+        step5.style.display = 'flex';
+        advancedRow.style.display = 'grid';
         svcLabel.textContent = 'Agency Service Charge';
         calcOutRow.style.display = 'flex';
         airlineRefundRow.style.display = 'flex';
@@ -3747,18 +3924,8 @@
     applyTypeStyling(type);
   }
 
-  // ---- Refund: "advanced" fields (Non-Refundable Tax / Commission Adjustment) are
-  // collapsed by default since they're 0 in most day-to-day refunds. ----
-  function showRefundAdvanced(show){
-    $('refund-advanced-row').style.display = show ? 'grid' : 'none';
-    $('btn-refund-advanced').textContent = show
-      ? '− Hide non-refundable tax / commission adjustment'
-      : '+ Non-refundable tax / commission adjustment';
-  }
-  $('btn-refund-advanced').addEventListener('click', () => {
-    const isOpen = $('refund-advanced-row').style.display !== 'none';
-    showRefundAdvanced(!isOpen);
-  });
+  // ---- Refund: Steps 1–5 always visible now (no collapse) — Step 4 (Deductions)
+  // used to be a collapsible "advanced" row; it's now a plain, always-visible step.
 
   // ---- Refund Type → dynamic field visibility ----
   // Full Refund (Unused Ticket) / Full Refund (Unused Ticket + Airline Charge): fare + tax, no used-segment.
@@ -3767,26 +3934,26 @@
   function applyRefundTypeFields(){
     const mode = $('f-mode-f').value;
     const totalFareWrap = $('refund-totalfare-wrap');
-    const usedSegWrap = $('refund-usedseg-wrap');
+    const step3 = $('refund-step3-usedseg');
+    const usedSegRow = $('refund-usedseg-wrap-row');
+    const usedSegTotalWrap = $('refund-usedsegtotal-wrap');
+    const calcBox = $('refund-calcbox');
     const commissionWrap = $('refund-commission-wrap');
+    const isPartial = (mode === 'PARTIAL');
+
+    step3.style.display = isPartial ? 'flex' : 'none';
+    usedSegRow.style.display = isPartial ? 'grid' : 'none';
+    usedSegTotalWrap.style.display = isPartial ? 'block' : 'none';
+    calcBox.style.display = isPartial ? 'block' : 'none';
 
     if(mode === 'TAX_ONLY'){
       totalFareWrap.style.display = 'none';
-      usedSegWrap.style.display = 'none';
       const hasCommission = (parseFloat($('f-commission-f').value) || 0) !== 0;
       commissionWrap.style.display = hasCommission ? 'block' : 'none';
-      $('refund-partial-breakdown').style.display = 'none';
-    } else if(mode === 'PARTIAL'){
-      totalFareWrap.style.display = 'block';
-      usedSegWrap.style.display = 'block';
-      commissionWrap.style.display = 'block';
-      $('refund-partial-breakdown').style.display = 'block';
     } else {
-      // FULL_UNUSED, FULL_UNUSED_CHARGE, or not yet selected
+      // PARTIAL, FULL_UNUSED, FULL_UNUSED_CHARGE, or not yet selected
       totalFareWrap.style.display = 'block';
-      usedSegWrap.style.display = 'none';
       commissionWrap.style.display = 'block';
-      $('refund-partial-breakdown').style.display = 'none';
     }
   }
   $('f-mode-f').addEventListener('change', () => {
@@ -3969,60 +4136,70 @@
 
     const baseFare = parseFloat($('f-refbasefare-f').value) || 0;
     const totalTax = parseFloat($('f-reftotaltax-f').value) || 0;
-    // Base Fare + Tax = Total Fare is just the ticket's face-value total (kept for
-    // audit/export only) — the airline refund math below always uses Fare and Tax
-    // as separate terms, per Refundable Fare + Refundable Tax − Fee − Commission.
-    let nonRefundTax = parseFloat($('f-nonrefundtax-f').value) || 0;
-    if(nonRefundTax < 0){ nonRefundTax = 0; $('f-nonrefundtax-f').value = 0; }
-    if(nonRefundTax > totalTax){ nonRefundTax = totalTax; $('f-nonrefundtax-f').value = nonRefundTax; }
     const airlineFee = parseFloat($('f-airline-f').value) || 0;
     const commission = (mode === 'TAX_ONLY') ? 0 : (parseFloat($('f-commission-f').value) || 0);
 
-    const refundableTax = totalTax - nonRefundTax;
+    // Raw values exactly as typed — never overwritten while the user is still typing.
+    // (Previously these fields force-corrected themselves on every keystroke, which
+    // silently reset the value to 0 whenever Base Fare/Tax hadn't been filled in yet
+    // or was smaller than what was being typed — making it look like the field
+    // "wouldn't accept" a fare or amount at all.)
+    const nonRefundTaxRaw = parseFloat($('f-nonrefundtax-f').value) || 0;
+    const usedSegRaw = parseFloat($('f-usedseg-f').value) || 0;
+    const usedSegTaxRaw = parseFloat($('f-usedsegtax-f').value) || 0;
+
+    // Clamped copies used only for the math — the inputs themselves are left alone.
+    const nonRefundTax = Math.min(Math.max(nonRefundTaxRaw, 0), totalTax);
+    const usedSeg = Math.min(Math.max(usedSegRaw, 0), baseFare);
+    const usedSegTax = Math.min(Math.max(usedSegTaxRaw, 0), totalTax);
+
     let refundableFare = 0;
+    let refundableTax = 0;
     let airlineRefund = 0;
+    let overLimit = false;
 
     if(mode === 'TAX_ONLY'){
       refundableFare = 0;
+      refundableTax = totalTax - nonRefundTax;
       airlineRefund = refundableTax - airlineFee;
+      overLimit = nonRefundTaxRaw > totalTax || nonRefundTaxRaw < 0;
     } else if(mode === 'PARTIAL'){
-      let usedSeg = parseFloat($('f-usedseg-f').value) || 0;
-      if(usedSeg < 0){ usedSeg = 0; $('f-usedseg-f').value = 0; }
-      // Only cap against Base Fare once Base Fare actually has a value — otherwise
-      // (e.g. Used Segment Fare gets typed before Base Fare) this was silently
-      // resetting whatever was typed back to 0, making the field feel broken.
-      if(baseFare > 0 && usedSeg > baseFare){ usedSeg = baseFare; $('f-usedseg-f').value = usedSeg; }
+      // Used Segment Base Fare + Used Segment Tax = Total Used Segment Fare — the
+      // portion of the ticket already flown, which isn't refundable.
       refundableFare = baseFare - usedSeg;
+      refundableTax = totalTax - usedSegTax - nonRefundTax;
       airlineRefund = refundableFare + refundableTax - airlineFee - commission;
+      overLimit = usedSegRaw > baseFare || usedSegRaw < 0 || usedSegTaxRaw > totalTax || usedSegTaxRaw < 0;
+      $('refund-usedsegtotal-f').value = (usedSegRaw + usedSegTaxRaw).toFixed(2);
+
+      // Reference hint: the full fare, for when the whole segment (not just part) was used.
+      const fullFareRef = baseFare + totalTax;
+      $('refund-usedseg-reference').style.display = fullFareRef > 0 ? 'block' : 'none';
+      $('refund-usedseg-reference-val').textContent = fullFareRef.toFixed(2);
+
+      // Live calculation preview
+      $('calcbox-basefare').textContent = baseFare.toFixed(2);
+      $('calcbox-usedseg').textContent = usedSegRaw.toFixed(2);
+      $('calcbox-reffare').textContent = refundableFare.toFixed(2);
+      $('calcbox-tax').textContent = totalTax.toFixed(2);
+      $('calcbox-nonrefundtax').textContent = (usedSegTaxRaw + nonRefundTaxRaw).toFixed(2);
+      $('calcbox-reftax').textContent = refundableTax.toFixed(2);
     } else {
-      // FULL_UNUSED / FULL_UNUSED_CHARGE (airline fee is simply 0 for the plain unused case)
+      // FULL_UNUSED / FULL_UNUSED_CHARGE
       refundableFare = baseFare;
+      refundableTax = totalTax - nonRefundTax;
       airlineRefund = refundableFare + refundableTax - airlineFee - commission;
+      overLimit = nonRefundTaxRaw > totalTax || nonRefundTaxRaw < 0;
     }
+    if(refundableTax < 0) refundableTax = 0;
 
     $('f-refoutfare-f').value = refundableFare.toFixed(2);
     $('f-refouttax-f').value = refundableTax.toFixed(2);
     $('refund-refoutfare-display').textContent = refundableFare.toFixed(2);
     $('refund-refouttax-display').textContent = refundableTax.toFixed(2);
-
-    // Live "Partial Refund Calculation" equation strip
-    if(mode === 'PARTIAL'){
-      const usedSegNow = parseFloat($('f-usedseg-f').value) || 0;
-      $('pr-basefare-display').textContent = baseFare.toFixed(2);
-      $('pr-usedseg-display').textContent = usedSegNow.toFixed(2);
-      $('pr-fare-display').textContent = refundableFare.toFixed(2);
-      $('pr-tax-display').textContent = totalTax.toFixed(2);
-      $('pr-nonrefundtax-display').textContent = nonRefundTax.toFixed(2);
-      $('pr-taxout-display').textContent = refundableTax.toFixed(2);
-      // Purely informational — Base Fare + Tax is shown as a reference/default,
-      // never written into the Used Segment Fare field automatically. The person
-      // can click "Use this value" to copy it in manually if they want it.
-      const refEl = $('usedseg-reference-value');
-      if(refEl) refEl.textContent = (baseFare + totalTax).toFixed(2);
-    }
     $('f-airlinerefund-f').value = airlineRefund.toFixed(2);
     $('f-tax-f').value = refundableTax.toFixed(2);
-    $('refund-negative-warning').style.display = (airlineRefund < 0) ? 'block' : 'none';
+    $('refund-negative-warning').style.display = (airlineRefund < 0 || overLimit) ? 'block' : 'none';
 
     // Agency Service Charge is just a plain amount box now — type a number to apply it, leave at 0 to skip.
     const svcAmt = parseFloat($('f-svc-f').value) || 0;
@@ -4032,17 +4209,13 @@
   document.querySelectorAll('.ptc-refund-calc').forEach(el => {
     el.addEventListener('input', recalcRefund);
   });
-  // Manual, explicit action only — clicking this is the ONLY way Used Segment Fare
-  // ever gets set from Base Fare + Tax. It is never auto-filled just by typing
-  // Base Fare, so the person's own entered amount is never silently overwritten.
-  if($('btn-usedseg-use-reference')){
-    $('btn-usedseg-use-reference').addEventListener('click', () => {
-      const baseFare = parseFloat($('f-refbasefare-f').value) || 0;
-      const totalTax = parseFloat($('f-reftotaltax-f').value) || 0;
-      $('f-usedseg-f').value = (baseFare + totalTax).toFixed(2);
-      recalcRefund();
-    });
-  }
+  // Quick-fill: "the whole segment's fare was used" — copies Base Fare/Tax straight
+  // into Used Segment Base Fare/Tax so nothing is refundable from that segment.
+  $('btn-usedseg-use-reference').addEventListener('click', () => {
+    $('f-usedseg-f').value = ($('f-refbasefare-f').value || '0');
+    $('f-usedsegtax-f').value = ($('f-reftotaltax-f').value || '0');
+    recalcRefund();
+  });
   // ---- Refund: Adjustment Given toggle — a record-keeping flag only (instead of a cash refund,
   // the client refund was held/adjusted against a future booking). It does NOT alter the
   // calculated Airline Refund or Client Refund / Adjustment amounts above. ----
@@ -4130,6 +4303,7 @@
 
       const baseFare = Number(num('f-refbasefare-f')) || 0;
       const usedSeg = Number(num('f-usedseg-f')) || 0;
+      const usedSegTax = Number(num('f-usedsegtax-f')) || 0;
       const totalTax = Number(num('f-reftotaltax-f')) || 0;
       const totalFare = baseFare + totalTax; // Base Fare + Tax = Total Fare — kept for audit/export only
       const nonRefundTax = Number(num('f-nonrefundtax-f')) || 0;
@@ -4139,25 +4313,31 @@
 
       // AIRLINE CALCULATION (never mixed with the agency service charge below).
       // Uses Fare and Tax as separate terms — never the blended Base Fare + Tax total.
-      const refundableTax = totalTax - nonRefundTax;
       let refundableFare = 0;
+      let refundableTax = 0;
       let airlineRefund = 0;
       if(mode === 'TAX_ONLY'){
         refundableFare = 0;
+        refundableTax = totalTax - nonRefundTax;
         airlineRefund = refundableTax - airlineFee;
       } else if(mode === 'PARTIAL'){
+        // Used Segment Base Fare + Used Segment Tax = Total Used Segment Fare (already flown, not refundable)
         refundableFare = baseFare - usedSeg;
+        refundableTax = totalTax - usedSegTax - nonRefundTax;
         airlineRefund = refundableFare + refundableTax - airlineFee - commission;
       } else {
         // FULL_UNUSED / FULL_UNUSED_CHARGE
         refundableFare = baseFare;
+        refundableTax = totalTax - nonRefundTax;
         airlineRefund = refundableFare + refundableTax - airlineFee - commission;
       }
+      if(refundableTax < 0) refundableTax = 0;
       const clientRefund = airlineRefund - svcAmt; // agency service charge applied only here
 
       base.refBaseFare = (mode === 'TAX_ONLY') ? '' : baseFare;
       base.refTotalFare = (mode === 'TAX_ONLY') ? '' : totalFare;
       base.usedSegmentFare = (mode === 'PARTIAL') ? usedSeg : '';
+      base.usedSegmentTax = (mode === 'PARTIAL') ? usedSegTax : '';
       base.refTotalTax = totalTax;
       base.refNonRefundTax = nonRefundTax;
       base.airlineCharge = airlineFee; // Airline Refund/Cancellation Fee
@@ -4421,7 +4601,7 @@
      'f-newtkt-t','f-sector-t','f-basefare-t','f-taxfare-t','f-markup-t','f-atp-t','f-markupamt-t',
      'f-oldtkt-r','f-newtkt-r','f-sector-r','f-code-r','f-faredif-r','f-airline-r','f-svc-r',
      'f-oldtkt-f','f-airline-f','f-svc-f','f-charge-f','f-tax-f','f-adjamt-f',
-     'f-refbasefare-f','f-usedseg-f','f-reftotaltax-f','f-nonrefundtax-f','f-commission-f',
+     'f-refbasefare-f','f-usedseg-f','f-usedsegtax-f','f-reftotaltax-f','f-nonrefundtax-f','f-commission-f',
      'f-refoutfare-f','f-refouttax-f','f-airlinerefund-f'
     ].forEach(id => { const el = $(id); if(el) el.value = ''; });
     if(entryNewTktChips) entryNewTktChips.setTickets([]);
@@ -4547,14 +4727,13 @@
       }
       setVal('f-refbasefare-f', baseFareVal);
       setVal('f-usedseg-f', e.usedSegmentFare);
+      setVal('f-usedsegtax-f', e.usedSegmentTax);
       setVal('f-reftotaltax-f', e.refTotalTax);
       const nonRefundTaxVal = (e.refNonRefundTax !== '' && e.refNonRefundTax !== undefined && e.refNonRefundTax !== null) ? e.refNonRefundTax : 0;
       const commissionVal = (e.commissionAdj !== '' && e.commissionAdj !== undefined && e.commissionAdj !== null) ? e.commissionAdj : 0;
       setVal('f-nonrefundtax-f', nonRefundTaxVal);
       setVal('f-airline-f', (e.airlineCharge !== '' && e.airlineCharge !== undefined && e.airlineCharge !== null) ? e.airlineCharge : 0);
       setVal('f-commission-f', commissionVal);
-      // Auto-expand the advanced row so an existing non-zero value isn't hidden from view.
-      showRefundAdvanced((parseFloat(nonRefundTaxVal) || 0) !== 0 || (parseFloat(commissionVal) || 0) !== 0);
 
       setVal('f-svc-f', e.svc);
 
@@ -4728,7 +4907,7 @@
   const FIELD_ORDER = ['date','pnrGds','pnrAirline','pname','pnum','ptype','platform','airline','txn','oldTkt','newTkt','sector',
                        'baseFare','taxFare','airlineTicketPrice','discount','markUp','markupAmount','totalFare',
                        'fareDiff','airlineCharge','svc','totalCollection','payableFare',
-                       'refTotalFare','usedSegmentFare','refTotalTax','refNonRefundTax','commissionAdj','svcApplied',
+                       'refTotalFare','usedSegmentFare','usedSegmentTax','refTotalTax','refNonRefundTax','commissionAdj','svcApplied',
                        'refundableFare','refundableTax','airlineRefund',
                        'refundCharge','taxRefund','refundType','refundStatus','adjustmentGiven','adjustmentAmount',
                        'code','note','createdAt','editedAt'];
@@ -4742,7 +4921,7 @@
     'TOTAL FARE':'totalFare','CUSTOMER SELLING PRICE':'totalFare',
     'FARE DIFFERENCE':'fareDiff','AIRLINE CHARGE':'airlineCharge','SERVICE CHARGE':'svc','TOTAL COLLECTION':'totalCollection',
     'TICKET PAYABLE FARE':'payableFare','TICKET PAYABLE FARE (LEGACY)':'payableFare',
-    'REFUND TOTAL FARE':'refTotalFare','USED SEGMENT FARE':'usedSegmentFare','REFUND TOTAL TAX':'refTotalTax',
+    'REFUND TOTAL FARE':'refTotalFare','USED SEGMENT FARE':'usedSegmentFare','USED SEGMENT TAX':'usedSegmentTax','REFUND TOTAL TAX':'refTotalTax',
     'NON-REFUNDABLE TAX':'refNonRefundTax','COMMISSION ADJUSTMENT':'commissionAdj','SERVICE CHARGE APPLIED':'svcApplied',
     'REFUNDABLE FARE':'refundableFare','REFUNDABLE TAX':'refundableTax','AIRLINE REFUND':'airlineRefund',
     'REFUND CHARGE':'refundCharge','CLIENT REFUND / ADJUSTMENT':'refundCharge',
@@ -4752,7 +4931,7 @@
   };
   const NUMERIC_FIELDS = ['baseFare','taxFare','airlineTicketPrice','discount','markUp','markupAmount','totalFare','fareDiff',
                           'airlineCharge','svc','totalCollection','payableFare',
-                          'refTotalFare','usedSegmentFare','refTotalTax','refNonRefundTax','commissionAdj',
+                          'refTotalFare','usedSegmentFare','usedSegmentTax','refTotalTax','refNonRefundTax','commissionAdj',
                           'refundableFare','refundableTax','airlineRefund',
                           'refundCharge','taxRefund','adjustmentAmount'];
 
@@ -4973,9 +5152,11 @@
         const barPct = pct > 0 ? Math.max(1.5, Math.min(100, pct)) : 0;
         return `
           <div class="ptc-contrib-row">
-            <span class="ptc-contrib-name"><span class="ptc-fare-dot" style="background:${tagColor[t]}"></span>${t}</span>
+            <span class="ptc-contrib-name" tabindex="0"><span class="ptc-fare-dot" style="background:${tagColor[t]}"></span>${t}
+              <span class="ptc-contrib-tooltip">${fmtImpactMoney(byType[t].value)} · ${byType[t].count} txn</span>
+            </span>
             <div class="ptc-contrib-track"><div class="ptc-contrib-fill" style="width:${barPct.toFixed(1)}%; background-color:${tagColor[t]};"></div></div>
-            <span class="ptc-contrib-amt"><b>${pct.toFixed(1)}%</b> · ${fmtImpactMoney(byType[t].value)} · ${byType[t].count} txn</span>
+            <span class="ptc-contrib-amt"><b>${pct.toFixed(1)}%</b></span>
           </div>
         `;
       }).join('');
@@ -5405,16 +5586,18 @@
     const now = new Date();
     const monthKey = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
     const thisMonth = entries.filter(e => (e.date||'').slice(0,7) === monthKey);
-    let ticketingValue = 0, reissueValue = 0, refundValue = 0, pendingRefunds = 0;
+    let ticketingValue = 0, reissueValue = 0, refundValue = 0, pendingRefunds = 0, agencyEarnings = 0;
     entries.forEach(e => {
       if(e.txn === 'Ticketing') ticketingValue += Number(e.totalFare)||0;
       if(e.txn === 'Reissue') reissueValue += Number(e.totalCollection)||0;
       if(e.txn === 'Refund'){ refundValue += Number(e.refundCharge)||0; if(e.refundStatus === 'PENDING') pendingRefunds++; }
+      agencyEarnings += entryEarnings(e); // markup (Ticketing) + service charge (Reissue/Refund/Void) — the company's actual take
     });
     const kpis = [
       { label:'Total Entries', value: totalEntries, sub: thisMonth.length + ' this month', color:'var(--booking)' },
       { label:'Ticketing Value', value: fmtK(ticketingValue), sub:'Total fare collected', color:'var(--booking)' },
       { label:'Reissue Collection', value: fmtK(reissueValue), sub:'Fare diff + charges', color:'var(--reissue)' },
+      { label:'Agency Earnings', value: fmtK(agencyEarnings), sub:'Markup + service charges', color:'#1E7A46' },
       { label:'Pending Refunds', value: pendingRefunds, sub: fmtK(refundValue) + ' total refund value', color:'var(--refund)' },
     ];
     $('ptc-kpi-grid').innerHTML = kpis.map(k => `
@@ -5647,6 +5830,22 @@
       const raw = localStorage.getItem(SALES_STORE_KEY);
       if(raw){ salesEntries = JSON.parse(raw); }
     }catch(err){ salesEntries = []; }
+  }
+
+  // Removes the sale at index i, deleting from the cloud too when connected —
+  // shared by both the detail-card and table-row delete buttons.
+  function deleteSaleAt(i){
+    const target = salesEntries[i];
+    if(isCloudConnected() && target && target._id){
+      cloudDb.collection(SALES_COLLECTION).doc(target._id).delete()
+        .then(() => toast('Sale removed — synced to the cloud'))
+        .catch(err => { console.error(err); toast('Cloud delete failed — check your connection.'); });
+      return;
+    }
+    salesEntries.splice(i, 1);
+    persistSales();
+    renderSales();
+    toast('Sale removed');
   }
 
   function collectSale(){
@@ -5891,10 +6090,7 @@
         const i = parseInt(btn.getAttribute('data-idx'), 10);
         if(salesEditingIndex === i){ stopSaleEdit(); clearSaleForm(); }
         else if(salesEditingIndex !== null && i < salesEditingIndex){ salesEditingIndex -= 1; }
-        salesEntries.splice(i, 1);
-        persistSales();
-        renderSales();
-        toast('Sale removed');
+        deleteSaleAt(i);
       });
     });
   }
@@ -5902,6 +6098,8 @@
   function renderSalesCharts(){
     const chartsAvailable = (typeof Chart !== 'undefined');
     if(!chartsAvailable) return;
+    const wrap = $('sales-charts-wrap');
+    if(wrap && wrap.style.display === 'none') return; // skip rendering into a hidden canvas — re-runs when the wrap is shown
     const now = new Date();
 
     // ---- Revenue trend (last 6 months): total sold vs. total collected ----
@@ -6035,10 +6233,7 @@
         const i = parseInt(btn.getAttribute('data-idx'), 10);
         if(salesEditingIndex === i){ stopSaleEdit(); clearSaleForm(); }
         else if(salesEditingIndex !== null && i < salesEditingIndex){ salesEditingIndex -= 1; }
-        salesEntries.splice(i, 1);
-        persistSales();
-        renderSales();
-        toast('Sale removed');
+        deleteSaleAt(i);
       });
     });
     tbody.querySelectorAll('.ptc-sales-edit').forEach(btn => {
@@ -6106,6 +6301,19 @@
     const sale = collectSale();
     const err = validateSale(sale);
     if(err){ toast(err); return; }
+
+    if(isCloudConnected()){
+      const wasEditing = salesEditingIndex !== null;
+      const existing = wasEditing ? salesEntries[salesEditingIndex] : null;
+      sale._id = existing && existing._id ? existing._id : (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(16).slice(2));
+      if(wasEditing) stopSaleEdit();
+      clearSaleForm();
+      cloudDb.collection(SALES_COLLECTION).doc(sale._id).set(trimForCloud(sale))
+        .then(() => toast(wasEditing ? 'Sale updated — synced to the cloud' : 'Sale added — synced to the cloud'))
+        .catch(err2 => { console.error(err2); toast('Cloud save failed — check your connection.'); });
+      return;
+    }
+
     if(salesEditingIndex !== null){
       salesEntries[salesEditingIndex] = sale;
       toast('Sale updated');
@@ -6125,13 +6333,45 @@
   $('btn-sales-clear-all').addEventListener('click', () => {
     if(!salesEntries.length) return;
     if(!confirm('Remove all sales entries? This cannot be undone.')) return;
-    salesEntries = [];
     salesEditingIndex = null;
     stopSaleEdit();
+
+    if(isCloudConnected()){
+      const batch = cloudDb.batch();
+      salesEntries.forEach(s => { if(s._id) batch.delete(cloudDb.collection(SALES_COLLECTION).doc(s._id)); });
+      batch.commit()
+        .then(() => toast('All sales cleared — synced to the cloud'))
+        .catch(err => { console.error(err); toast('Cloud clear failed — check your connection.'); });
+      return;
+    }
+
+    salesEntries = [];
     persistSales();
     renderSales();
     toast('All sales cleared');
   });
+
+  // ---- Revenue Trend / Payment Status Mix are hidden by default (declutters the
+  // Revenue Desk) — this toggle reveals them on demand and remembers the choice. ----
+  const SALES_CHARTS_VISIBLE_KEY = 'wrd_sales_charts_visible_v1';
+  function setSalesChartsVisible(visible){
+    const wrap = $('sales-charts-wrap');
+    const btn = $('btn-toggle-sales-charts');
+    if(!wrap || !btn) return;
+    wrap.style.display = visible ? '' : 'none';
+    btn.textContent = visible ? '📊 Hide Charts' : '📊 Show Charts';
+    if(visible) renderSalesCharts();
+    try{ localStorage.setItem(SALES_CHARTS_VISIBLE_KEY, visible ? '1' : '0'); }catch(err){}
+  }
+  $('btn-toggle-sales-charts').addEventListener('click', () => {
+    const wrap = $('sales-charts-wrap');
+    setSalesChartsVisible(wrap.style.display === 'none');
+  });
+  (function initSalesChartsVisibility(){
+    let saved = '0';
+    try{ saved = localStorage.getItem(SALES_CHARTS_VISIBLE_KEY) || '0'; }catch(err){}
+    setSalesChartsVisible(saved === '1');
+  })();
 
   $('btn-sales-export').addEventListener('click', () => {
     if(typeof XLSX === 'undefined'){ toast('Export library failed to load — check your internet connection.'); return; }
