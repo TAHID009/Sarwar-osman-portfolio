@@ -321,62 +321,54 @@
   .ptc-refund-step:first-of-type{ margin-top: 8px; }
   .ptc-refund-step-title{ font-size:11.5px; text-transform:uppercase; letter-spacing:1px; font-weight:800; color:var(--muted); }
 
+  .ptc-refund-calc-chev{ display:inline-block; transition: transform .15s ease; }
+  #btn-toggle-refund-calc.ptc-open .ptc-refund-calc-chev{ transform: rotate(90deg); }
+
   .ptc-refund-calc-panel{
-    background: #fff;
+    background: var(--card);
     border: 1px solid var(--line);
-    border-radius: 10px;
-    margin-bottom: 14px;
-    overflow: hidden;
+    border-radius: 12px;
+    padding: 2px 16px;
+    margin: 6px 0 14px;
   }
-  .ptc-refund-calc-toggle{
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    background: var(--refund-soft);
-    border: none;
-    padding: 10px 14px;
-    cursor: pointer;
-    font-size: 12px;
-    font-weight: 800;
-    letter-spacing: .3px;
-    color: var(--refund);
-    text-align: left;
-  }
-  .ptc-refund-calc-chev{ font-size: 11px; transition: transform .15s ease; }
-  .ptc-refund-calc-panel.ptc-open .ptc-refund-calc-chev{ transform: rotate(180deg); }
-  .ptc-refund-calc-body{ display: none; padding: 4px 16px 12px; }
-  .ptc-refund-calc-panel.ptc-open .ptc-refund-calc-body{ display: block; }
   .ptc-refund-calc-line{
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 14px;
-    padding: 10px 0;
-    border-top: 1px dashed var(--line);
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: 100px 1fr auto;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
   }
-  .ptc-refund-calc-line:first-child{ border-top: none; }
+  .ptc-refund-calc-line + .ptc-refund-calc-line{ border-top: 1px solid var(--line); }
   .ptc-refund-calc-label{
-    font-size: 11.5px;
+    font-size: 11px;
     text-transform: uppercase;
     letter-spacing: .5px;
     font-weight: 700;
     color: var(--muted);
-    flex-shrink: 0;
   }
   .ptc-refund-calc-formula{
     font-family: 'SFMono-Regular', ui-monospace, monospace;
-    font-size: 13.5px;
+    font-size: 13px;
     color: var(--ink-soft);
     text-align: right;
   }
-  .ptc-refund-calc-formula b{ color: var(--ink); font-weight: 700; }
-  .ptc-refund-calc-formula .ptc-refund-calc-result{
-    color: var(--accent);
+  .ptc-refund-calc-formula .op{ color: var(--muted); margin: 0 4px; }
+  .ptc-refund-calc-formula b{ color: var(--ink); font-weight: 600; }
+  .ptc-refund-calc-result{
+    font-family: 'SFMono-Regular', ui-monospace, monospace;
+    font-size: 13.5px;
     font-weight: 800;
-    font-size: 14.5px;
+    color: var(--accent);
+    background: var(--accent-soft);
+    border-radius: 999px;
+    padding: 5px 13px;
+    text-align: right;
+    min-width: 76px;
+  }
+  @media (max-width: 560px){
+    .ptc-refund-calc-line{ grid-template-columns: 1fr; gap: 4px; padding: 10px 0; }
+    .ptc-refund-calc-formula, .ptc-refund-calc-result{ text-align: left; }
+    .ptc-refund-calc-result{ display: inline-block; }
   }
 
   .ptc-section-label{
@@ -2195,19 +2187,20 @@
           <input type="text" id="refund-usedsegtotal-f" class="mono" readonly style="background:var(--refund-soft); font-weight:700; cursor:default;" value="0.00" />
         </div>
 
-        <div class="ptc-refund-calc-panel" id="refund-calc-panel" style="display:none;">
-          <button type="button" class="ptc-refund-calc-toggle" id="btn-toggle-refund-calc">
-            <span>🧮 Calculation Breakdown</span>
-            <span class="ptc-refund-calc-chev" id="refund-calc-chev">▾</span>
+        <div id="refund-calc-wrap" style="display:none;">
+          <button type="button" class="ptc-link-toggle" id="btn-toggle-refund-calc">
+            <span class="ptc-refund-calc-chev" id="refund-calc-chev">▸</span> Show calculation
           </button>
-          <div class="ptc-refund-calc-body" id="refund-calc-body">
+          <div class="ptc-refund-calc-panel" id="refund-calc-panel" style="display:none;">
             <div class="ptc-refund-calc-line">
               <span class="ptc-refund-calc-label">Refundable Fare</span>
-              <span class="ptc-refund-calc-formula"><b id="calc-basefare">0.00</b> − <b id="calc-usedseg">0.00</b> = <b class="ptc-refund-calc-result" id="calc-reffare">0.00</b></span>
+              <span class="ptc-refund-calc-formula"><b id="calc-basefare">0.00</b><span class="op">−</span><b id="calc-usedseg">0.00</b></span>
+              <span class="ptc-refund-calc-result" id="calc-reffare">0.00</span>
             </div>
             <div class="ptc-refund-calc-line">
               <span class="ptc-refund-calc-label">Refundable Tax</span>
-              <span class="ptc-refund-calc-formula"><b id="calc-tax">0.00</b> − <b id="calc-usedsegtax">0.00</b> − <b id="calc-nonrefund">0.00</b> = <b class="ptc-refund-calc-result" id="calc-reftax">0.00</b></span>
+              <span class="ptc-refund-calc-formula"><b id="calc-tax">0.00</b><span class="op">−</span><b id="calc-usedsegtax">0.00</b><span class="op">−</span><b id="calc-nonrefund">0.00</b></span>
+              <span class="ptc-refund-calc-result" id="calc-reftax">0.00</span>
             </div>
           </div>
         </div>
@@ -3917,14 +3910,14 @@
     const step3 = $('refund-step3-usedseg');
     const usedSegRow = $('refund-usedseg-wrap-row');
     const usedSegTotalWrap = $('refund-usedsegtotal-wrap');
-    const calcPanel = $('refund-calc-panel');
+    const calcWrap = $('refund-calc-wrap');
     const commissionWrap = $('refund-commission-wrap');
     const isPartial = (mode === 'PARTIAL');
 
     step3.style.display = isPartial ? 'flex' : 'none';
     usedSegRow.style.display = isPartial ? 'grid' : 'none';
     usedSegTotalWrap.style.display = isPartial ? 'block' : 'none';
-    calcPanel.style.display = isPartial ? 'block' : 'none';
+    calcWrap.style.display = isPartial ? 'block' : 'none';
 
     if(mode === 'TAX_ONLY'){
       totalFareWrap.style.display = 'none';
@@ -3945,12 +3938,14 @@
   // click to expand and see the Refundable Fare/Tax formula. Remembers your choice. ----
   const REFUND_CALC_OPEN_KEY = 'wrd_refund_calc_open_v1';
   function setRefundCalcOpen(open){
-    const panel = $('refund-calc-panel');
-    panel.classList.toggle('ptc-open', open);
+    $('refund-calc-panel').style.display = open ? 'block' : 'none';
+    $('btn-toggle-refund-calc').classList.toggle('ptc-open', open);
+    $('refund-calc-chev').textContent = open ? '▾' : '▸';
+    $('btn-toggle-refund-calc').lastChild.textContent = open ? ' Hide calculation' : ' Show calculation';
     try{ localStorage.setItem(REFUND_CALC_OPEN_KEY, open ? '1' : '0'); }catch(err){}
   }
   $('btn-toggle-refund-calc').addEventListener('click', () => {
-    setRefundCalcOpen(!$('refund-calc-panel').classList.contains('ptc-open'));
+    setRefundCalcOpen($('refund-calc-panel').style.display === 'none');
   });
   (function initRefundCalcOpen(){
     let saved = '0';
