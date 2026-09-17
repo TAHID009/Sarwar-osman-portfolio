@@ -542,29 +542,7 @@
     .ptc-contrib-row{ grid-template-columns: 90px 1fr; }
     .ptc-contrib-row .ptc-contrib-amt{ grid-column: 1 / -1; text-align: right; }
   }
-  .ptc-contrib-name{ font-weight: 700; color: var(--ink); display:flex; align-items:center; gap:6px; position:relative; cursor:default; }
-  .ptc-contrib-name .ptc-contrib-tooltip{
-    display: none;
-    position: absolute;
-    bottom: 130%;
-    left: 0;
-    min-width: 150px;
-    background: var(--ink);
-    color: #fff;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11.5px;
-    font-weight: 400;
-    line-height: 1.5;
-    padding: 8px 10px;
-    border-radius: 6px;
-    z-index: 20;
-    white-space: nowrap;
-    box-shadow: 0 4px 12px rgba(11,37,69,0.25);
-  }
-  .ptc-contrib-name:hover .ptc-contrib-tooltip,
-  .ptc-contrib-name:focus .ptc-contrib-tooltip{
-    display: block;
-  }
+  .ptc-contrib-name{ font-weight: 700; color: var(--ink); display:flex; align-items:center; gap:6px; }
   .ptc-contrib-track{
     display: block;
     width: 100%;
@@ -1172,7 +1150,7 @@
 
   .ptc-kpi-grid{
     display:grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    grid-template-columns: repeat(4, 1fr);
     gap:14px;
     margin-bottom:18px;
   }
@@ -2091,6 +2069,46 @@
           <div class="ptc-field" id="refund-usedseg-wrap" style="display:none;">
             <label for="f-usedseg-f">Used Segment Fare</label>
             <input type="number" step="0.01" id="f-usedseg-f" class="mono ptc-refund-calc" placeholder="0.00" />
+            <div class="ptc-field-hint" id="usedseg-reference-hint">
+              Reference (full fare, if the whole segment was used): <b id="usedseg-reference-value">0.00</b>
+              <button type="button" id="btn-usedseg-use-reference" class="ptc-link-toggle" style="padding:0; margin-left:6px; font-size:11.5px;">Use this value</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="ptc-fare-chart" id="refund-partial-breakdown" style="display:none;">
+          <div class="ptc-fare-chart-title" style="color:var(--refund);">🧮 Partial Refund Calculation</div>
+          <div class="ptc-fare-chart-equation" style="margin-bottom:12px;">
+            <div class="ptc-fare-chart-item">
+              <span class="ptc-fare-chart-item-label"><span class="ptc-fare-dot" style="background:var(--brand);"></span>Base Fare</span>
+              <span class="ptc-fare-chart-item-value" id="pr-basefare-display">0.00</span>
+            </div>
+            <span class="ptc-fare-chart-op">−</span>
+            <div class="ptc-fare-chart-item">
+              <span class="ptc-fare-chart-item-label"><span class="ptc-fare-dot" style="background:#E3A008;"></span>Used Segment</span>
+              <span class="ptc-fare-chart-item-value" id="pr-usedseg-display">0.00</span>
+            </div>
+            <span class="ptc-fare-chart-op">=</span>
+            <div class="ptc-fare-chart-item ptc-fare-chart-total">
+              <span class="ptc-fare-chart-item-label">Refundable Fare</span>
+              <span class="ptc-fare-chart-item-value" id="pr-fare-display">0.00</span>
+            </div>
+          </div>
+          <div class="ptc-fare-chart-equation">
+            <div class="ptc-fare-chart-item">
+              <span class="ptc-fare-chart-item-label"><span class="ptc-fare-dot" style="background:var(--brand);"></span>Tax</span>
+              <span class="ptc-fare-chart-item-value" id="pr-tax-display">0.00</span>
+            </div>
+            <span class="ptc-fare-chart-op">−</span>
+            <div class="ptc-fare-chart-item">
+              <span class="ptc-fare-chart-item-label"><span class="ptc-fare-dot" style="background:#E3A008;"></span>Non-Refund Tax</span>
+              <span class="ptc-fare-chart-item-value" id="pr-nonrefundtax-display">0.00</span>
+            </div>
+            <span class="ptc-fare-chart-op">=</span>
+            <div class="ptc-fare-chart-item ptc-fare-chart-total">
+              <span class="ptc-fare-chart-item-label">Refundable Tax</span>
+              <span class="ptc-fare-chart-item-value" id="pr-taxout-display">0.00</span>
+            </div>
           </div>
         </div>
         <div class="ptc-row" id="refund-tax-row">
@@ -2340,12 +2358,7 @@
 
       <div class="ptc-kpi-grid" id="sales-kpi-grid" style="margin-bottom:20px;"></div>
 
-      <div class="ptc-log-head" style="margin-bottom:10px;">
-        <span></span>
-        <button class="ptc-btn ptc-btn-ghost" id="btn-toggle-sales-charts" style="padding:6px 14px; font-size:12px;">📊 Show Charts</button>
-      </div>
-
-      <div class="ptc-dash-grid" id="sales-charts-wrap" style="margin-bottom:20px; display:none;">
+      <div class="ptc-dash-grid" style="margin-bottom:20px;">
         <div class="ptc-panel">
           <h3>Revenue Trend <span style="font-weight:400; text-transform:none; letter-spacing:0;">last 6 months</span></h3>
           <div class="ptc-panel-canvas-wrap"><canvas id="chart-sales-trend"></canvas></div>
@@ -3100,10 +3113,8 @@
   // ---- Live Cloud Sync (Firebase Firestore + Auth) — works on any device, any browser ----
   const CLOUD_CONFIG_KEY = 'wrd_cloud_config_v1';
   const CLOUD_COLLECTION = 'work_record_entries';
-  const SALES_COLLECTION = 'work_record_sales';
   let cloudDb = null;
   let cloudUnsub = null;
-  let salesCloudUnsub = null;
   let cloudAuthUser = null;
   let cloudPendingConfig = null;
 
@@ -3175,15 +3186,6 @@
     return full;
   }
 
-  // ---- Revenue Desk (sales) cloud sync — same pattern as the entries log above ----
-  const SALES_FIELD_ORDER = ['date','pname','paxAdult','paxChild','paxInfant','phone','responsible','tkt','pnrGds','pnrAirline','sector','airline','price','cost','profit','method','paid','due','status','dueDate','note'];
-  function expandSalesCloudDoc(id, data){
-    const full = {};
-    SALES_FIELD_ORDER.forEach(f => { full[f] = (data[f] !== undefined ? data[f] : ''); });
-    full._id = id;
-    return full;
-  }
-
   function subscribeCloud(){
     if(!cloudDb) return;
     if(cloudUnsub) cloudUnsub();
@@ -3212,36 +3214,6 @@
     }, (err) => {
       console.error('Cloud sync error', err);
       toast('Cloud sync interrupted — check your internet connection or that you\'re still signed in.');
-    });
-  }
-
-  function subscribeSalesCloud(){
-    if(!cloudDb) return;
-    if(salesCloudUnsub) salesCloudUnsub();
-    salesCloudUnsub = cloudDb.collection(SALES_COLLECTION).onSnapshot((snap) => {
-      const list = [];
-      snap.forEach(doc => list.push(expandSalesCloudDoc(doc.id, doc.data())));
-
-      if(snap.empty && salesEntries.length > 0 && !cloudDb.__salesMigrated){
-        cloudDb.__salesMigrated = true;
-        if(confirm('Your cloud database has no Revenue Desk sales yet, but this browser has ' + salesEntries.length + ' saved sale(s). Upload them to the cloud now?')){
-          const batch = cloudDb.batch();
-          salesEntries.forEach(s => {
-            const id = s._id || (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(16).slice(2));
-            batch.set(cloudDb.collection(SALES_COLLECTION).doc(id), trimForCloud(Object.assign({}, s, { _id: id })));
-          });
-          batch.commit().catch(err => { console.error('Sales migration failed', err); toast('Could not upload existing sales to the cloud.'); });
-          return; // the commit will trigger another snapshot with the real data
-        }
-      }
-
-      list.sort((a,b) => (b.date||'').localeCompare(a.date||''));
-      salesEntries = list;
-      persistSales();
-      renderSales();
-    }, (err) => {
-      console.error('Sales cloud sync error', err);
-      toast('Revenue Desk cloud sync interrupted — check your internet connection or that you\'re still signed in.');
     });
   }
 
@@ -3320,12 +3292,10 @@
             localStorage.setItem(CLOUD_CONFIG_KEY, JSON.stringify(config));
             setCloudStatus('connected');
             subscribeCloud();
-            subscribeSalesCloud();
             armInactivityWatch();
           } else {
             cloudDb = null;
             if(cloudUnsub){ cloudUnsub(); cloudUnsub = null; }
-            if(salesCloudUnsub){ salesCloudUnsub(); salesCloudUnsub = null; }
             setCloudStatus('idle');
             $('cloud-auth-error').textContent = '';
             $('cloud-auth-modal-backdrop').style.display = 'flex';
@@ -3346,7 +3316,6 @@
 
   function disconnectCloud(){
     if(cloudUnsub){ cloudUnsub(); cloudUnsub = null; }
-    if(salesCloudUnsub){ salesCloudUnsub(); salesCloudUnsub = null; }
     cloudDb = null;
     cloudAuthUser = null;
     localStorage.removeItem(CLOUD_CONFIG_KEY);
@@ -3806,15 +3775,18 @@
       usedSegWrap.style.display = 'none';
       const hasCommission = (parseFloat($('f-commission-f').value) || 0) !== 0;
       commissionWrap.style.display = hasCommission ? 'block' : 'none';
+      $('refund-partial-breakdown').style.display = 'none';
     } else if(mode === 'PARTIAL'){
       totalFareWrap.style.display = 'block';
       usedSegWrap.style.display = 'block';
       commissionWrap.style.display = 'block';
+      $('refund-partial-breakdown').style.display = 'block';
     } else {
       // FULL_UNUSED, FULL_UNUSED_CHARGE, or not yet selected
       totalFareWrap.style.display = 'block';
       usedSegWrap.style.display = 'none';
       commissionWrap.style.display = 'block';
+      $('refund-partial-breakdown').style.display = 'none';
     }
   }
   $('f-mode-f').addEventListener('change', () => {
@@ -4016,7 +3988,10 @@
     } else if(mode === 'PARTIAL'){
       let usedSeg = parseFloat($('f-usedseg-f').value) || 0;
       if(usedSeg < 0){ usedSeg = 0; $('f-usedseg-f').value = 0; }
-      if(usedSeg > baseFare){ usedSeg = baseFare; $('f-usedseg-f').value = usedSeg; }
+      // Only cap against Base Fare once Base Fare actually has a value — otherwise
+      // (e.g. Used Segment Fare gets typed before Base Fare) this was silently
+      // resetting whatever was typed back to 0, making the field feel broken.
+      if(baseFare > 0 && usedSeg > baseFare){ usedSeg = baseFare; $('f-usedseg-f').value = usedSeg; }
       refundableFare = baseFare - usedSeg;
       airlineRefund = refundableFare + refundableTax - airlineFee - commission;
     } else {
@@ -4029,6 +4004,22 @@
     $('f-refouttax-f').value = refundableTax.toFixed(2);
     $('refund-refoutfare-display').textContent = refundableFare.toFixed(2);
     $('refund-refouttax-display').textContent = refundableTax.toFixed(2);
+
+    // Live "Partial Refund Calculation" equation strip
+    if(mode === 'PARTIAL'){
+      const usedSegNow = parseFloat($('f-usedseg-f').value) || 0;
+      $('pr-basefare-display').textContent = baseFare.toFixed(2);
+      $('pr-usedseg-display').textContent = usedSegNow.toFixed(2);
+      $('pr-fare-display').textContent = refundableFare.toFixed(2);
+      $('pr-tax-display').textContent = totalTax.toFixed(2);
+      $('pr-nonrefundtax-display').textContent = nonRefundTax.toFixed(2);
+      $('pr-taxout-display').textContent = refundableTax.toFixed(2);
+      // Purely informational — Base Fare + Tax is shown as a reference/default,
+      // never written into the Used Segment Fare field automatically. The person
+      // can click "Use this value" to copy it in manually if they want it.
+      const refEl = $('usedseg-reference-value');
+      if(refEl) refEl.textContent = (baseFare + totalTax).toFixed(2);
+    }
     $('f-airlinerefund-f').value = airlineRefund.toFixed(2);
     $('f-tax-f').value = refundableTax.toFixed(2);
     $('refund-negative-warning').style.display = (airlineRefund < 0) ? 'block' : 'none';
@@ -4041,6 +4032,17 @@
   document.querySelectorAll('.ptc-refund-calc').forEach(el => {
     el.addEventListener('input', recalcRefund);
   });
+  // Manual, explicit action only — clicking this is the ONLY way Used Segment Fare
+  // ever gets set from Base Fare + Tax. It is never auto-filled just by typing
+  // Base Fare, so the person's own entered amount is never silently overwritten.
+  if($('btn-usedseg-use-reference')){
+    $('btn-usedseg-use-reference').addEventListener('click', () => {
+      const baseFare = parseFloat($('f-refbasefare-f').value) || 0;
+      const totalTax = parseFloat($('f-reftotaltax-f').value) || 0;
+      $('f-usedseg-f').value = (baseFare + totalTax).toFixed(2);
+      recalcRefund();
+    });
+  }
   // ---- Refund: Adjustment Given toggle — a record-keeping flag only (instead of a cash refund,
   // the client refund was held/adjusted against a future booking). It does NOT alter the
   // calculated Airline Refund or Client Refund / Adjustment amounts above. ----
@@ -4971,11 +4973,9 @@
         const barPct = pct > 0 ? Math.max(1.5, Math.min(100, pct)) : 0;
         return `
           <div class="ptc-contrib-row">
-            <span class="ptc-contrib-name" tabindex="0"><span class="ptc-fare-dot" style="background:${tagColor[t]}"></span>${t}
-              <span class="ptc-contrib-tooltip">${fmtImpactMoney(byType[t].value)} · ${byType[t].count} txn</span>
-            </span>
+            <span class="ptc-contrib-name"><span class="ptc-fare-dot" style="background:${tagColor[t]}"></span>${t}</span>
             <div class="ptc-contrib-track"><div class="ptc-contrib-fill" style="width:${barPct.toFixed(1)}%; background-color:${tagColor[t]};"></div></div>
-            <span class="ptc-contrib-amt"><b>${pct.toFixed(1)}%</b></span>
+            <span class="ptc-contrib-amt"><b>${pct.toFixed(1)}%</b> · ${fmtImpactMoney(byType[t].value)} · ${byType[t].count} txn</span>
           </div>
         `;
       }).join('');
@@ -5405,18 +5405,16 @@
     const now = new Date();
     const monthKey = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
     const thisMonth = entries.filter(e => (e.date||'').slice(0,7) === monthKey);
-    let ticketingValue = 0, reissueValue = 0, refundValue = 0, pendingRefunds = 0, agencyEarnings = 0;
+    let ticketingValue = 0, reissueValue = 0, refundValue = 0, pendingRefunds = 0;
     entries.forEach(e => {
       if(e.txn === 'Ticketing') ticketingValue += Number(e.totalFare)||0;
       if(e.txn === 'Reissue') reissueValue += Number(e.totalCollection)||0;
       if(e.txn === 'Refund'){ refundValue += Number(e.refundCharge)||0; if(e.refundStatus === 'PENDING') pendingRefunds++; }
-      agencyEarnings += entryEarnings(e); // markup (Ticketing) + service charge (Reissue/Refund/Void) — the company's actual take
     });
     const kpis = [
       { label:'Total Entries', value: totalEntries, sub: thisMonth.length + ' this month', color:'var(--booking)' },
       { label:'Ticketing Value', value: fmtK(ticketingValue), sub:'Total fare collected', color:'var(--booking)' },
       { label:'Reissue Collection', value: fmtK(reissueValue), sub:'Fare diff + charges', color:'var(--reissue)' },
-      { label:'Agency Earnings', value: fmtK(agencyEarnings), sub:'Markup + service charges', color:'#1E7A46' },
       { label:'Pending Refunds', value: pendingRefunds, sub: fmtK(refundValue) + ' total refund value', color:'var(--refund)' },
     ];
     $('ptc-kpi-grid').innerHTML = kpis.map(k => `
@@ -5649,22 +5647,6 @@
       const raw = localStorage.getItem(SALES_STORE_KEY);
       if(raw){ salesEntries = JSON.parse(raw); }
     }catch(err){ salesEntries = []; }
-  }
-
-  // Removes the sale at index i, deleting from the cloud too when connected —
-  // shared by both the detail-card and table-row delete buttons.
-  function deleteSaleAt(i){
-    const target = salesEntries[i];
-    if(isCloudConnected() && target && target._id){
-      cloudDb.collection(SALES_COLLECTION).doc(target._id).delete()
-        .then(() => toast('Sale removed — synced to the cloud'))
-        .catch(err => { console.error(err); toast('Cloud delete failed — check your connection.'); });
-      return;
-    }
-    salesEntries.splice(i, 1);
-    persistSales();
-    renderSales();
-    toast('Sale removed');
   }
 
   function collectSale(){
@@ -5909,7 +5891,10 @@
         const i = parseInt(btn.getAttribute('data-idx'), 10);
         if(salesEditingIndex === i){ stopSaleEdit(); clearSaleForm(); }
         else if(salesEditingIndex !== null && i < salesEditingIndex){ salesEditingIndex -= 1; }
-        deleteSaleAt(i);
+        salesEntries.splice(i, 1);
+        persistSales();
+        renderSales();
+        toast('Sale removed');
       });
     });
   }
@@ -5917,8 +5902,6 @@
   function renderSalesCharts(){
     const chartsAvailable = (typeof Chart !== 'undefined');
     if(!chartsAvailable) return;
-    const wrap = $('sales-charts-wrap');
-    if(wrap && wrap.style.display === 'none') return; // skip rendering into a hidden canvas — re-runs when the wrap is shown
     const now = new Date();
 
     // ---- Revenue trend (last 6 months): total sold vs. total collected ----
@@ -6052,7 +6035,10 @@
         const i = parseInt(btn.getAttribute('data-idx'), 10);
         if(salesEditingIndex === i){ stopSaleEdit(); clearSaleForm(); }
         else if(salesEditingIndex !== null && i < salesEditingIndex){ salesEditingIndex -= 1; }
-        deleteSaleAt(i);
+        salesEntries.splice(i, 1);
+        persistSales();
+        renderSales();
+        toast('Sale removed');
       });
     });
     tbody.querySelectorAll('.ptc-sales-edit').forEach(btn => {
@@ -6120,19 +6106,6 @@
     const sale = collectSale();
     const err = validateSale(sale);
     if(err){ toast(err); return; }
-
-    if(isCloudConnected()){
-      const wasEditing = salesEditingIndex !== null;
-      const existing = wasEditing ? salesEntries[salesEditingIndex] : null;
-      sale._id = existing && existing._id ? existing._id : (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(16).slice(2));
-      if(wasEditing) stopSaleEdit();
-      clearSaleForm();
-      cloudDb.collection(SALES_COLLECTION).doc(sale._id).set(trimForCloud(sale))
-        .then(() => toast(wasEditing ? 'Sale updated — synced to the cloud' : 'Sale added — synced to the cloud'))
-        .catch(err2 => { console.error(err2); toast('Cloud save failed — check your connection.'); });
-      return;
-    }
-
     if(salesEditingIndex !== null){
       salesEntries[salesEditingIndex] = sale;
       toast('Sale updated');
@@ -6152,45 +6125,13 @@
   $('btn-sales-clear-all').addEventListener('click', () => {
     if(!salesEntries.length) return;
     if(!confirm('Remove all sales entries? This cannot be undone.')) return;
+    salesEntries = [];
     salesEditingIndex = null;
     stopSaleEdit();
-
-    if(isCloudConnected()){
-      const batch = cloudDb.batch();
-      salesEntries.forEach(s => { if(s._id) batch.delete(cloudDb.collection(SALES_COLLECTION).doc(s._id)); });
-      batch.commit()
-        .then(() => toast('All sales cleared — synced to the cloud'))
-        .catch(err => { console.error(err); toast('Cloud clear failed — check your connection.'); });
-      return;
-    }
-
-    salesEntries = [];
     persistSales();
     renderSales();
     toast('All sales cleared');
   });
-
-  // ---- Revenue Trend / Payment Status Mix are hidden by default (declutters the
-  // Revenue Desk) — this toggle reveals them on demand and remembers the choice. ----
-  const SALES_CHARTS_VISIBLE_KEY = 'wrd_sales_charts_visible_v1';
-  function setSalesChartsVisible(visible){
-    const wrap = $('sales-charts-wrap');
-    const btn = $('btn-toggle-sales-charts');
-    if(!wrap || !btn) return;
-    wrap.style.display = visible ? '' : 'none';
-    btn.textContent = visible ? '📊 Hide Charts' : '📊 Show Charts';
-    if(visible) renderSalesCharts();
-    try{ localStorage.setItem(SALES_CHARTS_VISIBLE_KEY, visible ? '1' : '0'); }catch(err){}
-  }
-  $('btn-toggle-sales-charts').addEventListener('click', () => {
-    const wrap = $('sales-charts-wrap');
-    setSalesChartsVisible(wrap.style.display === 'none');
-  });
-  (function initSalesChartsVisibility(){
-    let saved = '0';
-    try{ saved = localStorage.getItem(SALES_CHARTS_VISIBLE_KEY) || '0'; }catch(err){}
-    setSalesChartsVisible(saved === '1');
-  })();
 
   $('btn-sales-export').addEventListener('click', () => {
     if(typeof XLSX === 'undefined'){ toast('Export library failed to load — check your internet connection.'); return; }
