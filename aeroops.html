@@ -3073,8 +3073,10 @@
   // ---- Live Cloud Sync (Firebase Firestore + Auth) — works on any device, any browser ----
   const CLOUD_CONFIG_KEY = 'wrd_cloud_config_v1';
   const CLOUD_COLLECTION = 'work_record_entries';
+  const SALES_COLLECTION = 'work_record_sales';
   let cloudDb = null;
   let cloudUnsub = null;
+  let salesCloudUnsub = null;
   let cloudAuthUser = null;
   let cloudPendingConfig = null;
 
@@ -3146,6 +3148,15 @@
     return full;
   }
 
+  // ---- Revenue Desk (sales) cloud sync — same pattern as the entries log above ----
+  const SALES_FIELD_ORDER = ['date','pname','paxAdult','paxChild','paxInfant','phone','responsible','tkt','pnrGds','pnrAirline','sector','airline','price','cost','profit','method','paid','due','status','dueDate','note'];
+  function expandSalesCloudDoc(id, data){
+    const full = {};
+    SALES_FIELD_ORDER.forEach(f => { full[f] = (data[f] !== undefined ? data[f] : ''); });
+    full._id = id;
+    return full;
+  }
+
   function subscribeCloud(){
     if(!cloudDb) return;
     if(cloudUnsub) cloudUnsub();
@@ -3174,6 +3185,36 @@
     }, (err) => {
       console.error('Cloud sync error', err);
       toast('Cloud sync interrupted — check your internet connection or that you\'re still signed in.');
+    });
+  }
+
+  function subscribeSalesCloud(){
+    if(!cloudDb) return;
+    if(salesCloudUnsub) salesCloudUnsub();
+    salesCloudUnsub = cloudDb.collection(SALES_COLLECTION).onSnapshot((snap) => {
+      const list = [];
+      snap.forEach(doc => list.push(expandSalesCloudDoc(doc.id, doc.data())));
+
+      if(snap.empty && salesEntries.length > 0 && !cloudDb.__salesMigrated){
+        cloudDb.__salesMigrated = true;
+        if(confirm('Your cloud database has no Revenue Desk sales yet, but this browser has ' + salesEntries.length + ' saved sale(s). Upload them to the cloud now?')){
+          const batch = cloudDb.batch();
+          salesEntries.forEach(s => {
+            const id = s._id || (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(16).slice(2));
+            batch.set(cloudDb.collection(SALES_COLLECTION).doc(id), trimForCloud(Object.assign({}, s, { _id: id })));
+          });
+          batch.commit().catch(err => { console.error('Sales migration failed', err); toast('Could not upload existing sales to the cloud.'); });
+          return; // the commit will trigger another snapshot with the real data
+        }
+      }
+
+      list.sort((a,b) => (b.date||'').localeCompare(a.date||''));
+      salesEntries = list;
+      persistSales();
+      renderSales();
+    }, (err) => {
+      console.error('Sales cloud sync error', err);
+      toast('Revenue Desk cloud sync interrupted — check your internet connection or that you\'re still signed in.');
     });
   }
 
@@ -3252,10 +3293,12 @@
             localStorage.setItem(CLOUD_CONFIG_KEY, JSON.stringify(config));
             setCloudStatus('connected');
             subscribeCloud();
+            subscribeSalesCloud();
             armInactivityWatch();
           } else {
             cloudDb = null;
             if(cloudUnsub){ cloudUnsub(); cloudUnsub = null; }
+            if(salesCloudUnsub){ salesCloudUnsub(); salesCloudUnsub = null; }
             setCloudStatus('idle');
             $('cloud-auth-error').textContent = '';
             $('cloud-auth-modal-backdrop').style.display = 'flex';
@@ -3276,6 +3319,7 @@
 
   function disconnectCloud(){
     if(cloudUnsub){ cloudUnsub(); cloudUnsub = null; }
+    if(salesCloudUnsub){ salesCloudUnsub(); salesCloudUnsub = null; }
     cloudDb = null;
     cloudAuthUser = null;
     localStorage.removeItem(CLOUD_CONFIG_KEY);
@@ -5576,6 +5620,22 @@
     }catch(err){ salesEntries = []; }
   }
 
+  // Removes the sale at index i, deleting from the cloud too when connected —
+  // shared by both the detail-card and table-row delete buttons.
+  function deleteSaleAt(i){
+    const target = salesEntries[i];
+    if(isCloudConnected() && target && target._id){
+      cloudDb.collection(SALES_COLLECTION).doc(target._id).delete()
+        .then(() => toast('Sale removed — synced to the cloud'))
+        .catch(err => { console.error(err); toast('Cloud delete failed — check your connection.'); });
+      return;
+    }
+    salesEntries.splice(i, 1);
+    persistSales();
+    renderSales();
+    toast('Sale removed');
+  }
+
   function collectSale(){
     const price = parseFloat($('s-price').value) || 0;
     const paid = parseFloat($('s-paid').value) || 0;
@@ -5818,10 +5878,7 @@
         const i = parseInt(btn.getAttribute('data-idx'), 10);
         if(salesEditingIndex === i){ stopSaleEdit(); clearSaleForm(); }
         else if(salesEditingIndex !== null && i < salesEditingIndex){ salesEditingIndex -= 1; }
-        salesEntries.splice(i, 1);
-        persistSales();
-        renderSales();
-        toast('Sale removed');
+        deleteSaleAt(i);
       });
     });
   }
@@ -5962,10 +6019,7 @@
         const i = parseInt(btn.getAttribute('data-idx'), 10);
         if(salesEditingIndex === i){ stopSaleEdit(); clearSaleForm(); }
         else if(salesEditingIndex !== null && i < salesEditingIndex){ salesEditingIndex -= 1; }
-        salesEntries.splice(i, 1);
-        persistSales();
-        renderSales();
-        toast('Sale removed');
+        deleteSaleAt(i);
       });
     });
     tbody.querySelectorAll('.ptc-sales-edit').forEach(btn => {
@@ -6033,6 +6087,19 @@
     const sale = collectSale();
     const err = validateSale(sale);
     if(err){ toast(err); return; }
+
+    if(isCloudConnected()){
+      const wasEditing = salesEditingIndex !== null;
+      const existing = wasEditing ? salesEntries[salesEditingIndex] : null;
+      sale._id = existing && existing._id ? existing._id : (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(16).slice(2));
+      if(wasEditing) stopSaleEdit();
+      clearSaleForm();
+      cloudDb.collection(SALES_COLLECTION).doc(sale._id).set(trimForCloud(sale))
+        .then(() => toast(wasEditing ? 'Sale updated — synced to the cloud' : 'Sale added — synced to the cloud'))
+        .catch(err2 => { console.error(err2); toast('Cloud save failed — check your connection.'); });
+      return;
+    }
+
     if(salesEditingIndex !== null){
       salesEntries[salesEditingIndex] = sale;
       toast('Sale updated');
@@ -6052,9 +6119,19 @@
   $('btn-sales-clear-all').addEventListener('click', () => {
     if(!salesEntries.length) return;
     if(!confirm('Remove all sales entries? This cannot be undone.')) return;
-    salesEntries = [];
     salesEditingIndex = null;
     stopSaleEdit();
+
+    if(isCloudConnected()){
+      const batch = cloudDb.batch();
+      salesEntries.forEach(s => { if(s._id) batch.delete(cloudDb.collection(SALES_COLLECTION).doc(s._id)); });
+      batch.commit()
+        .then(() => toast('All sales cleared — synced to the cloud'))
+        .catch(err => { console.error(err); toast('Cloud clear failed — check your connection.'); });
+      return;
+    }
+
+    salesEntries = [];
     persistSales();
     renderSales();
     toast('All sales cleared');
