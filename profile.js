@@ -83,5 +83,16 @@ const profile = {
     ["Delegate","Participated as a university conference delegate."],
     ["Volunteering","Assisted with career talks and student guidance activities."],
     ["Event Coordination","Supported execution of an inter-university quiz competition."]
-  ]
+  ],
+  // ⚠️ PLACEHOLDER NUMBERS — replace every value/sub below with your own real,
+  // verifiable performance figures before publishing this site. Pulling these
+  // from your ticketing log or manager-confirmed reports (not estimates) is
+  // what makes an "impact" section credible to someone reviewing your profile.
+  impact: [
+    { value: "1,200+", label: "PNRs Processed / Year", sub: "Across GDS, NDC and OTA channels" },
+    { value: "98%", label: "Booking Accuracy", sub: "Fare, PNR and ticketing data" },
+    { value: "35%", label: "Faster Reissue Turnaround", sub: "vs. team baseline, this year" },
+    { value: "150+", label: "Refunds Resolved", sub: "Airline penalty & tax cases" },
+  ],
+  impactNote: "Figures reflect ticketing volume, accuracy and turnaround across current and prior roles."
 };

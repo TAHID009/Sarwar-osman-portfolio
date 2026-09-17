@@ -25,6 +25,17 @@
     el("experienceTeaser").textContent = `Currently ${latest.role} at ${latest.company}, with ${profile.yearsExperience.toLowerCase()} across reservation, ticketing and travel operations.`;
   }
 
+  // Home performance impact strip
+  if (el("impactGrid") && profile.impact) {
+    el("impactGrid").innerHTML = profile.impact.map(x=>`
+      <div class="impact-stat">
+        <div class="impact-value">${esc(x.value)}</div>
+        <div class="impact-label">${esc(x.label)}</div>
+        <div class="impact-sub">${esc(x.sub)}</div>
+      </div>`).join("");
+  }
+  if (el("impactNote") && profile.impactNote) el("impactNote").textContent = profile.impactNote;
+
   // About page
   if (el("aboutText")) el("aboutText").textContent = profile.about;
   if (el("factName")) el("factName").textContent = profile.name;

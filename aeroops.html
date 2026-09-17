@@ -544,12 +544,16 @@
   }
   .ptc-contrib-name{ font-weight: 700; color: var(--ink); display:flex; align-items:center; gap:6px; }
   .ptc-contrib-track{
+    display: block;
+    width: 100%;
     height: 10px;
     background: #EDF1F5;
     border-radius: 6px;
     overflow: hidden;
+    box-sizing: border-box;
   }
   .ptc-contrib-fill{
+    display: block;
     height: 100%;
     border-radius: 6px;
     transition: width .4s ease;
@@ -4812,12 +4816,12 @@
 
   function deltaBadge(curr, prev){
     if(!prev){
-      return curr ? '<span class="ptc-impact-delta ptc-impact-delta-flat">New</span>' : '<span class="ptc-impact-delta ptc-impact-delta-flat">—</span>';
+      return curr ? '' : '';
     }
     const pct = ((curr - prev) / Math.abs(prev)) * 100;
     const cls = pct > 0.05 ? 'ptc-impact-delta-up' : (pct < -0.05 ? 'ptc-impact-delta-down' : 'ptc-impact-delta-flat');
     const arrow = pct > 0.05 ? '▲' : (pct < -0.05 ? '▼' : '■');
-    return `<span class="ptc-impact-delta ${cls}">${arrow} ${Math.abs(pct).toFixed(1)}%</span>`;
+    return `<span class="ptc-impact-delta ${cls}">${arrow} ${Math.abs(pct).toFixed(1)}%</span> `;
   }
 
   function statCard(label, value, sub, color){
@@ -4868,13 +4872,13 @@
 
     $('impact-headline').innerHTML = [
       statCard('Business Volume', fmtImpactMoney(currValue),
-        `${deltaBadge(currValue, prevValue)} vs previous period`, 'var(--booking)'),
+        prevValue ? `${deltaBadge(currValue, prevValue)} vs previous period` : 'Total value processed', 'var(--booking)'),
       statCard('Agency Earnings', fmtImpactMoney(currEarn),
-        `${deltaBadge(currEarn, prevEarn)} markup + service charges`, '#1E7A46'),
+        prevEarn ? `${deltaBadge(currEarn, prevEarn)} vs previous period` : 'Markup + service charges', '#1E7A46'),
       statCard('Share of All-Time', shareOfAll.toFixed(1) + '%',
         `of ${fmtImpactMoney(allTimeValue)} total recorded`, 'var(--reissue)'),
       statCard('Transactions', String(current.length),
-        `${deltaBadge(current.length, previous.length)} vs ${previous.length} previous`, 'var(--ink-soft)'),
+        previous.length ? `${deltaBadge(current.length, previous.length)} vs ${previous.length} previous` : 'Recorded this period', 'var(--ink-soft)'),
     ].join('');
 
     // ---- Value contribution by transaction type ----
@@ -4890,10 +4894,14 @@
     } else {
       contribEl.innerHTML = types.map(t => {
         const pct = currValue > 0 ? (byType[t].value / currValue * 100) : 0;
+        // Give any genuinely nonzero share a minimum visible sliver (so a 0.4%
+        // contribution isn't rendered as an invisible 0px bar), but leave true
+        // 0% contributions (e.g. Void with no charges) fully empty and honest.
+        const barPct = pct > 0 ? Math.max(1.5, Math.min(100, pct)) : 0;
         return `
           <div class="ptc-contrib-row">
             <span class="ptc-contrib-name"><span class="ptc-fare-dot" style="background:${tagColor[t]}"></span>${t}</span>
-            <span class="ptc-contrib-track"><span class="ptc-contrib-fill" style="width:${Math.min(100, pct)}%; background:${tagColor[t]};"></span></span>
+            <div class="ptc-contrib-track"><div class="ptc-contrib-fill" style="width:${barPct.toFixed(1)}%; background-color:${tagColor[t]};"></div></div>
             <span class="ptc-contrib-amt"><b>${pct.toFixed(1)}%</b> · ${fmtImpactMoney(byType[t].value)} · ${byType[t].count} txn</span>
           </div>
         `;
