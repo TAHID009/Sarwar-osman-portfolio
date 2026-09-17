@@ -316,52 +316,10 @@
     display:flex;
     align-items:center;
     gap:8px;
-    margin: 20px 0 10px;
+    margin: 12px 0 6px;
   }
-  .ptc-refund-step:first-of-type{ margin-top: 14px; }
+  .ptc-refund-step:first-of-type{ margin-top: 8px; }
   .ptc-refund-step-title{ font-size:11.5px; text-transform:uppercase; letter-spacing:1px; font-weight:800; color:var(--muted); }
-
-  .ptc-refund-calcbox{
-    background: var(--refund-soft);
-    border: 1px solid rgba(180,69,59,.25);
-    border-radius: 10px;
-    padding: 14px 16px;
-    margin-bottom: 14px;
-  }
-  .ptc-refund-calcbox-title{
-    font-size:11px; text-transform:uppercase; letter-spacing:1px; font-weight:800;
-    color:var(--refund); margin-bottom:12px; display:flex; align-items:center; gap:6px;
-  }
-  .ptc-refund-calcbox-row{
-    display:grid;
-    grid-template-columns: 1fr auto 1fr auto 1fr;
-    align-items:end;
-    gap:8px;
-    margin-bottom:10px;
-  }
-  .ptc-refund-calcbox-row:last-child{ margin-bottom:0; }
-  .ptc-refund-calcbox-op{
-    font-size:16px; font-weight:800; color:var(--muted);
-    padding-bottom:9px; text-align:center;
-  }
-  .ptc-refund-calcbox-chip{
-    background:#fff; border:1px solid var(--line); border-radius:8px; padding:8px 10px;
-  }
-  .ptc-refund-calcbox-chip label{
-    display:flex; align-items:center; gap:5px;
-    font-size:10.5px; text-transform:uppercase; letter-spacing:.5px; font-weight:700; color:var(--muted);
-    margin-bottom:4px;
-  }
-  .ptc-refund-calcbox-chip .mono{ font-size:14px; font-weight:700; color:var(--ink); }
-  .ptc-refund-calcbox-chip.ptc-refund-calcbox-result{
-    background: var(--brand-soft); border-color: rgba(14,110,115,.3);
-  }
-  .ptc-refund-calcbox-chip.ptc-refund-calcbox-result label{ color: var(--accent); }
-  .ptc-refund-calcbox-chip.ptc-refund-calcbox-result .mono{ color: var(--accent); font-size:15px; }
-  @media (max-width: 560px){
-    .ptc-refund-calcbox-row{ grid-template-columns: 1fr; }
-    .ptc-refund-calcbox-op{ padding:2px 0; }
-  }
 
   .ptc-section-label{
     display: flex;
@@ -2179,26 +2137,6 @@
           <input type="text" id="refund-usedsegtotal-f" class="mono" readonly style="background:var(--refund-soft); font-weight:700; cursor:default;" value="0.00" />
         </div>
 
-        <!-- Live calculation preview — updates as Steps 1–3 are filled in -->
-        <div class="ptc-refund-calcbox" id="refund-calcbox" style="display:none;">
-          <div class="ptc-refund-calcbox-title">🧮 Partial Refund Calculation</div>
-          <div class="ptc-refund-calcbox-row">
-            <div class="ptc-refund-calcbox-chip"><label><span class="ptc-fare-dot" style="background:var(--booking);"></span>Base Fare</label><div class="mono" id="calcbox-basefare">0.00</div></div>
-            <div class="ptc-refund-calcbox-op">−</div>
-            <div class="ptc-refund-calcbox-chip"><label><span class="ptc-fare-dot" style="background:var(--reissue);"></span>Used Segment</label><div class="mono" id="calcbox-usedseg">0.00</div></div>
-            <div class="ptc-refund-calcbox-op">=</div>
-            <div class="ptc-refund-calcbox-chip ptc-refund-calcbox-result"><label>Refundable Fare</label><div class="mono" id="calcbox-reffare">0.00</div></div>
-          </div>
-          <div class="ptc-refund-calcbox-row">
-            <div class="ptc-refund-calcbox-chip"><label><span class="ptc-fare-dot" style="background:var(--booking);"></span>Tax</label><div class="mono" id="calcbox-tax">0.00</div></div>
-            <div class="ptc-refund-calcbox-op">−</div>
-            <div class="ptc-refund-calcbox-chip"><label><span class="ptc-fare-dot" style="background:var(--reissue);"></span>Used Seg. + Non-Refund Tax</label><div class="mono" id="calcbox-nonrefundtax">0.00</div></div>
-            <div class="ptc-refund-calcbox-op">=</div>
-            <div class="ptc-refund-calcbox-chip ptc-refund-calcbox-result"><label>Refundable Tax</label><div class="mono" id="calcbox-reftax">0.00</div></div>
-          </div>
-        </div>
-
-        <!-- STEP 4 — everything the agency deducts before paying the client back -->
         <div class="ptc-refund-step" id="refund-step4-deductions">
           <span class="ptc-refund-step-title">Deductions &amp; Charges</span>
         </div>
@@ -3904,14 +3842,12 @@
     const step3 = $('refund-step3-usedseg');
     const usedSegRow = $('refund-usedseg-wrap-row');
     const usedSegTotalWrap = $('refund-usedsegtotal-wrap');
-    const calcBox = $('refund-calcbox');
     const commissionWrap = $('refund-commission-wrap');
     const isPartial = (mode === 'PARTIAL');
 
     step3.style.display = isPartial ? 'flex' : 'none';
     usedSegRow.style.display = isPartial ? 'grid' : 'none';
     usedSegTotalWrap.style.display = isPartial ? 'block' : 'none';
-    calcBox.style.display = isPartial ? 'block' : 'none';
 
     if(mode === 'TAX_ONLY'){
       totalFareWrap.style.display = 'none';
@@ -4138,14 +4074,6 @@
       airlineRefund = refundableFare + refundableTax - airlineFee - commission;
       overLimit = usedSegRaw > baseFare || usedSegRaw < 0 || usedSegTaxRaw > totalTax || usedSegTaxRaw < 0;
       $('refund-usedsegtotal-f').value = (usedSegRaw + usedSegTaxRaw).toFixed(2);
-
-      // Live calculation preview
-      $('calcbox-basefare').textContent = baseFare.toFixed(2);
-      $('calcbox-usedseg').textContent = usedSegRaw.toFixed(2);
-      $('calcbox-reffare').textContent = refundableFare.toFixed(2);
-      $('calcbox-tax').textContent = totalTax.toFixed(2);
-      $('calcbox-nonrefundtax').textContent = (usedSegTaxRaw + nonRefundTaxRaw).toFixed(2);
-      $('calcbox-reftax').textContent = refundableTax.toFixed(2);
     } else {
       // FULL_UNUSED / FULL_UNUSED_CHARGE
       refundableFare = baseFare;
