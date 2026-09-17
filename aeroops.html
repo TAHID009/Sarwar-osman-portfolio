@@ -315,35 +315,11 @@
   .ptc-refund-step{
     display:flex;
     align-items:center;
-    gap:10px;
-    margin: 24px 0 12px;
+    gap:8px;
+    margin: 20px 0 10px;
   }
-  .ptc-refund-step:first-of-type{ margin-top: 18px; }
-  .ptc-refund-step-num{
-    flex-shrink:0;
-    width:22px; height:22px;
-    border-radius:50%;
-    background: var(--refund);
-    color:#fff;
-    font-size:11.5px;
-    font-weight:800;
-    display:flex; align-items:center; justify-content:center;
-  }
-  .ptc-refund-step-text{ display:flex; align-items:baseline; gap:8px; flex-wrap:wrap; }
-  .ptc-refund-step-title{ font-size:12px; text-transform:uppercase; letter-spacing:1px; font-weight:800; color:var(--ink); }
-  .ptc-refund-step-sub{ font-size:11.5px; color:var(--muted); font-weight:500; }
-
-  .ptc-refund-reference{
-    font-size:11.5px;
-    color:var(--muted);
-    margin:-8px 0 14px;
-  }
-  .ptc-refund-reference b{ color:var(--ink-soft); font-family:'SFMono-Regular', ui-monospace, monospace; }
-  .ptc-refund-reference button{
-    background:none; border:none; padding:0; margin-left:6px;
-    color:var(--refund); font-weight:700; font-size:11.5px;
-    text-decoration:underline; cursor:pointer;
-  }
+  .ptc-refund-step:first-of-type{ margin-top: 14px; }
+  .ptc-refund-step-title{ font-size:11.5px; text-transform:uppercase; letter-spacing:1px; font-weight:800; color:var(--muted); }
 
   .ptc-refund-calcbox{
     background: var(--refund-soft);
@@ -2160,8 +2136,7 @@
 
         <!-- STEP 1 — the ticket's full face-value total, before anything is deducted -->
         <div class="ptc-refund-step" id="refund-step1-total">
-          <span class="ptc-refund-step-num">1</span>
-          <span class="ptc-refund-step-text"><span class="ptc-refund-step-title">Total Fare</span><span class="ptc-refund-step-sub">the full round-trip ticket, as issued</span></span>
+          <span class="ptc-refund-step-title">Total Fare</span>
         </div>
         <div class="ptc-row" id="refund-fare-row">
           <div class="ptc-field" id="refund-totalfare-wrap">
@@ -2176,8 +2151,7 @@
 
         <!-- STEP 2 — what the airline keeps for cancelling, before anything else is worked out -->
         <div class="ptc-refund-step" id="refund-step2-penalty">
-          <span class="ptc-refund-step-num">2</span>
-          <span class="ptc-refund-step-text"><span class="ptc-refund-step-title">Penalty</span><span class="ptc-refund-step-sub">airline's cancellation fee</span></span>
+          <span class="ptc-refund-step-title">Penalty</span>
         </div>
         <div class="ptc-row" id="refund-tax-row">
           <div class="ptc-field" style="grid-column: 1 / -1;">
@@ -2188,17 +2162,12 @@
 
         <!-- STEP 3 (Partial Refund only) — the portion of the ticket already flown -->
         <div class="ptc-refund-step" id="refund-step3-usedseg" style="display:none;">
-          <span class="ptc-refund-step-num">3</span>
-          <span class="ptc-refund-step-text"><span class="ptc-refund-step-title">Used Segment</span><span class="ptc-refund-step-sub">the part of the ticket already flown — not refundable</span></span>
+          <span class="ptc-refund-step-title">Used Segment</span>
         </div>
         <div class="ptc-row" id="refund-usedseg-wrap-row" style="display:none;">
           <div class="ptc-field" id="refund-usedseg-wrap">
             <label for="f-usedseg-f">Used Segment Base Fare</label>
             <input type="number" step="0.01" id="f-usedseg-f" class="mono ptc-refund-calc" placeholder="0.00" />
-            <div class="ptc-refund-reference" id="refund-usedseg-reference" style="display:none;">
-              Reference (full fare, if the whole segment was used): <b id="refund-usedseg-reference-val">0.00</b>
-              <button type="button" id="btn-usedseg-use-reference">Use this value</button>
-            </div>
           </div>
           <div class="ptc-field">
             <label for="f-usedsegtax-f">Used Segment Tax</label>
@@ -2231,8 +2200,7 @@
 
         <!-- STEP 4 — everything the agency deducts before paying the client back -->
         <div class="ptc-refund-step" id="refund-step4-deductions">
-          <span class="ptc-refund-step-num">4</span>
-          <span class="ptc-refund-step-text"><span class="ptc-refund-step-title">Deductions &amp; Charges</span><span class="ptc-refund-step-sub">non-refundable tax, commission/discount, agency service charge</span></span>
+          <span class="ptc-refund-step-title">Deductions &amp; Charges</span>
         </div>
         <div class="ptc-row" id="refund-advanced-row">
           <div class="ptc-field">
@@ -2260,8 +2228,7 @@
 
         <!-- STEP 5 — the result -->
         <div class="ptc-refund-step" id="refund-step5-result">
-          <span class="ptc-refund-step-num">5</span>
-          <span class="ptc-refund-step-text"><span class="ptc-refund-step-title">Result</span></span>
+          <span class="ptc-refund-step-title">Result</span>
         </div>
         <div class="ptc-refund-result" id="refund-result-panel">
           <div class="ptc-refund-result-breakdown" id="refund-calcout-row">
@@ -4172,11 +4139,6 @@
       overLimit = usedSegRaw > baseFare || usedSegRaw < 0 || usedSegTaxRaw > totalTax || usedSegTaxRaw < 0;
       $('refund-usedsegtotal-f').value = (usedSegRaw + usedSegTaxRaw).toFixed(2);
 
-      // Reference hint: the full fare, for when the whole segment (not just part) was used.
-      const fullFareRef = baseFare + totalTax;
-      $('refund-usedseg-reference').style.display = fullFareRef > 0 ? 'block' : 'none';
-      $('refund-usedseg-reference-val').textContent = fullFareRef.toFixed(2);
-
       // Live calculation preview
       $('calcbox-basefare').textContent = baseFare.toFixed(2);
       $('calcbox-usedseg').textContent = usedSegRaw.toFixed(2);
@@ -4208,13 +4170,6 @@
   }
   document.querySelectorAll('.ptc-refund-calc').forEach(el => {
     el.addEventListener('input', recalcRefund);
-  });
-  // Quick-fill: "the whole segment's fare was used" — copies Base Fare/Tax straight
-  // into Used Segment Base Fare/Tax so nothing is refundable from that segment.
-  $('btn-usedseg-use-reference').addEventListener('click', () => {
-    $('f-usedseg-f').value = ($('f-refbasefare-f').value || '0');
-    $('f-usedsegtax-f').value = ($('f-reftotaltax-f').value || '0');
-    recalcRefund();
   });
   // ---- Refund: Adjustment Given toggle — a record-keeping flag only (instead of a cash refund,
   // the client refund was held/adjusted against a future booking). It does NOT alter the
