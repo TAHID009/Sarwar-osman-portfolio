@@ -542,7 +542,29 @@
     .ptc-contrib-row{ grid-template-columns: 90px 1fr; }
     .ptc-contrib-row .ptc-contrib-amt{ grid-column: 1 / -1; text-align: right; }
   }
-  .ptc-contrib-name{ font-weight: 700; color: var(--ink); display:flex; align-items:center; gap:6px; }
+  .ptc-contrib-name{ font-weight: 700; color: var(--ink); display:flex; align-items:center; gap:6px; position:relative; cursor:default; }
+  .ptc-contrib-name .ptc-contrib-tooltip{
+    display: none;
+    position: absolute;
+    bottom: 130%;
+    left: 0;
+    min-width: 150px;
+    background: var(--ink);
+    color: #fff;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11.5px;
+    font-weight: 400;
+    line-height: 1.5;
+    padding: 8px 10px;
+    border-radius: 6px;
+    z-index: 20;
+    white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(11,37,69,0.25);
+  }
+  .ptc-contrib-name:hover .ptc-contrib-tooltip,
+  .ptc-contrib-name:focus .ptc-contrib-tooltip{
+    display: block;
+  }
   .ptc-contrib-track{
     display: block;
     width: 100%;
@@ -2318,7 +2340,12 @@
 
       <div class="ptc-kpi-grid" id="sales-kpi-grid" style="margin-bottom:20px;"></div>
 
-      <div class="ptc-dash-grid" style="margin-bottom:20px;">
+      <div class="ptc-log-head" style="margin-bottom:10px;">
+        <span></span>
+        <button class="ptc-btn ptc-btn-ghost" id="btn-toggle-sales-charts" style="padding:6px 14px; font-size:12px;">📊 Show Charts</button>
+      </div>
+
+      <div class="ptc-dash-grid" id="sales-charts-wrap" style="margin-bottom:20px; display:none;">
         <div class="ptc-panel">
           <h3>Revenue Trend <span style="font-weight:400; text-transform:none; letter-spacing:0;">last 6 months</span></h3>
           <div class="ptc-panel-canvas-wrap"><canvas id="chart-sales-trend"></canvas></div>
@@ -4944,9 +4971,11 @@
         const barPct = pct > 0 ? Math.max(1.5, Math.min(100, pct)) : 0;
         return `
           <div class="ptc-contrib-row">
-            <span class="ptc-contrib-name"><span class="ptc-fare-dot" style="background:${tagColor[t]}"></span>${t}</span>
+            <span class="ptc-contrib-name" tabindex="0"><span class="ptc-fare-dot" style="background:${tagColor[t]}"></span>${t}
+              <span class="ptc-contrib-tooltip">${fmtImpactMoney(byType[t].value)} · ${byType[t].count} txn</span>
+            </span>
             <div class="ptc-contrib-track"><div class="ptc-contrib-fill" style="width:${barPct.toFixed(1)}%; background-color:${tagColor[t]};"></div></div>
-            <span class="ptc-contrib-amt"><b>${pct.toFixed(1)}%</b> · ${fmtImpactMoney(byType[t].value)} · ${byType[t].count} txn</span>
+            <span class="ptc-contrib-amt"><b>${pct.toFixed(1)}%</b></span>
           </div>
         `;
       }).join('');
@@ -5886,6 +5915,8 @@
   function renderSalesCharts(){
     const chartsAvailable = (typeof Chart !== 'undefined');
     if(!chartsAvailable) return;
+    const wrap = $('sales-charts-wrap');
+    if(wrap && wrap.style.display === 'none') return; // skip rendering into a hidden canvas — re-runs when the wrap is shown
     const now = new Date();
 
     // ---- Revenue trend (last 6 months): total sold vs. total collected ----
@@ -6136,6 +6167,28 @@
     renderSales();
     toast('All sales cleared');
   });
+
+  // ---- Revenue Trend / Payment Status Mix are hidden by default (declutters the
+  // Revenue Desk) — this toggle reveals them on demand and remembers the choice. ----
+  const SALES_CHARTS_VISIBLE_KEY = 'wrd_sales_charts_visible_v1';
+  function setSalesChartsVisible(visible){
+    const wrap = $('sales-charts-wrap');
+    const btn = $('btn-toggle-sales-charts');
+    if(!wrap || !btn) return;
+    wrap.style.display = visible ? '' : 'none';
+    btn.textContent = visible ? '📊 Hide Charts' : '📊 Show Charts';
+    if(visible) renderSalesCharts();
+    try{ localStorage.setItem(SALES_CHARTS_VISIBLE_KEY, visible ? '1' : '0'); }catch(err){}
+  }
+  $('btn-toggle-sales-charts').addEventListener('click', () => {
+    const wrap = $('sales-charts-wrap');
+    setSalesChartsVisible(wrap.style.display === 'none');
+  });
+  (function initSalesChartsVisibility(){
+    let saved = '0';
+    try{ saved = localStorage.getItem(SALES_CHARTS_VISIBLE_KEY) || '0'; }catch(err){}
+    setSalesChartsVisible(saved === '1');
+  })();
 
   $('btn-sales-export').addEventListener('click', () => {
     if(typeof XLSX === 'undefined'){ toast('Export library failed to load — check your internet connection.'); return; }
