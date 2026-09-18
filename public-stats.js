@@ -25,26 +25,13 @@
 //    (This is the same UID-lock the rest of your Firestore rules should already
 //    move to — see the security note in AeroOps' cloud sync settings.)
 
-const PUBLIC_STATS_FIREBASE_CONFIG = { // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-const firebaseConfig = {
+const PUBLIC_STATS_FIREBASE_CONFIG = {
   apiKey: "AIzaSyD05sxfNz7W21pxG_lS6ETRbBevu7x_O14",
   authDomain: "my-work-records.firebaseapp.com",
   projectId: "my-work-records",
   storageBucket: "my-work-records.firebasestorage.app",
   messagingSenderId: "686225881136",
   appId: "1:686225881136:web:eac8f36503ae83e189d5f5"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-  // apiKey: "…",
-  // authDomain: "…",
-  // projectId: "…",
 };
 
 // Order must match profile.js's `impact` array exactly:
