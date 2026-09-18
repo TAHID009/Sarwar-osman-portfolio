@@ -27,9 +27,9 @@
 
   // Home performance impact strip
   if (el("impactGrid") && profile.impact) {
-    el("impactGrid").innerHTML = profile.impact.map(x=>`
+    el("impactGrid").innerHTML = profile.impact.map((x,i)=>`
       <div class="impact-stat">
-        <div class="impact-value">${esc(x.value)}</div>
+        <div class="impact-value" id="impact-value-${i}">${esc(x.value)}</div>
         <div class="impact-label">${esc(x.label)}</div>
         <div class="impact-sub">${esc(x.sub)}</div>
       </div>`).join("");

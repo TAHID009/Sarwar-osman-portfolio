@@ -3327,10 +3327,37 @@
       persist();
       writeToConnectedFile();
       render();
+      pushPublicStats();
     }, (err) => {
       console.error('Cloud sync error', err);
       toast('Cloud sync interrupted — check your internet connection or that you\'re still signed in.');
     });
+  }
+
+  // ---- Public stats for the portfolio homepage ("Professional growth, by the
+  // numbers") — a small, non-sensitive summary doc, recomputed from real entries
+  // and pushed to its own Firestore collection whenever the log changes. Counts
+  // only, never money: safe to expose on a public page. Debounced so a burst of
+  // sync activity doesn't spam writes.
+  const PUBLIC_STATS_COLLECTION = 'public_stats';
+  let publicStatsTimer = null;
+  function pushPublicStats(){
+    if(!cloudDb) return;
+    clearTimeout(publicStatsTimer);
+    publicStatsTimer = setTimeout(() => {
+      const ticketsIssued = entries.filter(e => e.txn === 'Ticketing').length;
+      const reissuesHandled = entries.filter(e => e.txn === 'Reissue').length;
+      const refundsProcessed = entries.filter(e => e.txn === 'Refund').length;
+      const airlines = new Set();
+      entries.forEach(e => { if(e.airline) airlines.add(String(e.airline).trim().toUpperCase()); });
+      cloudDb.collection(PUBLIC_STATS_COLLECTION).doc('homepage').set({
+        ticketsIssued,
+        reissuesHandled,
+        refundsProcessed,
+        airlinesWorkedWith: airlines.size,
+        updatedAt: new Date().toISOString()
+      }).catch(err => console.error('Public stats sync failed', err));
+    }, 3000);
   }
 
   function subscribeSalesCloud(){

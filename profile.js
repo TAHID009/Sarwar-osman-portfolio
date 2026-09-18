@@ -84,15 +84,16 @@ const profile = {
     ["Volunteering","Assisted with career talks and student guidance activities."],
     ["Event Coordination","Supported execution of an inter-university quiz competition."]
   ],
-  // ⚠️ PLACEHOLDER NUMBERS — replace every value/sub below with your own real,
-  // verifiable performance figures before publishing this site. Pulling these
-  // from your ticketing log or manager-confirmed reports (not estimates) is
-  // what makes an "impact" section credible to someone reviewing your profile.
+  // Live counts, not estimates — pulled straight from the real ticketing log via
+  // public-stats.js (reads a small public Firestore summary AeroOps keeps updated
+  // whenever entries change). The numbers below are only the fallback shown
+  // before that fetch resolves, or if it fails — kept as "—" on purpose so
+  // nothing fake is ever shown, live or fallback.
   impact: [
-    { value: "1,200+", label: "PNRs Processed / Year", sub: "Across GDS, NDC and OTA channels" },
-    { value: "98%", label: "Booking Accuracy", sub: "Fare, PNR and ticketing data" },
-    { value: "35%", label: "Faster Reissue Turnaround", sub: "vs. team baseline, this year" },
-    { value: "150+", label: "Refunds Resolved", sub: "Airline penalty & tax cases" },
+    { value: "—", label: "Tickets Issued", sub: "GDS, NDC and OTA channels" },
+    { value: "—", label: "Reissues Handled", sub: "Fare difference & rebooking cases" },
+    { value: "—", label: "Refunds Processed", sub: "Airline penalty & tax cases" },
+    { value: "—", label: "Airlines Worked With", sub: "Unique carriers ticketed" },
   ],
-  impactNote: "Figures reflect ticketing volume, accuracy and turnaround across current and prior roles."
+  impactNote: "Live counts from the ticketing log — updates automatically as new work is recorded."
 };
