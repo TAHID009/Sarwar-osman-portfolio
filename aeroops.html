@@ -2187,24 +2187,6 @@
           <input type="text" id="refund-usedsegtotal-f" class="mono" readonly style="background:var(--refund-soft); font-weight:700; cursor:default;" value="0.00" />
         </div>
 
-        <div id="refund-calc-wrap" style="display:none;">
-          <button type="button" class="ptc-link-toggle" id="btn-toggle-refund-calc">
-            <span class="ptc-refund-calc-chev" id="refund-calc-chev">▸</span> Show calculation
-          </button>
-          <div class="ptc-refund-calc-panel" id="refund-calc-panel" style="display:none;">
-            <div class="ptc-refund-calc-line">
-              <span class="ptc-refund-calc-label">Refundable Fare</span>
-              <span class="ptc-refund-calc-formula"><b id="calc-basefare">0.00</b><span class="op">−</span><b id="calc-usedseg">0.00</b></span>
-              <span class="ptc-refund-calc-result" id="calc-reffare">0.00</span>
-            </div>
-            <div class="ptc-refund-calc-line">
-              <span class="ptc-refund-calc-label">Refundable Tax</span>
-              <span class="ptc-refund-calc-formula"><b id="calc-tax">0.00</b><span class="op">−</span><b id="calc-usedsegtax">0.00</b><span class="op">−</span><b id="calc-nonrefund">0.00</b></span>
-              <span class="ptc-refund-calc-result" id="calc-reftax">0.00</span>
-            </div>
-          </div>
-        </div>
-
         <div class="ptc-refund-step" id="refund-step4-deductions">
           <span class="ptc-refund-step-title">Deductions &amp; Charges</span>
         </div>
@@ -2225,6 +2207,34 @@
               <span class="ptc-info" tabindex="0" aria-label="Service charge info">ⓘ<span class="ptc-tooltip">Separate from the airline refund — leave at 0.00 if none applies. Only affects the final Client Refund / Adjustment below, never the Airline Refund.</span></span>
             </label>
             <input type="number" step="0.01" id="f-svc-f" class="mono ptc-refund-calc" placeholder="0.00" />
+          </div>
+        </div>
+
+        <div id="refund-calc-wrap" style="display:none;">
+          <button type="button" class="ptc-link-toggle" id="btn-toggle-refund-calc">
+            <span class="ptc-refund-calc-chev" id="refund-calc-chev">▸</span> Show full calculation
+          </button>
+          <div class="ptc-refund-calc-panel" id="refund-calc-panel" style="display:none;">
+            <div class="ptc-refund-calc-line" id="calc-fare-line">
+              <span class="ptc-refund-calc-label">Refundable Fare</span>
+              <span class="ptc-refund-calc-formula" id="calc-fare-formula"></span>
+              <span class="ptc-refund-calc-result" id="calc-reffare">0.00</span>
+            </div>
+            <div class="ptc-refund-calc-line">
+              <span class="ptc-refund-calc-label">Refundable Tax</span>
+              <span class="ptc-refund-calc-formula" id="calc-tax-formula"></span>
+              <span class="ptc-refund-calc-result" id="calc-reftax">0.00</span>
+            </div>
+            <div class="ptc-refund-calc-line">
+              <span class="ptc-refund-calc-label">Airline Refund</span>
+              <span class="ptc-refund-calc-formula" id="calc-airline-formula"></span>
+              <span class="ptc-refund-calc-result" id="calc-airline">0.00</span>
+            </div>
+            <div class="ptc-refund-calc-line">
+              <span class="ptc-refund-calc-label" id="calc-client-label">Client Refund / Adjustment</span>
+              <span class="ptc-refund-calc-formula" id="calc-client-formula"></span>
+              <span class="ptc-refund-calc-result" id="calc-client">0.00</span>
+            </div>
           </div>
         </div>
 
@@ -3820,6 +3830,7 @@
       const step4 = $('refund-step4-deductions');
       const step5 = $('refund-step5-result');
       const advancedRow = $('refund-advanced-row');
+      const calcWrap = $('refund-calc-wrap');
       const svcLabel = $('f-svc-f-label-text');
       const calcOutRow = $('refund-calcout-row');
       const airlineRefundRow = $('refund-airlinerefund-row');
@@ -3841,6 +3852,7 @@
         step4.style.display = 'none';
         step5.style.display = 'none';
         advancedRow.style.display = 'none';
+        calcWrap.style.display = 'none';
         svcLabel.textContent = 'Service Charge';
         calcOutRow.style.display = 'none';
         airlineRefundRow.style.display = 'none';
@@ -3917,7 +3929,10 @@
     step3.style.display = isPartial ? 'flex' : 'none';
     usedSegRow.style.display = isPartial ? 'grid' : 'none';
     usedSegTotalWrap.style.display = isPartial ? 'block' : 'none';
-    calcWrap.style.display = isPartial ? 'block' : 'none';
+    // "Show full calculation" is available for every refund type, not just Partial —
+    // only Refundable Fare/Tax/Airline Refund/Client Refund differ by mode.
+    calcWrap.style.display = mode ? 'block' : 'none';
+    $('calc-fare-line').style.display = (mode === 'TAX_ONLY') ? 'none' : 'grid';
 
     if(mode === 'TAX_ONLY'){
       totalFareWrap.style.display = 'none';
@@ -4122,6 +4137,12 @@
   //   Refundable Fare + Refundable Tax − Airline Refund/Cancellation Fee − Commission Adjustment = AIRLINE REFUND
   //   AIRLINE REFUND − Agency Service Charge = CLIENT REFUND / ADJUSTMENT
   // Only applies when Transaction Type = Refund. For Void, the charge field stays a plain editable input.
+  // Renders a calculation line as inline HTML, e.g. "27741.00 − 21021.00" —
+  // first term has no operator, later terms default to "−" unless given one.
+  function calcFormulaHTML(parts){
+    return parts.map((p, i) => (i === 0 ? '' : `<span class="op">${p.op || '−'}</span>`) + `<b>${p.val.toFixed(2)}</b>`).join('');
+  }
+
   function recalcRefund(){
     if(typeSelect.value !== 'Refund') return;
     const mode = $('f-mode-f').value;
@@ -4155,6 +4176,8 @@
       refundableTax = totalTax - nonRefundTax;
       airlineRefund = refundableTax - airlineFee;
       overLimit = nonRefundTaxRaw > totalTax || nonRefundTaxRaw < 0;
+      $('calc-tax-formula').innerHTML = calcFormulaHTML([{val:totalTax}, {val:nonRefundTaxRaw}]);
+      $('calc-airline-formula').innerHTML = calcFormulaHTML([{val:refundableTax}, {val:airlineFee}]);
     } else if(mode === 'PARTIAL'){
       // Used Segment Base Fare + Used Segment Tax = Total Used Segment Fare — the
       // portion of the ticket already flown, which isn't refundable.
@@ -4164,19 +4187,18 @@
       overLimit = usedSegRaw > baseFare || usedSegRaw < 0 || usedSegTaxRaw > totalTax || usedSegTaxRaw < 0;
       $('refund-usedsegtotal-f').value = (usedSegRaw + usedSegTaxRaw).toFixed(2);
 
-      $('calc-basefare').textContent = baseFare.toFixed(2);
-      $('calc-usedseg').textContent = usedSegRaw.toFixed(2);
-      $('calc-reffare').textContent = refundableFare.toFixed(2);
-      $('calc-tax').textContent = totalTax.toFixed(2);
-      $('calc-usedsegtax').textContent = usedSegTaxRaw.toFixed(2);
-      $('calc-nonrefund').textContent = nonRefundTaxRaw.toFixed(2);
-      $('calc-reftax').textContent = refundableTax.toFixed(2);
+      $('calc-fare-formula').innerHTML = calcFormulaHTML([{val:baseFare}, {val:usedSegRaw}]);
+      $('calc-tax-formula').innerHTML = calcFormulaHTML([{val:totalTax}, {val:usedSegTaxRaw}, {val:nonRefundTaxRaw}]);
+      $('calc-airline-formula').innerHTML = calcFormulaHTML([{val:refundableFare}, {val:refundableTax, op:'+'}, {val:airlineFee}, {val:commission}]);
     } else {
       // FULL_UNUSED / FULL_UNUSED_CHARGE
       refundableFare = baseFare;
       refundableTax = totalTax - nonRefundTax;
       airlineRefund = refundableFare + refundableTax - airlineFee - commission;
       overLimit = nonRefundTaxRaw > totalTax || nonRefundTaxRaw < 0;
+      $('calc-fare-formula').innerHTML = calcFormulaHTML([{val:baseFare}]);
+      $('calc-tax-formula').innerHTML = calcFormulaHTML([{val:totalTax}, {val:nonRefundTaxRaw}]);
+      $('calc-airline-formula').innerHTML = calcFormulaHTML([{val:refundableFare}, {val:refundableTax, op:'+'}, {val:airlineFee}, {val:commission}]);
     }
     if(refundableTax < 0) refundableTax = 0;
 
@@ -4192,6 +4214,14 @@
     const svcAmt = parseFloat($('f-svc-f').value) || 0;
     const clientRefund = airlineRefund - svcAmt;
     $('f-charge-f').value = clientRefund.toFixed(2);
+
+    if(mode){
+      $('calc-reffare').textContent = refundableFare.toFixed(2);
+      $('calc-reftax').textContent = refundableTax.toFixed(2);
+      $('calc-airline').textContent = airlineRefund.toFixed(2);
+      $('calc-client').textContent = clientRefund.toFixed(2);
+      $('calc-client-formula').innerHTML = calcFormulaHTML([{val:airlineRefund}, {val:svcAmt}]);
+    }
   }
   document.querySelectorAll('.ptc-refund-calc').forEach(el => {
     el.addEventListener('input', recalcRefund);
