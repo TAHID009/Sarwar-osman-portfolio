@@ -371,6 +371,80 @@
     .ptc-refund-calc-result{ display: inline-block; }
   }
 
+  .ptc-pdf-import{
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin: 4px 0 16px;
+    padding: 12px 16px;
+    border: 1.5px dashed var(--line);
+    border-radius: 10px;
+    background: var(--paper);
+  }
+  .ptc-pdf-import-btn{
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--accent);
+    color: #fff;
+    padding: 9px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: opacity .15s ease;
+  }
+  .ptc-pdf-import-btn:hover{ opacity: .88; }
+  .ptc-pdf-import-btn.ptc-pdf-busy{ opacity: .6; pointer-events: none; }
+  .ptc-pdf-import-status{ font-size: 12px; color: var(--muted); }
+
+  #pdf-import-banner{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+    background: var(--brand-soft);
+    border: 1px solid rgba(14,110,115,.25);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-bottom: 14px;
+    font-size: 12.5px;
+    color: var(--accent);
+    font-weight: 600;
+  }
+  #pdf-import-banner button{
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--accent);
+    font-weight: 700;
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: 12.5px;
+    flex-shrink: 0;
+  }
+  #pdf-raw-text-wrap{ margin-bottom: 14px; }
+  #pdf-raw-text{
+    width: 100%;
+    min-height: 140px;
+    font-family: 'SFMono-Regular', ui-monospace, monospace;
+    font-size: 11.5px;
+    padding: 10px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #FCFDFE;
+    color: var(--ink-soft);
+    resize: vertical;
+  }
+  .ptc-pdf-highlight{ animation: ptcPdfHighlightFade 2.2s ease; }
+  @keyframes ptcPdfHighlightFade{
+    0%{ background: #FFF3B0; }
+    100%{ background: transparent; }
+  }
+
   .ptc-section-label{
     display: flex;
     align-items: center;
@@ -1490,7 +1564,6 @@
     inset:0 !important;
     overflow-y:auto;
     padding:24px;
-    perspective: 1400px;
   }
   #cloud-auth-modal-backdrop::before{
     /* fine technical grid, extremely subtle */
@@ -1532,124 +1605,17 @@
     z-index:1; pointer-events:none;
   }
 
-  /* ===== 3D swinging door — visual indicator of session state =====
-     A closed (red) door means locked out / signed out; an open (green) door
-     means the session is live. The leaf swings on a Y-axis hinge inside a
-     perspective container for a lightweight 3D effect without any images. */
-  .aero-door{
-    --door-w: 30px;
-    --door-h: 38px;
-    width: var(--door-w);
-    height: var(--door-h);
-    perspective: 110px;
-    display: inline-block;
-    vertical-align: middle;
-    flex-shrink: 0;
-  }
-  .aero-door-frame{
-    width: 100%;
-    height: 100%;
-    background: #16283d;
-    border-radius: 3px 3px 1px 1px;
-    position: relative;
-    overflow: hidden;
-    box-shadow: inset 0 0 0 2px rgba(255,255,255,0.10);
-  }
-  .aero-door-leaf{
-    position: absolute;
-    top: 2px; left: 2px;
-    width: calc(100% - 4px);
-    height: calc(100% - 4px);
-    border-radius: 2px;
-    transform-style: preserve-3d;
-    transform-origin: left center;
-    transition: transform .5s cubic-bezier(.34,1.4,.64,1), background .35s ease;
-    box-shadow: 1px 0 3px rgba(0,0,0,.35);
-    background: linear-gradient(135deg, #B4453B, #8f342c);
-    transform: rotateY(0deg);
-  }
-  .aero-door-leaf::after{
-    content:'';
-    position:absolute;
-    right: 4px; top: 50%;
-    width: 3px; height: 3px;
-    border-radius: 50%;
-    background: rgba(255,255,255,.75);
-    transform: translateY(-50%);
-  }
-  .aero-door.aero-door-open .aero-door-leaf{
-    transform: rotateY(-112deg);
-    background: linear-gradient(135deg, #3DDC97, #2bb37d);
-  }
-  .aero-door-wrap{
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .aero-door-caption{
-    font-size: 9px;
-    font-weight: 800;
-    letter-spacing: .1em;
-    text-transform: uppercase;
-    line-height: 1.3;
-  }
-  .aero-door-caption .state{ display:block; font-size: 10.5px; }
-
-  #btn-app-logout{
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: rgba(255,255,255,0.08);
-    border: 1px solid rgba(255,255,255,0.18);
-    color: #fff;
-    font-size: 11.5px;
-    font-weight: 700;
-    padding: 7px 12px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background .15s ease;
-  }
-  #btn-app-logout:hover{ background: rgba(255,255,255,0.16); }
-
   #cloud-auth-modal-backdrop .ptc-modal{
     position:relative; z-index:1;
     width:100%; max-width:432px;
     background:var(--card);
     border-radius:20px;
     border:1px solid rgba(255,255,255,.08);
-    box-shadow:
-      0 2px 4px rgba(4,16,34,.16),
-      0 14px 26px rgba(4,16,34,.24),
-      0 46px 90px rgba(4,16,34,.38);
+    box-shadow:0 30px 70px rgba(4,16,34,.45);
     padding:30px 28px 26px;
-    transform-style: preserve-3d;
-    transition: transform .35s cubic-bezier(.2,.85,.3,1), box-shadow .35s ease;
-    animation: aeroCardIn .55s cubic-bezier(.2,.9,.25,1) both;
-    will-change: transform;
+    animation:aeroCardIn .32s ease both;
   }
-  @keyframes aeroCardIn{
-    from{
-      opacity: 0;
-      transform: perspective(1400px) rotateX(-16deg) scale(.9) translateY(22px);
-    }
-    to{
-      opacity: 1;
-      transform: perspective(1400px) rotateX(0deg) scale(1) translateY(0);
-    }
-  }
-  @keyframes aeroCardOut{
-    from{
-      opacity: 1;
-      transform: perspective(1400px) rotateX(0deg) rotateY(0deg) scale(1) translateZ(0);
-    }
-    to{
-      opacity: 0;
-      transform: perspective(1400px) rotateX(8deg) rotateY(38deg) scale(.82) translateZ(-60px);
-    }
-  }
-  #cloud-auth-modal-backdrop .ptc-modal.aero-card-exit{
-    animation: aeroCardOut .4s cubic-bezier(.4,0,1,1) both;
-  }
+  @keyframes aeroCardIn{ from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:translateY(0)} }
 
   .aero-auth-brand{ display:flex; flex-direction:column; align-items:center; text-align:center; margin-bottom:18px; }
   .aero-auth-brand .icon{
@@ -1657,9 +1623,7 @@
     background:linear-gradient(135deg, var(--ink), var(--booking));
     display:flex; align-items:center; justify-content:center;
     font-size:19px; color:#fff; margin-bottom:10px;
-    box-shadow:0 8px 18px rgba(11,37,69,.25), 0 2px 5px rgba(11,37,69,.3);
-    transform: translateZ(26px);
-    transition: transform .35s ease;
+    box-shadow:0 8px 18px rgba(11,37,69,.25);
   }
   .aero-auth-brand .name{ font-size:13px; font-weight:800; letter-spacing:.16em; color:var(--ink); }
   .aero-auth-brand .tag{ font-size:11px; font-weight:600; color:var(--muted); margin-top:2px; letter-spacing:.02em; }
@@ -1706,11 +1670,6 @@
   #cloud-auth-modal-backdrop #btn-set-password:hover:not(:disabled){
     transform:translateY(-1px); box-shadow:0 10px 22px rgba(11,37,69,.28);
   }
-  #cloud-auth-modal-backdrop #btn-cloud-auth-signin:active:not(:disabled),
-  #cloud-auth-modal-backdrop #btn-send-verify-link:active:not(:disabled),
-  #cloud-auth-modal-backdrop #btn-set-password:active:not(:disabled){
-    transform:translateY(1px) scale(.99); box-shadow:0 3px 8px rgba(11,37,69,.28);
-  }
   #cloud-auth-modal-backdrop button:disabled{ opacity:.65; cursor:not-allowed; transform:none !important; }
   #auth-view-signin .ptc-actions{ margin-top:6px !important; flex-direction:column-reverse; align-items:stretch !important; gap:12px; }
   #btn-cloud-auth-reset{ text-align:center !important; font-weight:600 !important; }
@@ -1755,16 +1714,11 @@
     .aero-auth-footer{ bottom:10px; font-size:8.5px; }
   }
   @media (prefers-reduced-motion: reduce){
-    #cloud-auth-modal-backdrop .ptc-modal{ animation:none; transform:none !important; transition:none !important; }
-    #cloud-auth-modal-backdrop .ptc-modal.aero-card-exit{ animation:none; opacity:0; }
-    .aero-auth-brand .icon{ transform:none; transition:none; }
+    #cloud-auth-modal-backdrop .ptc-modal{ animation:none; }
     .aero-spinner{ animation:none; border-top-color:rgba(255,255,255,.35); }
     #cloud-auth-modal-backdrop #btn-cloud-auth-signin:hover:not(:disabled),
     #cloud-auth-modal-backdrop #btn-send-verify-link:hover:not(:disabled),
-    #cloud-auth-modal-backdrop #btn-set-password:hover:not(:disabled),
-    #cloud-auth-modal-backdrop #btn-cloud-auth-signin:active:not(:disabled),
-    #cloud-auth-modal-backdrop #btn-send-verify-link:active:not(:disabled),
-    #cloud-auth-modal-backdrop #btn-set-password:active:not(:disabled){ transform:none; }
+    #cloud-auth-modal-backdrop #btn-set-password:hover:not(:disabled){ transform:none; }
   }
 
 </style>
@@ -1772,10 +1726,7 @@
     <div class="ptc-modal-backdrop" id="cloud-auth-modal-backdrop" style="display:flex; z-index:5000;">
       <div class="aero-auth-topbar">
         <a class="brandmark" href="index.html" aria-label="Return to Home"><span>AEROOPS<small>WORK RECORD SYSTEM</small></span></a>
-        <div class="aero-door-wrap">
-          <div class="aero-door" id="auth-screen-door"><div class="aero-door-frame"><div class="aero-door-leaf"></div></div></div>
-          <div class="aero-auth-status"><span class="dot"></span>SECURE ACCESS</div>
-        </div>
+        <div class="aero-auth-status"><span class="dot"></span>SECURE ACCESS</div>
       </div>
 
       <div class="ptc-modal">
@@ -1901,14 +1852,7 @@
           <div class="ptc-eyebrow">✈ Ticketing Back Office</div>
           <h1>Work Record Database</h1>
         </div>
-        <div style="display:flex; align-items:center; gap:16px;">
-          <div class="aero-door-wrap">
-            <div class="aero-door aero-door-open" id="app-session-door"><div class="aero-door-frame"><div class="aero-door-leaf"></div></div></div>
-            <div class="aero-door-caption" style="color:rgba(255,255,255,0.7);">Session<span class="state" id="app-session-door-label" style="color:#3DDC97;">OPEN</span></div>
-          </div>
-          <button type="button" id="btn-app-logout" title="Log out">🚪 Log Out</button>
-          <div class="ptc-eyebrow" id="ptc-clock" style="color:rgba(255,255,255,0.75);"></div>
-        </div>
+        <div class="ptc-eyebrow" id="ptc-clock" style="color:rgba(255,255,255,0.75);"></div>
       </div>
       <div class="ptc-hero-perf" aria-hidden="true"></div>
       <div class="ptc-dash-greeting" id="ptc-greeting">Every booking, reissue, refund and void — in one place.</div>
@@ -2025,6 +1969,21 @@
       <div class="ptc-editing-banner" id="ptc-editing-banner">
         <span id="ptc-editing-banner-text">Editing entry #1</span>
       </div>
+      <div class="ptc-pdf-import" id="ptc-pdf-import">
+        <label for="pdf-ticket-input" class="ptc-pdf-import-btn" id="pdf-ticket-btn">
+          📄 Import from Ticket PDF
+        </label>
+        <input type="file" id="pdf-ticket-input" accept="application/pdf" style="display:none;" />
+        <span class="ptc-pdf-import-status" id="pdf-import-status">Reads a ticket PDF and fills in the fields below — always double-check before saving.</span>
+      </div>
+      <div id="pdf-import-banner" style="display:none;">
+        <span>⚠️ Fields were auto-filled from the uploaded PDF — verify every value before saving. Layouts vary by airline/GDS, so extraction can miss or misread a field.</span>
+        <button type="button" id="btn-pdf-raw-toggle">View raw extracted text</button>
+      </div>
+      <div id="pdf-raw-text-wrap" style="display:none;">
+        <textarea id="pdf-raw-text" readonly></textarea>
+      </div>
+
       <div class="ptc-row">
         <div class="ptc-field" style="grid-column: 1 / -1;">
           <label for="f-type">Transaction Type <span class="ptc-required">*</span></label>
@@ -3376,6 +3335,272 @@
     document.head.appendChild(s1);
   }
 
+  // ==========================================================================
+  // Import from Ticket PDF — reads an uploaded e-ticket/itinerary PDF, pulls out
+  // whatever it can recognize (PNR, passenger name, ticket number(s), airline,
+  // sector, base fare, tax), and fills the matching fields in. Ticket layouts
+  // differ a lot by GDS and by airline, so this is deliberately best-effort:
+  // every field it fills gets a brief highlight, a banner asks you to verify
+  // everything before saving, and the raw extracted text is always one click
+  // away so you can read anything the parser missed yourself.
+  // ==========================================================================
+  function loadPdfJs(cb, onerr){
+    if(window.pdfjsLib){ cb(); return; }
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+    s.onload = () => {
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+      cb();
+    };
+    s.onerror = onerr;
+    document.head.appendChild(s);
+  }
+
+  function extractPdfText(file){
+    return file.arrayBuffer().then(buf =>
+      window.pdfjsLib.getDocument({ data: buf }).promise.then(pdf => {
+        const pageNums = Array.from({ length: pdf.numPages }, (_, i) => i + 1);
+        return pageNums.reduce((chain, num) =>
+          chain.then(textSoFar =>
+            pdf.getPage(num).then(page =>
+              page.getTextContent().then(content => {
+                const pageText = content.items.map(it => it.str).join(' ');
+                return textSoFar + '\n' + pageText;
+              })
+            )
+          ), Promise.resolve('')
+        );
+      })
+    );
+  }
+
+  // Pulls whatever recognizable fields it can out of raw ticket text. Every
+  // regex here is best-effort against common e-ticket/itinerary layouts (Sabre,
+  // Amadeus, Galileo, and typical airline confirmation PDFs) — none of it is
+  // guaranteed to match every format, which is exactly why the caller always
+  // shows the raw text too.
+  function parseTicketText(text){
+    // pdf.js text items get space-joined per page (no reliable line breaks), and on
+    // some generated PDFs (like this one) the visual table headers and their values
+    // aren't even adjacent in the underlying text stream — so label-proximity
+    // guessing alone isn't reliable. Collapse whitespace once, then try a
+    // template-specific parser first (exact known layouts), falling back to
+    // generic label-based guessing for anything else.
+    const norm = text.replace(/\r/g, ' ').replace(/[ \t\n]+/g, ' ').trim();
+    const out = {};
+
+    // ---- Airline — works the same regardless of template ----
+    const airlineSelect = $('f-airline');
+    if(airlineSelect){
+      for(const opt of airlineSelect.options){
+        if(!opt.value || opt.value === 'OTHER') continue;
+        const name = (opt.textContent.split('—')[1] || '').trim();
+        const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const nameHit = name && new RegExp('\\b' + esc(name) + '\\b', 'i').test(norm);
+        const flightNoHit = new RegExp('\\b' + esc(opt.value) + '\\s?\\d{2,4}\\b').test(norm);
+        if(nameHit || flightNoHit){ out.airlineCode = opt.value; break; }
+      }
+    }
+
+    // ---- Finlay Travels / JF (Bangladesh) Limited e-ticket template — a fixed,
+    // known layout, so these patterns anchor on its exact wording rather than
+    // generic guessing (e.g. its "Airline PNR / Reservation PNR" column headers
+    // reappear disconnected from the actual values elsewhere in the PDF, so
+    // label-proximity matching alone would grab the wrong thing or nothing). ----
+    const isFinlay = /IATA NUMBER:/i.test(norm) && /Passenger Details:/i.test(norm);
+    if(isFinlay){
+      // The PNR pair sits right after "IATA NUMBER: <digits>", as:
+      // <Airline PNR> <Weekday>, <Day> <Mon> <Year> <Reservation PNR>
+      let m = norm.match(/IATA NUMBER:\s*\d+\s+([A-Z0-9]{5,8})\s+[A-Za-z]{3},\s*\d{1,2}\s+[A-Za-z]{3}\s+\d{2,4}\s+([A-Z0-9]{5,8})/i);
+      if(m){ out.airlinePnr = m[1].toUpperCase(); out.reservationPnr = m[2].toUpperCase(); }
+
+      m = norm.match(/Passenger Details:\s*([A-Z][A-Z\s\.]+?)\s+E\s*-?\s*Ticket/i);
+      if(m) out.passengerName = m[1].trim().replace(/\s{2,}/g, ' ');
+
+      m = norm.match(/E\s*-?\s*Ticket\s+(\d{10,13})/i);
+      if(m) out.ticketNumbers = [m[1]];
+
+      m = norm.match(/Base\s*Fare(?:\s*x\s*\d+)?\s+([\d,]+(?:\.\d+)?)/i);
+      if(m) out.baseFare = parseFloat(m[1].replace(/,/g, ''));
+
+      m = norm.match(/Tax\s*&\s*Fare(?:\s*x\s*\d+)?\s+([\d,]+(?:\.\d+)?)/i);
+      if(m) out.taxFare = parseFloat(m[1].replace(/,/g, ''));
+
+      // "Discount" here is a currency amount, not the % the form wants — convert it
+      // (the form already caps the field at 7% on its own, same rule applied here).
+      m = norm.match(/Discount\s+([\d,]+(?:\.\d+)?)/i);
+      if(m){
+        const discountAmt = parseFloat(m[1].replace(/,/g, ''));
+        if(discountAmt > 0 && out.baseFare) out.discountPct = Math.min(7, +(discountAmt / out.baseFare * 100).toFixed(2));
+      }
+
+      m = norm.match(/Route:\s*([A-Z]{3}(?:\s*-\s*[A-Z]{3})+)/i);
+      if(m) out.sector = m[1].toUpperCase().replace(/\s+/g, '');
+    } else {
+      // ---- Generic fallback for other ticket/itinerary layouts ----
+      let m = norm.match(/(?:Booking\s*Ref(?:erence)?\.?|PNR|Reservation\s*Code|Confirmation\s*(?:Number|Code)|Record\s*Locator)\s*[:\-]?\s*([A-Z0-9]{5,8})\b/i);
+      if(m) out.pnr = m[1].toUpperCase();
+
+      m = norm.match(/Passenger(?:'s)?\s*Name\s*[:\-]?\s*([A-Za-z][A-Za-z\s\/\.]{2,50}?)(?:\s{2,}|$)/i);
+      if(!m) m = norm.match(/\b([A-Z]{2,}\/[A-Z]{2,}(?:\s[A-Z]{2,})?)\s*(?:MR|MRS|MS|MSTR|MISS)?\b/);
+      if(m) out.passengerName = m[1].trim().replace(/\s{2,}/g, ' ');
+
+      // Prefer an explicitly-labeled ticket number over a bare digit scan — a bare
+      // scan can false-match other 13-digit runs on the page (e.g. a "+880..."
+      // phone number with the + stripped is 13 digits too).
+      m = norm.match(/E\s*-?\s*Ticket(?:\s*(?:No\.?|Number))?\s*[:\-]?\s*(\d{13})/i)
+        || norm.match(/Ticket\s*(?:No\.?|Number)\s*[:\-]?\s*(\d{3}[\s-]?\d{10})/i);
+      if(m) out.ticketNumbers = [m[1].replace(/\D/g, '')];
+      else {
+        const tktMatches = [...norm.matchAll(/\b(\d{3})[\s-]?(\d{10})\b/g)].map(mm => mm[1] + mm[2]);
+        if(tktMatches.length) out.ticketNumbers = [...new Set(tktMatches)].slice(0, 9);
+      }
+
+      m = norm.match(/Base\s*Fare\s*[:\-]?\s*(?:BDT|USD|৳|\$|Tk\.?)?\s*([\d,]+\.\d{1,2}|[\d,]+)/i);
+      if(m) out.baseFare = parseFloat(m[1].replace(/,/g, ''));
+
+      m = norm.match(/\bTax(?:es)?(?:\s*,?\s*Fees?\s*&?\s*Charges?)?\s*[:\-]?\s*(?:BDT|USD|৳|\$|Tk\.?)?\s*([\d,]+\.\d{1,2}|[\d,]+)/i);
+      if(m) out.taxFare = parseFloat(m[1].replace(/,/g, ''));
+
+      m = norm.match(/Route:\s*([A-Z]{3}(?:\s*-\s*[A-Z]{3})+)/i);
+      if(m){
+        out.sector = m[1].toUpperCase().replace(/\s+/g, '');
+      } else {
+        const routeMatches = [...norm.matchAll(/\b([A-Z]{3})\s*(?:-|–|to|TO|→)\s*([A-Z]{3})\b/g)];
+        if(routeMatches.length) out.sector = [...new Set(routeMatches.map(r => r[1] + '-' + r[2]))].join(' / ');
+      }
+    }
+
+    return out;
+  }
+
+  function pdfHighlight(id){
+    const el = $(id);
+    if(!el) return;
+    el.classList.remove('ptc-pdf-highlight');
+    void el.offsetWidth; // restart the CSS animation
+    el.classList.add('ptc-pdf-highlight');
+  }
+
+  function applyExtractedTicketFields(fields){
+    let filledAny = false;
+
+    // Reservation PNR maps to the form's "GDS PNR" field (the primary booking
+    // reference, whatever the channel); Airline PNR maps 1:1. A generic ticket
+    // that only yielded one PNR fills both fields with it, same as before.
+    if(fields.reservationPnr || fields.airlinePnr || fields.pnr){
+      $('f-pnr-gds').value = fields.reservationPnr || fields.pnr || fields.airlinePnr || '';
+      $('f-pnr-air').value = fields.airlinePnr || fields.pnr || fields.reservationPnr || '';
+      pdfHighlight('f-pnr-gds'); pdfHighlight('f-pnr-air');
+      filledAny = true;
+    }
+    if(fields.passengerName){
+      $('f-pname').value = fields.passengerName;
+      pdfHighlight('f-pname');
+      filledAny = true;
+    }
+    if(fields.airlineCode){
+      const sel = $('f-airline');
+      sel.value = fields.airlineCode;
+      sel.dispatchEvent(new Event('change'));
+      pdfHighlight('f-airline');
+      filledAny = true;
+    }
+
+    // Fare/sector/ticket-number fields only exist on the Ticketing form — switch
+    // to it automatically if nothing else has been chosen yet, since importing a
+    // ticket PDF almost always means entering a new ticket.
+    if(!typeSelect.value){
+      typeSelect.value = 'Ticketing';
+      typeSelect.dispatchEvent(new Event('change'));
+      if(typeof syncTypeTabs === 'function') syncTypeTabs();
+    }
+    if(typeSelect.value === 'Ticketing'){
+      if(fields.ticketNumbers && fields.ticketNumbers.length && entryNewTktChips){
+        entryNewTktChips.setTickets(fields.ticketNumbers);
+        pdfHighlight('f-newtkt-t-chips');
+        filledAny = true;
+      }
+      if(fields.sector){
+        $('f-sector-t').value = fields.sector;
+        pdfHighlight('f-sector-t');
+        filledAny = true;
+      }
+      if(fields.baseFare !== undefined){
+        $('f-basefare-t').value = fields.baseFare.toFixed(2);
+        pdfHighlight('f-basefare-t');
+        filledAny = true;
+      }
+      if(fields.taxFare !== undefined){
+        $('f-taxfare-t').value = fields.taxFare.toFixed(2);
+        pdfHighlight('f-taxfare-t');
+        filledAny = true;
+      }
+      if(fields.discountPct !== undefined){
+        $('f-markup-t').value = fields.discountPct.toFixed(2);
+        pdfHighlight('f-markup-t');
+        filledAny = true;
+      }
+      if(typeof recalcTicketingFare === 'function') recalcTicketingFare();
+    }
+
+    return filledAny;
+  }
+
+  (function initPdfTicketImport(){
+    const fileInput = $('pdf-ticket-input');
+    const btn = $('pdf-ticket-btn');
+    const status = $('pdf-import-status');
+    const banner = $('pdf-import-banner');
+    const rawWrap = $('pdf-raw-text-wrap');
+    const rawBox = $('pdf-raw-text');
+    if(!fileInput) return;
+    const defaultStatus = status.textContent;
+
+    $('btn-pdf-raw-toggle').addEventListener('click', () => {
+      rawWrap.style.display = (rawWrap.style.display === 'none') ? 'block' : 'none';
+    });
+
+    fileInput.addEventListener('change', () => {
+      const file = fileInput.files && fileInput.files[0];
+      fileInput.value = ''; // allow re-selecting the same file later
+      if(!file) return;
+      if(file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')){
+        toast('Please choose a PDF file.');
+        return;
+      }
+
+      btn.classList.add('ptc-pdf-busy');
+      status.textContent = 'Loading PDF reader…';
+      banner.style.display = 'none';
+
+      loadPdfJs(() => {
+        status.textContent = 'Reading ' + file.name + '…';
+        extractPdfText(file).then(text => {
+          rawBox.value = text.trim();
+          const fields = parseTicketText(text);
+          const filledAny = applyExtractedTicketFields(fields);
+          banner.style.display = 'flex';
+          rawWrap.style.display = 'none';
+          status.textContent = defaultStatus;
+          btn.classList.remove('ptc-pdf-busy');
+          toast(filledAny
+            ? 'Filled in what could be read from the PDF — please verify every field.'
+            : 'Could not confidently read any fields from this PDF — check the raw extracted text below.');
+        }).catch(err => {
+          console.error('PDF extraction failed', err);
+          status.textContent = defaultStatus;
+          btn.classList.remove('ptc-pdf-busy');
+          toast('Could not read that PDF — it may be a scanned image rather than a text-based PDF.');
+        });
+      }, () => {
+        status.textContent = defaultStatus;
+        btn.classList.remove('ptc-pdf-busy');
+        toast('Could not load the PDF reader — check your internet connection.');
+      });
+    });
+  })();
+
   function setCloudStatus(state){
     const el = $('ptc-cloud-status');
     const dot = $('ptc-cloud-dot');
@@ -3528,12 +3753,12 @@
   let passwordResetOobCode = null; // set once a "Forgot Access Code?" link's code is verified
   let passwordResetEmail = null;
 
-  // ---- Inactivity auto-refresh: after 15 minutes with no interaction on an
+  // ---- Inactivity auto-refresh: after 10 minutes with no interaction on an
   // authenticated AeroOps session, reload — which the reload-detector above
   // then routes to Home, and the NONE persistence above ensures the login
   // does not come back with it. One timer only; armed/disarmed by auth state
   // below so it never runs on the sign-in screen or after sign-out. ----
-  const INACTIVITY_LIMIT_MS = 15 * 60 * 1000;
+  const INACTIVITY_LIMIT_MS = 10 * 60 * 1000;
   const ACTIVITY_THROTTLE_MS = 1000; // coalesce bursts of mousemove/scroll
   let inactivityTimer = null;
   let inactivityArmed = false;
@@ -3566,68 +3791,6 @@
     clearTimeout(inactivityTimer);
   }
 
-  // ---- Session door indicator: a small 3D swinging door in the header shows the
-  // session state at a glance — open (green) while signed in, closed (red) once
-  // signed out. Purely visual; it never gates access on its own. ----
-  function setSessionDoorOpen(isOpen){
-    const door = $('app-session-door');
-    const label = $('app-session-door-label');
-    if(door) door.classList.toggle('aero-door-open', !!isOpen);
-    if(label){
-      label.textContent = isOpen ? 'OPEN' : 'CLOSED';
-      label.style.color = isOpen ? '#3DDC97' : '#E9857A';
-    }
-  }
-
-  // Plays the login card's 3D "fly away" exit animation, then runs the callback
-  // (hiding the modal) once it finishes — or immediately if the person prefers
-  // reduced motion, or the card isn't on screen for some reason.
-  const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  function playAuthCardExit(onDone){
-    const card = document.querySelector('#cloud-auth-modal-backdrop .ptc-modal');
-    if(!card || prefersReducedMotion){ onDone(); return; }
-    card.classList.add('aero-card-exit');
-    setTimeout(onDone, 400);
-  }
-
-  // A deliberate "Log Out" — ends the session but, unlike Disconnect in Settings,
-  // keeps the saved Firebase project config so signing back in is a single form,
-  // not re-entering the whole config again. Plays the door swinging shut first so
-  // the click has a moment of visible feedback before the screen changes.
-  function doAppLogout(){
-    setSessionDoorOpen(false);
-    setTimeout(() => {
-      if(window.firebase && firebase.auth && firebase.apps && firebase.apps.length){
-        firebase.auth().signOut().catch(() => {});
-      }
-    }, 320);
-  }
-  if($('btn-app-logout')){
-    $('btn-app-logout').addEventListener('click', doAppLogout);
-  }
-
-  // Subtle 3D tilt on the login card that follows the cursor, reinforcing the
-  // "floating board" effect. Skipped entirely for reduced-motion preference.
-  if(!prefersReducedMotion){
-    const authBackdrop = $('cloud-auth-modal-backdrop');
-    if(authBackdrop){
-      authBackdrop.addEventListener('mousemove', (e) => {
-        const card = document.querySelector('#cloud-auth-modal-backdrop .ptc-modal');
-        if(!card || card.classList.contains('aero-card-exit')) return;
-        const r = card.getBoundingClientRect();
-        const px = (e.clientX - r.left) / r.width;
-        const py = (e.clientY - r.top) / r.height;
-        const rotY = Math.max(-8, Math.min(8, (px - 0.5) * 16));
-        const rotX = Math.max(-8, Math.min(8, (0.5 - py) * 16));
-        card.style.transform = `perspective(1400px) rotateX(${rotX}deg) rotateY(${rotY}deg) scale(1.01)`;
-      });
-      authBackdrop.addEventListener('mouseleave', () => {
-        const card = document.querySelector('#cloud-auth-modal-backdrop .ptc-modal');
-        if(card && !card.classList.contains('aero-card-exit')) card.style.transform = '';
-      });
-    }
-  }
-
   function beginCloudConnection(config){
     setCloudStatus('connecting');
     loadFirebaseScripts(() => {
@@ -3652,27 +3815,21 @@
           cloudAuthUser = user;
           if(user){
             if(awaitingNewPassword){ return; } // keep the Set Access Code view open — don't jump to the dashboard yet
-            playAuthCardExit(() => {
-              $('cloud-auth-modal-backdrop').style.display = 'none';
-            });
+            $('cloud-auth-modal-backdrop').style.display = 'none';
             cloudDb = firebase.firestore();
             localStorage.setItem(CLOUD_CONFIG_KEY, JSON.stringify(config));
             setCloudStatus('connected');
             subscribeCloud();
             subscribeSalesCloud();
             armInactivityWatch();
-            setSessionDoorOpen(true);
           } else {
             cloudDb = null;
             if(cloudUnsub){ cloudUnsub(); cloudUnsub = null; }
             if(salesCloudUnsub){ salesCloudUnsub(); salesCloudUnsub = null; }
             setCloudStatus('idle');
             $('cloud-auth-error').textContent = '';
-            const modalCard = document.querySelector('#cloud-auth-modal-backdrop .ptc-modal');
-            if(modalCard) modalCard.classList.remove('aero-card-exit');
             $('cloud-auth-modal-backdrop').style.display = 'flex';
             disarmInactivityWatch();
-            setSessionDoorOpen(false);
           }
         });
       }catch(err){
