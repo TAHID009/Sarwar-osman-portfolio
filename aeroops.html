@@ -1392,6 +1392,22 @@
   }
   .ptc-detail-name{ font-weight:800; font-size:14.5px; color:var(--ink); }
   .ptc-detail-sub{ font-size:11.5px; color:var(--muted); margin-top:2px; }
+  .ptc-copy-btn{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: none;
+    padding: 0 0 0 3px;
+    font-size: 10.5px;
+    line-height: 1;
+    cursor: pointer;
+    opacity: 0.55;
+    vertical-align: -1px;
+    transition: opacity .15s ease, transform .1s ease;
+  }
+  .ptc-copy-btn:hover{ opacity: 1; }
+  .ptc-copy-btn:active{ transform: scale(0.88); }
   .ptc-detail-grid{
     display:grid;
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -2776,6 +2792,21 @@
       document.activeElement.blur();
     }
   }, { passive: true });
+
+  // ---- Select existing value on focus, everywhere ----
+  // Click any text/number field and its current value is selected, so typing
+  // immediately replaces it — no manual delete-then-retype. Applies globally via
+  // one delegated listener rather than wiring every field individually, so it
+  // covers every current field and any added later automatically. Deferred one
+  // frame so it doesn't fight the browser's own click-to-position-cursor behavior.
+  document.addEventListener('focusin', (e) => {
+    const el = e.target;
+    if(el.tagName !== 'INPUT') return;
+    const selectableTypes = ['text', 'number', 'tel', 'email', 'search', 'password'];
+    if(!selectableTypes.includes(el.type)) return;
+    if(el.readOnly || el.disabled) return;
+    requestAnimationFrame(() => { try{ el.select(); }catch(err){} });
+  });
 
   // ---- Multi ticket-number chip input ----
   // Reusable for any field where one PNR may cover several passengers, each with
@@ -4957,6 +4988,36 @@
     setTimeout(() => t.classList.remove('show'), 1600);
   }
 
+  // Copies plain text and confirms with the existing toast — used for PNR/ticket
+  // numbers in search results, since agents copy these into GDS/email/chat constantly.
+  function copyToClipboard(text, label){
+    if(!text || text === '—'){ return; }
+    const done = () => toast((label || 'Value') + ' copied');
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(done).catch(() => fallbackCopy(text, done));
+    } else {
+      fallbackCopy(text, done);
+    }
+  }
+  function fallbackCopy(text, done){
+    try{
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      done();
+    }catch(err){ /* clipboard truly unavailable — silently skip */ }
+  }
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.ptc-copy-btn');
+    if(!btn) return;
+    copyToClipboard(btn.getAttribute('data-copy'), btn.getAttribute('data-copy-label'));
+  });
+
   function persist(){
     try{
       localStorage.setItem(STORE_KEY, JSON.stringify(entries));
@@ -5814,7 +5875,7 @@
           <div class="ptc-detail-card-head">
             <div>
               <div class="ptc-detail-name">${e.pname || 'Unnamed'} <span class="ptc-tag" style="background:${color}; font-size:10px;">${e.txn}</span></div>
-              <div class="ptc-detail-sub">${e.date || ''} · GDS ${e.pnrGds || '—'} · Airline PNR ${e.pnrAirline || '—'}</div>
+              <div class="ptc-detail-sub">${e.date || ''} · GDS ${e.pnrGds || '—'}${e.pnrGds ? `<button type="button" class="ptc-copy-btn" data-copy="${e.pnrGds}" data-copy-label="GDS PNR" title="Copy GDS PNR">📋</button>` : ''} · Airline PNR ${e.pnrAirline || '—'}${e.pnrAirline ? `<button type="button" class="ptc-copy-btn" data-copy="${e.pnrAirline}" data-copy-label="Airline PNR" title="Copy Airline PNR">📋</button>` : ''}</div>
               ${e.editedAt ? `<div class="ptc-detail-sub" style="color:var(--reissue);">✏️ Last edited ${new Date(e.editedAt).toLocaleString()}</div>` : ''}
             </div>
           </div>
@@ -6429,7 +6490,7 @@
           <div class="ptc-detail-card-head">
             <div>
               <div class="ptc-detail-name">${s.pname || 'Unnamed'} <span class="ptc-tag" style="background:#1E7A46; font-size:10px;">SALE</span></div>
-              <div class="ptc-detail-sub">${s.date || ''} · GDS ${s.pnrGds || '—'} · Airline PNR ${s.pnrAirline || '—'}</div>
+              <div class="ptc-detail-sub">${s.date || ''} · GDS ${s.pnrGds || '—'}${s.pnrGds ? `<button type="button" class="ptc-copy-btn" data-copy="${s.pnrGds}" data-copy-label="GDS PNR" title="Copy GDS PNR">📋</button>` : ''} · Airline PNR ${s.pnrAirline || '—'}${s.pnrAirline ? `<button type="button" class="ptc-copy-btn" data-copy="${s.pnrAirline}" data-copy-label="Airline PNR" title="Copy Airline PNR">📋</button>` : ''}</div>
             </div>
           </div>
           ${chartHtml}
