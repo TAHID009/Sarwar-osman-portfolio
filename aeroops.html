@@ -2880,6 +2880,49 @@
     });
   })();
 
+  // ---- Global keyboard shortcuts ----
+  //   Ctrl/Cmd + S  → save the entry or sale form for whichever tab is open
+  //   /             → jump to the search box for whichever tab is open
+  //   Esc           → close the cloud-connect settings modal, or back out of
+  //                   an in-progress edit — never closes the required sign-in modal
+  document.addEventListener('keydown', (e) => {
+    const tag = (e.target && e.target.tagName || '').toUpperCase();
+    const isTyping = tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (e.target && e.target.isContentEditable);
+    const activeView = document.querySelector('.ptc-view.active');
+    const onSalesTab = !!(activeView && activeView.id === 'view-sales');
+    const onEntryTab = !!(activeView && activeView.id === 'view-entry');
+
+    if((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'S')){
+      e.preventDefault(); // stop the browser's own "Save Page" dialog
+      const btn = onSalesTab ? $('btn-sales-add') : (onEntryTab ? $('btn-add') : null);
+      if(btn) btn.click();
+      return;
+    }
+
+    if(e.key === '/' && !isTyping){
+      const searchEl = onSalesTab ? $('sales-search') : (onEntryTab ? $('ptc-search') : null);
+      if(searchEl){
+        e.preventDefault();
+        searchEl.focus();
+      }
+      return;
+    }
+
+    if(e.key === 'Escape'){
+      const settingsModal = $('cloud-modal-backdrop');
+      if(settingsModal && settingsModal.style.display !== 'none'){
+        settingsModal.style.display = 'none';
+        return;
+      }
+      const cancelEditBtn = onSalesTab ? $('btn-sales-cancel-edit') : (onEntryTab ? $('btn-cancel-edit') : null);
+      if(cancelEditBtn && cancelEditBtn.style.display !== 'none'){
+        cancelEditBtn.click();
+      }
+      // The sign-in modal is intentionally never closable via Esc — it's
+      // required access, not a dismissible dialog.
+    }
+  });
+
   // ---- Multi ticket-number chip input ----
   // Reusable for any field where one PNR may cover several passengers, each with
   // their own ticket number. Values are stored in a hidden input as a comma-joined
