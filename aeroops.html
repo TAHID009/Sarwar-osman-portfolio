@@ -3,6 +3,13 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <script>
+  // Apply the saved theme before first paint, so there's no flash of the wrong theme.
+  try{
+    var savedTheme = localStorage.getItem('ptc_theme');
+    if(savedTheme === 'dark'){ document.documentElement.setAttribute('data-theme', 'dark'); }
+  }catch(err){}
+</script>
+<script>
 (function(){
   var nav = performance.getEntriesByType("navigation")[0];
   if(nav && nav.type === "reload"){ location.replace("index.html"); return; }
@@ -58,6 +65,43 @@
     --shadow-md: 0 4px 16px rgba(11,37,69,0.08);
     --shadow-lg: 0 12px 32px rgba(11,37,69,0.14);
   }
+
+  /* ===== Dark mode ===== Overrides the same variables every component already
+     uses, so this covers the whole app's structural surfaces (backgrounds,
+     borders, text, shadows) in one place. Saturated status colors (booking/
+     reissue/refund/void and their "soft" tints) are intentionally left as-is —
+     they're used as small accents/badges, not full panel backgrounds, so they
+     stay legible on dark without needing a separate dark variant. */
+  html[data-theme="dark"],
+  #ptc-root[data-theme="dark"]{
+    --ink:#EAF0F8;
+    --ink-soft:#B9C6D9;
+    --paper:#0F1B2E;
+    --card:#16263D;
+    --line:#2A3D57;
+    --muted:#8A9BB5;
+
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.35);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.4);
+    --shadow-lg: 0 12px 32px rgba(0,0,0,0.5);
+  }
+  html[data-theme="dark"] body{ background: var(--paper); }
+
+  #theme-toggle-btn{
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid var(--line);
+    background: var(--card);
+    color: var(--ink-soft);
+    font-size: 12px;
+    font-weight: 700;
+    padding: 7px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all .15s ease;
+  }
+  #theme-toggle-btn:hover{ border-color: var(--accent); color: var(--accent); }
 
   * { box-sizing: border-box; }
 
@@ -1839,7 +1883,10 @@
           <div class="ptc-eyebrow">✈ Ticketing Back Office</div>
           <h1>Work Record Database</h1>
         </div>
-        <div class="ptc-eyebrow" id="ptc-clock" style="color:rgba(255,255,255,0.75);"></div>
+        <div style="display:flex; align-items:center; gap:12px;">
+          <button type="button" id="theme-toggle-btn" style="background:rgba(255,255,255,0.1); border-color:rgba(255,255,255,0.2); color:#fff;">🌙 Dark Mode</button>
+          <div class="ptc-eyebrow" id="ptc-clock" style="color:rgba(255,255,255,0.75);"></div>
+        </div>
       </div>
       <div class="ptc-hero-perf" aria-hidden="true"></div>
       <div class="ptc-dash-greeting" id="ptc-greeting">Every booking, reissue, refund and void — in one place.</div>
@@ -2807,6 +2854,31 @@
     if(el.readOnly || el.disabled) return;
     requestAnimationFrame(() => { try{ el.select(); }catch(err){} });
   });
+
+  // ---- Dark mode toggle ----
+  // The <head> script already applied a saved 'dark' preference before paint,
+  // to avoid a flash of light mode. This just wires the button + keeps it in
+  // sync, and lets the person switch back to light at any time.
+  (function initThemeToggle(){
+    const btn = $('theme-toggle-btn');
+    if(!btn) return;
+    function applyLabel(){
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      btn.textContent = isDark ? '☀️ Light Mode' : '🌙 Dark Mode';
+    }
+    applyLabel();
+    btn.addEventListener('click', () => {
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      if(isDark){
+        document.documentElement.removeAttribute('data-theme');
+        try{ localStorage.setItem('ptc_theme', 'light'); }catch(err){}
+      } else {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        try{ localStorage.setItem('ptc_theme', 'dark'); }catch(err){}
+      }
+      applyLabel();
+    });
+  })();
 
   // ---- Multi ticket-number chip input ----
   // Reusable for any field where one PNR may cover several passengers, each with
