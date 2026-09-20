@@ -401,11 +401,6 @@
   .ptc-pdf-import-status{ font-size: 12px; color: var(--muted); }
 
   #pdf-import-banner{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    flex-wrap: wrap;
     background: var(--brand-soft);
     border: 1px solid rgba(14,110,115,.25);
     border-radius: 8px;
@@ -414,30 +409,6 @@
     font-size: 12.5px;
     color: var(--accent);
     font-weight: 600;
-  }
-  #pdf-import-banner button{
-    background: none;
-    border: none;
-    padding: 0;
-    color: var(--accent);
-    font-weight: 700;
-    text-decoration: underline;
-    cursor: pointer;
-    font-size: 12.5px;
-    flex-shrink: 0;
-  }
-  #pdf-raw-text-wrap{ margin-bottom: 14px; }
-  #pdf-raw-text{
-    width: 100%;
-    min-height: 140px;
-    font-family: 'SFMono-Regular', ui-monospace, monospace;
-    font-size: 11.5px;
-    padding: 10px;
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    background: #FCFDFE;
-    color: var(--ink-soft);
-    resize: vertical;
   }
   .ptc-pdf-highlight{ animation: ptcPdfHighlightFade 2.2s ease; }
   @keyframes ptcPdfHighlightFade{
@@ -1977,11 +1948,7 @@
         <span class="ptc-pdf-import-status" id="pdf-import-status">Reads a ticket PDF and fills in the fields below — always double-check before saving.</span>
       </div>
       <div id="pdf-import-banner" style="display:none;">
-        <span>⚠️ Fields were auto-filled from the uploaded PDF — verify every value before saving. Layouts vary by airline/GDS, so extraction can miss or misread a field.</span>
-        <button type="button" id="btn-pdf-raw-toggle">View raw extracted text</button>
-      </div>
-      <div id="pdf-raw-text-wrap" style="display:none;">
-        <textarea id="pdf-raw-text" readonly></textarea>
+        ⚠️ Fields were auto-filled from the uploaded PDF — verify every value before saving. Layouts vary by airline/GDS, so extraction can miss or misread a field.
       </div>
 
       <div class="ptc-row">
@@ -3542,6 +3509,35 @@
         filledAny = true;
       }
       if(typeof recalcTicketingFare === 'function') recalcTicketingFare();
+    } else if(typeSelect.value === 'Reissue'){
+      // The PDF is the OLD ticket being reissued — fare-difference fields aren't in
+      // it (they only exist once you know the new fare), so just the ticket number.
+      if(fields.ticketNumbers && fields.ticketNumbers.length && entryOldTktReissueChips){
+        entryOldTktReissueChips.setTickets(fields.ticketNumbers);
+        pdfHighlight('f-oldtkt-r-chips');
+        filledAny = true;
+      }
+    } else if(typeSelect.value === 'Refund' || typeSelect.value === 'Void'){
+      // The PDF is the ticket being refunded/voided — its own Base Fare/Tax are
+      // exactly what the Refund form needs (Void doesn't use those fields).
+      if(fields.ticketNumbers && fields.ticketNumbers.length && entryOldTktRefundChips){
+        entryOldTktRefundChips.setTickets(fields.ticketNumbers);
+        pdfHighlight('f-oldtkt-f-chips');
+        filledAny = true;
+      }
+      if(typeSelect.value === 'Refund'){
+        if(fields.baseFare !== undefined){
+          $('f-refbasefare-f').value = fields.baseFare.toFixed(2);
+          pdfHighlight('f-refbasefare-f');
+          filledAny = true;
+        }
+        if(fields.taxFare !== undefined){
+          $('f-reftotaltax-f').value = fields.taxFare.toFixed(2);
+          pdfHighlight('f-reftotaltax-f');
+          filledAny = true;
+        }
+        if(typeof recalcRefund === 'function') recalcRefund();
+      }
     }
 
     return filledAny;
@@ -3552,14 +3548,8 @@
     const btn = $('pdf-ticket-btn');
     const status = $('pdf-import-status');
     const banner = $('pdf-import-banner');
-    const rawWrap = $('pdf-raw-text-wrap');
-    const rawBox = $('pdf-raw-text');
     if(!fileInput) return;
     const defaultStatus = status.textContent;
-
-    $('btn-pdf-raw-toggle').addEventListener('click', () => {
-      rawWrap.style.display = (rawWrap.style.display === 'none') ? 'block' : 'none';
-    });
 
     fileInput.addEventListener('change', () => {
       const file = fileInput.files && fileInput.files[0];
@@ -3577,16 +3567,14 @@
       loadPdfJs(() => {
         status.textContent = 'Reading ' + file.name + '…';
         extractPdfText(file).then(text => {
-          rawBox.value = text.trim();
           const fields = parseTicketText(text);
           const filledAny = applyExtractedTicketFields(fields);
-          banner.style.display = 'flex';
-          rawWrap.style.display = 'none';
+          banner.style.display = 'block';
           status.textContent = defaultStatus;
           btn.classList.remove('ptc-pdf-busy');
           toast(filledAny
             ? 'Filled in what could be read from the PDF — please verify every field.'
-            : 'Could not confidently read any fields from this PDF — check the raw extracted text below.');
+            : 'Could not confidently read any fields from this PDF — please fill it in manually.');
         }).catch(err => {
           console.error('PDF extraction failed', err);
           status.textContent = defaultStatus;
