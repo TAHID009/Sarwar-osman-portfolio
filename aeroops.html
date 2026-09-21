@@ -2819,13 +2819,13 @@
   }
 
   // Display-only formatting for multi-passenger PNRs: the Passenger Name field
-  // is still just one comma-separated text value (nothing about how it's
-  // entered, stored, or calculated changes) — this only affects how it's
-  // rendered, stacking each name on its own line instead of one long comma
-  // list, wherever a passenger name is shown.
+  // is still just one text value (nothing about how it's entered, stored, or
+  // calculated changes) — this only affects how it's rendered, stacking each
+  // name on its own line instead of one long list. Splits on comma, semicolon,
+  // or newline — whichever separator was actually typed/pasted between names.
   function formatPassengerNamesHTML(pname){
     if(!pname) return '';
-    const names = String(pname).split(',').map(n => n.trim()).filter(Boolean);
+    const names = String(pname).split(/[,;\n]+/).map(n => n.trim()).filter(Boolean);
     if(names.length <= 1) return esc(pname);
     return names.map(n => esc(n)).join('<br>');
   }
