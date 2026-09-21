@@ -3,13 +3,6 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <script>
-  // Apply the saved theme before first paint, so there's no flash of the wrong theme.
-  try{
-    var savedTheme = localStorage.getItem('ptc_theme');
-    if(savedTheme === 'dark'){ document.documentElement.setAttribute('data-theme', 'dark'); }
-  }catch(err){}
-</script>
-<script>
 (function(){
   var nav = performance.getEntriesByType("navigation")[0];
   if(nav && nav.type === "reload"){ location.replace("index.html"); return; }
@@ -65,43 +58,6 @@
     --shadow-md: 0 4px 16px rgba(11,37,69,0.08);
     --shadow-lg: 0 12px 32px rgba(11,37,69,0.14);
   }
-
-  /* ===== Dark mode ===== Overrides the same variables every component already
-     uses, so this covers the whole app's structural surfaces (backgrounds,
-     borders, text, shadows) in one place. Saturated status colors (booking/
-     reissue/refund/void and their "soft" tints) are intentionally left as-is —
-     they're used as small accents/badges, not full panel backgrounds, so they
-     stay legible on dark without needing a separate dark variant. */
-  html[data-theme="dark"],
-  #ptc-root[data-theme="dark"]{
-    --ink:#EAF0F8;
-    --ink-soft:#B9C6D9;
-    --paper:#0F1B2E;
-    --card:#16263D;
-    --line:#2A3D57;
-    --muted:#8A9BB5;
-
-    --shadow-sm: 0 1px 3px rgba(0,0,0,0.35);
-    --shadow-md: 0 4px 16px rgba(0,0,0,0.4);
-    --shadow-lg: 0 12px 32px rgba(0,0,0,0.5);
-  }
-  html[data-theme="dark"] body{ background: var(--paper); }
-
-  #theme-toggle-btn{
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    border: 1px solid var(--line);
-    background: var(--card);
-    color: var(--ink-soft);
-    font-size: 12px;
-    font-weight: 700;
-    padding: 7px 12px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all .15s ease;
-  }
-  #theme-toggle-btn:hover{ border-color: var(--accent); color: var(--accent); }
 
   * { box-sizing: border-box; }
 
@@ -367,20 +323,6 @@
 
   .ptc-refund-calc-chev{ display:inline-block; transition: transform .15s ease; }
   #btn-toggle-refund-calc.ptc-open .ptc-refund-calc-chev{ transform: rotate(90deg); }
-
-  .ptc-calc-health{
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 11.5px;
-    font-weight: 700;
-    padding: 5px 11px;
-    border-radius: 20px;
-    margin-bottom: 8px;
-  }
-  .ptc-calc-health-missing{ background: var(--reissue-soft); color: var(--reissue); }
-  .ptc-calc-health-error{ background: var(--refund-soft); color: var(--refund); }
-  .ptc-calc-health-ready{ background: #E9F6EE; color: #1E7A46; }
 
   .ptc-refund-calc-panel{
     background: var(--card);
@@ -1064,6 +1006,25 @@
   .ptc-status-badge.ptc-status-badge-partial{ background: var(--reissue); }
   .ptc-status-badge.ptc-status-badge-due{ background: var(--refund); }
 
+  /* Ticket Status — a separate concept from the payment status badge above:
+     where the ticket itself stands (Issued/Flown/No-Show/Exchanged/Refunded),
+     quick-updatable in place without touching any other field on the record. */
+  .ptc-tktstatus-select{
+    border: none;
+    border-radius: 20px;
+    padding: 4px 10px;
+    font-size: 11.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    color: #fff;
+    cursor: pointer;
+    font-family: inherit;
+    background-color: var(--tkt-status-color, var(--booking));
+  }
+  .ptc-tktstatus-select:focus{ outline: 2px solid rgba(11,37,69,.25); outline-offset: 1px; }
+  .ptc-tktstatus-select option{ color: var(--ink); background: #fff; font-weight: 600; }
+
   /* Passenger count breakdown (one PNR can carry Adult/Child/Infant together) */
   .ptc-pax-count{
     display: flex;
@@ -1450,22 +1411,6 @@
   }
   .ptc-detail-name{ font-weight:800; font-size:14.5px; color:var(--ink); }
   .ptc-detail-sub{ font-size:11.5px; color:var(--muted); margin-top:2px; }
-  .ptc-copy-btn{
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border: none;
-    background: none;
-    padding: 0 0 0 3px;
-    font-size: 10.5px;
-    line-height: 1;
-    cursor: pointer;
-    opacity: 0.55;
-    vertical-align: -1px;
-    transition: opacity .15s ease, transform .1s ease;
-  }
-  .ptc-copy-btn:hover{ opacity: 1; }
-  .ptc-copy-btn:active{ transform: scale(0.88); }
   .ptc-detail-grid{
     display:grid;
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -1897,10 +1842,7 @@
           <div class="ptc-eyebrow">✈ Ticketing Back Office</div>
           <h1>Work Record Database</h1>
         </div>
-        <div style="display:flex; align-items:center; gap:12px;">
-          <button type="button" id="theme-toggle-btn" style="background:rgba(255,255,255,0.1); border-color:rgba(255,255,255,0.2); color:#fff;">🌙 Dark Mode</button>
-          <div class="ptc-eyebrow" id="ptc-clock" style="color:rgba(255,255,255,0.75);"></div>
-        </div>
+        <div class="ptc-eyebrow" id="ptc-clock" style="color:rgba(255,255,255,0.75);"></div>
       </div>
       <div class="ptc-hero-perf" aria-hidden="true"></div>
       <div class="ptc-dash-greeting" id="ptc-greeting">Every booking, reissue, refund and void — in one place.</div>
@@ -2008,26 +1950,6 @@
         <div class="ptc-actions" style="margin-top:14px; justify-content:flex-end;">
           <button class="ptc-btn ptc-btn-ghost" id="btn-cloud-cancel">Cancel</button>
           <button class="ptc-btn ptc-btn-primary" id="btn-cloud-connect-confirm" style="background:#1E7A46;">Connect</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- ===== Quick Collection popup — records a payment against a due/partial
-         sale directly, without opening the full edit form. ===== -->
-    <div class="ptc-modal-backdrop" id="collect-modal-backdrop" style="display:none;">
-      <div class="ptc-modal" style="max-width:380px;">
-        <h3 style="margin:0 0 4px; font-size:16px; color:var(--ink);">Collect Payment</h3>
-        <p style="font-size:12.5px; color:var(--ink-soft); margin:0 0 16px;" id="collect-modal-who"></p>
-
-        <div class="ptc-field">
-          <label for="collect-modal-amount">Collection Amount</label>
-          <input type="number" step="0.01" min="0" id="collect-modal-amount" class="mono" placeholder="0.00" />
-        </div>
-        <div class="ptc-field-hint" id="collect-modal-hint"></div>
-
-        <div class="ptc-actions" style="margin-top:14px; justify-content:flex-end;">
-          <button class="ptc-btn ptc-btn-ghost" id="btn-collect-cancel">Cancel</button>
-          <button class="ptc-btn ptc-btn-primary" id="btn-collect-confirm" style="background:#1E7A46;">Confirm Collection</button>
         </div>
       </div>
     </div>
@@ -2364,7 +2286,6 @@
         </div>
 
         <div id="refund-calc-wrap" style="display:none;">
-          <div class="ptc-calc-health" id="refund-calc-health"></div>
           <button type="button" class="ptc-link-toggle" id="btn-toggle-refund-calc">
             <span class="ptc-refund-calc-chev" id="refund-calc-chev">▸</span> Show full calculation
           </button>
@@ -2820,6 +2741,7 @@
               <th>Paid</th>
               <th>Due</th>
               <th>Status</th>
+              <th>Ticket Status</th>
               <th class="ptc-col-secondary">Due Date</th>
               <th>Note</th>
               <th></th>
@@ -2874,94 +2796,6 @@
       document.activeElement.blur();
     }
   }, { passive: true });
-
-  // ---- Select existing value on focus, everywhere ----
-  // Click any text/number field and its current value is selected, so typing
-  // immediately replaces it — no manual delete-then-retype. Applies globally via
-  // one delegated listener rather than wiring every field individually, so it
-  // covers every current field and any added later automatically. Deferred one
-  // frame so it doesn't fight the browser's own click-to-position-cursor behavior.
-  document.addEventListener('focusin', (e) => {
-    const el = e.target;
-    if(el.tagName !== 'INPUT') return;
-    const selectableTypes = ['text', 'number', 'tel', 'email', 'search', 'password'];
-    if(!selectableTypes.includes(el.type)) return;
-    if(el.readOnly || el.disabled) return;
-    requestAnimationFrame(() => { try{ el.select(); }catch(err){} });
-  });
-
-  // ---- Dark mode toggle ----
-  // The <head> script already applied a saved 'dark' preference before paint,
-  // to avoid a flash of light mode. This just wires the button + keeps it in
-  // sync, and lets the person switch back to light at any time.
-  (function initThemeToggle(){
-    const btn = $('theme-toggle-btn');
-    if(!btn) return;
-    function applyLabel(){
-      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-      btn.textContent = isDark ? '☀️ Light Mode' : '🌙 Dark Mode';
-    }
-    applyLabel();
-    btn.addEventListener('click', () => {
-      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-      if(isDark){
-        document.documentElement.removeAttribute('data-theme');
-        try{ localStorage.setItem('ptc_theme', 'light'); }catch(err){}
-      } else {
-        document.documentElement.setAttribute('data-theme', 'dark');
-        try{ localStorage.setItem('ptc_theme', 'dark'); }catch(err){}
-      }
-      applyLabel();
-    });
-  })();
-
-  // ---- Global keyboard shortcuts ----
-  //   Ctrl/Cmd + S  → save the entry or sale form for whichever tab is open
-  //   /             → jump to the search box for whichever tab is open
-  //   Esc           → close the cloud-connect settings modal, or back out of
-  //                   an in-progress edit — never closes the required sign-in modal
-  document.addEventListener('keydown', (e) => {
-    const tag = (e.target && e.target.tagName || '').toUpperCase();
-    const isTyping = tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (e.target && e.target.isContentEditable);
-    const activeView = document.querySelector('.ptc-view.active');
-    const onSalesTab = !!(activeView && activeView.id === 'view-sales');
-    const onEntryTab = !!(activeView && activeView.id === 'view-entry');
-
-    if((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'S')){
-      e.preventDefault(); // stop the browser's own "Save Page" dialog
-      const btn = onSalesTab ? $('btn-sales-add') : (onEntryTab ? $('btn-add') : null);
-      if(btn) btn.click();
-      return;
-    }
-
-    if(e.key === '/' && !isTyping){
-      const searchEl = onSalesTab ? $('sales-search') : (onEntryTab ? $('ptc-search') : null);
-      if(searchEl){
-        e.preventDefault();
-        searchEl.focus();
-      }
-      return;
-    }
-
-    if(e.key === 'Escape'){
-      const collectModal = $('collect-modal-backdrop');
-      if(collectModal && collectModal.style.display !== 'none'){
-        closeCollectModal();
-        return;
-      }
-      const settingsModal = $('cloud-modal-backdrop');
-      if(settingsModal && settingsModal.style.display !== 'none'){
-        settingsModal.style.display = 'none';
-        return;
-      }
-      const cancelEditBtn = onSalesTab ? $('btn-sales-cancel-edit') : (onEntryTab ? $('btn-cancel-edit') : null);
-      if(cancelEditBtn && cancelEditBtn.style.display !== 'none'){
-        cancelEditBtn.click();
-      }
-      // The sign-in modal is intentionally never closable via Esc — it's
-      // required access, not a dismissible dialog.
-    }
-  });
 
   // ---- Multi ticket-number chip input ----
   // Reusable for any field where one PNR may cover several passengers, each with
@@ -3823,7 +3657,7 @@
   }
 
   // ---- Revenue Desk (sales) cloud sync — same pattern as the entries log above ----
-  const SALES_FIELD_ORDER = ['date','pname','paxAdult','paxChild','paxInfant','phone','responsible','tkt','pnrGds','pnrAirline','sector','airline','price','cost','profit','method','paid','due','status','dueDate','note'];
+  const SALES_FIELD_ORDER = ['date','pname','paxAdult','paxChild','paxInfant','phone','responsible','tkt','pnrGds','pnrAirline','sector','airline','price','cost','profit','method','paid','due','status','ticketStatus','dueDate','note'];
   function expandSalesCloudDoc(id, data){
     const full = {};
     SALES_FIELD_ORDER.forEach(f => { full[f] = (data[f] !== undefined ? data[f] : ''); });
@@ -4778,33 +4612,6 @@
       $('calc-client').textContent = clientRefund.toFixed(2);
       $('calc-client-formula').innerHTML = calcFormulaHTML([{val:airlineRefund}, {val:svcAmt}]);
     }
-
-    // ---- Calculation Health Check ----
-    // Tells the person at a glance whether the numbers on screen are trustworthy,
-    // and names the exact field to fix if not — rather than silently showing a
-    // wrong-looking total with no explanation.
-    const healthEl = $('refund-calc-health');
-    if(healthEl && mode){
-      let missingField = '';
-      if(mode === 'TAX_ONLY'){
-        if(totalTax <= 0) missingField = 'Tax';
-      } else {
-        if(baseFare <= 0) missingField = 'Base Fare';
-        else if(totalTax <= 0) missingField = 'Tax';
-      }
-      if(missingField){
-        healthEl.className = 'ptc-calc-health ptc-calc-health-missing';
-        healthEl.innerHTML = `⚠️ Missing Required Information — enter <b>${missingField}</b> to calculate`;
-      } else if(overLimit || airlineRefund < 0){
-        healthEl.className = 'ptc-calc-health ptc-calc-health-error';
-        healthEl.innerHTML = overLimit
-          ? '🔎 Check Input — Used Segment or Non-Refundable Tax exceeds what\'s available'
-          : '🔎 Check Input — this results in a negative airline refund';
-      } else {
-        healthEl.className = 'ptc-calc-health ptc-calc-health-ready';
-        healthEl.innerHTML = '✅ Calculation Complete';
-      }
-    }
   }
   document.querySelectorAll('.ptc-refund-calc').forEach(el => {
     el.addEventListener('input', recalcRefund);
@@ -5169,36 +4976,6 @@
     t.classList.add('show');
     setTimeout(() => t.classList.remove('show'), 1600);
   }
-
-  // Copies plain text and confirms with the existing toast — used for PNR/ticket
-  // numbers in search results, since agents copy these into GDS/email/chat constantly.
-  function copyToClipboard(text, label){
-    if(!text || text === '—'){ return; }
-    const done = () => toast((label || 'Value') + ' copied');
-    if(navigator.clipboard && navigator.clipboard.writeText){
-      navigator.clipboard.writeText(text).then(done).catch(() => fallbackCopy(text, done));
-    } else {
-      fallbackCopy(text, done);
-    }
-  }
-  function fallbackCopy(text, done){
-    try{
-      const ta = document.createElement('textarea');
-      ta.value = text;
-      ta.style.position = 'fixed';
-      ta.style.opacity = '0';
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand('copy');
-      document.body.removeChild(ta);
-      done();
-    }catch(err){ /* clipboard truly unavailable — silently skip */ }
-  }
-  document.addEventListener('click', (e) => {
-    const btn = e.target.closest('.ptc-copy-btn');
-    if(!btn) return;
-    copyToClipboard(btn.getAttribute('data-copy'), btn.getAttribute('data-copy-label'));
-  });
 
   function persist(){
     try{
@@ -6057,7 +5834,7 @@
           <div class="ptc-detail-card-head">
             <div>
               <div class="ptc-detail-name">${e.pname || 'Unnamed'} <span class="ptc-tag" style="background:${color}; font-size:10px;">${e.txn}</span></div>
-              <div class="ptc-detail-sub">${e.date || ''} · GDS ${e.pnrGds || '—'}${e.pnrGds ? `<button type="button" class="ptc-copy-btn" data-copy="${e.pnrGds}" data-copy-label="GDS PNR" title="Copy GDS PNR">📋</button>` : ''} · Airline PNR ${e.pnrAirline || '—'}${e.pnrAirline ? `<button type="button" class="ptc-copy-btn" data-copy="${e.pnrAirline}" data-copy-label="Airline PNR" title="Copy Airline PNR">📋</button>` : ''}</div>
+              <div class="ptc-detail-sub">${e.date || ''} · GDS ${e.pnrGds || '—'} · Airline PNR ${e.pnrAirline || '—'}</div>
               ${e.editedAt ? `<div class="ptc-detail-sub" style="color:var(--reissue);">✏️ Last edited ${new Date(e.editedAt).toLocaleString()}</div>` : ''}
             </div>
           </div>
@@ -6471,6 +6248,59 @@
     toast('Sale removed');
   }
 
+  // ---- Ticket Status (Issued/Flown/No-Show/Exchanged/Refunded) — separate from
+  // the payment status badge above. Lets an existing sale record be updated in
+  // place after the journey/departure outcome is known, without touching any
+  // other field (PNR, ticket number, fare, commission, etc.) or the record's id. ----
+  const TICKET_STATUS_OPTIONS = ['Issued', 'Flown', 'No-Show', 'Exchanged', 'Refunded'];
+  function normalizeTicketStatus(status){
+    return TICKET_STATUS_OPTIONS.includes(status) ? status : 'Issued'; // undated/legacy records default to Issued
+  }
+  function ticketStatusColor(status){
+    switch(normalizeTicketStatus(status)){
+      case 'Flown': return '#1E7A46';
+      case 'No-Show': return 'var(--refund)';
+      case 'Exchanged': return 'var(--reissue)';
+      case 'Refunded': return 'var(--void)';
+      default: return 'var(--booking)'; // Issued
+    }
+  }
+  function ticketStatusControlHTML(status, idx){
+    const val = normalizeTicketStatus(status);
+    const opts = TICKET_STATUS_OPTIONS.map(o => `<option value="${o}"${o === val ? ' selected' : ''}>${o}</option>`).join('');
+    return `<select class="ptc-tktstatus-select" data-idx="${idx}" style="--tkt-status-color:${ticketStatusColor(val)};" title="Ticket status">${opts}</select>`;
+  }
+  function wireTicketStatusControls(container){
+    container.querySelectorAll('.ptc-tktstatus-select').forEach(sel => {
+      sel.addEventListener('click', (e) => e.stopPropagation());
+      sel.addEventListener('change', () => {
+        const i = parseInt(sel.getAttribute('data-idx'), 10);
+        sel.style.setProperty('--tkt-status-color', ticketStatusColor(sel.value));
+        updateSaleTicketStatus(i, sel.value);
+      });
+    });
+  }
+  // Updates ONLY the ticket status on an existing sale — same record, same id,
+  // every other field (fare, commission, PNR, ticket number...) left untouched.
+  function updateSaleTicketStatus(idx, newStatus){
+    const sale = salesEntries[idx];
+    if(!sale) return;
+    const status = normalizeTicketStatus(newStatus);
+    if(normalizeTicketStatus(sale.ticketStatus) === status) return;
+    sale.ticketStatus = status;
+
+    if(isCloudConnected() && sale._id){
+      cloudDb.collection(SALES_COLLECTION).doc(sale._id).update({ ticketStatus: status })
+        .then(() => toast('Ticket status updated to ' + status + ' — synced to the cloud'))
+        .catch(err => { console.error(err); toast('Cloud update failed — check your connection.'); });
+      return; // the live sync listener refreshes the list once the cloud confirms
+    }
+
+    persistSales();
+    renderSales();
+    toast('Ticket status updated to ' + status);
+  }
+
   function collectSale(){
     const price = parseFloat($('s-price').value) || 0;
     const paid = parseFloat($('s-paid').value) || 0;
@@ -6603,81 +6433,9 @@
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
         const i = parseInt(btn.getAttribute('data-idx'), 10);
-        openCollectModal(i);
+        startSaleEdit(i);
+        $('sales-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
       });
-    });
-  }
-
-  // ---- Quick Collection popup: record a payment against a due/partial sale
-  // directly, without opening the full form. ----
-  let collectModalIndex = null;
-
-  function openCollectModal(i){
-    const s = salesEntries[i];
-    if(!s) return;
-    const due = Number(s.due) || 0;
-    if(due <= 0) return; // nothing left to collect
-    collectModalIndex = i;
-    $('collect-modal-who').textContent = (s.pname || 'Unnamed') + ' — Remaining Due: ' + fmtMoneySales(due);
-    const amountInput = $('collect-modal-amount');
-    amountInput.value = '';
-    amountInput.max = due;
-    $('collect-modal-hint').textContent = '';
-    $('collect-modal-hint').classList.remove('ptc-field-hint-error');
-    $('collect-modal-backdrop').style.display = 'flex';
-    setTimeout(() => amountInput.focus(), 50);
-  }
-
-  function closeCollectModal(){
-    $('collect-modal-backdrop').style.display = 'none';
-    collectModalIndex = null;
-  }
-
-  function confirmCollection(){
-    if(collectModalIndex === null) return;
-    const s = salesEntries[collectModalIndex];
-    if(!s) { closeCollectModal(); return; }
-
-    const due = Number(s.due) || 0;
-    const amount = parseFloat($('collect-modal-amount').value);
-    const hint = $('collect-modal-hint');
-
-    if(isNaN(amount) || amount <= 0){
-      hint.textContent = 'Enter an amount greater than 0.';
-      hint.classList.add('ptc-field-hint-error');
-      return;
-    }
-    if(amount > due){
-      hint.textContent = `Cannot collect more than the remaining due (${fmtMoneySales(due)}).`;
-      hint.classList.add('ptc-field-hint-error');
-      return;
-    }
-
-    // Apply directly to the existing record — no form, no re-entering anything else.
-    const price = Number(s.price) || 0;
-    const newPaid = (Number(s.paid) || 0) + amount;
-    const newDue = Math.max(0, price - newPaid);
-    s.paid = newPaid;
-    s.due = newDue;
-    s.status = newDue <= 0 ? 'PAID' : (newPaid > 0 ? 'PARTIAL' : 'DUE');
-
-    if(isCloudConnected() && s._id){
-      cloudDb.collection(SALES_COLLECTION).doc(s._id).set(trimForCloud(s))
-        .then(() => toast(newDue <= 0 ? 'Fully collected — synced to the cloud' : (fmtMoneySales(amount) + ' collected — synced to the cloud')))
-        .catch(err => { console.error(err); toast('Cloud save failed — check your connection.'); });
-    } else {
-      persistSales();
-      renderSales();
-      toast(newDue <= 0 ? 'Fully collected' : fmtMoneySales(amount) + ' collected');
-    }
-    closeCollectModal();
-  }
-
-  if($('btn-collect-confirm')) $('btn-collect-confirm').addEventListener('click', confirmCollection);
-  if($('btn-collect-cancel')) $('btn-collect-cancel').addEventListener('click', closeCollectModal);
-  if($('collect-modal-amount')){
-    $('collect-modal-amount').addEventListener('keydown', (e) => {
-      if(e.key === 'Enter'){ e.preventDefault(); confirmCollection(); }
     });
   }
 
@@ -6744,7 +6502,7 @@
           <div class="ptc-detail-card-head">
             <div>
               <div class="ptc-detail-name">${s.pname || 'Unnamed'} <span class="ptc-tag" style="background:#1E7A46; font-size:10px;">SALE</span></div>
-              <div class="ptc-detail-sub">${s.date || ''} · GDS ${s.pnrGds || '—'}${s.pnrGds ? `<button type="button" class="ptc-copy-btn" data-copy="${s.pnrGds}" data-copy-label="GDS PNR" title="Copy GDS PNR">📋</button>` : ''} · Airline PNR ${s.pnrAirline || '—'}${s.pnrAirline ? `<button type="button" class="ptc-copy-btn" data-copy="${s.pnrAirline}" data-copy-label="Airline PNR" title="Copy Airline PNR">📋</button>` : ''}</div>
+              <div class="ptc-detail-sub">${s.date || ''} · GDS ${s.pnrGds || '—'} · Airline PNR ${s.pnrAirline || '—'}</div>
             </div>
           </div>
           ${chartHtml}
@@ -6754,6 +6512,7 @@
             <span class="ptc-settlement-simple-label">Due</span>
             <span class="ptc-settlement-simple-due">${fmtMoneySales(s.due)}</span>
             <span class="ptc-status-badge ${badgeClass}">${badgeIcon} ${s.status || '—'}</span>
+            ${ticketStatusControlHTML(s.ticketStatus, idx)}
           </div>
           <div class="ptc-detail-grid">
             ${fields.map(([label,value]) => `
@@ -6788,6 +6547,7 @@
         deleteSaleAt(i);
       });
     });
+    wireTicketStatusControls(wrap);
   }
 
   function renderSalesCharts(){
@@ -6911,6 +6671,7 @@
         <td class="mono">${fmtMoneySales(s.paid)}</td>
         <td class="mono">${fmtMoneySales(s.due)}</td>
         <td><span class="ptc-tag ${sIcon(s.status)}">${s.status}</span></td>
+        <td>${ticketStatusControlHTML(s.ticketStatus, idx)}</td>
         <td class="ptc-col-secondary">${s.dueDate || ''}</td>
         <td>${s.note || ''}</td>
         <td>
@@ -6937,6 +6698,7 @@
         startSaleEdit(i);
       });
     });
+    wireTicketStatusControls(tbody);
   }
 
   function populateSaleForm(s){
@@ -6996,6 +6758,13 @@
     const sale = collectSale();
     const err = validateSale(sale);
     if(err){ toast(err); return; }
+
+    // Ticket Status lives outside this form — it's only ever changed via the
+    // quick-action control on the record itself (see updateSaleTicketStatus).
+    // Re-saving the form, whether adding or editing, never touches it: a new
+    // sale starts Issued, an edited one keeps whatever it already had.
+    const editingForStatus = salesEditingIndex !== null ? salesEntries[salesEditingIndex] : null;
+    sale.ticketStatus = normalizeTicketStatus(editingForStatus ? editingForStatus.ticketStatus : 'Issued');
 
     if(isCloudConnected()){
       const wasEditing = salesEditingIndex !== null;
@@ -7075,7 +6844,7 @@
       ['GDS PNR','pnrGds'], ['AIRLINE PNR','pnrAirline'],
       ['SECTOR','sector'], ['AIRLINE','airline'], ['SELLING PRICE','price'], ['NET COST','cost'],
       ['PROFIT','profit'], ['PAYMENT METHOD','method'], ['AMOUNT PAID','paid'], ['AMOUNT DUE','due'],
-      ['STATUS','status'], ['DUE DATE','dueDate'], ['NOTE','note'],
+      ['STATUS','status'], ['TICKET STATUS','ticketStatus'], ['DUE DATE','dueDate'], ['NOTE','note'],
     ];
     const rows = [cols.map(c => c[0]), ...salesEntries.map(s => cols.map(c => s[c[1]] ?? ''))];
     const ws = XLSX.utils.aoa_to_sheet(rows);
