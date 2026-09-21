@@ -368,6 +368,20 @@
   .ptc-refund-calc-chev{ display:inline-block; transition: transform .15s ease; }
   #btn-toggle-refund-calc.ptc-open .ptc-refund-calc-chev{ transform: rotate(90deg); }
 
+  .ptc-calc-health{
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11.5px;
+    font-weight: 700;
+    padding: 5px 11px;
+    border-radius: 20px;
+    margin-bottom: 8px;
+  }
+  .ptc-calc-health-missing{ background: var(--reissue-soft); color: var(--reissue); }
+  .ptc-calc-health-error{ background: var(--refund-soft); color: var(--refund); }
+  .ptc-calc-health-ready{ background: #E9F6EE; color: #1E7A46; }
+
   .ptc-refund-calc-panel{
     background: var(--card);
     border: 1px solid var(--line);
@@ -1998,6 +2012,26 @@
       </div>
     </div>
 
+    <!-- ===== Quick Collection popup — records a payment against a due/partial
+         sale directly, without opening the full edit form. ===== -->
+    <div class="ptc-modal-backdrop" id="collect-modal-backdrop" style="display:none;">
+      <div class="ptc-modal" style="max-width:380px;">
+        <h3 style="margin:0 0 4px; font-size:16px; color:var(--ink);">Collect Payment</h3>
+        <p style="font-size:12.5px; color:var(--ink-soft); margin:0 0 16px;" id="collect-modal-who"></p>
+
+        <div class="ptc-field">
+          <label for="collect-modal-amount">Collection Amount</label>
+          <input type="number" step="0.01" min="0" id="collect-modal-amount" class="mono" placeholder="0.00" />
+        </div>
+        <div class="ptc-field-hint" id="collect-modal-hint"></div>
+
+        <div class="ptc-actions" style="margin-top:14px; justify-content:flex-end;">
+          <button class="ptc-btn ptc-btn-ghost" id="btn-collect-cancel">Cancel</button>
+          <button class="ptc-btn ptc-btn-primary" id="btn-collect-confirm" style="background:#1E7A46;">Confirm Collection</button>
+        </div>
+      </div>
+    </div>
+
 
     <div class="ptc-card" id="ptc-card">
       <div class="ptc-editing-banner" id="ptc-editing-banner">
@@ -2330,6 +2364,7 @@
         </div>
 
         <div id="refund-calc-wrap" style="display:none;">
+          <div class="ptc-calc-health" id="refund-calc-health"></div>
           <button type="button" class="ptc-link-toggle" id="btn-toggle-refund-calc">
             <span class="ptc-refund-calc-chev" id="refund-calc-chev">▸</span> Show full calculation
           </button>
@@ -2909,6 +2944,11 @@
     }
 
     if(e.key === 'Escape'){
+      const collectModal = $('collect-modal-backdrop');
+      if(collectModal && collectModal.style.display !== 'none'){
+        closeCollectModal();
+        return;
+      }
       const settingsModal = $('cloud-modal-backdrop');
       if(settingsModal && settingsModal.style.display !== 'none'){
         settingsModal.style.display = 'none';
@@ -4738,6 +4778,33 @@
       $('calc-client').textContent = clientRefund.toFixed(2);
       $('calc-client-formula').innerHTML = calcFormulaHTML([{val:airlineRefund}, {val:svcAmt}]);
     }
+
+    // ---- Calculation Health Check ----
+    // Tells the person at a glance whether the numbers on screen are trustworthy,
+    // and names the exact field to fix if not — rather than silently showing a
+    // wrong-looking total with no explanation.
+    const healthEl = $('refund-calc-health');
+    if(healthEl && mode){
+      let missingField = '';
+      if(mode === 'TAX_ONLY'){
+        if(totalTax <= 0) missingField = 'Tax';
+      } else {
+        if(baseFare <= 0) missingField = 'Base Fare';
+        else if(totalTax <= 0) missingField = 'Tax';
+      }
+      if(missingField){
+        healthEl.className = 'ptc-calc-health ptc-calc-health-missing';
+        healthEl.innerHTML = `⚠️ Missing Required Information — enter <b>${missingField}</b> to calculate`;
+      } else if(overLimit || airlineRefund < 0){
+        healthEl.className = 'ptc-calc-health ptc-calc-health-error';
+        healthEl.innerHTML = overLimit
+          ? '🔎 Check Input — Used Segment or Non-Refundable Tax exceeds what\'s available'
+          : '🔎 Check Input — this results in a negative airline refund';
+      } else {
+        healthEl.className = 'ptc-calc-health ptc-calc-health-ready';
+        healthEl.innerHTML = '✅ Calculation Complete';
+      }
+    }
   }
   document.querySelectorAll('.ptc-refund-calc').forEach(el => {
     el.addEventListener('input', recalcRefund);
@@ -6536,9 +6603,81 @@
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
         const i = parseInt(btn.getAttribute('data-idx'), 10);
-        startSaleEdit(i);
-        $('sales-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        openCollectModal(i);
       });
+    });
+  }
+
+  // ---- Quick Collection popup: record a payment against a due/partial sale
+  // directly, without opening the full form. ----
+  let collectModalIndex = null;
+
+  function openCollectModal(i){
+    const s = salesEntries[i];
+    if(!s) return;
+    const due = Number(s.due) || 0;
+    if(due <= 0) return; // nothing left to collect
+    collectModalIndex = i;
+    $('collect-modal-who').textContent = (s.pname || 'Unnamed') + ' — Remaining Due: ' + fmtMoneySales(due);
+    const amountInput = $('collect-modal-amount');
+    amountInput.value = '';
+    amountInput.max = due;
+    $('collect-modal-hint').textContent = '';
+    $('collect-modal-hint').classList.remove('ptc-field-hint-error');
+    $('collect-modal-backdrop').style.display = 'flex';
+    setTimeout(() => amountInput.focus(), 50);
+  }
+
+  function closeCollectModal(){
+    $('collect-modal-backdrop').style.display = 'none';
+    collectModalIndex = null;
+  }
+
+  function confirmCollection(){
+    if(collectModalIndex === null) return;
+    const s = salesEntries[collectModalIndex];
+    if(!s) { closeCollectModal(); return; }
+
+    const due = Number(s.due) || 0;
+    const amount = parseFloat($('collect-modal-amount').value);
+    const hint = $('collect-modal-hint');
+
+    if(isNaN(amount) || amount <= 0){
+      hint.textContent = 'Enter an amount greater than 0.';
+      hint.classList.add('ptc-field-hint-error');
+      return;
+    }
+    if(amount > due){
+      hint.textContent = `Cannot collect more than the remaining due (${fmtMoneySales(due)}).`;
+      hint.classList.add('ptc-field-hint-error');
+      return;
+    }
+
+    // Apply directly to the existing record — no form, no re-entering anything else.
+    const price = Number(s.price) || 0;
+    const newPaid = (Number(s.paid) || 0) + amount;
+    const newDue = Math.max(0, price - newPaid);
+    s.paid = newPaid;
+    s.due = newDue;
+    s.status = newDue <= 0 ? 'PAID' : (newPaid > 0 ? 'PARTIAL' : 'DUE');
+
+    if(isCloudConnected() && s._id){
+      cloudDb.collection(SALES_COLLECTION).doc(s._id).set(trimForCloud(s))
+        .then(() => toast(newDue <= 0 ? 'Fully collected — synced to the cloud' : (fmtMoneySales(amount) + ' collected — synced to the cloud')))
+        .catch(err => { console.error(err); toast('Cloud save failed — check your connection.'); });
+    } else {
+      persistSales();
+      renderSales();
+      toast(newDue <= 0 ? 'Fully collected' : fmtMoneySales(amount) + ' collected');
+    }
+    closeCollectModal();
+  }
+
+  if($('btn-collect-confirm')) $('btn-collect-confirm').addEventListener('click', confirmCollection);
+  if($('btn-collect-cancel')) $('btn-collect-cancel').addEventListener('click', closeCollectModal);
+  if($('collect-modal-amount')){
+    $('collect-modal-amount').addEventListener('keydown', (e) => {
+      if(e.key === 'Enter'){ e.preventDefault(); confirmCollection(); }
     });
   }
 
