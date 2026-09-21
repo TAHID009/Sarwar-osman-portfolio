@@ -718,7 +718,7 @@
     background: var(--ink);
     color: #fff;
     text-align: left;
-    padding: 9px 10px;
+    padding: 7px 10px;
     font-weight: 600;
     white-space: nowrap;
     font-size: 11px;
@@ -750,9 +750,11 @@
   .ptc-view-toggle:hover{ border-color: var(--accent); color: var(--accent); }
 
   table.ptc-table td{
-    padding: 8px 10px;
+    padding: 6px 10px;
     border-top: 1px solid var(--line);
     white-space: nowrap;
+    vertical-align: top;
+    line-height: 1.4;
   }
 
   table.ptc-table tr:nth-child(even) td{
@@ -1398,8 +1400,8 @@
     border:1px solid var(--line);
     border-left:4px solid var(--accent);
     border-radius:9px;
-    padding:14px 16px;
-    margin-bottom:12px;
+    padding:10px 14px;
+    margin-bottom:8px;
   }
   .ptc-detail-card-head{
     display:flex;
@@ -1407,16 +1409,16 @@
     align-items:center;
     flex-wrap:wrap;
     gap:8px;
-    margin-bottom:10px;
-    padding-bottom:8px;
+    margin-bottom:7px;
+    padding-bottom:6px;
     border-bottom:1px dashed var(--line);
   }
-  .ptc-detail-name{ font-weight:800; font-size:14.5px; color:var(--ink); }
+  .ptc-detail-name{ font-weight:800; font-size:14.5px; color:var(--ink); line-height:1.35; }
   .ptc-detail-sub{ font-size:11.5px; color:var(--muted); margin-top:2px; }
   .ptc-detail-grid{
     display:grid;
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap:10px 16px;
+    gap:7px 14px;
   }
   .ptc-detail-field-label{
     font-size:9.5px;
@@ -1430,9 +1432,10 @@
     color:var(--ink);
     font-family:'IBM Plex Mono', monospace;
     margin-top:1px;
+    line-height:1.4;
     word-break:break-word;
   }
-  .ptc-detail-actions{ margin-top:10px; display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+  .ptc-detail-actions{ margin-top:8px; display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
 
   /* "Client Refund" — final payable amount, called out separately from the grid */
   .ptc-client-refund-callout{
@@ -2813,6 +2816,18 @@
   function esc(v){
     if(v === undefined || v === null) return '';
     return String(v).replace(/[&<>"']/g, (c) => ESC_MAP[c]);
+  }
+
+  // Display-only formatting for multi-passenger PNRs: the Passenger Name field
+  // is still just one comma-separated text value (nothing about how it's
+  // entered, stored, or calculated changes) — this only affects how it's
+  // rendered, stacking each name on its own line instead of one long comma
+  // list, wherever a passenger name is shown.
+  function formatPassengerNamesHTML(pname){
+    if(!pname) return '';
+    const names = String(pname).split(',').map(n => n.trim()).filter(Boolean);
+    if(names.length <= 1) return esc(pname);
+    return names.map(n => esc(n)).join('<br>');
   }
 
   // Disable "scroll to increase/decrease" on every number input across every
@@ -4997,7 +5012,7 @@
         <td>${e.date || ''}</td>
         <td class="mono">${esc(e.pnrGds)}</td>
         <td class="mono">${esc(e.pnrAirline)}</td>
-        <td>${esc(e.pname)}</td>
+        <td>${formatPassengerNamesHTML(e.pname)}</td>
         <td class="ptc-col-secondary">${esc(e.ptype)}</td>
         <td class="mono ptc-col-secondary">${esc(e.platform)}</td>
         <td class="mono">${esc(e.airline)}</td>
@@ -5953,7 +5968,7 @@
         <div class="ptc-detail-card" style="border-left-color:${color};">
           <div class="ptc-detail-card-head">
             <div>
-              <div class="ptc-detail-name">${esc(e.pname) || 'Unnamed'} <span class="ptc-tag" style="background:${color}; font-size:10px;">${e.txn}</span>${e.txn === 'Refund' && e.refundStatus ? ` <span class="ptc-tag ${e.refundStatus === 'REFUNDED' ? 'ptc-status-tag-refunded' : 'ptc-status-tag-pending'}" style="font-size:10px;">${esc(e.refundStatus)}</span>` : ''}</div>
+              <div class="ptc-detail-name">${formatPassengerNamesHTML(e.pname) || 'Unnamed'} <span class="ptc-tag" style="background:${color}; font-size:10px;">${e.txn}</span>${e.txn === 'Refund' && e.refundStatus ? ` <span class="ptc-tag ${e.refundStatus === 'REFUNDED' ? 'ptc-status-tag-refunded' : 'ptc-status-tag-pending'}" style="font-size:10px;">${esc(e.refundStatus)}</span>` : ''}</div>
               <div class="ptc-detail-sub">${e.date || ''} · GDS ${esc(e.pnrGds) || '—'} · Airline PNR ${esc(e.pnrAirline) || '—'}</div>
               ${e.editedAt ? `<div class="ptc-detail-sub" style="color:var(--reissue);">✏️ Last edited ${esc(new Date(e.editedAt).toLocaleString())}</div>` : ''}
             </div>
@@ -5963,7 +5978,7 @@
             ${fields.map(([label,value]) => `
               <div>
                 <div class="ptc-detail-field-label">${esc(label)}</div>
-                <div class="ptc-detail-field-value">${(value === '' || value === undefined || value === null) ? '—' : esc(value)}</div>
+                <div class="ptc-detail-field-value">${(value === '' || value === undefined || value === null) ? '—' : (label === 'Passenger' ? formatPassengerNamesHTML(value) : esc(value))}</div>
               </div>
             `).join('')}
           </div>
@@ -6266,7 +6281,7 @@
       return `
         <div class="ptc-feed-item">
           <div>
-            <div class="ptc-feed-name">${esc(e.pname) || '—'} <span class="ptc-tag" style="background:${tagColor[e.txn]}; font-size:9.5px; padding:1px 6px;">${e.txn}</span></div>
+            <div class="ptc-feed-name">${formatPassengerNamesHTML(e.pname) || '—'} <span class="ptc-tag" style="background:${tagColor[e.txn]}; font-size:9.5px; padding:1px 6px;">${e.txn}</span></div>
             <div class="ptc-feed-meta">${e.date || ''} · ${esc(e.pnrGds)} ${e.sector ? '· ' + esc(e.sector) : ''}</div>
           </div>
           <div class="ptc-feed-amt">${amt ? amt.toFixed(2) : ''}</div>
@@ -6555,7 +6570,7 @@
       ${owing.map(({s, idx}) => `
         <div class="ptc-due-row" data-idx="${idx}" role="button" tabindex="0" title="Click to view full PNR details">
           <div>
-            <div class="ptc-due-row-who">${esc(s.pname) || 'Unnamed'}</div>
+            <div class="ptc-due-row-who">${formatPassengerNamesHTML(s.pname) || 'Unnamed'}</div>
             <div class="ptc-due-row-pnr">GDS ${esc(s.pnrGds) || '—'} · Airline ${esc(s.pnrAirline) || '—'}${s.tkt ? ' · Tkt ' + fmtTicketList(s.tkt) : ''}</div>
             <div class="ptc-due-row-resp">👤 ${s.responsible ? esc(s.responsible) : '<span class="ptc-due-row-resp-missing">No responsible person set</span>'}</div>
           </div>
@@ -6655,7 +6670,7 @@
         <div class="ptc-detail-card" style="border-left-color:#1E7A46;">
           <div class="ptc-detail-card-head">
             <div>
-              <div class="ptc-detail-name">${esc(s.pname) || 'Unnamed'} <span class="ptc-tag" style="background:#1E7A46; font-size:10px;">SALE</span></div>
+              <div class="ptc-detail-name">${formatPassengerNamesHTML(s.pname) || 'Unnamed'} <span class="ptc-tag" style="background:#1E7A46; font-size:10px;">SALE</span></div>
               <div class="ptc-detail-sub">${s.date || ''} · GDS ${esc(s.pnrGds) || '—'} · Airline PNR ${esc(s.pnrAirline) || '—'}</div>
             </div>
           </div>
@@ -6810,7 +6825,7 @@
       else if(s.status === 'PARTIAL') tr.classList.add('ptc-row-partial');
       tr.innerHTML = `
         <td>${s.date || ''}</td>
-        <td>${esc(s.pname)}</td>
+        <td>${formatPassengerNamesHTML(s.pname)}</td>
         <td class="mono ptc-col-secondary">${paxSummary(s)}</td>
         <td class="mono ptc-col-secondary">${esc(s.phone)}</td>
         <td class="mono">${fmtTicketList(s.tkt)}</td>
