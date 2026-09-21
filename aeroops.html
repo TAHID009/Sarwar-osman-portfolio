@@ -5974,7 +5974,10 @@
           </div>
           ` : ''}
           <div class="ptc-detail-actions">
-            ${e.txn === 'Refund' ? `
+            ${(e.txn === 'Refund' && pendingAdjFilterActive) ? `
+            <button type="button" class="ptc-btn ptc-btn-primary ptc-adj-done-btn" data-idx="${idx}" style="padding:6px 16px; font-size:12px; background:#1E7A46; margin-right:auto;">Adjustment Done</button>
+            ` : ''}
+            ${(e.txn === 'Refund' && !pendingAdjFilterActive) ? `
             <div style="display:flex; align-items:center; gap:8px; margin-right:auto;">
               <span class="ptc-detail-field-label" style="margin:0;">Adjustment Given</span>
               <button type="button" class="ptc-btn ptc-btn-ghost ptc-adj-btn ptc-search-adj ${(e.adjustmentGiven !== 'YES') ? 'ptc-adj-active' : ''}" data-idx="${idx}" data-val="NO" style="padding:6px 14px; font-size:12px;">No</button>
@@ -5993,6 +5996,21 @@
         const i = parseInt(btn.getAttribute('data-idx'), 10);
         const val = btn.getAttribute('data-val');
         quickSetAdjustment(i, val);
+      });
+    });
+    // "Adjustment Done" — only shown in the Pending Refund Adjustments view. Sets
+    // the very same adjustmentGiven field the Yes/No toggle above already uses
+    // (via the same quickSetAdjustment function, so the update is saved and
+    // synced exactly the same way everywhere else in the app already relies on)
+    // — briefly confirms on the button itself, then the list re-filters and the
+    // now-adjusted PNR drops off automatically.
+    wrap.querySelectorAll('.ptc-adj-done-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const i = parseInt(btn.getAttribute('data-idx'), 10);
+        btn.textContent = '✓ Adjusted';
+        btn.disabled = true;
+        btn.style.opacity = '0.85';
+        setTimeout(() => quickSetAdjustment(i, 'YES'), 500);
       });
     });
     wrap.querySelectorAll('.ptc-search-edit').forEach(btn => {
