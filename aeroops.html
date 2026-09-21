@@ -542,6 +542,8 @@
   }
   .ptc-btn-ghost:hover{ background: #F3F5F8; border-color: #C4CEDA; }
   .ptc-btn:disabled{ opacity: 0.5; cursor: not-allowed; transform: none; }
+  .ptc-btn-ghost.ptc-btn-active{ background: var(--refund); color: #fff; border-color: var(--refund); }
+  .ptc-btn-ghost.ptc-btn-active:hover{ background: var(--refund); }
 
   .ptc-log-head{
     display:flex;
@@ -2401,6 +2403,7 @@
             style="width:100%; box-sizing:border-box; padding:10px 12px 10px 34px; border:1px solid var(--line); border-radius:8px; font-family:inherit; font-size:13px; color:var(--ink);" />
         </div>
         <button class="ptc-btn ptc-btn-ghost" id="btn-search-clear" style="display:none;">Clear Search</button>
+        <button class="ptc-btn ptc-btn-ghost" id="btn-pending-refund-adj" style="padding:9px 14px; font-size:12.5px; white-space:nowrap;">⏳ Pending Refund Adjustments</button>
       </div>
       <div id="ptc-search-meta" style="font-size:11.5px; color:var(--muted); margin-top:8px; display:none;"></div>
       <div id="ptc-search-results" style="margin-top:12px; display:none;"></div>
@@ -5747,6 +5750,7 @@
 
   // ================= SEARCH =================
   let searchQuery = '';
+  let pendingAdjFilterActive = false; // "Pending Refund Adjustments" quick filter — a view on top of existing Refund Status / Adjustment Given fields, no new data
 
   const REFUND_TYPE_LABELS = {
     FULL_UNUSED: 'Full Refund',
@@ -5892,7 +5896,7 @@
     const tableWrap = $('ptc-table-wrap');
     const clearBtn = $('btn-search-clear');
 
-    if(!searchQuery.trim()){
+    if(!searchQuery.trim() && !pendingAdjFilterActive){
       wrap.style.display = 'none';
       meta.style.display = 'none';
       clearBtn.style.display = 'none';
@@ -5901,17 +5905,30 @@
     }
 
     clearBtn.style.display = 'inline-flex';
+    clearBtn.textContent = pendingAdjFilterActive ? 'Clear Filter' : 'Clear Search';
     tableWrap.style.display = 'none';
 
     const matches = [];
-    entries.forEach((e, idx) => { if(matchesQuery(e, searchQuery)) matches.push(idx); });
+    if(pendingAdjFilterActive){
+      // Same Refund Status / Adjustment Given fields the table and detail card
+      // already show — this is just a quick way to see only the ones still owed.
+      entries.forEach((e, idx) => {
+        if(e.txn === 'Refund' && e.refundStatus === 'REFUNDED' && e.adjustmentGiven !== 'YES') matches.push(idx);
+      });
+    } else {
+      entries.forEach((e, idx) => { if(matchesQuery(e, searchQuery)) matches.push(idx); });
+    }
 
     meta.style.display = 'block';
-    meta.textContent = matches.length + ' match' + (matches.length === 1 ? '' : 'es') + ' for "' + searchQuery + '"';
+    meta.textContent = pendingAdjFilterActive
+      ? matches.length + ' refunded PNR' + (matches.length === 1 ? '' : 's') + ' still pending refund adjustment'
+      : matches.length + ' match' + (matches.length === 1 ? '' : 'es') + ' for "' + searchQuery + '"';
 
     wrap.style.display = 'block';
     if(!matches.length){
-      wrap.innerHTML = '<div class="ptc-search-noresult">No entry found for that PNR / ticket number / name. Check the spelling or clear the search to browse the full log.</div>';
+      wrap.innerHTML = pendingAdjFilterActive
+        ? '<div class="ptc-search-noresult">No refunded PNRs are currently pending adjustment.</div>'
+        : '<div class="ptc-search-noresult">No entry found for that PNR / ticket number / name. Check the spelling or clear the search to browse the full log.</div>';
       return;
     }
 
@@ -5936,7 +5953,7 @@
         <div class="ptc-detail-card" style="border-left-color:${color};">
           <div class="ptc-detail-card-head">
             <div>
-              <div class="ptc-detail-name">${esc(e.pname) || 'Unnamed'} <span class="ptc-tag" style="background:${color}; font-size:10px;">${e.txn}</span></div>
+              <div class="ptc-detail-name">${esc(e.pname) || 'Unnamed'} <span class="ptc-tag" style="background:${color}; font-size:10px;">${e.txn}</span>${e.txn === 'Refund' && e.refundStatus ? ` <span class="ptc-tag ${e.refundStatus === 'REFUNDED' ? 'ptc-status-tag-refunded' : 'ptc-status-tag-pending'}" style="font-size:10px;">${esc(e.refundStatus)}</span>` : ''}</div>
               <div class="ptc-detail-sub">${e.date || ''} · GDS ${esc(e.pnrGds) || '—'} · Airline PNR ${esc(e.pnrAirline) || '—'}</div>
               ${e.editedAt ? `<div class="ptc-detail-sub" style="color:var(--reissue);">✏️ Last edited ${esc(new Date(e.editedAt).toLocaleString())}</div>` : ''}
             </div>
@@ -6000,11 +6017,26 @@
 
   $('ptc-search').addEventListener('input', (e) => {
     searchQuery = e.target.value;
+    if(searchQuery.trim() && pendingAdjFilterActive){
+      pendingAdjFilterActive = false;
+      $('btn-pending-refund-adj').classList.remove('ptc-btn-active');
+    }
     renderSearchResults();
   });
   $('btn-search-clear').addEventListener('click', () => {
     searchQuery = '';
     $('ptc-search').value = '';
+    pendingAdjFilterActive = false;
+    $('btn-pending-refund-adj').classList.remove('ptc-btn-active');
+    renderSearchResults();
+  });
+  $('btn-pending-refund-adj').addEventListener('click', () => {
+    pendingAdjFilterActive = !pendingAdjFilterActive;
+    $('btn-pending-refund-adj').classList.toggle('ptc-btn-active', pendingAdjFilterActive);
+    if(pendingAdjFilterActive){
+      searchQuery = '';
+      $('ptc-search').value = '';
+    }
     renderSearchResults();
   });
 
