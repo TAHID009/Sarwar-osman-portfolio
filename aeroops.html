@@ -1961,7 +1961,7 @@
       </div>
       <div class="ptc-pdf-import" id="ptc-pdf-import">
         <label for="pdf-ticket-input" class="ptc-pdf-import-btn" id="pdf-ticket-btn">
-          📄 Import from Ticket PDF
+          🎫 TKT AutoFill
         </label>
         <input type="file" id="pdf-ticket-input" accept="application/pdf" style="display:none;" />
         <span class="ptc-pdf-import-status" id="pdf-import-status">Reads a ticket PDF and fills in the fields below — always double-check before saving.</span>
@@ -2554,6 +2554,18 @@
           <span id="sales-editing-banner-text">Editing sale #1</span>
         </div>
         <div class="ptc-section-label" style="--sec-color:#1E7A46;">🎫 Ticket Sale Information</div>
+
+        <div class="ptc-pdf-import" id="ptc-pdf-import-sales">
+          <label for="pdf-ticket-input-sales" class="ptc-pdf-import-btn" id="pdf-ticket-btn-sales">
+            🎫 TKT AutoFill
+          </label>
+          <input type="file" id="pdf-ticket-input-sales" accept="application/pdf" style="display:none;" />
+          <span class="ptc-pdf-import-status" id="pdf-import-status-sales">Reads a ticket PDF and fills in the fields below — always double-check before saving.</span>
+        </div>
+        <div id="pdf-import-banner-sales" style="display:none;">
+          ⚠️ Fields were auto-filled from the uploaded PDF — verify every value before saving. Layouts vary by airline/GDS, so extraction can miss or misread a field.
+        </div>
+
         <div class="ptc-row">
           <div class="ptc-field">
             <label for="s-date">Sale Date</label>
@@ -3323,7 +3335,7 @@
   }
 
   // ==========================================================================
-  // Import from Ticket PDF — reads an uploaded e-ticket/itinerary PDF, pulls out
+  // TKT AutoFill — reads an uploaded e-ticket/itinerary PDF, pulls out
   // whatever it can recognize (PNR, passenger name, ticket number(s), airline,
   // sector, base fare, tax), and fills the matching fields in. Ticket layouts
   // differ a lot by GDS and by airline, so this is deliberately best-effort:
@@ -3421,6 +3433,16 @@
         if(discountAmt > 0 && out.baseFare) out.discountPct = Math.min(7, +(discountAmt / out.baseFare * 100).toFixed(2));
       }
 
+      // Total/Paid Amount — what the client was actually charged on this ticket.
+      // Not used by the Ticketing entry form (which derives its own total from
+      // Base Fare + Tax − Discount), but it's exactly the Revenue Desk's Selling
+      // Price, so Revenue Desk import uses this instead of Base Fare + Tax.
+      m = norm.match(/Total\s*Amount\s+([\d,]+(?:\.\d+)?)/i);
+      if(m) out.totalFare = parseFloat(m[1].replace(/,/g, ''));
+
+      m = norm.match(/Paid\s*Amount\s+([\d,]+(?:\.\d+)?)/i);
+      if(m) out.paidAmount = parseFloat(m[1].replace(/,/g, ''));
+
       m = norm.match(/Route:\s*([A-Z]{3}(?:\s*-\s*[A-Z]{3})+)/i);
       if(m) out.sector = m[1].toUpperCase().replace(/\s+/g, '');
     } else {
@@ -3448,6 +3470,12 @@
 
       m = norm.match(/\bTax(?:es)?(?:\s*,?\s*Fees?\s*&?\s*Charges?)?\s*[:\-]?\s*(?:BDT|USD|৳|\$|Tk\.?)?\s*([\d,]+\.\d{1,2}|[\d,]+)/i);
       if(m) out.taxFare = parseFloat(m[1].replace(/,/g, ''));
+
+      m = norm.match(/(?:Grand\s*)?Total\s*(?:Fare|Amount)?\s*[:\-]?\s*(?:BDT|USD|৳|\$|Tk\.?)?\s*([\d,]+\.\d{1,2}|[\d,]+)/i);
+      if(m) out.totalFare = parseFloat(m[1].replace(/,/g, ''));
+
+      m = norm.match(/Paid\s*Amount\s*[:\-]?\s*(?:BDT|USD|৳|\$|Tk\.?)?\s*([\d,]+\.\d{1,2}|[\d,]+)/i);
+      if(m) out.paidAmount = parseFloat(m[1].replace(/,/g, ''));
 
       m = norm.match(/Route:\s*([A-Z]{3}(?:\s*-\s*[A-Z]{3})+)/i);
       if(m){
@@ -3563,11 +3591,68 @@
     return filledAny;
   }
 
-  (function initPdfTicketImport(){
-    const fileInput = $('pdf-ticket-input');
-    const btn = $('pdf-ticket-btn');
-    const status = $('pdf-import-status');
-    const banner = $('pdf-import-banner');
+  // Same idea as applyExtractedTicketFields above, but for the Revenue Desk sale
+  // form's own field ids. Net Cost is deliberately left alone — a client-facing
+  // ticket never shows the agency's own supplier cost, so there's nothing honest
+  // to extract for it; Selling Price uses what the ticket shows the client paid.
+  function applyExtractedSaleFields(fields){
+    let filledAny = false;
+
+    if(fields.reservationPnr || fields.airlinePnr || fields.pnr){
+      $('s-pnr-gds').value = fields.reservationPnr || fields.pnr || fields.airlinePnr || '';
+      $('s-pnr-air').value = fields.airlinePnr || fields.pnr || fields.reservationPnr || '';
+      pdfHighlight('s-pnr-gds'); pdfHighlight('s-pnr-air');
+      filledAny = true;
+    }
+    if(fields.passengerName){
+      $('s-pname').value = fields.passengerName;
+      pdfHighlight('s-pname');
+      filledAny = true;
+    }
+    if(fields.sector){
+      $('s-sector').value = fields.sector;
+      pdfHighlight('s-sector');
+      filledAny = true;
+    }
+    if(fields.airlineCode){
+      // Revenue Desk's Airline field is free text, not the Entry Log's dropdown —
+      // write the matched airline's name if we have one, else the raw code.
+      let label = fields.airlineCode;
+      const entrySelect = $('f-airline');
+      if(entrySelect){
+        const opt = [...entrySelect.options].find(o => o.value === fields.airlineCode);
+        const name = opt ? (opt.textContent.split('—')[1] || '').trim() : '';
+        if(name) label = name;
+      }
+      $('s-airline').value = label;
+      pdfHighlight('s-airline');
+      filledAny = true;
+    }
+    if(fields.ticketNumbers && fields.ticketNumbers.length && salesTktChips){
+      salesTktChips.setTickets(fields.ticketNumbers);
+      pdfHighlight('s-tkt-chips');
+      filledAny = true;
+    }
+
+    const sellingPrice = fields.paidAmount !== undefined ? fields.paidAmount
+      : fields.totalFare !== undefined ? fields.totalFare
+      : (fields.baseFare !== undefined && fields.taxFare !== undefined) ? (fields.baseFare + fields.taxFare)
+      : undefined;
+    if(sellingPrice !== undefined){
+      $('s-price').value = sellingPrice.toFixed(2);
+      pdfHighlight('s-price');
+      filledAny = true;
+    }
+    if(typeof recalcSale === 'function') recalcSale();
+
+    return filledAny;
+  }
+
+  function wirePdfImport(fileInputId, btnId, statusId, bannerId, applyFn){
+    const fileInput = $(fileInputId);
+    const btn = $(btnId);
+    const status = $(statusId);
+    const banner = $(bannerId);
     if(!fileInput) return;
     const defaultStatus = status.textContent;
 
@@ -3588,7 +3673,7 @@
         status.textContent = 'Reading ' + file.name + '…';
         extractPdfText(file).then(text => {
           const fields = parseTicketText(text);
-          const filledAny = applyExtractedTicketFields(fields);
+          const filledAny = applyFn(fields);
           banner.style.display = 'block';
           status.textContent = defaultStatus;
           btn.classList.remove('ptc-pdf-busy');
@@ -3607,7 +3692,9 @@
         toast('Could not load the PDF reader — check your internet connection.');
       });
     });
-  })();
+  }
+  wirePdfImport('pdf-ticket-input', 'pdf-ticket-btn', 'pdf-import-status', 'pdf-import-banner', applyExtractedTicketFields);
+  wirePdfImport('pdf-ticket-input-sales', 'pdf-ticket-btn-sales', 'pdf-import-status-sales', 'pdf-import-banner-sales', applyExtractedSaleFields);
 
   function setCloudStatus(state){
     const el = $('ptc-cloud-status');
