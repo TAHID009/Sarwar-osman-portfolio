@@ -2830,6 +2830,14 @@
     return names.map(n => esc(n)).join('<br>');
   }
 
+  // Same idea for a PNR's ticket number(s) — stored comma-joined (never changes),
+  // just stacked vertically instead of one long comma list when there's more than one.
+  function fmtTicketListHTML(v){
+    const list = (v || '').toString().split(',').map(t => t.trim()).filter(Boolean);
+    if(list.length <= 1) return esc(list[0] || '');
+    return list.map(t => esc(t)).join('<br>');
+  }
+
   // Disable "scroll to increase/decrease" on every number input across every
   // section (entry, reissue, refund, sales, achievement, etc.) — scrolling the
   // page while a number field happens to be focused should never change its value.
@@ -5017,8 +5025,8 @@
         <td class="mono ptc-col-secondary">${esc(e.platform)}</td>
         <td class="mono">${esc(e.airline)}</td>
         <td><span class="ptc-tag" style="background:${color}">${e.txn}</span></td>
-        <td class="mono">${fmtTicketList(e.oldTkt)}</td>
-        <td class="mono">${fmtTicketList(e.newTkt)}</td>
+        <td class="mono">${fmtTicketListHTML(e.oldTkt)}</td>
+        <td class="mono">${fmtTicketListHTML(e.newTkt)}</td>
         <td class="mono">${esc(e.sector)}</td>
         <td class="mono ptc-col-secondary">${fmtMoney(e.baseFare)}</td>
         <td class="mono ptc-col-secondary">${fmtMoney(e.taxFare)}</td>
@@ -5978,11 +5986,10 @@
             ${fields.map(([label,value]) => `
               <div>
                 <div class="ptc-detail-field-label">${esc(label)}</div>
-                <div class="ptc-detail-field-value">${(value === '' || value === undefined || value === null) ? '—' : (label === 'Passenger' ? formatPassengerNamesHTML(value) : esc(value))}</div>
+                <div class="ptc-detail-field-value">${(value === '' || value === undefined || value === null) ? '—' : (label === 'Passenger' ? formatPassengerNamesHTML(value) : (label === 'Ticket No.' || label === 'Old Ticket' || label === 'New Ticket') ? fmtTicketListHTML(value) : esc(value))}</div>
               </div>
             `).join('')}
-          </div>
-          ${e.txn === 'Refund' ? `
+          </div>          ${e.txn === 'Refund' ? `
           <div class="ptc-client-refund-callout">
             <span class="ptc-client-refund-callout-label">💵 Client Refund</span>
             <span class="ptc-client-refund-callout-value">${fmtMoney(e.refundCharge)}</span>
@@ -6571,7 +6578,7 @@
         <div class="ptc-due-row" data-idx="${idx}" role="button" tabindex="0" title="Click to view full PNR details">
           <div>
             <div class="ptc-due-row-who">${formatPassengerNamesHTML(s.pname) || 'Unnamed'}</div>
-            <div class="ptc-due-row-pnr">GDS ${esc(s.pnrGds) || '—'} · Airline ${esc(s.pnrAirline) || '—'}${s.tkt ? ' · Tkt ' + fmtTicketList(s.tkt) : ''}</div>
+            <div class="ptc-due-row-pnr">GDS ${esc(s.pnrGds) || '—'} · Airline ${esc(s.pnrAirline) || '—'}${s.tkt ? ' · Tkt ' + fmtTicketListHTML(s.tkt) : ''}</div>
             <div class="ptc-due-row-resp">👤 ${s.responsible ? esc(s.responsible) : '<span class="ptc-due-row-resp-missing">No responsible person set</span>'}</div>
           </div>
           <div style="display:flex; align-items:center; gap:10px;">
@@ -6687,7 +6694,7 @@
             ${fields.map(([label,value]) => `
               <div>
                 <div class="ptc-detail-field-label">${esc(label)}</div>
-                <div class="ptc-detail-field-value">${(value === '' || value === undefined || value === null) ? '—' : esc(value)}</div>
+                <div class="ptc-detail-field-value">${(value === '' || value === undefined || value === null) ? '—' : (label === 'Ticket No.' ? fmtTicketListHTML(value) : esc(value))}</div>
               </div>
             `).join('')}
           </div>
@@ -6828,7 +6835,7 @@
         <td>${formatPassengerNamesHTML(s.pname)}</td>
         <td class="mono ptc-col-secondary">${paxSummary(s)}</td>
         <td class="mono ptc-col-secondary">${esc(s.phone)}</td>
-        <td class="mono">${fmtTicketList(s.tkt)}</td>
+        <td class="mono">${fmtTicketListHTML(s.tkt)}</td>
         <td class="mono">${esc(s.pnrGds)}</td>
         <td class="mono">${esc(s.pnrAirline)}</td>
         <td class="mono">${esc(s.sector)}</td>
