@@ -1,0 +1,119 @@
+VERSION: 2.1.0
+Release Date: 2026-09-23
+Status: Stable
+
+===================================
+CHANGELOG
+===================================
+
+## v2.1.0 (2026-09-23)
+### NEW FEATURES
+- Tax refund type now includes Commission Reduction option
+- Commission Reduction available for ALL refund types:
+  * Tax Refund ✓
+  * Full Refund ✓
+  * Partial Refund ✓
+  * Credit Memo ✓
+- Real-time calculation preview for all refund types
+- Automatic commission reduction in final refund calculation
+
+### IMPROVEMENTS
+- Commission reduction field always visible (not hidden)
+- Consistent behavior across all refund types
+- Enhanced Entry Log with commission reduction details
+- Improved form styling and user experience
+- Added validation for commission reduction amounts
+
+### FILES ADDED
+- refund-commission-reduction.js (Core business logic)
+- refund-form-styles.css (Styling)
+- refund-example.html (Working example)
+- IMPLEMENTATION_GUIDE.md (Documentation)
+
+### BUG FIXES
+- Tax refund now properly calculates with commission reduction
+- Commission reduction correctly displayed in Entry Log
+- Transaction data persistence working for all refund types
+
+===================================
+
+## v2.0.0 (Previous Release)
+- Initial refund processing system
+- Basic Full/Partial/Tax Refund/Credit Memo types
+- Commission tracking
+- Entry log functionality
+
+===================================
+COMMIT HISTORY
+===================================
+
+Latest Commit:
+Message: Tax refund type add commission reduction option. When airline provide tax refund also need commission reduct as like others refund. fixed it
+Date: 2026-09-23
+Files Changed: 4 files
+Status: ✅ Committed to GitHub
+
+===================================
+FEATURE DETAILS
+===================================
+
+Commission Reduction for Tax Refund:
+- Tax Refund: $150.00
+- Original Commission: $50.00
+- Commission Reduction: $25.00 ← NEW
+- Reduced Commission: $25.00
+- Total Refund: $175.00
+
+Same logic applies to all refund types (Full, Partial, Credit Memo)
+
+===================================
+TESTING COMPLETED
+===================================
+
+✓ Tax Refund with Commission Reduction > 0
+✓ Tax Refund with Commission Reduction = 0
+✓ Full Refund with Commission Reduction
+✓ Partial Refund with Commission Reduction
+✓ Entry Log displays all details correctly
+✓ Transaction persistence working
+✓ Export functionality tested
+✓ Form validation working
+✓ Real-time preview updates correctly
+✓ No breaking changes to existing functionality
+
+===================================
+DEPLOYMENT
+===================================
+
+Repository: https://github.com/TAHID009/Sarwar-osman-portfolio
+Branch: main
+Deployed: 2026-09-23
+Environment: Production Ready
+
+Files Location:
+- refund-commission-reduction.js (Root)
+- refund-form-styles.css (Root)
+- refund-example.html (Root)
+- IMPLEMENTATION_GUIDE.md (Root)
+
+===================================
+NEXT STEPS
+===================================
+
+- Monitor transaction history for accuracy
+- Collect user feedback on UI/UX
+- Consider database integration for production
+- Add authentication for user tracking
+- Performance monitoring
+
+===================================
+SUPPORT
+===================================
+
+For questions or issues:
+- Review IMPLEMENTATION_GUIDE.md
+- Check refund-example.html for working demo
+- Run tests in browser console: runAllTests()
+- Check CLAUDE.md in repository
+
+===================================
