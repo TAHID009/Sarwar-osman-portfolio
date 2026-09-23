@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AeroOps - Refund Processing | Tax Refund Commission Reduction</title>
+  <link rel="stylesheet" href="refund-form-styles.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>AeroOps - Refund Processing System</h1>
+      <p>Tax Refund Commission Reduction Feature</p>
+    </header>
+
+    <main>
+      <!-- Form Container -->
+      <section id="formSection"></section>
+
+      <!-- Entry Log Display -->
+      <section id="logSection"></section>
+
+      <!-- Transactions History -->
+      <section id="transactionsSection">
+        <h2>Transaction History</h2>
+        <button class="btn-primary" onclick="showTransactions()">Load Transactions</button>
+        <button class="btn-secondary" onclick="exportTransactions()">Export as JSON</button>
+        <div id="transactionsContent"></div>
+      </section>
+    </main>
+
+    <footer>
+      <p>&copy; 2026 AeroOps - Refund Management System</p>
+    </footer>
+  </div>
+
+  <!-- Scripts -->
+  <script src="refund-commission-reduction.js"></script>
+  <script>
+    // ========================================
+    // Application Initialization
+    // ========================================
+
+    document.addEventListener('DOMContentLoaded', function () {
+      // Initialize form
+      const formSection = document.getElementById('formSection');
+      formSection.innerHTML = RefundFormHandler.getRefundForm();
+      RefundFormHandler.setupFormListeners();
+
+      // Setup form submission
+      document.getElementById('refundForm').addEventListener('submit', handleRefundSubmit);
+    });
+
+    // ========================================
+    // Form Submission Handler
+    // ========================================
+
+    function handleRefundSubmit(event) {
+      event.preventDefault();
+
+      // Gather form data
+      const form = event.target;
+      const refundData = {
+        refundType: form.refundType.value,
+        refundAmount: parseFloat(form.refundAmount.value),
+        commissionAmount: parseFloat(form.commissionAmount.value),
+        commissionReduction: parseFloat(form.commissionReduction.value) || 0,
+        taxAmount: parseFloat(form.taxAmount.value) || 0,
+        bookingRef: form.bookingRef.value,
+        passengerName: form.passengerName.value,
+        remarks: form.remarks.value,
+        processedBy: getUserName() // Would come from logged-in user
+      };
+
+      // Validate
+      const processor = new RefundProcessor();
+      const validation = processor.validateRefund(refundData);
+
+      if (!validation.isValid) {
+        showError(validation.errors);
+        return;
+      }
+
+      // Calculate
+      const calculation = processor.calculateRefund(refundData);
+
+      // Create log entry
+      const logEntry = EntryLogger.createRefundLog(refundData, calculation);
+
+      // Display log
+      displayEntryLog(logEntry);
+
+      // Save to storage
+      RefundDataStore.saveRefundTransaction(logEntry);
+
+      // Show success
+      showSuccess(`Refund processed successfully. Booking: ${refundData.bookingRef}`);
+
+      // Reset form
+      form.reset();
+      document.getElementById('calculationPreview').style.display = 'none';
+    }
+
+    // ========================================
+    // UI Helpers
+    // ========================================
+
+    function displayEntryLog(logEntry) {
+      const logSection = document.getElementById('logSection');
+      const logDisplay = EntryLogger.formatLogDisplay(logEntry);
+      const logHTML = `
+        <div class="entry-log entry-log-success">
+          ${logDisplay.replace(/</g, '&lt;').replace(/>/g, '&gt;')}
+        </div>
+      `;
+      logSection.innerHTML = logHTML;
+      logSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function showError(errors) {
+      const message = errors.join('\n• ');
+      const logSection = document.getElementById('logSection');
+      const errorHTML = `
+        <div class="entry-log entry-log-error">
+          ❌ VALIDATION ERRORS:
+          • ${message}
+        </div>
+      `;
+      logSection.innerHTML = errorHTML;
+    }
+
+    function showSuccess(message) {
+      const badge = document.createElement('div');
+      badge.className = 'status-badge status-success';
+      badge.textContent = '✓ ' + message;
+      document.getElementById('logSection').prepend(badge);
+    }
+
+    // ========================================
+    // Transaction Management
+    // ========================================
+
+    function showTransactions() {
+      const transactions = RefundDataStore.getAllTransactions();
+
+      if (transactions.length === 0) {
+        document.getElementById('transactionsContent').innerHTML =
+          '<p>No transactions found.</p>';
+        return;
+      }
+
+      let html = `
+        <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+          <thead>
+            <tr style="background: #34495e; color: white;">
+              <th style="padding: 10px; text-align: left;">Date/Time</th>
+              <th style="padding: 10px; text-align: left;">Booking Ref</th>
+              <th style="padding: 10px; text-align: left;">Passenger</th>
+              <th style="padding: 10px; text-align: right;">Refund Amount</th>
+              <th style="padding: 10px; text-align: right;">Commission Reduction</th>
+              <th style="padding: 10px; text-align: right;">Total</th>
+              <th style="padding: 10px; text-align: left;">Type</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+
+      transactions.forEach((tx) => {
+        html += `
+          <tr style="border-bottom: 1px solid #ecf0f1;">
+            <td style="padding: 10px;">${new Date(tx.timestamp).toLocaleString()}</td>
+            <td style="padding: 10px;">${tx.bookingRef}</td>
+            <td style="padding: 10px;">${tx.passengerName}</td>
+            <td style="padding: 10px; text-align: right;">${tx.originalRefundAmount.toFixed(2)}</td>
+            <td style="padding: 10px; text-align: right; color: #16a085; font-weight: 600;">
+              ${tx.commissionReduction.toFixed(2)}
+            </td>
+            <td style="padding: 10px; text-align: right; font-weight: 600;">${tx.totalRefund.toFixed(2)}</td>
+            <td style="padding: 10px;">${tx.refundType}</td>
+          </tr>
+        `;
+      });
+
+      html += `
+          </tbody>
+        </table>
+      `;
+
+      document.getElementById('transactionsContent').innerHTML = html;
+    }
+
+    function exportTransactions() {
+      const data = RefundDataStore.exportTransactions();
+      const blob = new Blob([data], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `refund-transactions-${new Date().toISOString().split('T')[0]}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    // ========================================
+    // Utility Functions
+    // ========================================
+
+    function getUserName() {
+      return localStorage.getItem('userName') || 'Admin';
+    }
+
+    // ========================================
+    // Testing Helpers
+    // ========================================
+
+    // Test data generators
+    function testTaxRefundWithCommissionReduction() {
+      console.log('Testing: Tax Refund with Commission Reduction');
+
+      const processor = new RefundProcessor();
+
+      const testData = {
+        refundType: 'Tax Refund',
+        refundAmount: 150.0,
+        commissionAmount: 50.0,
+        commissionReduction: 25.0,
+        taxAmount: 150.0
+      };
+
+      console.log('Input:', testData);
+
+      const result = processor.calculateRefund(testData);
+      console.log('Result:', result);
+      console.log(
+        'Expected Total Refund: 175.00 (150 + 25)',
+        'Actual:',
+        result.totalRefund.toFixed(2)
+      );
+
+      return result.totalRefund === 175.0 ? '✓ PASS' : '✗ FAIL';
+    }
+
+    function testTaxRefundZeroCommissionReduction() {
+      console.log('Testing: Tax Refund with Zero Commission Reduction');
+
+      const processor = new RefundProcessor();
+
+      const testData = {
+        refundType: 'Tax Refund',
+        refundAmount: 200.0,
+        commissionAmount: 60.0,
+        commissionReduction: 0,
+        taxAmount: 200.0
+      };
+
+      console.log('Input:', testData);
+
+      const result = processor.calculateRefund(testData);
+      console.log('Result:', result);
+      console.log(
+        'Expected Total Refund: 200.00 (200 + 0)',
+        'Actual:',
+        result.totalRefund.toFixed(2)
+      );
+
+      return result.totalRefund === 200.0 ? '✓ PASS' : '✗ FAIL';
+    }
+
+    function runAllTests() {
+      console.clear();
+      console.log('=== REFUND SYSTEM TESTS ===\n');
+
+      console.log('Test 1: Tax Refund with Commission Reduction = $25');
+      console.log(testTaxRefundWithCommissionReduction());
+      console.log('\n---\n');
+
+      console.log('Test 2: Tax Refund with Commission Reduction = $0');
+      console.log(testTaxRefundZeroCommissionReduction());
+      console.log('\n---\n');
+
+      console.log('All tests completed. See console for details.');
+    }
+
+    // Make test functions available in console
+    window.runAllTests = runAllTests;
+    window.RefundProcessor = RefundProcessor;
+    window.EntryLogger = EntryLogger;
+    window.RefundDataStore = RefundDataStore;
+  </script>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #ecf0f1;
+      color: #2c3e50;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+      padding: 30px 0;
+    }
+
+    header h1 {
+      font-size: 2em;
+      margin-bottom: 10px;
+      color: #2c3e50;
+    }
+
+    header p {
+      color: #7f8c8d;
+      font-size: 1.1em;
+    }
+
+    main {
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    section {
+      margin-bottom: 40px;
+    }
+
+    section h2 {
+      margin-bottom: 20px;
+      color: #2c3e50;
+      border-bottom: 2px solid #3498db;
+      padding-bottom: 10px;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      padding: 20px;
+      color: #7f8c8d;
+      font-size: 0.9em;
+    }
+  </style>
+</body>
+</html>
