@@ -1,0 +1,57 @@
+<!-- ========================================
+     ADD THIS TO YOUR EXISTING REFUND FORM
+     After AGENCY SERVICE CHARGE field
+     ======================================== -->
+
+<!-- Commission Reduction Field -->
+<div class="form-group">
+  <label for="commissionReduction">
+    COMMISSION REDUCTION
+    <span class="badge-new">NEW</span>
+  </label>
+  <input 
+    type="number" 
+    id="commissionReduction" 
+    name="commissionReduction" 
+    class="form-control" 
+    step="0.01" 
+    min="0" 
+    value="0.00"
+    placeholder="0.00"
+  >
+  <small class="form-text">Amount of commission to reduce (same as other refund types)</small>
+</div>
+
+<!-- Original Commission Field (for reference) -->
+<div class="form-group">
+  <label for="originalCommission">ORIGINAL COMMISSION</label>
+  <input 
+    type="number" 
+    id="originalCommission" 
+    name="originalCommission" 
+    class="form-control" 
+    step="0.01" 
+    min="0" 
+    value="0.00"
+    placeholder="0.00"
+  >
+  <small class="form-text">Total commission amount</small>
+</div>
+
+<!-- Reduced Commission (auto-calculated, read-only) -->
+<div class="form-group">
+  <label for="reducedCommission">REDUCED COMMISSION</label>
+  <input 
+    type="number" 
+    id="reducedCommission" 
+    name="reducedCommission" 
+    class="form-control" 
+    step="0.01" 
+    min="0" 
+    value="0.00"
+    placeholder="0.00"
+    readonly
+    style="background-color: #f5f5f5;"
+  >
+  <small class="form-text">Commission after reduction (Original - Reduction)</small>
+</div>
