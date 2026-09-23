@@ -1760,6 +1760,8 @@
     .aero-centerline,.aero-runway-surface{ animation:none !important; }
     .aero-aircraft{ transition:opacity .4s ease !important; transform:translate(-50%,0) scale(.62) !important; }
     .aero-scene-climb .aero-aircraft{ opacity:0; }
+    .aero-mini-plane{ animation:none !important; transition:opacity .4s ease !important; transform:none !important; }
+    .aero-mini-scene.aero-mini-climb .aero-mini-plane{ opacity:0; }
   }
 
   #cloud-auth-modal-backdrop .ptc-modal{
@@ -1777,13 +1779,53 @@
   @keyframes aeroCardIn{ from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:translateY(0)} }
 
   .aero-auth-brand{ display:flex; flex-direction:column; align-items:center; text-align:center; margin-bottom:18px; }
-  .aero-auth-brand .icon{
-    width:44px; height:44px; border-radius:12px;
-    background:linear-gradient(135deg, var(--ink), var(--booking));
-    display:flex; align-items:center; justify-content:center;
-    font-size:19px; color:#fff; margin-bottom:10px;
-    box-shadow:0 8px 18px rgba(11,37,69,.25);
+
+  /* ---- Self-contained mini runway scene, inside the card itself (not the
+     full-screen background) — this is the primary animated element: a small
+     plane sits on a short runway strip while the form waits for credentials,
+     then plays its own taxi -> takeoff sequence on successful sign-in, timed
+     together with the full-screen scene by the same JS function. ---- */
+  .aero-mini-scene{
+    position:relative; width:64px; height:64px; margin:0 auto 10px;
+    border-radius:16px; overflow:hidden;
+    background:linear-gradient(160deg, var(--ink) 0%, var(--booking) 100%);
+    box-shadow:0 8px 18px rgba(11,37,69,.28);
+    display:flex; align-items:flex-end; justify-content:center;
   }
+  .aero-mini-strip{
+    position:absolute; left:10%; right:10%; bottom:15px; height:2px;
+    background-image: repeating-linear-gradient(90deg, rgba(255,255,255,.6) 0 5px, transparent 5px 11px);
+    opacity:.6;
+    transition: opacity .4s ease;
+  }
+  .aero-mini-plane{
+    position:relative; z-index:1; font-size:21px; line-height:1; margin-bottom:9px;
+    display:inline-block;
+    filter: drop-shadow(0 2px 3px rgba(0,0,0,.4));
+    animation: aeroMiniIdle 3s ease-in-out infinite;
+    transition: transform 1s cubic-bezier(.4,0,.2,1), opacity .9s ease;
+    transform: translate(0,0) rotate(0deg) scale(1);
+  }
+  @keyframes aeroMiniIdle{ 0%,100%{ transform:translateY(0) rotate(0deg); } 50%{ transform:translateY(-1.5px) rotate(0deg); } }
+
+  /* Password being typed — plane "readies" (faster idle motion), same cue the
+     full-screen scene already gives via aero-scene-armed. */
+  .aero-mini-scene.aero-mini-armed .aero-mini-plane{ animation-duration:1.5s; }
+
+  /* Takeoff phases — toggled on #aero-mini-scene at the same timeouts as the
+     full-screen sequence in playAeroOpsTakeoffSequence(). */
+  .aero-mini-scene.aero-mini-accelerate .aero-mini-plane{
+    animation:none; transform:translate(8px,0) rotate(0deg) scale(1.04);
+  }
+  .aero-mini-scene.aero-mini-liftoff .aero-mini-plane{
+    animation:none; transform:translate(18px,-16px) rotate(-30deg) scale(1.08);
+  }
+  .aero-mini-scene.aero-mini-climb .aero-mini-plane{
+    animation:none; transform:translate(38px,-46px) rotate(-38deg) scale(.6);
+    opacity:0;
+  }
+  .aero-mini-scene.aero-mini-armed .aero-mini-strip{ opacity:1; }
+
   .aero-auth-brand .name{ font-size:13px; font-weight:800; letter-spacing:.16em; color:var(--ink); }
   .aero-auth-brand .tag{ font-size:11px; font-weight:600; color:var(--muted); margin-top:2px; letter-spacing:.02em; }
 
@@ -1921,7 +1963,10 @@
       <div class="ptc-modal">
 
         <div class="aero-auth-brand">
-          <div class="icon">✈</div>
+          <div class="aero-mini-scene" id="aero-mini-scene">
+            <div class="aero-mini-strip"></div>
+            <div class="aero-mini-plane" id="aero-mini-plane">✈️</div>
+          </div>
           <div class="name">AEROOPS</div>
           <div class="tag">Work Record System</div>
         </div>
@@ -4349,7 +4394,10 @@
     const pwInput = $('cloud-auth-password');
     if(pwInput){
       pwInput.addEventListener('input', () => {
-        scene.classList.toggle('aero-scene-armed', pwInput.value.length > 0);
+        const armed = pwInput.value.length > 0;
+        scene.classList.toggle('aero-scene-armed', armed);
+        const mini = $('aero-mini-scene');
+        if(mini) mini.classList.toggle('aero-mini-armed', armed);
       });
     }
   })();
@@ -4357,6 +4405,8 @@
   function resetAeroOpsScene(){
     const scene = $('aero-runway-scene');
     if(scene) scene.className = 'aero-runway-scene';
+    const mini = $('aero-mini-scene');
+    if(mini) mini.className = 'aero-mini-scene';
     const status = $('cloud-auth-status-text');
     const dot = document.querySelector('.aero-auth-status');
     if(dot) dot.classList.remove('aero-status-live', 'aero-status-granted');
@@ -4369,6 +4419,7 @@
   // backdrop). Honors prefers-reduced-motion with a short fade instead.
   function playAeroOpsTakeoffSequence(onComplete){
     const scene = $('aero-runway-scene');
+    const mini = $('aero-mini-scene');
     const statusEl = document.querySelector('.aero-auth-status');
     const statusText = $('cloud-auth-status-text');
     if(!scene){ onComplete(); return; }
@@ -4376,6 +4427,7 @@
     const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if(reduced){
       $('cloud-auth-modal-backdrop').classList.add('aero-panel-fade');
+      if(mini) mini.classList.add('aero-mini-climb');
       setTimeout(onComplete, 450);
       return;
     }
@@ -4388,12 +4440,14 @@
 
     setStatus('AUTHENTICATING…');
     scene.classList.add('aero-scene-armed');
+    if(mini) mini.classList.add('aero-mini-armed');
 
     setTimeout(() => { setStatus('ACCESS GRANTED', true); scene.classList.add('aero-scene-granted'); }, 550);
-    setTimeout(() => { scene.classList.add('aero-scene-accelerate'); }, 1150);
-    setTimeout(() => { scene.classList.add('aero-scene-liftoff'); }, 2350);
+    setTimeout(() => { scene.classList.add('aero-scene-accelerate'); if(mini) mini.classList.add('aero-mini-accelerate'); }, 1150);
+    setTimeout(() => { scene.classList.add('aero-scene-liftoff'); if(mini) mini.classList.add('aero-mini-liftoff'); }, 2350);
     setTimeout(() => {
       scene.classList.add('aero-scene-climb');
+      if(mini) mini.classList.add('aero-mini-climb');
       $('cloud-auth-modal-backdrop').classList.add('aero-panel-fade');
     }, 3350);
     setTimeout(onComplete, 4350);
