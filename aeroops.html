@@ -1289,6 +1289,113 @@
   }
   .ptc-dash-greeting{ font-size:13px; color:rgba(255,255,255,0.8); position:relative; z-index:1; }
 
+  /* ===== NEW: unified global search bar + results dropdown ===== */
+  .ptc-global-search-wrap{
+    position: relative;
+    margin: 14px 0 2px;
+    z-index: 20;
+  }
+  .ptc-global-search-icon{
+    position: absolute;
+    left: 14px; top: 50%; transform: translateY(-50%);
+    font-size: 14px;
+    opacity: 0.7;
+    pointer-events: none;
+  }
+  #ptc-global-search{
+    width: 100%;
+    box-sizing: border-box;
+    padding: 11px 14px 11px 38px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.25);
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+    font-family: inherit;
+    font-size: 13.5px;
+  }
+  #ptc-global-search::placeholder{ color: rgba(255,255,255,0.6); }
+  #ptc-global-search:focus{ outline: none; background: rgba(255,255,255,0.16); border-color: rgba(255,255,255,0.45); }
+  .ptc-global-search-results{
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0; right: 0;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.25);
+    max-height: 380px;
+    overflow-y: auto;
+    padding: 6px;
+  }
+  .ptc-global-search-empty{ color: var(--muted); font-size: 12.5px; padding: 12px; text-align: center; }
+  .ptc-global-search-group-label{
+    font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 800;
+    color: var(--muted); padding: 8px 8px 4px;
+  }
+  .ptc-global-search-item{
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px; border-radius: 7px; cursor: pointer;
+  }
+  .ptc-global-search-item:hover{ background: var(--paper); }
+  .ptc-global-search-item-icon{ font-size: 15px; flex-shrink: 0; }
+  .ptc-global-search-item-main{ flex: 1; min-width: 0; }
+  .ptc-global-search-item-title{ font-weight: 600; font-size: 12.5px; color: var(--ink); }
+  .ptc-global-search-item-meta{ font-size: 11px; color: var(--muted); }
+  .ptc-global-search-item-go{ font-size: 10.5px; font-weight: 700; color: var(--accent); white-space: nowrap; }
+
+  /* ===== NEW: Command Center strip (system status + quick actions) ===== */
+  .ptc-command-center{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 12px 0 2px;
+  }
+  .ptc-command-status{
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.85);
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.18);
+    padding: 6px 12px;
+    border-radius: 20px;
+  }
+  .ptc-command-status-dot{
+    width: 7px; height: 7px; border-radius: 50%;
+    background: #3DDC97;
+    box-shadow: 0 0 0 3px rgba(61,220,151,0.25);
+  }
+  .ptc-command-status-dot.offline{ background: #E9857A; box-shadow: 0 0 0 3px rgba(233,133,122,0.25); }
+  .ptc-command-actions{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .ptc-command-action{
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.18);
+    color: #fff;
+    font-family: inherit;
+    font-size: 11.5px;
+    font-weight: 700;
+    padding: 7px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background .15s ease;
+  }
+  .ptc-command-action:hover{ background: rgba(255,255,255,0.18); }
+  @media (max-width: 720px){
+    .ptc-command-actions{ width: 100%; }
+    .ptc-command-action{ flex: 1 1 auto; justify-content: center; }
+  }
+
   .ptc-hero-perf{
     position: relative;
     z-index: 1;
@@ -1386,6 +1493,24 @@
   .ptc-feed-name{ font-weight:600; color:var(--ink); }
   .ptc-feed-meta{ color:var(--muted); font-size:11px; }
   .ptc-feed-amt{ font-family:'IBM Plex Mono', monospace; font-weight:700; color:var(--ink); white-space:nowrap; }
+
+  /* ===== NEW: Recent Operations panel — separate from .ptc-feed above ===== */
+  .ptc-recent-ops{ display:flex; flex-direction:column; gap:2px; max-height:340px; overflow-y:auto; }
+  .ptc-recent-ops-empty{ color:var(--muted); font-size:12.5px; padding:10px 2px; }
+  .ptc-recent-ops-item{
+    display:flex; align-items:center; gap:10px;
+    padding:8px 4px; border-bottom:1px solid var(--line);
+  }
+  .ptc-recent-ops-item:last-child{ border-bottom:none; }
+  .ptc-recent-ops-icon{
+    width:26px; height:26px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-size:12px; flex-shrink:0; background:var(--paper);
+  }
+  .ptc-recent-ops-main{ flex:1; min-width:0; }
+  .ptc-recent-ops-title{ font-weight:600; font-size:12.5px; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .ptc-recent-ops-meta{ font-size:10.5px; color:var(--muted); margin-top:1px; }
+  .ptc-recent-ops-time{ font-size:10.5px; color:var(--muted); white-space:nowrap; flex-shrink:0; }
 
   .ptc-dash-empty{
     text-align:center;
@@ -1600,178 +1725,12 @@
     z-index:1; pointer-events:none;
   }
 
-  /* ============================================================
-     Realistic runway/aircraft scene — a purely visual layer behind
-     the existing sign-in card above. Built entirely from CSS/SVG
-     (no video, no WebGL, no external assets) so it stays lightweight.
-     Phase classes toggled on #aero-runway-scene by JS drive the
-     post-login taxi -> accelerate -> liftoff -> climb sequence;
-     nothing here touches auth logic, only what's already true
-     (signed in or not) gets a cinematic reveal instead of an
-     instant swap.
-     ============================================================ */
-  .aero-runway-scene{
-    position:absolute; inset:0; z-index:0; overflow:hidden;
-    background:linear-gradient(180deg, #060B18 0%, #0A1730 42%, #12233F 72%, #17304F 100%);
-  }
-  .aero-sky{
-    position:absolute; inset:0;
-    background:
-      radial-gradient(60% 45% at 50% 78%, rgba(70,120,170,.22), transparent 70%),
-      radial-gradient(120% 60% at 50% 100%, rgba(255,196,120,.05), transparent 60%);
-  }
-  .aero-terminal{
-    position:absolute; left:0; right:0; bottom:36%; height:9%;
-    background:
-      repeating-linear-gradient(90deg, rgba(255,205,130,.55) 0 2px, transparent 2px 16px),
-      linear-gradient(180deg, #0A1526 0%, #060C18 100%);
-    -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 35%, #000 100%);
-            mask-image: linear-gradient(180deg, transparent 0%, #000 35%, #000 100%);
-    opacity:.5;
-    animation: aeroTerminalFlicker 7s ease-in-out infinite;
-  }
-  @keyframes aeroTerminalFlicker{ 0%,94%,100%{ opacity:.5; } 96%{ opacity:.36; } 98%{ opacity:.56; } }
-
-  .aero-runway{
-    position:absolute; left:50%; bottom:-6%; width:220%; height:70%;
-    transform:translateX(-50%);
-    clip-path: polygon(43% 0%, 57% 0%, 82% 100%, 18% 100%);
-    background:linear-gradient(180deg, #1B2434 0%, #262F40 55%, #2E3848 100%);
-  }
-  .aero-runway-surface{
-    position:absolute; inset:0;
-    background:linear-gradient(100deg, transparent 40%, rgba(180,205,230,.10) 49%, transparent 58%);
-    background-size:220% 100%;
-    animation: aeroSheen 9s ease-in-out infinite;
-  }
-  @keyframes aeroSheen{ 0%{ background-position:0% 0; } 50%{ background-position:100% 0; } 100%{ background-position:0% 0; } }
-
-  .aero-centerline{
-    position:absolute; left:50%; top:0; bottom:0; width:1.6%;
-    transform:translateX(-50%);
-    background-image: repeating-linear-gradient(180deg, rgba(255,255,255,.9) 0 8%, transparent 8% 20%);
-    background-size:100% 60px;
-    animation: aeroCenterlineFlow 1.15s linear infinite;
-    opacity:.85;
-  }
-  @keyframes aeroCenterlineFlow{ from{ background-position:0 0; } to{ background-position:0 60px; } }
-
-  .aero-edge-lights{
-    position:absolute; top:0; bottom:0; width:2px;
-    background:transparent;
-  }
-  .aero-edge-left{ left:16%; transform:skewX(9deg); }
-  .aero-edge-right{ right:16%; transform:skewX(-9deg); }
-  .aero-edge-lights::before{
-    content:""; position:absolute; inset:0;
-    /* dot positions generated inline via JS (aeroEdgeDotShadow) — this
-       is the fallback if JS hasn't run yet, so the runway never looks bare */
-    background:linear-gradient(180deg, rgba(255,205,130,.5), rgba(255,205,130,.15));
-    width:2px;
-  }
-  @keyframes aeroDotFlicker{ 0%,100%{ opacity:.55; } 50%{ opacity:1; } }
-
-  .aero-aircraft{
-    position:absolute; left:50%; bottom:9%; width:210px;
-    transform:translate(-50%, 0) scale(.62);
-    transform-origin:50% 85%;
-    filter: drop-shadow(0 6px 14px rgba(0,0,0,.45));
-    animation: aeroIdleBob 4.5s ease-in-out infinite;
-    transition: transform 1.1s cubic-bezier(.4,0,.2,1);
-    will-change: transform;
-  }
-  @keyframes aeroIdleBob{ 0%,100%{ transform:translate(-50%,0) scale(.62); } 50%{ transform:translate(-50%,-2px) scale(.62); } }
-  .aero-aircraft-svg{ width:100%; height:auto; display:block; overflow:visible; }
-
-  .aero-ac-fuselage{ fill:#D7DEE7; }
-  .aero-ac-tail{ fill:#AEB9C8; }
-  .aero-ac-tailwing{ fill:#AEB9C8; }
-  .aero-ac-wing{ fill:#C3CBD6; }
-  .aero-ac-engine{ fill:#5B6472; }
-  .aero-ac-cockpit{ fill:#2A3446; }
-  .aero-ac-windows{ fill:rgba(20,28,42,.5); }
-  .aero-ac-navlight-red{ fill:#FF4D4D; filter:drop-shadow(0 0 3px #FF4D4D); animation: aeroNavBlink 1.6s ease-in-out infinite; }
-  .aero-ac-navlight-green{ fill:#3DDC7A; filter:drop-shadow(0 0 3px #3DDC7A); animation: aeroNavBlink 1.6s ease-in-out infinite .3s; }
-  @keyframes aeroNavBlink{ 0%,100%{ opacity:.55; } 50%{ opacity:1; } }
-  .aero-ac-strobe{ fill:#fff; opacity:0; animation: aeroStrobe 3.2s linear infinite; }
-  @keyframes aeroStrobe{ 0%,100%{ opacity:0; } 1.5%{ opacity:1; } 3%{ opacity:0; } 6%{ opacity:1; } 8%{ opacity:0; } }
-  .aero-ac-landing-glow{ fill:#FFDFA0; opacity:.35; filter:blur(1.5px); transition:opacity .6s ease; }
-
-  .aero-haze{
-    position:absolute; inset:0; pointer-events:none;
-    background:radial-gradient(140% 60% at 50% 100%, rgba(140,170,210,.12), transparent 65%);
-  }
-  .aero-vignette{
-    position:absolute; inset:0; pointer-events:none;
-    background:radial-gradient(120% 90% at 50% 40%, transparent 55%, rgba(2,6,14,.55) 100%);
-  }
-
-  /* ---- Phase choreography (classes toggled by JS on #aero-runway-scene) ---- */
-  .aero-scene-armed .aero-ac-landing-glow{ opacity:.55; }
-  .aero-scene-armed .aero-centerline{ opacity:1; }
-
-  .aero-scene-granted .aero-ac-landing-glow{ opacity:.9; }
-  .aero-scene-granted .aero-aircraft{ animation:none; }
-
-  .aero-scene-accelerate .aero-centerline{ animation-duration:.28s; }
-  .aero-scene-accelerate .aero-runway-surface{ animation-duration:2.4s; }
-  .aero-scene-accelerate .aero-aircraft{
-    animation:none;
-    transform:translate(-50%, 3px) scale(.66);
-    transition: transform 1.15s cubic-bezier(.55,0,.85,.3);
-  }
-  .aero-scene-accelerate .aero-ac-landing-glow{ opacity:1; }
-
-  .aero-scene-liftoff .aero-aircraft{
-    transform:translate(-38%, -34%) scale(.42) rotate(-9deg);
-    transition: transform 1.3s cubic-bezier(.25,.6,.3,1);
-  }
-
-  .aero-scene-climb .aero-aircraft{
-    transform:translate(-30%, -78%) scale(.16) rotate(-13deg);
-    opacity:0;
-    transition: transform 1.35s cubic-bezier(.3,.4,.4,1), opacity 1.1s ease-in .3s;
-  }
-  .aero-scene-climb .aero-vignette{ background:rgba(2,6,14,.7); transition:background 1.2s ease; }
-  .aero-scene-climb .aero-sky{ opacity:.4; transition:opacity 1.2s ease; }
-
-  .aero-scene-exit{ opacity:0; transition:opacity .6s ease; }
-
-  #aero-runway-scene.aero-scene-climb ~ .ptc-modal,
-  .ptc-modal-backdrop.aero-panel-fade .ptc-modal{ opacity:0; transform:translateY(-6px); transition:opacity .5s ease, transform .5s ease; }
-
-  .aero-auth-status.aero-status-live{ color:#fff; }
-  .aero-auth-status.aero-status-granted .dot{ background:#FFC24B; box-shadow:0 0 0 3px rgba(255,194,75,.2); }
-
-  @media (min-width:901px){
-    #cloud-auth-modal-backdrop{ justify-content:flex-end; padding-right:8%; }
-  }
-  @media (max-width:900px){
-    .aero-terminal{ opacity:.32; }
-    .aero-runway{ width:260%; }
-  }
-  @media (max-width:600px){
-    .aero-runway-scene{ opacity:.55; }
-    .aero-terminal{ display:none; }
-    .aero-aircraft{ width:150px; }
-  }
-  @media (prefers-reduced-motion: reduce){
-    .aero-runway-scene *{ animation:none !important; }
-    .aero-centerline,.aero-runway-surface{ animation:none !important; }
-    .aero-aircraft{ transition:opacity .4s ease !important; transform:translate(-50%,0) scale(.62) !important; }
-    .aero-scene-climb .aero-aircraft{ opacity:0; }
-    .aero-mini-plane{ animation:none !important; transition:opacity .4s ease !important; transform:none !important; }
-    .aero-mini-scene.aero-mini-climb .aero-mini-plane{ opacity:0; }
-  }
-
   #cloud-auth-modal-backdrop .ptc-modal{
     position:relative; z-index:1;
     width:100%; max-width:432px;
-    background:rgba(255,255,255,.93);
-    backdrop-filter:blur(18px) saturate(160%);
-    -webkit-backdrop-filter:blur(18px) saturate(160%);
+    background:var(--card);
     border-radius:20px;
-    border:1px solid rgba(255,255,255,.5);
+    border:1px solid rgba(255,255,255,.08);
     box-shadow:0 30px 70px rgba(4,16,34,.45);
     padding:30px 28px 26px;
     animation:aeroCardIn .32s ease both;
@@ -1779,53 +1738,13 @@
   @keyframes aeroCardIn{ from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:translateY(0)} }
 
   .aero-auth-brand{ display:flex; flex-direction:column; align-items:center; text-align:center; margin-bottom:18px; }
-
-  /* ---- Self-contained mini runway scene, inside the card itself (not the
-     full-screen background) — this is the primary animated element: a small
-     plane sits on a short runway strip while the form waits for credentials,
-     then plays its own taxi -> takeoff sequence on successful sign-in, timed
-     together with the full-screen scene by the same JS function. ---- */
-  .aero-mini-scene{
-    position:relative; width:64px; height:64px; margin:0 auto 10px;
-    border-radius:16px; overflow:hidden;
-    background:linear-gradient(160deg, var(--ink) 0%, var(--booking) 100%);
-    box-shadow:0 8px 18px rgba(11,37,69,.28);
-    display:flex; align-items:flex-end; justify-content:center;
+  .aero-auth-brand .icon{
+    width:44px; height:44px; border-radius:12px;
+    background:linear-gradient(135deg, var(--ink), var(--booking));
+    display:flex; align-items:center; justify-content:center;
+    font-size:19px; color:#fff; margin-bottom:10px;
+    box-shadow:0 8px 18px rgba(11,37,69,.25);
   }
-  .aero-mini-strip{
-    position:absolute; left:10%; right:10%; bottom:15px; height:2px;
-    background-image: repeating-linear-gradient(90deg, rgba(255,255,255,.6) 0 5px, transparent 5px 11px);
-    opacity:.6;
-    transition: opacity .4s ease;
-  }
-  .aero-mini-plane{
-    position:relative; z-index:1; font-size:21px; line-height:1; margin-bottom:9px;
-    display:inline-block;
-    filter: drop-shadow(0 2px 3px rgba(0,0,0,.4));
-    animation: aeroMiniIdle 3s ease-in-out infinite;
-    transition: transform 1s cubic-bezier(.4,0,.2,1), opacity .9s ease;
-    transform: translate(0,0) rotate(0deg) scale(1);
-  }
-  @keyframes aeroMiniIdle{ 0%,100%{ transform:translateY(0) rotate(0deg); } 50%{ transform:translateY(-1.5px) rotate(0deg); } }
-
-  /* Password being typed — plane "readies" (faster idle motion), same cue the
-     full-screen scene already gives via aero-scene-armed. */
-  .aero-mini-scene.aero-mini-armed .aero-mini-plane{ animation-duration:1.5s; }
-
-  /* Takeoff phases — toggled on #aero-mini-scene at the same timeouts as the
-     full-screen sequence in playAeroOpsTakeoffSequence(). */
-  .aero-mini-scene.aero-mini-accelerate .aero-mini-plane{
-    animation:none; transform:translate(8px,0) rotate(0deg) scale(1.04);
-  }
-  .aero-mini-scene.aero-mini-liftoff .aero-mini-plane{
-    animation:none; transform:translate(18px,-16px) rotate(-30deg) scale(1.08);
-  }
-  .aero-mini-scene.aero-mini-climb .aero-mini-plane{
-    animation:none; transform:translate(38px,-46px) rotate(-38deg) scale(.6);
-    opacity:0;
-  }
-  .aero-mini-scene.aero-mini-armed .aero-mini-strip{ opacity:1; }
-
   .aero-auth-brand .name{ font-size:13px; font-weight:800; letter-spacing:.16em; color:var(--ink); }
   .aero-auth-brand .tag{ font-size:11px; font-weight:600; color:var(--muted); margin-top:2px; letter-spacing:.02em; }
 
@@ -1925,48 +1844,15 @@
 </style>
 </head><body>
     <div class="ptc-modal-backdrop" id="cloud-auth-modal-backdrop" style="display:flex; z-index:5000;">
-      <div class="aero-runway-scene" id="aero-runway-scene" aria-hidden="true">
-        <div class="aero-sky"></div>
-        <div class="aero-terminal"></div>
-        <div class="aero-runway">
-          <div class="aero-runway-surface"></div>
-          <div class="aero-centerline" id="aero-centerline"></div>
-          <div class="aero-edge-lights aero-edge-left" id="aero-edge-left"></div>
-          <div class="aero-edge-lights aero-edge-right" id="aero-edge-right"></div>
-        </div>
-        <div class="aero-aircraft" id="aero-aircraft">
-          <svg viewBox="0 0 400 100" class="aero-aircraft-svg">
-            <ellipse class="aero-ac-engine" cx="150" cy="72" rx="15" ry="8.5"/>
-            <ellipse class="aero-ac-engine" cx="228" cy="72" rx="15" ry="8.5"/>
-            <path class="aero-ac-wing" d="M122,58 L42,93 L60,95 L152,65 Z"/>
-            <path class="aero-ac-wing" d="M258,58 L338,93 L320,95 L228,65 Z"/>
-            <path class="aero-ac-tailwing" d="M330,42 L372,52 L368,56.5 L326,48 Z"/>
-            <path class="aero-ac-fuselage" d="M20,52 C20,44 34,38 60,36 L300,32 C330,31 352,34 366,40 C372,43 372,49 366,52 L60,56 C34,55 20,50 20,52 Z"/>
-            <path class="aero-ac-fuselage" d="M366,40 C378,42 386,46 388,49 C386,49 378,50 366,52 Z"/>
-            <path class="aero-ac-tail" d="M28,38 L18,9 L34,11 L44,38 Z"/>
-            <path class="aero-ac-cockpit" d="M351,38 L363.5,39.4 L361.5,45 L349.5,43.6 Z"/>
-            <rect class="aero-ac-windows" x="70" y="40" width="216" height="2.6" rx="1.3"/>
-            <circle class="aero-ac-navlight aero-ac-navlight-red" cx="47" cy="92" r="2.6"/>
-            <circle class="aero-ac-navlight aero-ac-navlight-green" cx="334" cy="91" r="2.6"/>
-            <circle class="aero-ac-strobe" cx="20" cy="22" r="2.1"/>
-            <ellipse class="aero-ac-landing-glow" cx="388" cy="48" rx="15" ry="9"/>
-          </svg>
-        </div>
-        <div class="aero-haze"></div>
-        <div class="aero-vignette"></div>
-      </div>
       <div class="aero-auth-topbar">
         <a class="brandmark" href="index.html" aria-label="Return to Home"><span>AEROOPS<small>WORK RECORD SYSTEM</small></span></a>
-        <div class="aero-auth-status"><span class="dot"></span><span id="cloud-auth-status-text">SECURE ACCESS</span></div>
+        <div class="aero-auth-status"><span class="dot"></span>SECURE ACCESS</div>
       </div>
 
       <div class="ptc-modal">
 
         <div class="aero-auth-brand">
-          <div class="aero-mini-scene" id="aero-mini-scene">
-            <div class="aero-mini-strip"></div>
-            <div class="aero-mini-plane" id="aero-mini-plane">✈️</div>
-          </div>
+          <div class="icon">✈</div>
           <div class="name">AEROOPS</div>
           <div class="tag">Work Record System</div>
         </div>
@@ -2088,6 +1974,29 @@
         </div>
         <div class="ptc-eyebrow" id="ptc-clock" style="color:rgba(255,255,255,0.75);"></div>
       </div>
+
+      <!-- ===== NEW: unified global search — separate element, does not touch
+           the two existing per-tab search boxes or the header row above. ===== -->
+      <div class="ptc-global-search-wrap" id="ptc-global-search-wrap">
+        <span class="ptc-global-search-icon">🔎</span>
+        <input type="text" id="ptc-global-search" placeholder="Search everything — PNR, ticket number, passenger, or route..." autocomplete="off" />
+        <div class="ptc-global-search-results" id="ptc-global-search-results" style="display:none;"></div>
+      </div>
+
+      <!-- ===== NEW: Command Center strip — system status + quick actions.
+           Purely additive; sits below the search bar without touching it. ===== -->
+      <div class="ptc-command-center" id="ptc-command-center">
+        <div class="ptc-command-status" id="ptc-command-status"></div>
+        <div class="ptc-command-actions">
+          <button type="button" class="ptc-command-action" id="qa-new-transaction" title="Start a new transaction">🧾 New Transaction</button>
+          <button type="button" class="ptc-command-action" id="qa-import-pdf" title="Import a ticket PDF">📄 Import PDF</button>
+          <button type="button" class="ptc-command-action" id="qa-refund" title="Jump to the Refund calculator">💸 Refund</button>
+          <button type="button" class="ptc-command-action" id="qa-reissue" title="Jump to Reissue">🔄 Reissue</button>
+          <button type="button" class="ptc-command-action" id="qa-search" title="Focus global search">🔎 Search</button>
+          <button type="button" class="ptc-command-action" id="qa-recent" title="View recent operations">🕒 Recent</button>
+        </div>
+      </div>
+
       <div class="ptc-hero-perf" aria-hidden="true"></div>
       <div class="ptc-dash-greeting" id="ptc-greeting">Every booking, reissue, refund and void — in one place.</div>
     </div>
@@ -2126,6 +2035,16 @@
           <div class="ptc-panel">
             <h3>Recent Activity</h3>
             <div class="ptc-feed" id="ptc-feed"></div>
+          </div>
+        </div>
+
+        <!-- ===== NEW: Recent Operations — a separate panel, does not touch the
+             existing Recent Activity feed above. Merges transactions, sales,
+             searches, and PDF imports into one chronological, timestamped view. ===== -->
+        <div class="ptc-dash-grid" style="grid-template-columns: 1fr;">
+          <div class="ptc-panel">
+            <h3>Recent Operations</h3>
+            <div class="ptc-recent-ops" id="ptc-recent-ops"></div>
           </div>
         </div>
 
@@ -4191,21 +4110,13 @@
           cloudAuthUser = user;
           if(user){
             if(awaitingNewPassword){ return; } // keep the Set Access Code view open — don't jump to the dashboard yet
+            $('cloud-auth-modal-backdrop').style.display = 'none';
             cloudDb = firebase.firestore();
             localStorage.setItem(CLOUD_CONFIG_KEY, JSON.stringify(config));
             setCloudStatus('connected');
             subscribeCloud();
             subscribeSalesCloud();
             armInactivityWatch();
-            // Data/session setup above is unchanged and starts immediately in the
-            // background; only the visual reveal of the dashboard is deferred to
-            // let the cinematic sequence play first (or skipped straight to the
-            // same display:none this used to do immediately, if reduced-motion).
-            if(typeof playAeroOpsTakeoffSequence === 'function'){
-              playAeroOpsTakeoffSequence(() => { $('cloud-auth-modal-backdrop').style.display = 'none'; });
-            } else {
-              $('cloud-auth-modal-backdrop').style.display = 'none';
-            }
           } else {
             cloudDb = null;
             if(cloudUnsub){ cloudUnsub(); cloudUnsub = null; }
@@ -4213,7 +4124,6 @@
             setCloudStatus('idle');
             $('cloud-auth-error').textContent = '';
             $('cloud-auth-modal-backdrop').style.display = 'flex';
-            if(typeof resetAeroOpsScene === 'function') resetAeroOpsScene();
             disarmInactivityWatch();
           }
         });
@@ -4360,98 +4270,6 @@
   ['setpw-password','setpw-confirm'].forEach(id => {
     $(id).addEventListener('keydown', (e) => { if(e.key === 'Enter' && !$('btn-set-password').disabled){ e.preventDefault(); $('btn-set-password').click(); } });
   });
-
-  // ============================================================
-  // Runway/aircraft scene — visual only. Generates the edge-light dots
-  // once, wires a subtle "lights up" cue while the Access Code is being
-  // typed, and plays the post-login taxi->takeoff sequence before the
-  // existing display:none reveal (see the onAuthStateChanged hook above).
-  // None of this touches Firebase, validation, or session logic.
-  // ============================================================
-  (function initAeroOpsRunwayScene(){
-    const scene = $('aero-runway-scene');
-    if(!scene) return;
-
-    // Generate ~16 runway edge-light dots per side, each with its own
-    // flicker timing so they don't all pulse in lockstep.
-    function buildEdgeLights(id){
-      const el = $(id);
-      if(!el) return;
-      let html = '';
-      const count = 16;
-      for(let i = 0; i < count; i++){
-        const topPct = (i / (count - 1)) * 100;
-        const delay = (i % 5) * 0.6;
-        html += `<span style="position:absolute; left:-2px; top:${topPct}%; width:5px; height:5px; border-radius:50%; background:#FFD9A0; box-shadow:0 0 6px 1.5px rgba(255,217,160,.8); animation:aeroDotFlicker 3.4s ease-in-out ${delay}s infinite;"></span>`;
-      }
-      el.innerHTML = html;
-    }
-    buildEdgeLights('aero-edge-left');
-    buildEdgeLights('aero-edge-right');
-
-    // "Subtle aircraft/navigation-light activity can increase slightly" while
-    // the Access Code is being typed — purely cosmetic, reads nothing new.
-    const pwInput = $('cloud-auth-password');
-    if(pwInput){
-      pwInput.addEventListener('input', () => {
-        const armed = pwInput.value.length > 0;
-        scene.classList.toggle('aero-scene-armed', armed);
-        const mini = $('aero-mini-scene');
-        if(mini) mini.classList.toggle('aero-mini-armed', armed);
-      });
-    }
-  })();
-
-  function resetAeroOpsScene(){
-    const scene = $('aero-runway-scene');
-    if(scene) scene.className = 'aero-runway-scene';
-    const mini = $('aero-mini-scene');
-    if(mini) mini.className = 'aero-mini-scene';
-    const status = $('cloud-auth-status-text');
-    const dot = document.querySelector('.aero-auth-status');
-    if(dot) dot.classList.remove('aero-status-live', 'aero-status-granted');
-    if(status) status.textContent = 'SECURE ACCESS';
-    $('cloud-auth-modal-backdrop').classList.remove('aero-panel-fade');
-  }
-
-  // Plays the taxi -> accelerate -> liftoff -> climb sequence, then calls
-  // onComplete (which does exactly what used to run immediately: hide the
-  // backdrop). Honors prefers-reduced-motion with a short fade instead.
-  function playAeroOpsTakeoffSequence(onComplete){
-    const scene = $('aero-runway-scene');
-    const mini = $('aero-mini-scene');
-    const statusEl = document.querySelector('.aero-auth-status');
-    const statusText = $('cloud-auth-status-text');
-    if(!scene){ onComplete(); return; }
-
-    const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if(reduced){
-      $('cloud-auth-modal-backdrop').classList.add('aero-panel-fade');
-      if(mini) mini.classList.add('aero-mini-climb');
-      setTimeout(onComplete, 450);
-      return;
-    }
-
-    const setStatus = (text, granted) => {
-      if(statusText) statusText.textContent = text;
-      if(statusEl) statusEl.classList.toggle('aero-status-granted', !!granted);
-      if(statusEl) statusEl.classList.add('aero-status-live');
-    };
-
-    setStatus('AUTHENTICATING…');
-    scene.classList.add('aero-scene-armed');
-    if(mini) mini.classList.add('aero-mini-armed');
-
-    setTimeout(() => { setStatus('ACCESS GRANTED', true); scene.classList.add('aero-scene-granted'); }, 550);
-    setTimeout(() => { scene.classList.add('aero-scene-accelerate'); if(mini) mini.classList.add('aero-mini-accelerate'); }, 1150);
-    setTimeout(() => { scene.classList.add('aero-scene-liftoff'); if(mini) mini.classList.add('aero-mini-liftoff'); }, 2350);
-    setTimeout(() => {
-      scene.classList.add('aero-scene-climb');
-      if(mini) mini.classList.add('aero-mini-climb');
-      $('cloud-auth-modal-backdrop').classList.add('aero-panel-fade');
-    }, 3350);
-    setTimeout(onComplete, 4350);
-  }
 
   function signInEmailForCurrentView(){
     const remembered = localStorage.getItem(REMEMBERED_EMAIL_KEY);
@@ -4795,8 +4613,10 @@
 
     if(mode === 'TAX_ONLY'){
       totalFareWrap.style.display = 'none';
-      const hasCommission = (parseFloat($('f-commission-f').value) || 0) !== 0;
-      commissionWrap.style.display = hasCommission ? 'block' : 'none';
+      // Commission reduction applies to Tax Refunds too — airlines deduct
+      // commission even when only the tax portion is being refunded, same as
+      // every other refund type. No longer hidden/zeroed for this mode.
+      commissionWrap.style.display = 'block';
     } else {
       // PARTIAL, FULL_UNUSED, FULL_UNUSED_CHARGE, or not yet selected
       totalFareWrap.style.display = 'block';
@@ -5009,7 +4829,9 @@
     const baseFare = parseFloat($('f-refbasefare-f').value) || 0;
     const totalTax = parseFloat($('f-reftotaltax-f').value) || 0;
     const airlineFee = parseFloat($('f-airline-f').value) || 0;
-    const commission = (mode === 'TAX_ONLY') ? 0 : (parseFloat($('f-commission-f').value) || 0);
+    // Commission reduction now applies to every refund type, including Tax Refund —
+    // airlines deduct commission on tax-only refunds too, the same as any other refund.
+    const commission = parseFloat($('f-commission-f').value) || 0;
 
     // Raw values exactly as typed — never overwritten while the user is still typing.
     // (Previously these fields force-corrected themselves on every keystroke, which
@@ -5033,10 +4855,10 @@
     if(mode === 'TAX_ONLY'){
       refundableFare = 0;
       refundableTax = totalTax - nonRefundTax;
-      airlineRefund = refundableTax - airlineFee;
+      airlineRefund = refundableTax - airlineFee - commission;
       overLimit = nonRefundTaxRaw > totalTax || nonRefundTaxRaw < 0;
       $('calc-tax-formula').innerHTML = calcFormulaHTML([{val:totalTax}, {val:nonRefundTaxRaw}]);
-      $('calc-airline-formula').innerHTML = calcFormulaHTML([{val:refundableTax}, {val:airlineFee}]);
+      $('calc-airline-formula').innerHTML = calcFormulaHTML([{val:refundableTax}, {val:airlineFee}, {val:commission}]);
     } else if(mode === 'PARTIAL'){
       // Used Segment Base Fare + Used Segment Tax = Total Used Segment Fare — the
       // portion of the ticket already flown, which isn't refundable.
@@ -5177,7 +4999,9 @@
       const totalFare = baseFare + totalTax; // Base Fare + Tax = Total Fare — kept for audit/export only
       const nonRefundTax = Number(num('f-nonrefundtax-f')) || 0;
       const airlineFee = Number(num('f-airline-f')) || 0;
-      const commission = (mode === 'TAX_ONLY') ? 0 : (Number(num('f-commission-f')) || 0);
+      // Commission reduction now applies to every refund type, including Tax
+      // Refund — matches the live calculation above.
+      const commission = Number(num('f-commission-f')) || 0;
       const svcAmt = Number(num('f-svc-f')) || 0; // plain amount box — 0 means no service charge
 
       // AIRLINE CALCULATION (never mixed with the agency service charge below).
@@ -5188,7 +5012,7 @@
       if(mode === 'TAX_ONLY'){
         refundableFare = 0;
         refundableTax = totalTax - nonRefundTax;
-        airlineRefund = refundableTax - airlineFee;
+        airlineRefund = refundableTax - airlineFee - commission;
       } else if(mode === 'PARTIAL'){
         // Used Segment Base Fare + Used Segment Tax = Total Used Segment Fare (already flown, not refundable)
         refundableFare = baseFare - usedSeg;
@@ -6166,7 +5990,10 @@
         ['Non-Refundable Tax', fmtMoney(e.refNonRefundTax)],
         ['Airline Refund', fmtMoney(e.airlineRefund)]
       );
-      if(e.refundType !== 'TAX_ONLY') f.push(['Commission Amount', fmtMoney(e.commissionAdj)]);
+      // Commission reduction now applies to every refund type, including Tax
+      // Refund, so it's always shown in the search-result grid — not just for
+      // Full/Partial refunds anymore.
+      f.push(['Commission Amount', fmtMoney(e.commissionAdj)]);
       f.push(['Service Charge', fmtMoney(e.svc)]);
       // "Client Refund" — the final amount payable to the client — is shown as its
       // own highlighted callout beneath the grid rather than buried as a plain row.
@@ -7373,6 +7200,314 @@
 
   loadSales();
   renderSales();
+
+  // ======================================================================
+  // NEW FEATURE: Recent Operations panel (transactions + sales + searches +
+  // PDF imports, merged and timestamped). Purely additive — nothing above
+  // this point was modified. Existing functions are wrapped, not edited, and
+  // extra listeners are attached alongside the originals, not replacing them.
+  // ======================================================================
+  (function initRecentOperations(){
+    const RECENT_LOG_KEY = 'ptc_recent_log_v1';
+    const RECENT_LOG_MAX = 8;
+
+    function pushRecentLog(kind, label){
+      try{
+        const raw = localStorage.getItem(RECENT_LOG_KEY);
+        const log = raw ? JSON.parse(raw) : [];
+        log.unshift({ kind, label, ts: new Date().toISOString() });
+        localStorage.setItem(RECENT_LOG_KEY, JSON.stringify(log.slice(0, RECENT_LOG_MAX)));
+      }catch(err){ /* recent log is a nice-to-have — skip silently if storage is unavailable */ }
+    }
+    function getRecentLog(){
+      try{
+        const raw = localStorage.getItem(RECENT_LOG_KEY);
+        return raw ? JSON.parse(raw) : [];
+      }catch(err){ return []; }
+    }
+    function relativeTime(iso){
+      if(!iso) return '';
+      const diffMs = Date.now() - new Date(iso).getTime();
+      const min = Math.floor(diffMs / 60000);
+      if(min < 1) return 'Just now';
+      if(min < 60) return min + 'm ago';
+      const hr = Math.floor(min / 60);
+      if(hr < 24) return hr + 'h ago';
+      const day = Math.floor(hr / 24);
+      if(day < 7) return day + 'd ago';
+      return new Date(iso).toLocaleDateString();
+    }
+
+    const OPS_ICON = { Ticketing:'🎫', Reissue:'🔄', Refund:'💸', Void:'🚫', Sale:'💰', search:'🔍', import:'📄' };
+
+    function renderRecentOperations(){
+      const el = document.getElementById('ptc-recent-ops');
+      if(!el) return;
+
+      const txnItems = (typeof entries !== 'undefined' ? entries : []).map(e => ({
+        icon: OPS_ICON[e.txn] || '•',
+        title: (e.pname || 'Unnamed') + ' — ' + e.txn,
+        meta: [e.pnrGds, e.sector].filter(Boolean).join(' · '),
+        ts: e.editedAt || e.createdAt || e.date || '',
+      }));
+      const saleItems = (typeof salesEntries !== 'undefined' ? salesEntries : []).map(s => ({
+        icon: OPS_ICON.Sale,
+        title: (s.pname || 'Unnamed') + ' — Sale',
+        meta: [s.pnrGds, s.status].filter(Boolean).join(' · '),
+        ts: s.editedAt || s.createdAt || s.date || '',
+      }));
+      const logItems = getRecentLog().map(x => ({
+        icon: OPS_ICON[x.kind] || '•',
+        title: x.kind === 'search' ? 'Searched ' + x.label : 'Imported ' + x.label,
+        meta: x.kind === 'search' ? 'Search' : 'PDF Import',
+        ts: x.ts,
+      }));
+
+      const merged = txnItems.concat(saleItems, logItems)
+        .filter(x => x.ts)
+        .sort((a, b) => new Date(b.ts) - new Date(a.ts))
+        .slice(0, 10);
+
+      if(!merged.length){
+        el.innerHTML = '<div class="ptc-recent-ops-empty">No operations recorded yet.</div>';
+        return;
+      }
+      el.innerHTML = merged.map(x => `
+        <div class="ptc-recent-ops-item">
+          <div class="ptc-recent-ops-icon">${x.icon}</div>
+          <div class="ptc-recent-ops-main">
+            <div class="ptc-recent-ops-title">${x.title}</div>
+            <div class="ptc-recent-ops-meta">${x.meta || ''}</div>
+          </div>
+          <div class="ptc-recent-ops-time">${relativeTime(x.ts)}</div>
+        </div>
+      `).join('');
+    }
+
+    // Refresh the new panel whenever the dashboard renders — without editing
+    // renderDashboard itself, by wrapping the existing function.
+    if(typeof renderDashboard === 'function'){
+      const _origRenderDashboard = renderDashboard;
+      renderDashboard = function(){
+        _origRenderDashboard();
+        renderRecentOperations();
+      };
+    }
+
+    // Log searches via a second, independent listener — the original search
+    // listeners declared earlier are untouched and still run exactly as before.
+    let searchLogTimer = null;
+    function logSearchDebounced(query, view){
+      clearTimeout(searchLogTimer);
+      if(!query || query.trim().length < 2) return;
+      searchLogTimer = setTimeout(() => pushRecentLog('search', `"${query.trim()}" in ${view}`), 900);
+    }
+    const entrySearchEl = document.getElementById('ptc-search');
+    if(entrySearchEl){
+      entrySearchEl.addEventListener('input', (e) => logSearchDebounced(e.target.value, 'Entries Log'));
+    }
+    const salesSearchEl = document.getElementById('sales-search');
+    if(salesSearchEl){
+      salesSearchEl.addEventListener('input', (e) => logSearchDebounced(e.target.value, 'Revenue Desk'));
+    }
+
+    // Log PDF imports by wrapping openPdfReviewModal instead of editing its call site.
+    if(typeof openPdfReviewModal === 'function'){
+      const _origOpenPdfReviewModal = openPdfReviewModal;
+      openPdfReviewModal = function(fields, filename){
+        pushRecentLog('import', filename || 'ticket PDF');
+        return _origOpenPdfReviewModal(fields, filename);
+      };
+    }
+
+    renderRecentOperations();
+  })();
+
+  // ======================================================================
+  // NEW FEATURE: Unified global search — searches both Entries Log and
+  // Revenue Desk at once, regardless of which tab is active. Reuses the
+  // existing per-tab search boxes and render functions by driving them
+  // programmatically (setting their value + dispatching input), rather
+  // than duplicating their search logic. Nothing above this point in the
+  // file was modified to build this.
+  // ======================================================================
+  (function initGlobalSearch(){
+    const input = document.getElementById('ptc-global-search');
+    const resultsEl = document.getElementById('ptc-global-search-results');
+    if(!input || !resultsEl) return;
+
+    function norm(v){ return (v || '').toString().toUpperCase(); }
+
+    function matchesEntry(e, q){
+      const hay = [e.pnrGds, e.pnrAirline, e.oldTkt, e.newTkt, e.pname, e.sector].map(norm).join(' | ');
+      return hay.includes(q);
+    }
+    function matchesSale(s, q){
+      const hay = [s.pnrGds, s.pnrAirline, s.tkt, s.pname, s.sector].map(norm).join(' | ');
+      return hay.includes(q);
+    }
+
+    function goToEntry(idx){
+      resultsEl.style.display = 'none';
+      input.value = '';
+      if(typeof switchView === 'function') switchView('entry');
+      const searchBox = document.getElementById('ptc-search');
+      if(searchBox){
+        const target = entries[idx];
+        const q = (target && (target.pnrGds || target.pname)) || '';
+        searchBox.value = q;
+        searchBox.dispatchEvent(new Event('input'));
+        setTimeout(() => searchBox.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+      }
+    }
+    function goToSale(idx){
+      resultsEl.style.display = 'none';
+      input.value = '';
+      if(typeof switchView === 'function') switchView('sales');
+      const searchBox = document.getElementById('sales-search');
+      if(searchBox){
+        const target = salesEntries[idx];
+        const q = (target && (target.pnrGds || target.pname)) || '';
+        searchBox.value = q;
+        searchBox.dispatchEvent(new Event('input'));
+        setTimeout(() => searchBox.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+      }
+    }
+
+    let debounceTimer = null;
+    input.addEventListener('input', () => {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(runGlobalSearch, 180);
+    });
+    input.addEventListener('focus', () => { if(input.value.trim()) runGlobalSearch(); });
+    document.addEventListener('click', (e) => {
+      if(!e.target.closest('#ptc-global-search-wrap')) resultsEl.style.display = 'none';
+    });
+    document.addEventListener('keydown', (e) => {
+      if(e.key === 'Escape' && resultsEl.style.display !== 'none'){ resultsEl.style.display = 'none'; input.blur(); }
+    });
+
+    function runGlobalSearch(){
+      const q = norm(input.value.trim());
+      if(q.length < 2){ resultsEl.style.display = 'none'; return; }
+
+      const entryMatches = [];
+      (typeof entries !== 'undefined' ? entries : []).forEach((e, idx) => {
+        if(matchesEntry(e, q)) entryMatches.push({ idx, e });
+      });
+      const saleMatches = [];
+      (typeof salesEntries !== 'undefined' ? salesEntries : []).forEach((s, idx) => {
+        if(matchesSale(s, q)) saleMatches.push({ idx, s });
+      });
+
+      if(!entryMatches.length && !saleMatches.length){
+        resultsEl.innerHTML = '<div class="ptc-global-search-empty">No matches in Entries Log or Revenue Desk.</div>';
+        resultsEl.style.display = 'block';
+        return;
+      }
+
+      let html = '';
+      if(entryMatches.length){
+        html += '<div class="ptc-global-search-group-label">Entries Log</div>';
+        html += entryMatches.slice(0, 6).map(({idx, e}) => `
+          <div class="ptc-global-search-item" data-kind="entry" data-idx="${idx}">
+            <div class="ptc-global-search-item-icon">${{Ticketing:'🎫',Reissue:'🔄',Refund:'💸',Void:'🚫'}[e.txn] || '•'}</div>
+            <div class="ptc-global-search-item-main">
+              <div class="ptc-global-search-item-title">${e.pname || 'Unnamed'} — ${e.txn}</div>
+              <div class="ptc-global-search-item-meta">${[e.pnrGds, e.sector].filter(Boolean).join(' · ')}</div>
+            </div>
+            <div class="ptc-global-search-item-go">View →</div>
+          </div>
+        `).join('');
+      }
+      if(saleMatches.length){
+        html += '<div class="ptc-global-search-group-label">Revenue Desk</div>';
+        html += saleMatches.slice(0, 6).map(({idx, s}) => `
+          <div class="ptc-global-search-item" data-kind="sale" data-idx="${idx}">
+            <div class="ptc-global-search-item-icon">💰</div>
+            <div class="ptc-global-search-item-main">
+              <div class="ptc-global-search-item-title">${s.pname || 'Unnamed'} — Sale</div>
+              <div class="ptc-global-search-item-meta">${[s.pnrGds, s.status].filter(Boolean).join(' · ')}</div>
+            </div>
+            <div class="ptc-global-search-item-go">View →</div>
+          </div>
+        `).join('');
+      }
+      resultsEl.innerHTML = html;
+      resultsEl.style.display = 'block';
+      resultsEl.querySelectorAll('.ptc-global-search-item').forEach(item => {
+        item.addEventListener('click', () => {
+          const idx = parseInt(item.getAttribute('data-idx'), 10);
+          if(item.getAttribute('data-kind') === 'entry') goToEntry(idx);
+          else goToSale(idx);
+        });
+      });
+    }
+  })();
+
+  // ======================================================================
+  // NEW FEATURE: Command Center — system status pill + Quick Action buttons.
+  // Wires the HTML shell already in the header. Every action reuses existing
+  // functions (clearForm, switchView, syncTypeTabs, the PDF input, the global
+  // search box) rather than duplicating their logic — nothing they call was
+  // modified to make this work.
+  // ======================================================================
+  (function initCommandCenter(){
+    const statusEl = document.getElementById('ptc-command-status');
+    function renderCommandStatus(){
+      if(!statusEl) return;
+      const online = (typeof isCloudConnected === 'function') && isCloudConnected();
+      const count = (typeof entries !== 'undefined' ? entries.length : 0) + (typeof salesEntries !== 'undefined' ? salesEntries.length : 0);
+      statusEl.innerHTML = `<span class="ptc-command-status-dot${online ? '' : ' offline'}"></span>${online ? 'Cloud Synced' : 'Local Only'} · ${count} records`;
+    }
+    renderCommandStatus();
+    setInterval(renderCommandStatus, 3000); // cheap poll — cloud status can change from elsewhere (e.g. sign out) without a hook
+
+    function goEntryTab(){ if(typeof switchView === 'function') switchView('entry'); }
+
+    const qaNew = document.getElementById('qa-new-transaction');
+    if(qaNew) qaNew.addEventListener('click', () => {
+      goEntryTab();
+      if(typeof clearForm === 'function') clearForm();
+      const pname = document.getElementById('f-pname');
+      if(pname) setTimeout(() => pname.focus(), 50);
+    });
+
+    const qaImport = document.getElementById('qa-import-pdf');
+    if(qaImport) qaImport.addEventListener('click', () => {
+      goEntryTab();
+      const pdfInput = document.getElementById('pdf-ticket-input');
+      if(pdfInput) setTimeout(() => pdfInput.click(), 50);
+    });
+
+    function setTransactionType(type){
+      goEntryTab();
+      const sel = document.getElementById('f-type');
+      if(!sel) return;
+      sel.value = type;
+      sel.dispatchEvent(new Event('change'));
+      if(typeof syncTypeTabs === 'function') syncTypeTabs();
+    }
+    const qaRefund = document.getElementById('qa-refund');
+    if(qaRefund) qaRefund.addEventListener('click', () => setTransactionType('Refund'));
+    const qaReissue = document.getElementById('qa-reissue');
+    if(qaReissue) qaReissue.addEventListener('click', () => setTransactionType('Reissue'));
+
+    const qaSearch = document.getElementById('qa-search');
+    if(qaSearch) qaSearch.addEventListener('click', () => {
+      const gs = document.getElementById('ptc-global-search');
+      if(gs) gs.focus();
+    });
+
+    const qaRecent = document.getElementById('qa-recent');
+    if(qaRecent) qaRecent.addEventListener('click', () => {
+      if(typeof switchView === 'function') switchView('dashboard');
+      setTimeout(() => {
+        const ops = document.getElementById('ptc-recent-ops');
+        if(ops) ops.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 100);
+    });
+  })();
 })();
 </script>
 </body></html>
