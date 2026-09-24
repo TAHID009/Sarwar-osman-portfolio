@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AeroOps OTA Operations - Advanced flight operations portal with aircraft runway landing sequence">
+    <meta name="theme-color" content="#0d1117">
+    <title>AeroOps OTA — Over-The-Air Operations</title>
+    <style>
+        :root {
+            --dark-bg: #0d1117;
+            --darker-bg: #010409;
+            --cyan: #00d9ff;
+            --cyan-dark: #0088bb;
+            --cyan-light: #33e5ff;
+            --orange: #ff6b35;
+            --yellow: #ffff00;
+            --white: #ffffff;
+            --text-primary: #ffffff;
+            --text-secondary: #a8b8d8;
+            --text-tertiary: #7a8aaa;
+            --success: #00ff88;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(180deg, #0a0d1a 0%, #0d1117 50%, #0a0d1a 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-primary);
+            overflow: hidden;
+            font-weight: 400;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Background elements */
+        .stars {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        .star {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            background: #ffffff;
+            border-radius: 50%;
+            box-shadow: 0 0 2px rgba(255, 255, 255, 0.8);
+            opacity: 0.4;
+            animation: twinkle 4s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.8; }
+        }
+
+        /* Scan line */
+        .scan-line {
+            position: fixed;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(0, 217, 255, 0.4), transparent);
+            top: 0;
+            animation: scan 10s linear infinite;
+            opacity: 0.25;
+            z-index: 5;
+            box-shadow: 0 0 16px rgba(0, 217, 255, 0.3);
+        }
+
+        @keyframes scan {
+            0% { top: 0; opacity: 0.1; }
+            50% { opacity: 0.25; }
+            100% { top: 100vh; opacity: 0.1; }
+        }
+
+        /* ===== RUNWAY SCENE ===== */
+        .runway-scene {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 100;
+            background: linear-gradient(180deg, #1a1f3a 0%, #0d1117 50%, #000000 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+            transition: opacity 0.8s ease-out 1s;
+            pointer-events: auto;
+        }
+
+        .runway-scene.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Runway container */
+        .runway-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Sky gradient */
+        .runway-sky {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background: linear-gradient(180deg, #1a1f3a 0%, #0d1117 100%);
+            z-index: 1;
+        }
+
+        /* Runway surface */
+        .runway-surface {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background: linear-gradient(180deg, #1a2035 0%, #0a0f20 100%);
+            z-index: 1;
+        }
+
+        /* Runway markings */
+        .runway-markings {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 30%;
+            height: 100%;
+            transform: translateX(-50%);
+            z-index: 2;
+        }
+
+        /* Runway lights - approaching */
+        .runway-lights {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 3;
+        }
+
+        .light-pair {
+            position: absolute;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 2%;
+        }
+
+        .light {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--yellow);
+            box-shadow: 0 0 10px var(--yellow);
+        }
+
+        /* Perspective runway lines */
+        .perspective-line {
+            position: absolute;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-left: 15% solid transparent;
+            border-right: 15% solid transparent;
+            transform: translateX(-50%);
+            opacity: 0.4;
+        }
+
+        .perspective-line.white {
+            border-bottom: 8px solid white;
+        }
+
+        .perspective-line.yellow {
+            border-bottom: 8px solid var(--yellow);
+        }
+
+        /* Aircraft on runway */
+        .aircraft-on-runway {
+            position: absolute;
+            bottom: 25%;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            width: 120px;
+            height: 120px;
+            animation: aircraftApproach 4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+
+        @keyframes aircraftApproach {
+            0% {
+                bottom: 5%;
+                opacity: 0.3;
+                transform: translateX(-50%) scale(0.5);
+            }
+            50% {
+                opacity: 0.7;
+            }
+            100% {
+                bottom: 25%;
+                opacity: 1;
+                transform: translateX(-50%) scale(1);
+            }
+        }
+
+        /* Landing lights (landing gear lights) */
+        .landing-lights {
+            position: absolute;
+            bottom: 20%;
+            left: 50%;
+            width: 100%;
+            height: 60%;
+            transform: translateX(-50%);
+            z-index: 5;
+        }
+
+        .light-beam {
+            position: absolute;
+            width: 200%;
+            height: 100%;
+            left: -50%;
+            opacity: 0;
+        }
+
+        .light-beam.left {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, transparent 40%);
+        }
+
+        .light-beam.right {
+            background: linear-gradient(45deg, transparent 60%, rgba(255, 255, 255, 0.4) 100%);
+        }
+
+        .light-beam.active {
+            animation: beamFlash 0.6s ease-out;
+        }
+
+        @keyframes beamFlash {
+            0% { opacity: 0; }
+            50% { opacity: 0.8; }
+            100% { opacity: 0; }
+        }
+
+        /* Strobe lights */
+        .strobe-light {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--orange);
+            box-shadow: 0 0 20px var(--orange);
+            opacity: 0;
+            z-index: 15;
+        }
+
+        .strobe-light.left {
+            bottom: 22%;
+            left: 20%;
+        }
+
+        .strobe-light.right {
+            bottom: 22%;
+            right: 20%;
+        }
+
+        .strobe-light.active {
+            animation: strobeFlash 0.3s ease-out;
+        }
+
+        @keyframes strobeFlash {
+            0% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        /* Full screen flash */
+        .full-flash {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: white;
+            opacity: 0;
+            z-index: 50;
+            pointer-events: none;
+        }
+
+        .full-flash.active {
+            animation: fullFlash 0.8s ease-out;
+        }
+
+        @keyframes fullFlash {
+            0% { opacity: 0; }
+            20% { opacity: 0.9; }
+            100% { opacity: 0; }
+        }
+
+        /* Runway info */
+        .runway-info {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 20;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 12px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .runway-label {
+            font-size: 11px;
+            color: var(--text-tertiary);
+            margin-bottom: 6px;
+        }
+
+        .runway-status {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--yellow);
+            text-shadow: 0 0 12px var(--yellow);
+            animation: statusGlow 1s ease-in-out infinite;
+        }
+
+        @keyframes statusGlow {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+        }
+
+        /* ===== LOGIN BOARD ===== */
+        .login-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 99;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(13, 17, 23, 0.95);
+            backdrop-filter: blur(10px);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.8s ease-out;
+        }
+
+        .login-container.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .login-box {
+            position: relative;
+            max-width: 480px;
+            width: 90%;
+            background: linear-gradient(135deg, rgba(13, 17, 23, 0.95) 0%, rgba(10, 14, 26, 0.98) 100%);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 217, 255, 0.25);
+            border-radius: 16px;
+            padding: 48px;
+            box-shadow: 
+                0 20px 60px rgba(0, 0, 0, 0.6),
+                0 0 40px rgba(0, 217, 255, 0.12),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            animation: formSlideUp 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes formSlideUp {
+            from {
+                transform: translateY(60px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .form-header {
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .form-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+            letter-spacing: -0.5px;
+        }
+
+        .form-subtitle {
+            font-size: 12px;
+            color: var(--text-secondary);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+
+        .arrival-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 16px;
+            font-size: 11px;
+            color: var(--success);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+            box-shadow: 0 0 8px var(--success);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .form-group {
+            margin-bottom: 28px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 16px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
+            border: 1px solid rgba(0, 217, 255, 0.2);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            outline: none;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .form-input:focus {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+            border-color: var(--cyan);
+            box-shadow: 
+                inset 0 1px 2px rgba(0, 0, 0, 0.2),
+                0 0 0 3px rgba(0, 217, 255, 0.15),
+                0 0 12px rgba(0, 217, 255, 0.3);
+        }
+
+        .form-input::placeholder {
+            color: rgba(168, 184, 216, 0.4);
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            margin-bottom: 28px;
+            gap: 12px;
+        }
+
+        .remember-check {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: color 0.2s;
+        }
+
+        .remember-check:hover {
+            color: var(--cyan);
+        }
+
+        .form-checkbox {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            accent-color: var(--cyan);
+        }
+
+        .forgot-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .forgot-link:hover {
+            color: var(--cyan);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--cyan) 0%, var(--cyan-dark) 100%);
+            border: 1px solid rgba(51, 229, 255, 0.4);
+            border-radius: 10px;
+            color: var(--darker-bg);
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: 
+                0 8px 24px rgba(0, 217, 255, 0.25),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-login::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+            z-index: 1;
+        }
+
+        .btn-login:hover::before {
+            transform: translateX(100%);
+        }
+
+        .btn-login:hover {
+            transform: translateY(-3px);
+            box-shadow: 
+                0 14px 32px rgba(0, 217, 255, 0.35),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 28px 0;
+            gap: 12px;
+            font-size: 10px;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(0, 217, 255, 0.2), transparent);
+        }
+
+        .signup-text {
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .signup-text a {
+            color: var(--cyan);
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .signup-text a:hover {
+            text-shadow: 0 0 8px rgba(0, 217, 255, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .login-box {
+                padding: 32px 24px;
+            }
+
+            .form-title {
+                font-size: 24px;
+            }
+
+            .aircraft-on-runway {
+                width: 90px;
+                height: 90px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background -->
+    <div class="stars" id="starsContainer"></div>
+    <div class="scan-line"></div>
+
+    <!-- ===== RUNWAY SCENE ===== -->
+    <div class="runway-scene" id="runwayScene">
+        <div class="runway-container">
+            <!-- Sky and surface -->
+            <div class="runway-sky"></div>
+            <div class="runway-surface"></div>
+
+            <!-- Runway markings perspective -->
+            <div class="runway-markings" id="runwayMarkings">
+                <div class="perspective-line white" style="bottom: 90%; width: 0; border-left: 8% solid transparent; border-right: 8% solid transparent;"></div>
+                <div class="perspective-line white" style="bottom: 80%; width: 0; border-left: 10% solid transparent; border-right: 10% solid transparent;"></div>
+                <div class="perspective-line yellow" style="bottom: 70%; width: 0; border-left: 12% solid transparent; border-right: 12% solid transparent;"></div>
+                <div class="perspective-line white" style="bottom: 60%; width: 0; border-left: 14% solid transparent; border-right: 14% solid transparent;"></div>
+                <div class="perspective-line white" style="bottom: 50%; width: 0; border-left: 16% solid transparent; border-right: 16% solid transparent;"></div>
+                <div class="perspective-line yellow" style="bottom: 40%; width: 0; border-left: 18% solid transparent; border-right: 18% solid transparent;"></div>
+                <div class="perspective-line white" style="bottom: 30%; width: 0; border-left: 20% solid transparent; border-right: 20% solid transparent;"></div>
+            </div>
+
+            <!-- Runway lights -->
+            <div class="runway-lights">
+                <div class="light-pair" style="bottom: 85%;"><div class="light"></div><div class="light"></div></div>
+                <div class="light-pair" style="bottom: 75%;"><div class="light"></div><div class="light"></div></div>
+                <div class="light-pair" style="bottom: 65%;"><div class="light"></div><div class="light"></div></div>
+                <div class="light-pair" style="bottom: 55%;"><div class="light"></div><div class="light"></div></div>
+                <div class="light-pair" style="bottom: 45%;"><div class="light"></div><div class="light"></div></div>
+                <div class="light-pair" style="bottom: 35%;"><div class="light"></div><div class="light"></div></div>
+            </div>
+
+            <!-- Aircraft on runway -->
+            <svg class="aircraft-on-runway" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="fuselage-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" style="stop-color:#00d9ff;stop-opacity:0.95" />
+                        <stop offset="100%" style="stop-color:#0088bb;stop-opacity:0.8" />
+                    </linearGradient>
+                </defs>
+                <g>
+                    <!-- Fuselage -->
+                    <ellipse cx="100" cy="100" rx="20" ry="50" fill="url(#fuselage-grad)"/>
+                    <!-- Wings -->
+                    <rect x="35" y="95" width="130" height="18" fill="#00d9ff" opacity="0.8" rx="8"/>
+                    <!-- Left nav light (green) -->
+                    <circle cx="35" cy="104" r="6" fill="#00ff88" opacity="0.95"/>
+                    <!-- Right nav light (red) -->
+                    <circle cx="165" cy="104" r="6" fill="#ff6b35" opacity="0.95"/>
+                    <!-- Cockpit -->
+                    <circle cx="100" cy="70" r="7" fill="#ffff00" opacity="0.9"/>
+                    <!-- Tail -->
+                    <polygon points="100,145 90,175 110,175" fill="#0088bb" opacity="0.85"/>
+                    <!-- Landing gear -->
+                    <line x1="85" y1="148" x2="85" y2="175" stroke="#00d9ff" stroke-width="2"/>
+                    <line x1="115" y1="148" x2="115" y2="175" stroke="#00d9ff" stroke-width="2"/>
+                </g>
+            </svg>
+
+            <!-- Landing lights (beams from aircraft) -->
+            <div class="landing-lights">
+                <div class="light-beam left" id="lightBeamLeft"></div>
+                <div class="light-beam right" id="lightBeamRight"></div>
+            </div>
+
+            <!-- Strobe lights -->
+            <div class="strobe-light left" id="strobeLeft"></div>
+            <div class="strobe-light right" id="strobeRight"></div>
+
+            <!-- Full screen flash -->
+            <div class="full-flash" id="fullFlash"></div>
+
+            <!-- Runway info -->
+            <div class="runway-info">
+                <div class="runway-label">Runway 25L — Approach</div>
+                <div class="runway-status">FINAL APPROACH</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== LOGIN CONTAINER ===== -->
+    <div class="login-container" id="loginContainer">
+        <div class="login-box">
+            <div class="form-header">
+                <h1 class="form-title">Flight Operations</h1>
+                <p class="form-subtitle">Secure Portal Access</p>
+                <div class="arrival-status">
+                    <div class="status-dot"></div>
+                    Aircraft Arrived — System Ready
+                </div>
+            </div>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label class="form-label">Pilot ID or Email</label>
+                    <input 
+                        type="email" 
+                        class="form-input" 
+                        placeholder="Enter your credentials"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Access Code</label>
+                    <input 
+                        type="password" 
+                        class="form-input" 
+                        placeholder="Enter your access code"
+                        required
+                    >
+                </div>
+
+                <div class="form-actions">
+                    <label class="remember-check">
+                        <input type="checkbox" class="form-checkbox"> Remember this device
+                    </label>
+                    <a href="#" class="forgot-link">Forgot code?</a>
+                </div>
+
+                <button type="submit" class="btn-login">Access Flight Deck</button>
+
+                <div class="divider">Secure Channel</div>
+
+                <div class="signup-text">
+                    New to AeroOps? <a href="#">Request access</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Generate stars for background
+        function createStars() {
+            const container = document.getElementById('starsContainer');
+            const starCount = window.innerWidth > 768 ? 80 : 50;
+            
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 4 + 's';
+                container.appendChild(star);
+            }
+        }
+
+        // Landing sequence - aircraft lands and triggers login
+        function startLandingSequence() {
+            const timeline = [
+                // Landing light beams flash (4s)
+                {
+                    time: 4000,
+                    action: () => {
+                        document.getElementById('lightBeamLeft').classList.add('active');
+                        document.getElementById('lightBeamRight').classList.add('active');
+                    }
+                },
+                
+                // First strobe flash (4.2s)
+                {
+                    time: 4200,
+                    action: () => {
+                        document.getElementById('strobeLeft').classList.add('active');
+                        document.getElementById('strobeRight').classList.add('active');
+                    }
+                },
+                
+                // Second strobe flash (4.6s)
+                {
+                    time: 4600,
+                    action: () => {
+                        document.getElementById('strobeLeft').classList.remove('active');
+                        document.getElementById('strobeRight').classList.remove('active');
+                        setTimeout(() => {
+                            document.getElementById('strobeLeft').classList.add('active');
+                            document.getElementById('strobeRight').classList.add('active');
+                        }, 50);
+                    }
+                },
+                
+                // Full screen white flash (4.9s)
+                {
+                    time: 4900,
+                    action: () => {
+                        document.getElementById('fullFlash').classList.add('active');
+                    }
+                },
+                
+                // Hide runway & show login (5.7s)
+                {
+                    time: 5700,
+                    action: () => {
+                        document.getElementById('runwayScene').classList.add('hidden');
+                        document.getElementById('loginContainer').classList.add('show');
+                    }
+                }
+            ];
+
+            timeline.forEach(event => {
+                setTimeout(event.action, event.time);
+            });
+        }
+
+        // Handle form submission
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = this.querySelector('.btn-login');
+            const originalText = btn.textContent;
+            
+            btn.disabled = true;
+            btn.textContent = 'Verifying credentials...';
+            
+            setTimeout(() => {
+                btn.textContent = 'Authenticating...';
+                
+                setTimeout(() => {
+                    btn.textContent = 'Access Granted ✓';
+                    btn.style.background = 'linear-gradient(135deg, #00ff88 0%, #00cc66 100%)';
+                    
+                    setTimeout(() => {
+                        alert('Welcome to AeroOps Flight Operations Portal');
+                        btn.disabled = false;
+                        btn.textContent = originalText;
+                        btn.style.background = '';
+                    }, 1200);
+                }, 800);
+            }, 1000);
+        });
+
+        // Initialize on page load
+        window.addEventListener('load', () => {
+            createStars();
+            startLandingSequence();
+        });
+    </script>
+</body>
+</html>
