@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="AeroOps OTA Operations - Advanced flight operations portal with aircraft runway landing sequence">
+    <meta name="description" content="AeroOps OTA Operations - Flight operations portal with runway landing sequence">
     <meta name="theme-color" content="#0d1117">
     <title>AeroOps OTA — Over-The-Air Operations</title>
     <style>
@@ -47,7 +47,6 @@
             -moz-osx-font-smoothing: grayscale;
         }
 
-        /* Background elements */
         .stars {
             position: fixed;
             width: 100%;
@@ -73,7 +72,6 @@
             50% { opacity: 0.8; }
         }
 
-        /* Scan line */
         .scan-line {
             position: fixed;
             width: 100%;
@@ -92,7 +90,6 @@
             100% { top: 100vh; opacity: 0.1; }
         }
 
-        /* ===== RUNWAY SCENE ===== */
         .runway-scene {
             position: fixed;
             top: 0;
@@ -115,7 +112,6 @@
             pointer-events: none;
         }
 
-        /* Runway container */
         .runway-container {
             position: relative;
             width: 100%;
@@ -126,7 +122,6 @@
             justify-content: center;
         }
 
-        /* Sky gradient */
         .runway-sky {
             position: absolute;
             top: 0;
@@ -137,7 +132,6 @@
             z-index: 1;
         }
 
-        /* Runway surface */
         .runway-surface {
             position: absolute;
             bottom: 0;
@@ -148,7 +142,6 @@
             z-index: 1;
         }
 
-        /* Runway markings */
         .runway-markings {
             position: absolute;
             bottom: 0;
@@ -159,7 +152,6 @@
             z-index: 2;
         }
 
-        /* Runway lights - approaching */
         .runway-lights {
             position: absolute;
             width: 100%;
@@ -183,7 +175,6 @@
             box-shadow: 0 0 10px var(--yellow);
         }
 
-        /* Perspective runway lines */
         .perspective-line {
             position: absolute;
             left: 50%;
@@ -203,7 +194,6 @@
             border-bottom: 8px solid var(--yellow);
         }
 
-        /* Aircraft on runway */
         .aircraft-on-runway {
             position: absolute;
             bottom: 25%;
@@ -231,7 +221,6 @@
             }
         }
 
-        /* Landing lights (landing gear lights) */
         .landing-lights {
             position: absolute;
             bottom: 20%;
@@ -268,7 +257,6 @@
             100% { opacity: 0; }
         }
 
-        /* Strobe lights */
         .strobe-light {
             position: absolute;
             width: 20px;
@@ -299,7 +287,6 @@
             100% { opacity: 0; }
         }
 
-        /* Full screen flash */
         .full-flash {
             position: absolute;
             width: 100%;
@@ -320,7 +307,6 @@
             100% { opacity: 0; }
         }
 
-        /* Runway info */
         .runway-info {
             position: absolute;
             bottom: 40px;
@@ -353,7 +339,6 @@
             50% { opacity: 1; }
         }
 
-        /* ===== LOGIN BOARD ===== */
         .login-container {
             position: fixed;
             top: 0;
@@ -635,18 +620,14 @@
     </style>
 </head>
 <body>
-    <!-- Background -->
     <div class="stars" id="starsContainer"></div>
     <div class="scan-line"></div>
 
-    <!-- ===== RUNWAY SCENE ===== -->
     <div class="runway-scene" id="runwayScene">
         <div class="runway-container">
-            <!-- Sky and surface -->
             <div class="runway-sky"></div>
             <div class="runway-surface"></div>
 
-            <!-- Runway markings perspective -->
             <div class="runway-markings" id="runwayMarkings">
                 <div class="perspective-line white" style="bottom: 90%; width: 0; border-left: 8% solid transparent; border-right: 8% solid transparent;"></div>
                 <div class="perspective-line white" style="bottom: 80%; width: 0; border-left: 10% solid transparent; border-right: 10% solid transparent;"></div>
@@ -657,7 +638,6 @@
                 <div class="perspective-line white" style="bottom: 30%; width: 0; border-left: 20% solid transparent; border-right: 20% solid transparent;"></div>
             </div>
 
-            <!-- Runway lights -->
             <div class="runway-lights">
                 <div class="light-pair" style="bottom: 85%;"><div class="light"></div><div class="light"></div></div>
                 <div class="light-pair" style="bottom: 75%;"><div class="light"></div><div class="light"></div></div>
@@ -667,7 +647,6 @@
                 <div class="light-pair" style="bottom: 35%;"><div class="light"></div><div class="light"></div></div>
             </div>
 
-            <!-- Aircraft on runway -->
             <svg class="aircraft-on-runway" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
                 <defs>
                     <linearGradient id="fuselage-grad" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -676,38 +655,27 @@
                     </linearGradient>
                 </defs>
                 <g>
-                    <!-- Fuselage -->
                     <ellipse cx="100" cy="100" rx="20" ry="50" fill="url(#fuselage-grad)"/>
-                    <!-- Wings -->
                     <rect x="35" y="95" width="130" height="18" fill="#00d9ff" opacity="0.8" rx="8"/>
-                    <!-- Left nav light (green) -->
                     <circle cx="35" cy="104" r="6" fill="#00ff88" opacity="0.95"/>
-                    <!-- Right nav light (red) -->
                     <circle cx="165" cy="104" r="6" fill="#ff6b35" opacity="0.95"/>
-                    <!-- Cockpit -->
                     <circle cx="100" cy="70" r="7" fill="#ffff00" opacity="0.9"/>
-                    <!-- Tail -->
                     <polygon points="100,145 90,175 110,175" fill="#0088bb" opacity="0.85"/>
-                    <!-- Landing gear -->
                     <line x1="85" y1="148" x2="85" y2="175" stroke="#00d9ff" stroke-width="2"/>
                     <line x1="115" y1="148" x2="115" y2="175" stroke="#00d9ff" stroke-width="2"/>
                 </g>
             </svg>
 
-            <!-- Landing lights (beams from aircraft) -->
             <div class="landing-lights">
                 <div class="light-beam left" id="lightBeamLeft"></div>
                 <div class="light-beam right" id="lightBeamRight"></div>
             </div>
 
-            <!-- Strobe lights -->
             <div class="strobe-light left" id="strobeLeft"></div>
             <div class="strobe-light right" id="strobeRight"></div>
 
-            <!-- Full screen flash -->
             <div class="full-flash" id="fullFlash"></div>
 
-            <!-- Runway info -->
             <div class="runway-info">
                 <div class="runway-label">Runway 25L — Approach</div>
                 <div class="runway-status">FINAL APPROACH</div>
@@ -715,7 +683,6 @@
         </div>
     </div>
 
-    <!-- ===== LOGIN CONTAINER ===== -->
     <div class="login-container" id="loginContainer">
         <div class="login-box">
             <div class="form-header">
@@ -767,7 +734,6 @@
     </div>
 
     <script>
-        // Generate stars for background
         function createStars() {
             const container = document.getElementById('starsContainer');
             const starCount = window.innerWidth > 768 ? 80 : 50;
@@ -782,10 +748,8 @@
             }
         }
 
-        // Landing sequence - aircraft lands and triggers login
         function startLandingSequence() {
             const timeline = [
-                // Landing light beams flash (4s)
                 {
                     time: 4000,
                     action: () => {
@@ -793,8 +757,6 @@
                         document.getElementById('lightBeamRight').classList.add('active');
                     }
                 },
-                
-                // First strobe flash (4.2s)
                 {
                     time: 4200,
                     action: () => {
@@ -802,8 +764,6 @@
                         document.getElementById('strobeRight').classList.add('active');
                     }
                 },
-                
-                // Second strobe flash (4.6s)
                 {
                     time: 4600,
                     action: () => {
@@ -815,16 +775,12 @@
                         }, 50);
                     }
                 },
-                
-                // Full screen white flash (4.9s)
                 {
                     time: 4900,
                     action: () => {
                         document.getElementById('fullFlash').classList.add('active');
                     }
                 },
-                
-                // Hide runway & show login (5.7s)
                 {
                     time: 5700,
                     action: () => {
@@ -839,7 +795,6 @@
             });
         }
 
-        // Handle form submission
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const btn = this.querySelector('.btn-login');
@@ -856,16 +811,12 @@
                     btn.style.background = 'linear-gradient(135deg, #00ff88 0%, #00cc66 100%)';
                     
                     setTimeout(() => {
-                        alert('Welcome to AeroOps Flight Operations Portal');
-                        btn.disabled = false;
-                        btn.textContent = originalText;
-                        btn.style.background = '';
-                    }, 1200);
+                        window.location.href = 'aeroops.html';
+                    }, 800);
                 }, 800);
             }, 1000);
         });
 
-        // Initialize on page load
         window.addEventListener('load', () => {
             createStars();
             startLandingSequence();
