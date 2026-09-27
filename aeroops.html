@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AeroOps — Flight Operations</title>
+    <style>
+        :root {
+            --dark-bg: #0a0e27;
+            --darker-bg: #050810;
+            --cyan: #00d9ff;
+            --cyan-dark: #0099cc;
+            --gold: #ffa500;
+            --text-primary: #ffffff;
+            --text-secondary: #b0c4de;
+            --border: rgba(0, 217, 255, 0.3);
+            --success: #00ff88;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, var(--darker-bg) 0%, var(--dark-bg) 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+
+        /* ===== SHARED BACKGROUND ===== */
+        .stars {
+            position: fixed;
+            width: 100%; height: 100%;
+            top: 0; left: 0; z-index: 1;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px; height: 2px;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 0.8; }
+        }
+
+        .scan-line {
+            position: fixed;
+            width: 100%; height: 1px;
+            background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+            top: 0;
+            animation: scan 8s linear infinite;
+            opacity: 0.3;
+            z-index: 5;
+        }
+
+        @keyframes scan {
+            0% { top: 0; }
+            100% { top: 100vh; }
+        }
+
+        /* ===== LOGIN VIEW ===== */
+        #loginView {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 420px;
+        }
+
+        .radar-container {
+            position: absolute;
+            width: 300px; height: 300px;
+            right: -100px; top: -100px;
+            opacity: 0.15;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .radar-circle {
+            position: absolute;
+            border: 1px solid var(--cyan);
+            border-radius: 50%;
+            animation: radar-pulse 3s infinite linear;
+            left: 50%; top: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .radar-circle:nth-child(1) { width: 100px; height: 100px; animation-delay: 0s; }
+        .radar-circle:nth-child(2) { width: 150px; height: 150px; animation-delay: 1s; }
+        .radar-circle:nth-child(3) { width: 200px; height: 200px; animation-delay: 2s; }
+
+        @keyframes radar-pulse {
+            0% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
+        }
+
+        .header { position: relative; z-index: 2; margin-bottom: 50px; text-align: center; }
+
+        .logo {
+            font-size: 14px; font-weight: 600; letter-spacing: 3px;
+            color: var(--cyan); text-transform: uppercase;
+            margin-bottom: 20px;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .aircraft-icon {
+            display: inline-block;
+            width: 50px; height: 50px;
+            margin-bottom: 20px;
+            animation: planeFloat 3s ease-in-out infinite;
+        }
+
+        .aircraft-icon svg { width: 100%; height: 100%; filter: drop-shadow(0 0 8px var(--cyan)); }
+
+        @keyframes planeFloat {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(5deg); }
+        }
+
+        .title {
+            font-size: 28px; font-weight: 700; margin-bottom: 8px;
+            color: var(--text-primary);
+            animation: fadeInDown 0.8s ease-out 0.1s both;
+        }
+
+        .subtitle {
+            font-size: 13px; color: var(--text-secondary); letter-spacing: 1px;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        .login-box {
+            position: relative; z-index: 2;
+            background: rgba(10, 14, 39, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 40px;
+            animation: fadeInUp 0.8s ease-out 0.3s both;
+            box-shadow: 0 8px 32px rgba(0, 217, 255, 0.1);
+        }
+
+        .login-box:hover {
+            border-color: rgba(0, 217, 255, 0.5);
+            box-shadow: 0 8px 32px rgba(0, 217, 255, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        .form-group { margin-bottom: 24px; }
+
+        .form-label {
+            display: block; font-size: 12px; font-weight: 600;
+            color: var(--text-secondary); margin-bottom: 8px;
+            letter-spacing: 0.5px; text-transform: uppercase;
+        }
+
+        .form-input {
+            width: 100%; padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 14px; font-family: inherit;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .form-input:focus {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--cyan);
+            box-shadow: 0 0 16px rgba(0, 217, 255, 0.2);
+        }
+
+        .form-input::placeholder { color: rgba(176, 196, 222, 0.5); }
+
+        .remember-forgot {
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 12px; margin-bottom: 28px;
+        }
+
+        .remember-forgot label {
+            display: flex; align-items: center; gap: 6px;
+            cursor: pointer; color: var(--text-secondary);
+            transition: color 0.2s;
+        }
+
+        .remember-forgot label:hover { color: var(--cyan); }
+
+        .remember-forgot a {
+            color: var(--text-secondary); text-decoration: none; transition: color 0.2s;
+        }
+
+        .remember-forgot a:hover { color: var(--cyan); }
+
+        .checkbox { width: 16px; height: 16px; cursor: pointer; accent-color: var(--cyan); }
+
+        .btn-login {
+            width: 100%; padding: 14px;
+            background: linear-gradient(135deg, var(--cyan) 0%, var(--cyan-dark) 100%);
+            border: none; border-radius: 8px;
+            color: var(--darker-bg);
+            font-size: 14px; font-weight: 600; letter-spacing: 1px;
+            text-transform: uppercase; cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 16px;
+        }
+
+        .btn-login:hover { transform: translateY(-2px); box-shadow: 0 12px 24px rgba(0, 217, 255, 0.3); }
+        .btn-login:active { transform: translateY(0); }
+        .btn-login:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        .status-dot {
+            display: inline-block; width: 8px; height: 8px;
+            background: var(--success); border-radius: 50%;
+            margin-right: 6px; animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(0, 255, 136, 0.4); }
+            50% { opacity: 0.8; box-shadow: 0 0 0 6px rgba(0, 255, 136, 0); }
+        }
+
+        .system-status {
+            font-size: 11px; color: var(--text-secondary);
+            text-align: center; margin-top: 20px;
+        }
+
+        .divider {
+            display: flex; align-items: center; margin: 24px 0; gap: 12px;
+            font-size: 11px; color: var(--text-secondary);
+        }
+
+        .divider::before, .divider::after {
+            content: ''; flex: 1; height: 1px; background: var(--border);
+        }
+
+        .signup-prompt { text-align: center; font-size: 13px; color: var(--text-secondary); }
+
+        .signup-prompt a {
+            color: var(--cyan); text-decoration: none; font-weight: 600; transition: color 0.2s;
+        }
+
+        .signup-prompt a:hover { color: var(--gold); }
+
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ===== DATA ENTRY VIEW ===== */
+        #dataEntryView {
+            display: none;
+            min-height: 100vh;
+            padding: 32px 20px 60px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .de-topbar {
+            max-width: 960px; margin: 0 auto 32px;
+            display: flex; align-items: center; justify-content: space-between;
+            animation: fadeInDown 0.6s ease-out;
+        }
+
+        .de-brand { display: flex; align-items: center; gap: 12px; }
+
+        .de-brand svg { width: 28px; height: 28px; filter: drop-shadow(0 0 6px var(--cyan)); }
+
+        .de-brand-text { font-size: 16px; font-weight: 700; letter-spacing: 1px; }
+
+        .de-status {
+            font-size: 11px; color: var(--success);
+            display: flex; align-items: center; gap: 6px;
+            text-transform: uppercase; letter-spacing: 0.5px;
+        }
+
+        .btn-logout {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 8px 18px;
+            border-radius: 8px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-logout:hover { border-color: var(--cyan); color: var(--cyan); }
+
+        .de-wrap { max-width: 960px; margin: 0 auto; }
+
+        .de-header { margin-bottom: 28px; animation: fadeInUp 0.7s ease-out 0.1s both; }
+
+        .de-header h1 { font-size: 26px; font-weight: 700; margin-bottom: 6px; }
+
+        .de-header p { font-size: 13px; color: var(--text-secondary); }
+
+        .de-grid {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 800px) {
+            .de-grid { grid-template-columns: 1fr; }
+        }
+
+        .de-card {
+            background: rgba(10, 14, 39, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 28px;
+            animation: fadeInUp 0.7s ease-out 0.2s both;
+        }
+
+        .de-card h2 {
+            font-size: 13px; text-transform: uppercase; letter-spacing: 1px;
+            color: var(--cyan); margin-bottom: 20px;
+        }
+
+        .de-field { margin-bottom: 18px; }
+
+        .de-field label {
+            display: block; font-size: 11px; color: var(--text-secondary);
+            text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;
+        }
+
+        .de-field input, .de-field select {
+            width: 100%; padding: 10px 14px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 13px; font-family: inherit;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .de-field input:focus, .de-field select:focus {
+            border-color: var(--cyan);
+            box-shadow: 0 0 12px rgba(0, 217, 255, 0.15);
+        }
+
+        .de-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+        .btn-submit {
+            width: 100%; padding: 12px;
+            background: linear-gradient(135deg, var(--cyan) 0%, var(--cyan-dark) 100%);
+            border: none; border-radius: 8px;
+            color: var(--darker-bg);
+            font-size: 13px; font-weight: 700; letter-spacing: 1px;
+            text-transform: uppercase; cursor: pointer;
+            margin-top: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0, 217, 255, 0.3); }
+
+        .de-log-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(0, 217, 255, 0.1);
+            font-size: 12px;
+        }
+
+        .de-log-item:last-child { border-bottom: none; }
+
+        .de-log-flight { font-weight: 600; color: var(--text-primary); }
+
+        .de-log-route { color: var(--text-secondary); font-size: 11px; margin-top: 2px; }
+
+        .de-log-status {
+            font-size: 10px; padding: 3px 10px; border-radius: 20px;
+            text-transform: uppercase; letter-spacing: 0.5px;
+            background: rgba(0, 255, 136, 0.15); color: var(--success);
+        }
+
+        .de-empty { font-size: 12px; color: var(--text-secondary); text-align: center; padding: 20px 0; }
+
+        @media (max-width: 480px) {
+            .login-box { padding: 28px; }
+            .title { font-size: 24px; }
+            .radar-container { display: none; }
+            .de-card { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars" id="starsContainer"></div>
+    <div class="scan-line"></div>
+
+    <!-- ===== LOGIN VIEW ===== -->
+    <div id="loginView">
+        <div class="container">
+            <div class="radar-container">
+                <div class="radar-circle"></div>
+                <div class="radar-circle"></div>
+                <div class="radar-circle"></div>
+            </div>
+
+            <div class="header">
+                <div class="logo">✈ AeroOps</div>
+
+                <svg class="aircraft-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <filter id="glow">
+                            <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                            <feMerge>
+                                <feMergeNode in="coloredBlur"/>
+                                <feMergeNode in="SourceGraphic"/>
+                            </feMerge>
+                        </filter>
+                    </defs>
+                    <g filter="url(#glow)">
+                        <ellipse cx="50" cy="50" rx="12" ry="28" fill="currentColor" opacity="0.8"/>
+                        <rect x="20" y="45" width="60" height="10" fill="currentColor" opacity="0.6" rx="2"/>
+                        <polygon points="50,72 45,82 55,82" fill="currentColor" opacity="0.8"/>
+                        <circle cx="50" cy="35" r="4" fill="#00d9ff"/>
+                    </g>
+                </svg>
+
+                <h1 class="title">Flight Operations</h1>
+                <p class="subtitle">Secure Portal Access</p>
+            </div>
+
+            <div class="login-box">
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label class="form-label">Pilot ID or Email</label>
+                        <input type="email" class="form-input" placeholder="Enter your credentials" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Access Code</label>
+                        <input type="password" class="form-input" placeholder="Enter your access code" required>
+                    </div>
+
+                    <div class="remember-forgot">
+                        <label><input type="checkbox" class="checkbox"> Remember this device</label>
+                        <a href="#forgot">Forgot code?</a>
+                    </div>
+
+                    <button type="submit" class="btn-login">Access Flight Deck</button>
+
+                    <div class="system-status">
+                        <span class="status-dot"></span>
+                        System operational
+                    </div>
+                </form>
+
+                <div class="divider">Secure Channel</div>
+
+                <div class="signup-prompt">
+                    New to AeroOps? <a href="index.html">Request access</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== DATA ENTRY VIEW (shown after login) ===== -->
+    <div id="dataEntryView">
+        <div class="de-topbar">
+            <div class="de-brand">
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <g>
+                        <ellipse cx="50" cy="50" rx="12" ry="28" fill="#00d9ff" opacity="0.8"/>
+                        <rect x="20" y="45" width="60" height="10" fill="#00d9ff" opacity="0.6" rx="2"/>
+                        <polygon points="50,72 45,82 55,82" fill="#00d9ff" opacity="0.8"/>
+                    </g>
+                </svg>
+                <div>
+                    <div class="de-brand-text">AeroOps Data Entry</div>
+                    <div class="de-status"><span class="status-dot"></span>Session active</div>
+                </div>
+            </div>
+            <button class="btn-logout" id="btnLogout">Log Out</button>
+        </div>
+
+        <div class="de-wrap">
+            <div class="de-header">
+                <h1>Flight Data Entry</h1>
+                <p>Log a new flight movement or review recent entries below.</p>
+            </div>
+
+            <div class="de-grid">
+                <div class="de-card">
+                    <h2>New Entry</h2>
+                    <form id="entryForm">
+                        <div class="de-row">
+                            <div class="de-field">
+                                <label>Flight Number</label>
+                                <input type="text" id="flightNo" placeholder="e.g. AO-2201" required>
+                            </div>
+                            <div class="de-field">
+                                <label>Aircraft Type</label>
+                                <input type="text" id="aircraftType" placeholder="e.g. B738" required>
+                            </div>
+                        </div>
+                        <div class="de-row">
+                            <div class="de-field">
+                                <label>Departure</label>
+                                <input type="text" id="depAirport" placeholder="e.g. DAC" required>
+                            </div>
+                            <div class="de-field">
+                                <label>Arrival</label>
+                                <input type="text" id="arrAirport" placeholder="e.g. CGP" required>
+                            </div>
+                        </div>
+                        <div class="de-row">
+                            <div class="de-field">
+                                <label>Date</label>
+                                <input type="date" id="flightDate" required>
+                            </div>
+                            <div class="de-field">
+                                <label>Status</label>
+                                <select id="flightStatus">
+                                    <option>Scheduled</option>
+                                    <option>Departed</option>
+                                    <option>Arrived</option>
+                                    <option>Delayed</option>
+                                    <option>Cancelled</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-submit">Save Entry</button>
+                    </form>
+                </div>
+
+                <div class="de-card">
+                    <h2>Recent Entries</h2>
+                    <div id="entryLog">
+                        <div class="de-empty">No entries yet — add one on the left.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function createStars() {
+            const container = document.getElementById('starsContainer');
+            for (let i = 0; i < 50; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                container.appendChild(star);
+            }
+        }
+
+        // Login submission -> reveal Data Entry view
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = this.querySelector('.btn-login');
+            btn.disabled = true;
+            btn.textContent = 'Verifying credentials...';
+
+            setTimeout(() => {
+                btn.textContent = 'Access Granted ✓';
+                setTimeout(() => {
+                    document.getElementById('loginView').style.display = 'none';
+                    document.getElementById('dataEntryView').style.display = 'block';
+                }, 600);
+            }, 1200);
+        });
+
+        // Log out -> back to login view
+        document.getElementById('btnLogout').addEventListener('click', function() {
+            document.getElementById('dataEntryView').style.display = 'none';
+            document.getElementById('loginView').style.display = 'flex';
+            document.getElementById('loginForm').reset();
+            const btn = document.querySelector('.btn-login');
+            btn.disabled = false;
+            btn.textContent = 'Access Flight Deck';
+        });
+
+        // Data entry form -> add row to log
+        document.getElementById('entryForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const flightNo = document.getElementById('flightNo').value;
+            const dep = document.getElementById('depAirport').value.toUpperCase();
+            const arr = document.getElementById('arrAirport').value.toUpperCase();
+            const status = document.getElementById('flightStatus').value;
+
+            const log = document.getElementById('entryLog');
+            const empty = log.querySelector('.de-empty');
+            if (empty) empty.remove();
+
+            const item = document.createElement('div');
+            item.className = 'de-log-item';
+            item.innerHTML = `
+                <div>
+                    <div class="de-log-flight">${flightNo}</div>
+                    <div class="de-log-route">${dep} → ${arr}</div>
+                </div>
+                <div class="de-log-status">${status}</div>
+            `;
+            log.prepend(item);
+            this.reset();
+        });
+
+        window.addEventListener('load', createStars);
+    </script>
+</body>
+</html>
