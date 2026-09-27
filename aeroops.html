@@ -3,615 +3,1213 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AeroOps — Flight Operations</title>
+    <meta name="description" content="AeroOps OTA Operations - Advanced flight operations portal with aircraft runway landing sequence">
+    <meta name="theme-color" content="#0d1117">
+    <title>AeroOps OTA — Over-The-Air Operations</title>
     <style>
         :root {
-            --dark-bg: #0a0e27;
-            --darker-bg: #050810;
+            --dark-bg: #0d1117;
+            --darker-bg: #010409;
             --cyan: #00d9ff;
-            --cyan-dark: #0099cc;
-            --gold: #ffa500;
+            --cyan-dark: #0088bb;
+            --cyan-light: #33e5ff;
+            --orange: #ff6b35;
+            --yellow: #ffff00;
+            --white: #ffffff;
             --text-primary: #ffffff;
-            --text-secondary: #b0c4de;
-            --border: rgba(0, 217, 255, 0.3);
+            --text-secondary: #a8b8d8;
+            --text-tertiary: #7a8aaa;
             --success: #00ff88;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+        }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, var(--darker-bg) 0%, var(--dark-bg) 100%);
-            min-height: 100vh;
-            color: var(--text-primary);
-            overflow-x: hidden;
-        }
-
-        /* ===== SHARED BACKGROUND ===== */
-        .stars {
-            position: fixed;
-            width: 100%; height: 100%;
-            top: 0; left: 0; z-index: 1;
-        }
-
-        .star {
-            position: absolute;
-            width: 2px; height: 2px;
-            background: white;
-            border-radius: 50%;
-            opacity: 0.3;
-            animation: twinkle 3s infinite;
-        }
-
-        @keyframes twinkle {
-            0%, 100% { opacity: 0.2; }
-            50% { opacity: 0.8; }
-        }
-
-        .scan-line {
-            position: fixed;
-            width: 100%; height: 1px;
-            background: linear-gradient(90deg, transparent, var(--cyan), transparent);
-            top: 0;
-            animation: scan 8s linear infinite;
-            opacity: 0.3;
-            z-index: 5;
-        }
-
-        @keyframes scan {
-            0% { top: 0; }
-            100% { top: 100vh; }
-        }
-
-        /* ===== LOGIN VIEW ===== */
-        #loginView {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(180deg, #0a0d1a 0%, #0d1117 50%, #0a0d1a 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 40px 20px;
+            color: var(--text-primary);
+            overflow: hidden;
+            font-weight: 400;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
-        .container {
-            position: relative;
-            z-index: 10;
+        /* Background elements */
+        .stars {
+            position: fixed;
             width: 100%;
-            max-width: 420px;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1;
         }
 
-        .radar-container {
+        .star {
             position: absolute;
-            width: 300px; height: 300px;
-            right: -100px; top: -100px;
-            opacity: 0.15;
-            z-index: 0;
+            width: 1px;
+            height: 1px;
+            background: #ffffff;
+            border-radius: 50%;
+            box-shadow: 0 0 2px rgba(255, 255, 255, 0.8);
+            opacity: 0.4;
+            animation: twinkle 4s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.8; }
+        }
+
+        /* Scan line */
+        .scan-line {
+            position: fixed;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(0, 217, 255, 0.4), transparent);
+            top: 0;
+            animation: scan 10s linear infinite;
+            opacity: 0.25;
+            z-index: 5;
+            box-shadow: 0 0 16px rgba(0, 217, 255, 0.3);
+        }
+
+        @keyframes scan {
+            0% { top: 0; opacity: 0.1; }
+            50% { opacity: 0.25; }
+            100% { top: 100vh; opacity: 0.1; }
+        }
+
+        /* ===== RUNWAY SCENE ===== */
+        .runway-scene {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 100;
+            background: linear-gradient(180deg, #1a1f3a 0%, #0d1117 50%, #000000 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+            transition: opacity 0.8s ease-out 1s;
+            pointer-events: auto;
+        }
+
+        .runway-scene.hidden {
+            opacity: 0;
             pointer-events: none;
         }
 
-        .radar-circle {
+        /* Runway container */
+        .runway-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Sky gradient */
+        .runway-sky {
             position: absolute;
-            border: 1px solid var(--cyan);
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background: linear-gradient(180deg, #1a1f3a 0%, #0d1117 100%);
+            z-index: 1;
+        }
+
+        /* Runway surface */
+        .runway-surface {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background: linear-gradient(180deg, #1a2035 0%, #0a0f20 100%);
+            z-index: 1;
+        }
+
+        /* Runway markings */
+        .runway-markings {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 30%;
+            height: 100%;
+            transform: translateX(-50%);
+            z-index: 2;
+        }
+
+        /* Runway lights - approaching */
+        .runway-lights {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 3;
+        }
+
+        .light-pair {
+            position: absolute;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 2%;
+        }
+
+        .light {
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
-            animation: radar-pulse 3s infinite linear;
-            left: 50%; top: 50%;
-            transform: translate(-50%, -50%);
+            background: var(--yellow);
+            box-shadow: 0 0 10px var(--yellow);
         }
 
-        .radar-circle:nth-child(1) { width: 100px; height: 100px; animation-delay: 0s; }
-        .radar-circle:nth-child(2) { width: 150px; height: 150px; animation-delay: 1s; }
-        .radar-circle:nth-child(3) { width: 200px; height: 200px; animation-delay: 2s; }
-
-        @keyframes radar-pulse {
-            0% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
-            100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
+        /* Perspective runway lines */
+        .perspective-line {
+            position: absolute;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-left: 15% solid transparent;
+            border-right: 15% solid transparent;
+            transform: translateX(-50%);
+            opacity: 0.4;
         }
 
-        .header { position: relative; z-index: 2; margin-bottom: 50px; text-align: center; }
-
-        .logo {
-            font-size: 14px; font-weight: 600; letter-spacing: 3px;
-            color: var(--cyan); text-transform: uppercase;
-            margin-bottom: 20px;
-            animation: fadeInDown 0.8s ease-out;
+        .perspective-line.white {
+            border-bottom: 8px solid white;
         }
 
-        .aircraft-icon {
-            display: inline-block;
-            width: 50px; height: 50px;
-            margin-bottom: 20px;
-            animation: planeFloat 3s ease-in-out infinite;
+        .perspective-line.yellow {
+            border-bottom: 8px solid var(--yellow);
         }
 
-        .aircraft-icon svg { width: 100%; height: 100%; filter: drop-shadow(0 0 8px var(--cyan)); }
-
-        @keyframes planeFloat {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-10px) rotate(5deg); }
+        /* Aircraft on runway */
+        .aircraft-on-runway {
+            position: absolute;
+            bottom: 25%;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            width: 120px;
+            height: 120px;
+            animation: aircraftApproach 4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
         }
 
-        .title {
-            font-size: 28px; font-weight: 700; margin-bottom: 8px;
-            color: var(--text-primary);
-            animation: fadeInDown 0.8s ease-out 0.1s both;
+        @keyframes aircraftApproach {
+            0% {
+                bottom: 5%;
+                opacity: 0.3;
+                transform: translateX(-50%) scale(0.5);
+            }
+            50% {
+                opacity: 0.7;
+            }
+            100% {
+                bottom: 25%;
+                opacity: 1;
+                transform: translateX(-50%) scale(1);
+            }
         }
 
-        .subtitle {
-            font-size: 13px; color: var(--text-secondary); letter-spacing: 1px;
-            animation: fadeInUp 0.8s ease-out 0.2s both;
+        /* Landing lights (landing gear lights) */
+        .landing-lights {
+            position: absolute;
+            bottom: 20%;
+            left: 50%;
+            width: 100%;
+            height: 60%;
+            transform: translateX(-50%);
+            z-index: 5;
+        }
+
+        .light-beam {
+            position: absolute;
+            width: 200%;
+            height: 100%;
+            left: -50%;
+            opacity: 0;
+        }
+
+        .light-beam.left {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, transparent 40%);
+        }
+
+        .light-beam.right {
+            background: linear-gradient(45deg, transparent 60%, rgba(255, 255, 255, 0.4) 100%);
+        }
+
+        .light-beam.active {
+            animation: beamFlash 0.6s ease-out;
+        }
+
+        @keyframes beamFlash {
+            0% { opacity: 0; }
+            50% { opacity: 0.8; }
+            100% { opacity: 0; }
+        }
+
+        /* Strobe lights */
+        .strobe-light {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--orange);
+            box-shadow: 0 0 20px var(--orange);
+            opacity: 0;
+            z-index: 15;
+        }
+
+        .strobe-light.left {
+            bottom: 22%;
+            left: 20%;
+        }
+
+        .strobe-light.right {
+            bottom: 22%;
+            right: 20%;
+        }
+
+        .strobe-light.active {
+            animation: strobeFlash 0.3s ease-out;
+        }
+
+        @keyframes strobeFlash {
+            0% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        /* Full screen flash */
+        .full-flash {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: white;
+            opacity: 0;
+            z-index: 50;
+            pointer-events: none;
+        }
+
+        .full-flash.active {
+            animation: fullFlash 0.8s ease-out;
+        }
+
+        @keyframes fullFlash {
+            0% { opacity: 0; }
+            20% { opacity: 0.9; }
+            100% { opacity: 0; }
+        }
+
+        /* Runway info */
+        .runway-info {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 20;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 12px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .runway-label {
+            font-size: 11px;
+            color: var(--text-tertiary);
+            margin-bottom: 6px;
+        }
+
+        .runway-status {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--yellow);
+            text-shadow: 0 0 12px var(--yellow);
+            animation: statusGlow 1s ease-in-out infinite;
+        }
+
+        @keyframes statusGlow {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+        }
+
+        /* ===== LOGIN BOARD ===== */
+        .login-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 99;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(13, 17, 23, 0.95);
+            backdrop-filter: blur(10px);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.8s ease-out;
+        }
+
+        .login-container.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .login-box-wrap {
+            position: relative;
+            max-width: 480px;
+            width: 90%;
+            perspective: 1200px;
+        }
+
+        /* Animated rotating gradient border */
+        .login-box-wrap::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: 18px;
+            background: conic-gradient(from 0deg, #00d9ff, #00ff88, #ff6b35, #00d9ff);
+            opacity: 0.55;
+            filter: blur(6px);
+            animation: rotateBorder 5s linear infinite;
+            z-index: 0;
+        }
+
+        @keyframes rotateBorder {
+            0% { filter: blur(6px) hue-rotate(0deg); }
+            100% { filter: blur(6px) hue-rotate(360deg); }
         }
 
         .login-box {
-            position: relative; z-index: 2;
-            background: rgba(10, 14, 39, 0.7);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 40px;
-            animation: fadeInUp 0.8s ease-out 0.3s both;
-            box-shadow: 0 8px 32px rgba(0, 217, 255, 0.1);
+            position: relative;
+            width: 100%;
+            background: linear-gradient(135deg, rgba(13, 17, 23, 0.97) 0%, rgba(10, 14, 26, 0.99) 100%);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 217, 255, 0.25);
+            border-radius: 16px;
+            padding: 48px;
+            box-shadow: 
+                0 20px 60px rgba(0, 0, 0, 0.6),
+                0 0 40px rgba(0, 217, 255, 0.12),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            animation: formSlideUp 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 1;
+            overflow: hidden;
+            transform-style: preserve-3d;
+            transition: transform 0.15s ease-out;
         }
 
-        .login-box:hover {
-            border-color: rgba(0, 217, 255, 0.5);
-            box-shadow: 0 8px 32px rgba(0, 217, 255, 0.15);
-            transition: all 0.3s ease;
+        /* Floating particles inside card */
+        .card-particles {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 0;
+            border-radius: 16px;
         }
 
-        .form-group { margin-bottom: 24px; }
-
-        .form-label {
-            display: block; font-size: 12px; font-weight: 600;
-            color: var(--text-secondary); margin-bottom: 8px;
-            letter-spacing: 0.5px; text-transform: uppercase;
+        .card-particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            border-radius: 50%;
+            background: var(--cyan);
+            box-shadow: 0 0 6px var(--cyan);
+            opacity: 0.5;
+            animation: floatParticle linear infinite;
         }
 
-        .form-input {
-            width: 100%; padding: 12px 16px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            color: var(--text-primary);
-            font-size: 14px; font-family: inherit;
-            transition: all 0.3s ease;
-            outline: none;
+        @keyframes floatParticle {
+            0% { transform: translateY(0) translateX(0); opacity: 0; }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.6; }
+            100% { transform: translateY(-260px) translateX(20px); opacity: 0; }
         }
 
-        .form-input:focus {
-            background: rgba(255, 255, 255, 0.08);
-            border-color: var(--cyan);
-            box-shadow: 0 0 16px rgba(0, 217, 255, 0.2);
-        }
-
-        .form-input::placeholder { color: rgba(176, 196, 222, 0.5); }
-
-        .remember-forgot {
-            display: flex; justify-content: space-between; align-items: center;
-            font-size: 12px; margin-bottom: 28px;
-        }
-
-        .remember-forgot label {
-            display: flex; align-items: center; gap: 6px;
-            cursor: pointer; color: var(--text-secondary);
-            transition: color 0.2s;
-        }
-
-        .remember-forgot label:hover { color: var(--cyan); }
-
-        .remember-forgot a {
-            color: var(--text-secondary); text-decoration: none; transition: color 0.2s;
-        }
-
-        .remember-forgot a:hover { color: var(--cyan); }
-
-        .checkbox { width: 16px; height: 16px; cursor: pointer; accent-color: var(--cyan); }
-
-        .btn-login {
-            width: 100%; padding: 14px;
-            background: linear-gradient(135deg, var(--cyan) 0%, var(--cyan-dark) 100%);
-            border: none; border-radius: 8px;
-            color: var(--darker-bg);
-            font-size: 14px; font-weight: 600; letter-spacing: 1px;
-            text-transform: uppercase; cursor: pointer;
-            transition: all 0.3s ease;
-            margin-bottom: 16px;
-        }
-
-        .btn-login:hover { transform: translateY(-2px); box-shadow: 0 12px 24px rgba(0, 217, 255, 0.3); }
-        .btn-login:active { transform: translateY(0); }
-        .btn-login:disabled { opacity: 0.6; cursor: not-allowed; }
-
-        .status-dot {
-            display: inline-block; width: 8px; height: 8px;
-            background: var(--success); border-radius: 50%;
-            margin-right: 6px; animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(0, 255, 136, 0.4); }
-            50% { opacity: 0.8; box-shadow: 0 0 0 6px rgba(0, 255, 136, 0); }
-        }
-
-        .system-status {
-            font-size: 11px; color: var(--text-secondary);
-            text-align: center; margin-top: 20px;
-        }
-
-        .divider {
-            display: flex; align-items: center; margin: 24px 0; gap: 12px;
-            font-size: 11px; color: var(--text-secondary);
-        }
-
-        .divider::before, .divider::after {
-            content: ''; flex: 1; height: 1px; background: var(--border);
-        }
-
-        .signup-prompt { text-align: center; font-size: 13px; color: var(--text-secondary); }
-
-        .signup-prompt a {
-            color: var(--cyan); text-decoration: none; font-weight: 600; transition: color 0.2s;
-        }
-
-        .signup-prompt a:hover { color: var(--gold); }
-
-        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* ===== DATA ENTRY VIEW ===== */
-        #dataEntryView {
-            display: none;
-            min-height: 100vh;
-            padding: 32px 20px 60px;
+        .login-box > * {
             position: relative;
             z-index: 2;
         }
 
-        .de-topbar {
-            max-width: 960px; margin: 0 auto 32px;
-            display: flex; align-items: center; justify-content: space-between;
-            animation: fadeInDown 0.6s ease-out;
+        /* Tab switcher */
+        .tab-switcher {
+            display: flex;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(0, 217, 255, 0.15);
+            border-radius: 10px;
+            padding: 4px;
+            margin-bottom: 32px;
+            position: relative;
         }
 
-        .de-brand { display: flex; align-items: center; gap: 12px; }
-
-        .de-brand svg { width: 28px; height: 28px; filter: drop-shadow(0 0 6px var(--cyan)); }
-
-        .de-brand-text { font-size: 16px; font-weight: 700; letter-spacing: 1px; }
-
-        .de-status {
-            font-size: 11px; color: var(--success);
-            display: flex; align-items: center; gap: 6px;
-            text-transform: uppercase; letter-spacing: 0.5px;
-        }
-
-        .btn-logout {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--border);
-            color: var(--text-secondary);
-            padding: 8px 18px;
-            border-radius: 8px;
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
             font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--text-tertiary);
+            background: none;
+            border: none;
             cursor: pointer;
-            transition: all 0.2s ease;
-            letter-spacing: 0.5px;
+            position: relative;
+            z-index: 2;
+            transition: color 0.4s ease;
         }
 
-        .btn-logout:hover { border-color: var(--cyan); color: var(--cyan); }
-
-        .de-wrap { max-width: 960px; margin: 0 auto; }
-
-        .de-header { margin-bottom: 28px; animation: fadeInUp 0.7s ease-out 0.1s both; }
-
-        .de-header h1 { font-size: 26px; font-weight: 700; margin-bottom: 6px; }
-
-        .de-header p { font-size: 13px; color: var(--text-secondary); }
-
-        .de-grid {
-            display: grid;
-            grid-template-columns: 1.1fr 0.9fr;
-            gap: 24px;
-        }
-
-        @media (max-width: 800px) {
-            .de-grid { grid-template-columns: 1fr; }
-        }
-
-        .de-card {
-            background: rgba(10, 14, 39, 0.7);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 28px;
-            animation: fadeInUp 0.7s ease-out 0.2s both;
-        }
-
-        .de-card h2 {
-            font-size: 13px; text-transform: uppercase; letter-spacing: 1px;
-            color: var(--cyan); margin-bottom: 20px;
-        }
-
-        .de-field { margin-bottom: 18px; }
-
-        .de-field label {
-            display: block; font-size: 11px; color: var(--text-secondary);
-            text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;
-        }
-
-        .de-field input, .de-field select {
-            width: 100%; padding: 10px 14px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            color: var(--text-primary);
-            font-size: 13px; font-family: inherit;
-            outline: none;
-            transition: all 0.3s ease;
-        }
-
-        .de-field input:focus, .de-field select:focus {
-            border-color: var(--cyan);
-            box-shadow: 0 0 12px rgba(0, 217, 255, 0.15);
-        }
-
-        .de-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-
-        .btn-submit {
-            width: 100%; padding: 12px;
-            background: linear-gradient(135deg, var(--cyan) 0%, var(--cyan-dark) 100%);
-            border: none; border-radius: 8px;
+        .tab-btn.active {
             color: var(--darker-bg);
-            font-size: 13px; font-weight: 700; letter-spacing: 1px;
-            text-transform: uppercase; cursor: pointer;
+        }
+
+        .tab-indicator {
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            width: calc(50% - 4px);
+            height: calc(100% - 8px);
+            background: linear-gradient(135deg, var(--cyan), var(--cyan-dark));
+            border-radius: 7px;
+            transition: transform 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+            box-shadow: 0 4px 12px rgba(0, 217, 255, 0.35);
+        }
+
+        .tab-indicator.right {
+            transform: translateX(100%);
+        }
+
+        /* Icon inputs */
+        .input-icon-wrap {
+            position: relative;
+        }
+
+        .input-icon-wrap svg {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 16px;
+            height: 16px;
+            stroke: var(--text-tertiary);
+            transition: stroke 0.3s ease, filter 0.3s ease;
+            pointer-events: none;
+            z-index: 3;
+        }
+
+        .input-icon-wrap .form-input {
+            padding-left: 40px;
+        }
+
+        .input-icon-wrap:focus-within svg {
+            stroke: var(--cyan);
+            filter: drop-shadow(0 0 4px var(--cyan));
+        }
+
+        .toggle-visibility {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            stroke: var(--text-tertiary);
+            transition: stroke 0.3s ease;
+            z-index: 3;
+        }
+
+        .toggle-visibility:hover {
+            stroke: var(--cyan);
+        }
+
+        /* Password strength bar */
+        .strength-bar {
+            height: 3px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 2px;
             margin-top: 8px;
-            transition: all 0.3s ease;
+            overflow: hidden;
         }
 
-        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0, 217, 255, 0.3); }
+        .strength-fill {
+            height: 100%;
+            width: 0%;
+            border-radius: 2px;
+            transition: width 0.4s ease, background 0.4s ease;
+        }
 
-        .de-log-item {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid rgba(0, 217, 255, 0.1);
+        /* Ripple button */
+        .btn-login {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            transform: scale(0);
+            animation: rippleAnim 0.6s ease-out;
+            pointer-events: none;
+            z-index: 3;
+        }
+
+        @keyframes rippleAnim {
+            to {
+                transform: scale(3);
+                opacity: 0;
+            }
+        }
+
+        @keyframes formSlideUp {
+            from {
+                transform: translateY(60px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .form-header {
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .form-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+            letter-spacing: -0.5px;
+        }
+
+        .form-subtitle {
             font-size: 12px;
+            color: var(--text-secondary);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: 500;
         }
 
-        .de-log-item:last-child { border-bottom: none; }
-
-        .de-log-flight { font-weight: 600; color: var(--text-primary); }
-
-        .de-log-route { color: var(--text-secondary); font-size: 11px; margin-top: 2px; }
-
-        .de-log-status {
-            font-size: 10px; padding: 3px 10px; border-radius: 20px;
-            text-transform: uppercase; letter-spacing: 0.5px;
-            background: rgba(0, 255, 136, 0.15); color: var(--success);
+        .arrival-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 16px;
+            font-size: 11px;
+            color: var(--success);
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        .de-empty { font-size: 12px; color: var(--text-secondary); text-align: center; padding: 20px 0; }
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+            box-shadow: 0 0 8px var(--success);
+        }
 
-        @media (max-width: 480px) {
-            .login-box { padding: 28px; }
-            .title { font-size: 24px; }
-            .radar-container { display: none; }
-            .de-card { padding: 20px; }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .form-group {
+            margin-bottom: 28px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 16px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
+            border: 1px solid rgba(0, 217, 255, 0.2);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            outline: none;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .form-input:focus {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+            border-color: var(--cyan);
+            box-shadow: 
+                inset 0 1px 2px rgba(0, 0, 0, 0.2),
+                0 0 0 3px rgba(0, 217, 255, 0.15),
+                0 0 12px rgba(0, 217, 255, 0.3);
+        }
+
+        .form-input::placeholder {
+            color: rgba(168, 184, 216, 0.4);
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            margin-bottom: 28px;
+            gap: 12px;
+        }
+
+        .remember-check {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: color 0.2s;
+        }
+
+        .remember-check:hover {
+            color: var(--cyan);
+        }
+
+        .form-checkbox {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            accent-color: var(--cyan);
+        }
+
+        .forgot-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .forgot-link:hover {
+            color: var(--cyan);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--cyan) 0%, var(--cyan-dark) 100%);
+            border: 1px solid rgba(51, 229, 255, 0.4);
+            border-radius: 10px;
+            color: var(--darker-bg);
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: 
+                0 8px 24px rgba(0, 217, 255, 0.25),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-login::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+            z-index: 1;
+        }
+
+        .btn-login:hover::before {
+            transform: translateX(100%);
+        }
+
+        .btn-login:hover {
+            transform: translateY(-3px);
+            box-shadow: 
+                0 14px 32px rgba(0, 217, 255, 0.35),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 28px 0;
+            gap: 12px;
+            font-size: 10px;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(0, 217, 255, 0.2), transparent);
+        }
+
+        .signup-text {
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .signup-text a {
+            color: var(--cyan);
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .signup-text a:hover {
+            text-shadow: 0 0 8px rgba(0, 217, 255, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .login-box {
+                padding: 32px 24px;
+            }
+
+            .form-title {
+                font-size: 24px;
+            }
+
+            .aircraft-on-runway {
+                width: 90px;
+                height: 90px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Background -->
     <div class="stars" id="starsContainer"></div>
     <div class="scan-line"></div>
 
-    <!-- ===== LOGIN VIEW ===== -->
-    <div id="loginView">
-        <div class="container">
-            <div class="radar-container">
-                <div class="radar-circle"></div>
-                <div class="radar-circle"></div>
-                <div class="radar-circle"></div>
+    <!-- ===== RUNWAY SCENE ===== -->
+    <div class="runway-scene" id="runwayScene">
+        <div class="runway-container">
+            <!-- Sky and surface -->
+            <div class="runway-sky"></div>
+            <div class="runway-surface"></div>
+
+            <!-- Runway markings perspective -->
+            <div class="runway-markings" id="runwayMarkings">
+                <div class="perspective-line white" style="bottom: 90%; width: 0; border-left: 8% solid transparent; border-right: 8% solid transparent;"></div>
+                <div class="perspective-line white" style="bottom: 80%; width: 0; border-left: 10% solid transparent; border-right: 10% solid transparent;"></div>
+                <div class="perspective-line yellow" style="bottom: 70%; width: 0; border-left: 12% solid transparent; border-right: 12% solid transparent;"></div>
+                <div class="perspective-line white" style="bottom: 60%; width: 0; border-left: 14% solid transparent; border-right: 14% solid transparent;"></div>
+                <div class="perspective-line white" style="bottom: 50%; width: 0; border-left: 16% solid transparent; border-right: 16% solid transparent;"></div>
+                <div class="perspective-line yellow" style="bottom: 40%; width: 0; border-left: 18% solid transparent; border-right: 18% solid transparent;"></div>
+                <div class="perspective-line white" style="bottom: 30%; width: 0; border-left: 20% solid transparent; border-right: 20% solid transparent;"></div>
             </div>
 
-            <div class="header">
-                <div class="logo">✈ AeroOps</div>
-
-                <svg class="aircraft-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                        <filter id="glow">
-                            <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
-                            <feMerge>
-                                <feMergeNode in="coloredBlur"/>
-                                <feMergeNode in="SourceGraphic"/>
-                            </feMerge>
-                        </filter>
-                    </defs>
-                    <g filter="url(#glow)">
-                        <ellipse cx="50" cy="50" rx="12" ry="28" fill="currentColor" opacity="0.8"/>
-                        <rect x="20" y="45" width="60" height="10" fill="currentColor" opacity="0.6" rx="2"/>
-                        <polygon points="50,72 45,82 55,82" fill="currentColor" opacity="0.8"/>
-                        <circle cx="50" cy="35" r="4" fill="#00d9ff"/>
-                    </g>
-                </svg>
-
-                <h1 class="title">Flight Operations</h1>
-                <p class="subtitle">Secure Portal Access</p>
+            <!-- Runway lights -->
+            <div class="runway-lights">
+                <div class="light-pair" style="bottom: 85%;"><div class="light"></div><div class="light"></div></div>
+                <div class="light-pair" style="bottom: 75%;"><div class="light"></div><div class="light"></div></div>
+                <div class="light-pair" style="bottom: 65%;"><div class="light"></div><div class="light"></div></div>
+                <div class="light-pair" style="bottom: 55%;"><div class="light"></div><div class="light"></div></div>
+                <div class="light-pair" style="bottom: 45%;"><div class="light"></div><div class="light"></div></div>
+                <div class="light-pair" style="bottom: 35%;"><div class="light"></div><div class="light"></div></div>
             </div>
 
-            <div class="login-box">
-                <form id="loginForm">
-                    <div class="form-group">
-                        <label class="form-label">Pilot ID or Email</label>
-                        <input type="email" class="form-input" placeholder="Enter your credentials" required>
-                    </div>
+            <!-- Aircraft on runway -->
+            <svg class="aircraft-on-runway" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="fuselage-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" style="stop-color:#00d9ff;stop-opacity:0.95" />
+                        <stop offset="100%" style="stop-color:#0088bb;stop-opacity:0.8" />
+                    </linearGradient>
+                </defs>
+                <g>
+                    <!-- Fuselage -->
+                    <ellipse cx="100" cy="100" rx="20" ry="50" fill="url(#fuselage-grad)"/>
+                    <!-- Wings -->
+                    <rect x="35" y="95" width="130" height="18" fill="#00d9ff" opacity="0.8" rx="8"/>
+                    <!-- Left nav light (green) -->
+                    <circle cx="35" cy="104" r="6" fill="#00ff88" opacity="0.95"/>
+                    <!-- Right nav light (red) -->
+                    <circle cx="165" cy="104" r="6" fill="#ff6b35" opacity="0.95"/>
+                    <!-- Cockpit -->
+                    <circle cx="100" cy="70" r="7" fill="#ffff00" opacity="0.9"/>
+                    <!-- Tail -->
+                    <polygon points="100,145 90,175 110,175" fill="#0088bb" opacity="0.85"/>
+                    <!-- Landing gear -->
+                    <line x1="85" y1="148" x2="85" y2="175" stroke="#00d9ff" stroke-width="2"/>
+                    <line x1="115" y1="148" x2="115" y2="175" stroke="#00d9ff" stroke-width="2"/>
+                </g>
+            </svg>
 
-                    <div class="form-group">
-                        <label class="form-label">Access Code</label>
-                        <input type="password" class="form-input" placeholder="Enter your access code" required>
-                    </div>
+            <!-- Landing lights (beams from aircraft) -->
+            <div class="landing-lights">
+                <div class="light-beam left" id="lightBeamLeft"></div>
+                <div class="light-beam right" id="lightBeamRight"></div>
+            </div>
 
-                    <div class="remember-forgot">
-                        <label><input type="checkbox" class="checkbox"> Remember this device</label>
-                        <a href="#forgot">Forgot code?</a>
-                    </div>
+            <!-- Strobe lights -->
+            <div class="strobe-light left" id="strobeLeft"></div>
+            <div class="strobe-light right" id="strobeRight"></div>
 
-                    <button type="submit" class="btn-login">Access Flight Deck</button>
+            <!-- Full screen flash -->
+            <div class="full-flash" id="fullFlash"></div>
 
-                    <div class="system-status">
-                        <span class="status-dot"></span>
-                        System operational
-                    </div>
-                </form>
-
-                <div class="divider">Secure Channel</div>
-
-                <div class="signup-prompt">
-                    New to AeroOps? <a href="index.html">Request access</a>
-                </div>
+            <!-- Runway info -->
+            <div class="runway-info">
+                <div class="runway-label">Runway 25L — Approach</div>
+                <div class="runway-status">FINAL APPROACH</div>
             </div>
         </div>
     </div>
 
-    <!-- ===== DATA ENTRY VIEW (shown after login) ===== -->
-    <div id="dataEntryView">
-        <div class="de-topbar">
-            <div class="de-brand">
-                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                    <g>
-                        <ellipse cx="50" cy="50" rx="12" ry="28" fill="#00d9ff" opacity="0.8"/>
-                        <rect x="20" y="45" width="60" height="10" fill="#00d9ff" opacity="0.6" rx="2"/>
-                        <polygon points="50,72 45,82 55,82" fill="#00d9ff" opacity="0.8"/>
-                    </g>
-                </svg>
-                <div>
-                    <div class="de-brand-text">AeroOps Data Entry</div>
-                    <div class="de-status"><span class="status-dot"></span>Session active</div>
-                </div>
-            </div>
-            <button class="btn-logout" id="btnLogout">Log Out</button>
-        </div>
+    <!-- ===== LOGIN CONTAINER ===== -->
+    <div class="login-container" id="loginContainer">
+        <div class="login-box-wrap" id="tiltWrap">
+            <div class="login-box" id="loginBox">
+                <!-- Floating particles inside the card -->
+                <div class="card-particles" id="cardParticles"></div>
 
-        <div class="de-wrap">
-            <div class="de-header">
-                <h1>Flight Data Entry</h1>
-                <p>Log a new flight movement or review recent entries below.</p>
-            </div>
-
-            <div class="de-grid">
-                <div class="de-card">
-                    <h2>New Entry</h2>
-                    <form id="entryForm">
-                        <div class="de-row">
-                            <div class="de-field">
-                                <label>Flight Number</label>
-                                <input type="text" id="flightNo" placeholder="e.g. AO-2201" required>
-                            </div>
-                            <div class="de-field">
-                                <label>Aircraft Type</label>
-                                <input type="text" id="aircraftType" placeholder="e.g. B738" required>
-                            </div>
-                        </div>
-                        <div class="de-row">
-                            <div class="de-field">
-                                <label>Departure</label>
-                                <input type="text" id="depAirport" placeholder="e.g. DAC" required>
-                            </div>
-                            <div class="de-field">
-                                <label>Arrival</label>
-                                <input type="text" id="arrAirport" placeholder="e.g. CGP" required>
-                            </div>
-                        </div>
-                        <div class="de-row">
-                            <div class="de-field">
-                                <label>Date</label>
-                                <input type="date" id="flightDate" required>
-                            </div>
-                            <div class="de-field">
-                                <label>Status</label>
-                                <select id="flightStatus">
-                                    <option>Scheduled</option>
-                                    <option>Departed</option>
-                                    <option>Arrived</option>
-                                    <option>Delayed</option>
-                                    <option>Cancelled</option>
-                                </select>
-                            </div>
-                        </div>
-                        <button type="submit" class="btn-submit">Save Entry</button>
-                    </form>
-                </div>
-
-                <div class="de-card">
-                    <h2>Recent Entries</h2>
-                    <div id="entryLog">
-                        <div class="de-empty">No entries yet — add one on the left.</div>
+                <div class="form-header">
+                    <h1 class="form-title">Flight Operations</h1>
+                    <p class="form-subtitle">Secure Portal Access</p>
+                    <div class="arrival-status">
+                        <div class="status-dot"></div>
+                        Aircraft Arrived — System Ready
                     </div>
                 </div>
+
+                <!-- Tab switcher -->
+                <div class="tab-switcher">
+                    <div class="tab-indicator" id="tabIndicator"></div>
+                    <button type="button" class="tab-btn active" id="tabLogin">Login</button>
+                    <button type="button" class="tab-btn" id="tabSignup">Sign Up</button>
+                </div>
+
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label class="form-label">Pilot ID or Email</label>
+                        <div class="input-icon-wrap">
+                            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M4 4h16v16H4z" opacity="0"/>
+                                <path d="M22 6l-10 7L2 6"/>
+                                <path d="M2 6h20v12H2z"/>
+                            </svg>
+                            <input 
+                                type="email" 
+                                class="form-input" 
+                                placeholder="Enter your credentials"
+                                required
+                            >
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Access Code</label>
+                        <div class="input-icon-wrap">
+                            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="5" y="11" width="14" height="9" rx="2"/>
+                                <path d="M8 11V7a4 4 0 0 1 8 0v4"/>
+                            </svg>
+                            <input 
+                                type="password" 
+                                class="form-input" 
+                                id="passwordInput"
+                                placeholder="Enter your access code"
+                                required
+                            >
+                            <svg class="toggle-visibility" id="togglePw" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                        </div>
+                        <div class="strength-bar">
+                            <div class="strength-fill" id="strengthFill"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <label class="remember-check">
+                            <input type="checkbox" class="form-checkbox"> Remember this device
+                        </label>
+                        <a href="#" class="forgot-link">Forgot code?</a>
+                    </div>
+
+                    <button type="submit" class="btn-login" id="btnLogin">Access Flight Deck</button>
+
+                    <div class="divider">Secure Channel</div>
+
+                    <div class="signup-text">
+                        New to AeroOps? <a href="#">Request access</a>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 
     <script>
+        // Generate stars for background
         function createStars() {
             const container = document.getElementById('starsContainer');
-            for (let i = 0; i < 50; i++) {
+            const starCount = window.innerWidth > 768 ? 80 : 50;
+            
+            for (let i = 0; i < starCount; i++) {
                 const star = document.createElement('div');
                 star.className = 'star';
                 star.style.left = Math.random() * 100 + '%';
                 star.style.top = Math.random() * 100 + '%';
-                star.style.animationDelay = Math.random() * 3 + 's';
+                star.style.animationDelay = Math.random() * 4 + 's';
                 container.appendChild(star);
             }
         }
 
-        // Login submission -> reveal Data Entry view
+        // Landing sequence - aircraft lands and triggers login
+        function startLandingSequence() {
+            const timeline = [
+                // Landing light beams flash (4s)
+                {
+                    time: 4000,
+                    action: () => {
+                        document.getElementById('lightBeamLeft').classList.add('active');
+                        document.getElementById('lightBeamRight').classList.add('active');
+                    }
+                },
+                
+                // First strobe flash (4.2s)
+                {
+                    time: 4200,
+                    action: () => {
+                        document.getElementById('strobeLeft').classList.add('active');
+                        document.getElementById('strobeRight').classList.add('active');
+                    }
+                },
+                
+                // Second strobe flash (4.6s)
+                {
+                    time: 4600,
+                    action: () => {
+                        document.getElementById('strobeLeft').classList.remove('active');
+                        document.getElementById('strobeRight').classList.remove('active');
+                        setTimeout(() => {
+                            document.getElementById('strobeLeft').classList.add('active');
+                            document.getElementById('strobeRight').classList.add('active');
+                        }, 50);
+                    }
+                },
+                
+                // Full screen white flash (4.9s)
+                {
+                    time: 4900,
+                    action: () => {
+                        document.getElementById('fullFlash').classList.add('active');
+                    }
+                },
+                
+                // Hide runway & show login (5.7s)
+                {
+                    time: 5700,
+                    action: () => {
+                        document.getElementById('runwayScene').classList.add('hidden');
+                        document.getElementById('loginContainer').classList.add('show');
+                    }
+                }
+            ];
+
+            timeline.forEach(event => {
+                setTimeout(event.action, event.time);
+            });
+        }
+
+        // Handle form submission
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const btn = this.querySelector('.btn-login');
+            const originalText = btn.textContent;
+            
             btn.disabled = true;
             btn.textContent = 'Verifying credentials...';
-
+            
             setTimeout(() => {
-                btn.textContent = 'Access Granted ✓';
+                btn.textContent = 'Authenticating...';
+                
                 setTimeout(() => {
-                    document.getElementById('loginView').style.display = 'none';
-                    document.getElementById('dataEntryView').style.display = 'block';
-                }, 600);
-            }, 1200);
+                    btn.textContent = 'Access Granted ✓';
+                    btn.style.background = 'linear-gradient(135deg, #00ff88 0%, #00cc66 100%)';
+                    
+                    setTimeout(() => {
+                        alert('Welcome to AeroOps Flight Operations Portal');
+                        btn.disabled = false;
+                        btn.textContent = originalText;
+                        btn.style.background = '';
+                    }, 1200);
+                }, 800);
+            }, 1000);
         });
 
-        // Log out -> back to login view
-        document.getElementById('btnLogout').addEventListener('click', function() {
-            document.getElementById('dataEntryView').style.display = 'none';
-            document.getElementById('loginView').style.display = 'flex';
-            document.getElementById('loginForm').reset();
-            const btn = document.querySelector('.btn-login');
-            btn.disabled = false;
-            btn.textContent = 'Access Flight Deck';
+        // Floating particles inside login card
+        function createCardParticles() {
+            const container = document.getElementById('cardParticles');
+            if (!container) return;
+            const count = 18;
+            for (let i = 0; i < count; i++) {
+                const p = document.createElement('div');
+                p.className = 'card-particle';
+                p.style.left = Math.random() * 100 + '%';
+                p.style.bottom = (Math.random() * 20 - 10) + 'px';
+                p.style.animationDuration = (6 + Math.random() * 8) + 's';
+                p.style.animationDelay = (Math.random() * 8) + 's';
+                container.appendChild(p);
+            }
+        }
+
+        // 3D tilt effect on mouse move
+        function initTilt() {
+            const wrap = document.getElementById('tiltWrap');
+            const box = document.getElementById('loginBox');
+            if (!wrap || !box) return;
+
+            wrap.addEventListener('mousemove', (e) => {
+                const rect = wrap.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                const rotateX = ((y - centerY) / centerY) * -4;
+                const rotateY = ((x - centerX) / centerX) * 4;
+                box.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            });
+
+            wrap.addEventListener('mouseleave', () => {
+                box.style.transform = 'rotateX(0deg) rotateY(0deg)';
+            });
+        }
+
+        // Tab switcher (Login / Sign Up)
+        function initTabSwitcher() {
+            const tabLogin = document.getElementById('tabLogin');
+            const tabSignup = document.getElementById('tabSignup');
+            const indicator = document.getElementById('tabIndicator');
+            const btnLogin = document.getElementById('btnLogin');
+            if (!tabLogin || !tabSignup) return;
+
+            tabLogin.addEventListener('click', () => {
+                tabLogin.classList.add('active');
+                tabSignup.classList.remove('active');
+                indicator.classList.remove('right');
+                btnLogin.textContent = 'Access Flight Deck';
+            });
+
+            tabSignup.addEventListener('click', () => {
+                tabSignup.classList.add('active');
+                tabLogin.classList.remove('active');
+                indicator.classList.add('right');
+                btnLogin.textContent = 'Request Clearance';
+            });
+        }
+
+        // Password show/hide toggle
+        function initPasswordToggle() {
+            const toggle = document.getElementById('togglePw');
+            const input = document.getElementById('passwordInput');
+            const strengthFill = document.getElementById('strengthFill');
+            if (!toggle || !input) return;
+
+            toggle.addEventListener('click', () => {
+                input.type = input.type === 'password' ? 'text' : 'password';
+            });
+
+            input.addEventListener('input', () => {
+                const val = input.value;
+                let score = 0;
+                if (val.length > 3) score += 25;
+                if (val.length > 7) score += 25;
+                if (/[A-Z]/.test(val)) score += 25;
+                if (/[0-9!@#$%^&*]/.test(val)) score += 25;
+
+                strengthFill.style.width = score + '%';
+                if (score < 50) {
+                    strengthFill.style.background = '#ff6b35';
+                } else if (score < 100) {
+                    strengthFill.style.background = '#ffff00';
+                } else {
+                    strengthFill.style.background = '#00ff88';
+                }
+            });
+        }
+
+        // Ripple click effect on login button
+        function initRippleButton() {
+            const btn = document.getElementById('btnLogin');
+            if (!btn) return;
+
+            btn.addEventListener('click', function(e) {
+                const rect = btn.getBoundingClientRect();
+                const ripple = document.createElement('span');
+                const size = Math.max(rect.width, rect.height);
+                ripple.className = 'ripple';
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+                ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+                btn.appendChild(ripple);
+                setTimeout(() => ripple.remove(), 600);
+            });
+        }
+
+        // Initialize on page load
+        window.addEventListener('load', () => {
+            createStars();
+            startLandingSequence();
+            createCardParticles();
+            initTilt();
+            initTabSwitcher();
+            initPasswordToggle();
+            initRippleButton();
         });
-
-        // Data entry form -> add row to log
-        document.getElementById('entryForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const flightNo = document.getElementById('flightNo').value;
-            const dep = document.getElementById('depAirport').value.toUpperCase();
-            const arr = document.getElementById('arrAirport').value.toUpperCase();
-            const status = document.getElementById('flightStatus').value;
-
-            const log = document.getElementById('entryLog');
-            const empty = log.querySelector('.de-empty');
-            if (empty) empty.remove();
-
-            const item = document.createElement('div');
-            item.className = 'de-log-item';
-            item.innerHTML = `
-                <div>
-                    <div class="de-log-flight">${flightNo}</div>
-                    <div class="de-log-route">${dep} → ${arr}</div>
-                </div>
-                <div class="de-log-status">${status}</div>
-            `;
-            log.prepend(item);
-            this.reset();
-        });
-
-        window.addEventListener('load', createStars);
     </script>
 </body>
 </html>
