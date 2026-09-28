@@ -1665,6 +1665,15 @@
   #ptc-impact-section:not(.ptc-impact-open) #ach-range-label,
   #ptc-impact-section:not(.ptc-impact-open) #ach-card{ display:none; }
 
+  /* Transaction Type now sits at the top of the Entry Desk form (light background) */
+  #ptc-card .ptc-header-txntype{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin:0 0 10px; padding-bottom:10px; border-bottom:1px solid var(--line); }
+  #ptc-card .ptc-header-control-label{ color:var(--ink-soft); margin:0; }
+  #ptc-card .ptc-header-txntype .ptc-txn-tabs{ grid-template-columns:repeat(4, auto); gap:6px; margin:0; }
+  #ptc-card .ptc-header-txntype .ptc-txn-tab{ background:#fff; border-color:var(--line); color:var(--ink-soft); padding:6px 12px; font-size:12px; border-radius:8px; }
+  #ptc-card .ptc-header-txntype .ptc-txn-tab:hover{ border-color:var(--txn-color, var(--accent)); color:var(--txn-color, var(--accent)); background:color-mix(in srgb, var(--txn-color, var(--accent)) 8%, #fff); }
+  #ptc-card .ptc-header-txntype .ptc-txn-tab.ptc-txn-tab-active{ background:var(--txn-color, var(--accent)); border-color:var(--txn-color, var(--accent)); color:#fff; box-shadow:none; }
+  @media (max-width:640px){ #ptc-card .ptc-header-txntype .ptc-txn-tabs{ grid-template-columns:repeat(2, 1fr); width:100%; } }
+
   /* ===== Entry Log collapsible wrapper ===== */
   .ptc-entrylog-body[hidden]{ display: none; }
 
@@ -2349,22 +2358,6 @@
            options, same click behavior — the code that wires them up (typeSelect,
            #f-type-tabs listeners, wirePdfImport) was not changed. ===== -->
       <div class="ptc-header-controls" id="ptc-header-controls">
-        <div class="ptc-header-txntype" id="ptc-header-txntype">
-          <div class="ptc-header-control-label">Transaction Type <span class="ptc-required">*</span></div>
-          <select id="f-type" class="ptc-method-select-native" aria-hidden="true" tabindex="-1">
-            <option value="" disabled selected>Select Type</option>
-            <option value="Ticketing">Ticketing</option>
-            <option value="Reissue">Reissue</option>
-            <option value="Refund">Refund</option>
-            <option value="Void">Void</option>
-          </select>
-          <div class="ptc-txn-tabs" id="f-type-tabs" role="group" aria-label="Transaction type">
-            <button type="button" class="ptc-txn-tab" data-type="Ticketing" style="--txn-color:#2E6F95;">✈️ Ticketing</button>
-            <button type="button" class="ptc-txn-tab" data-type="Reissue" style="--txn-color:#C97F1E;">🔄 Reissue</button>
-            <button type="button" class="ptc-txn-tab" data-type="Refund" style="--txn-color:#B4453B;">💸 Refund</button>
-            <button type="button" class="ptc-txn-tab" data-type="Void" style="--txn-color:#6B7280;">🚫 Void</button>
-          </div>
-        </div>
         <div class="ptc-header-tktautofill" id="ptc-header-tktautofill">
           <div class="ptc-header-control-label">TKT AutoFill</div>
           <div class="ptc-pdf-import" id="ptc-pdf-import">
@@ -2494,6 +2487,24 @@
       <!-- TKT AutoFill and Transaction Type now live in the header only (see
            .ptc-header-controls above) — moved, not duplicated, so #pdf-ticket-input,
            #pdf-ticket-btn, #f-type and #f-type-tabs still work exactly as before. -->
+      <!-- Transaction Type lives here (Entry Desk only) — moved from the header, same ids/handlers. -->
+      <div class="ptc-header-txntype" id="ptc-header-txntype">
+          <div class="ptc-header-control-label">Transaction Type <span class="ptc-required">*</span></div>
+          <select id="f-type" class="ptc-method-select-native" aria-hidden="true" tabindex="-1">
+            <option value="" disabled selected>Select Type</option>
+            <option value="Ticketing">Ticketing</option>
+            <option value="Reissue">Reissue</option>
+            <option value="Refund">Refund</option>
+            <option value="Void">Void</option>
+          </select>
+          <div class="ptc-txn-tabs" id="f-type-tabs" role="group" aria-label="Transaction type">
+            <button type="button" class="ptc-txn-tab" data-type="Ticketing" style="--txn-color:#2E6F95;">✈️ Ticketing</button>
+            <button type="button" class="ptc-txn-tab" data-type="Reissue" style="--txn-color:#C97F1E;">🔄 Reissue</button>
+            <button type="button" class="ptc-txn-tab" data-type="Refund" style="--txn-color:#B4453B;">💸 Refund</button>
+            <button type="button" class="ptc-txn-tab" data-type="Void" style="--txn-color:#6B7280;">🚫 Void</button>
+          </div>
+        </div>
+
       <div id="pdf-import-banner" style="display:none;">
         ⚠️ Fields were auto-filled from the uploaded PDF — verify every value before saving. Layouts vary by airline/GDS, so extraction can miss or misread a field.
       </div>
