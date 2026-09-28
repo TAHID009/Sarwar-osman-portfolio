@@ -1589,6 +1589,82 @@
     .ptc-header-txntype, .ptc-header-tktautofill{ flex-wrap:wrap; }
   }
 
+  /* ===== Redesign layer: nav, today strip, grouped form, compact log, reports, spacing ===== */
+  #ptc-nav{ display:flex; gap:2px; background:#E3E9F0; padding:3px; border-radius:10px; margin:0 0 8px; overflow-x:auto; scrollbar-width:none; }
+  #ptc-nav::-webkit-scrollbar{ display:none; }
+  .ptc-nav-btn{ flex:1 0 auto; border:none; background:transparent; font:inherit; font-size:12.5px; font-weight:700; color:var(--ink-soft); padding:7px 14px; border-radius:7px; cursor:pointer; white-space:nowrap; }
+  .ptc-nav-btn:hover{ background:rgba(255,255,255,0.55); }
+  .ptc-nav-btn.active{ background:#fff; color:var(--ink); box-shadow:var(--shadow-sm); }
+  #ptc-today{ display:grid; grid-template-columns:repeat(5,1fr); gap:6px; margin-bottom:10px; }
+  .ptc-today-item{ background:var(--card); border:1px solid var(--line); border-radius:8px; padding:5px 10px; display:flex; align-items:baseline; justify-content:space-between; gap:6px; min-width:0; }
+  .ptc-today-item span{ font-size:10px; text-transform:uppercase; letter-spacing:0.4px; color:var(--muted); font-weight:700; white-space:nowrap; }
+  .ptc-today-item b{ font-size:15px; color:var(--ink); font-variant-numeric:tabular-nums; }
+  @media (max-width:720px){ #ptc-today{ grid-template-columns:repeat(3,1fr); } }
+  @media (max-width:420px){ #ptc-today{ grid-template-columns:repeat(2,1fr); } }
+
+  /* panes: each nav tab shows one workspace */
+  #ptc-root[data-pane="entrydesk"] #ptc-entrylog-head,
+  #ptc-root[data-pane="entrydesk"] #ptc-entrylog-body,
+  #ptc-root[data-pane="entrydesk"] #ptc-impact-section,
+  #ptc-root[data-pane="entrylog"] #ptc-card,
+  #ptc-root[data-pane="entrylog"] #ptc-impact-section,
+  #ptc-root[data-pane="reports"] #ptc-card,
+  #ptc-root[data-pane="reports"] #ptc-entrylog-head,
+  #ptc-root[data-pane="reports"] #ptc-entrylog-body,
+  #ptc-root[data-pane="salesdesk"] #sales-kpi-section,
+  #ptc-root[data-pane="salesdesk"] #sales-ledger-section,
+  #ptc-root[data-pane="saleslog"] #sales-card{ display:none !important; }
+  #ptc-root[data-pane="entrylog"] #ptc-entrylog-body{ display:block !important; }
+  #ptc-root[data-pane="entrylog"] #btn-entrylog-toggle{ display:none; }
+  #ptc-root[data-pane="entrylog"] #ptc-entrylog-head{ cursor:default !important; margin-top:0; }
+
+  /* grouped Entry form */
+  .ptc-grp{ margin:0 0 10px; }
+  .ptc-grp-title{ font-size:10.5px; font-weight:800; letter-spacing:0.8px; text-transform:uppercase; color:var(--ink-soft); margin:0 0 5px; padding-bottom:3px; border-bottom:1px solid var(--line); }
+  .ptc-grp-body{ display:grid; gap:8px 12px; }
+  .ptc-g3{ grid-template-columns:repeat(3,1fr); }
+  .ptc-g2{ grid-template-columns:repeat(2,1fr); }
+  .ptc-grp-body .ptc-row{ display:contents; }
+  .ptc-grp-body .ptc-row > div:empty{ display:none; }
+  @media (max-width:640px){ .ptc-g3, .ptc-g2{ grid-template-columns:1fr; } }
+  .ptc-sr-only{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+  #ptc-root .ptc-card{ padding:14px 18px; margin-bottom:12px; }
+  #ptc-root .ptc-row{ gap:8px 12px; margin-bottom:8px; }
+  #ptc-root .ptc-field label{ font-size:11px; margin-bottom:3px; }
+  #ptc-root .ptc-field input, #ptc-root .ptc-field select, #ptc-root .ptc-field textarea{ padding:7px 10px; font-size:13px; }
+  #ptc-root .ptc-section-label{ margin:10px 0 6px; }
+  #ptc-root .ptc-log-head{ margin:12px 0 8px; }
+  #ptc-root .ptc-actions{ margin-top:10px; }
+  #ptc-root .ptc-btn{ padding:7px 14px; font-size:12.5px; }
+
+  /* compact Entry Log (full table stays behind "Show Full Details") */
+  #ptc-table-wrap{ display:none !important; }
+  #ptc-root.ptc-fulllog #ptc-table-wrap:not([style*="none"]){ display:block !important; }
+  #ptc-root.ptc-fulllog #ptc-clog-wrap{ display:none; }
+  .ptc-entrylog-body:has(#ptc-table-wrap[style*="none"]) #ptc-clog-wrap{ display:none; }
+  #ptc-clog{ width:100%; border-collapse:collapse; font-size:12.5px; }
+  #ptc-clog th{ text-align:left; font-size:10.5px; text-transform:uppercase; letter-spacing:0.5px; color:var(--muted); padding:7px 10px; border-bottom:1px solid var(--line); white-space:nowrap; }
+  #ptc-clog td{ padding:7px 10px; border-bottom:1px solid var(--line); vertical-align:top; }
+  #ptc-clog tr.ptc-cl-main:hover td{ background:#F7F9FC; }
+  #ptc-clog .ptc-sub{ font-size:11px; color:var(--muted); }
+  #ptc-clog .ptc-cl-amt{ text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; font-weight:600; }
+  #ptc-clog .ptc-cl-act{ white-space:nowrap; }
+  .ptc-mini{ border:1px solid var(--line); background:#fff; color:var(--ink-soft); font:inherit; font-size:11.5px; font-weight:600; padding:3px 8px; border-radius:6px; cursor:pointer; }
+  .ptc-mini:hover{ background:#F3F5F8; }
+  .ptc-mini-danger{ color:var(--refund); border-color:#E7C4C0; }
+  .ptc-cl-detail td{ background:#F8FAFC; padding:10px 14px 12px; }
+  .ptc-clog-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:8px 14px; }
+  .ptc-clog-grid .l{ font-size:10px; text-transform:uppercase; letter-spacing:0.5px; color:var(--muted); font-weight:700; }
+  .ptc-clog-grid .v{ font-size:12.5px; font-family:'SFMono-Regular',Consolas,monospace; word-break:break-word; }
+  .ptc-qa-row{ display:inline-flex; gap:6px; flex-wrap:wrap; }
+  @media (max-width:700px){ #ptc-clog th:nth-child(3), #ptc-clog td:nth-child(3){ display:none; } }
+
+  /* Reports: key KPIs first, details on Expand */
+  #ptc-rep-kpis{ grid-template-columns:repeat(4,1fr); margin-bottom:8px; gap:8px; }
+  @media (max-width:720px){ #ptc-rep-kpis{ grid-template-columns:repeat(2,1fr); } }
+  #ptc-impact-section:not(.ptc-impact-open) #ach-range-label,
+  #ptc-impact-section:not(.ptc-impact-open) #ach-card{ display:none; }
+
   /* ===== Entry Log collapsible wrapper ===== */
   .ptc-entrylog-body[hidden]{ display: none; }
 
@@ -2160,7 +2236,7 @@
 <a href="index.html" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--muted,#667085);text-decoration:none;margin-bottom:8px">← Back to Portfolio</a>
 </div>
 
-<div id="ptc-root">
+<div id="ptc-root" data-pane="entrydesk">
   <div class="ptc-shell">
     <div class="ptc-dash-hero">
       <div class="ptc-dash-hero-top">
@@ -2305,9 +2381,25 @@
       <div class="ptc-dash-greeting" id="ptc-greeting">Every booking, reissue, refund and void — in one place.</div>
     </div>
 
-    <div class="ptc-tabs">
+    <div class="ptc-tabs" style="display:none;">
       <button class="ptc-tab active" id="tab-btn-entry" data-view="entry">🧾 Add Entry &amp; Log</button>
       <button class="ptc-tab" id="tab-btn-sales" data-view="sales">💰 Revenue Desk</button>
+    </div>
+
+    <nav id="ptc-nav" aria-label="AeroOps sections">
+      <button type="button" class="ptc-nav-btn active" data-pane="entrydesk">🧾 Entry Desk</button>
+      <button type="button" class="ptc-nav-btn" data-pane="salesdesk">💰 Revenue Desk</button>
+      <button type="button" class="ptc-nav-btn" data-pane="entrylog">📋 Entry Log</button>
+      <button type="button" class="ptc-nav-btn" data-pane="saleslog">📒 Revenue Log</button>
+      <button type="button" class="ptc-nav-btn" data-pane="reports">📊 Reports</button>
+    </nav>
+
+    <div id="ptc-today" aria-label="Today summary">
+      <div class="ptc-today-item"><span>Tickets</span><b id="td-tickets">0</b></div>
+      <div class="ptc-today-item"><span>Reissues</span><b id="td-reissues">0</b></div>
+      <div class="ptc-today-item"><span>Refunds</span><b id="td-refunds">0</b></div>
+      <div class="ptc-today-item" title="Refunded entries whose adjustment has not been given yet (all dates)"><span>Pending Adj.</span><b id="td-pending">0</b></div>
+      <div class="ptc-today-item" title="Selling price of today's Revenue Desk sales"><span>Revenue</span><b id="td-revenue">0</b></div>
     </div>
 
     <!-- ============ DASHBOARD VIEW ============ -->
@@ -2406,6 +2498,7 @@
         ⚠️ Fields were auto-filled from the uploaded PDF — verify every value before saving. Layouts vary by airline/GDS, so extraction can miss or misread a field.
       </div>
 
+      <div class="ptc-grp"><div class="ptc-grp-title">Booking</div><div class="ptc-grp-body ptc-g3">
       <div class="ptc-row">
         <div class="ptc-field">
           <label for="f-date">Date</label>
@@ -2413,7 +2506,6 @@
         </div>
         <div></div>
       </div>
-
       <div class="ptc-row">
         <div class="ptc-field">
           <label for="f-pnr-gds">GDS PNR <span class="ptc-required">*</span></label>
@@ -2424,7 +2516,8 @@
           <input type="text" id="f-pnr-air" class="mono" />
         </div>
       </div>
-
+      </div></div>
+      <div class="ptc-grp"><div class="ptc-grp-title">Passenger</div><div class="ptc-grp-body ptc-g2">
       <div class="ptc-row">
         <div class="ptc-field">
           <label for="f-pname">Passenger Name <span class="ptc-required">*</span></label>
@@ -2435,7 +2528,8 @@
           <input type="text" id="f-pnum" class="mono" />
         </div>
       </div>
-
+      </div></div>
+      <div class="ptc-grp"><div class="ptc-grp-title">Ticketing</div><div class="ptc-grp-body ptc-g2">
       <div class="ptc-row">
         <div class="ptc-field">
           <label for="f-platform">Platform</label>
@@ -2486,6 +2580,7 @@
           <input type="text" id="f-airline-other" class="mono" placeholder="Type airline code" style="display:none; margin-top:6px;" />
         </div>
       </div>
+      </div></div>
 
       <!-- ===== TICKETING FIELDS ===== -->
       <div id="section-Ticketing">
@@ -2791,12 +2886,13 @@
 
 
 
-      <div class="ptc-row" style="margin-top:4px;">
+      <div class="ptc-grp"><div class="ptc-grp-title">Notes</div>
+      <div class="ptc-row" style="margin-top:0;">
         <div class="ptc-field" style="grid-column: 1 / -1;">
-          <label for="f-note">Note</label>
-          <textarea id="f-note" rows="2" placeholder="Any additional remarks"></textarea>
+          <label for="f-note" class="ptc-sr-only">Remarks</label>
+          <textarea id="f-note" rows="2" placeholder="Remarks — any additional notes"></textarea>
         </div>
-      </div>
+      </div></div>
 
       <div class="ptc-actions">
         <button class="ptc-btn ptc-btn-ghost" id="btn-cancel-edit" style="display:none; border-color:var(--reissue); color:var(--reissue); font-weight:700;">Cancel Edit</button>
@@ -2842,6 +2938,13 @@
       </div>
     </div>
 
+    <div class="ptc-table-wrap" id="ptc-clog-wrap">
+      <table class="ptc-table" id="ptc-clog">
+        <thead><tr><th>PNR</th><th>Passenger</th><th>Airline</th><th>TKT</th><th>Type</th><th>Status</th><th style="text-align:right;">Amount</th><th>Action</th></tr></thead>
+        <tbody id="ptc-clog-body"></tbody>
+      </table>
+      <div class="ptc-empty" id="ptc-clog-empty" style="display:none;">No entries to show.</div>
+    </div>
     <div class="ptc-table-wrap" id="ptc-table-wrap">
       <table class="ptc-table ptc-compact" id="ptc-table">
         <thead>
@@ -2929,10 +3032,13 @@
     })();
     </script>
 
-    <div class="ptc-log-head" style="margin-top:28px;">
+    <div id="ptc-impact-section">
+    <div class="ptc-log-head" style="margin-top:0;">
       <h2>Business Impact</h2>
       <button class="ptc-btn ptc-btn-ghost" id="btn-open-dashboard" style="padding:6px 14px; font-size:12px;">📊 View Full Dashboard</button>
     </div>
+    <div class="ptc-kpi-grid" id="ptc-rep-kpis"></div>
+    <div style="margin:2px 0 10px;"><button type="button" class="ptc-btn ptc-btn-ghost" id="btn-impact-details" style="padding:5px 12px; font-size:12px;">Expand charts &amp; Operational Health ▾</button></div>
     <div class="ptc-count" id="ach-range-label" style="margin-bottom:10px; display:block;"></div>
 
     <div class="ptc-card" id="ach-card" style="border-left-color:#0B2545;">
@@ -2964,6 +3070,7 @@
       <div class="ptc-impact-grid" id="impact-health"></div>
 
     </div>
+    </div><!-- /ptc-impact-section -->
 
     </div><!-- /view-entry -->
 
@@ -2971,6 +3078,7 @@
 
       <div class="ptc-due-panel" id="sales-due-panel" style="display:none;"></div>
 
+      <div id="sales-kpi-section">
       <div class="ptc-kpi-grid" id="sales-kpi-grid" style="margin-bottom:20px;"></div>
 
       <div class="ptc-log-head" style="margin-bottom:10px;">
@@ -2989,6 +3097,8 @@
           <div class="ptc-legend-row" id="chart-sales-status-legend"></div>
         </div>
       </div>
+
+      </div><!-- /sales-kpi-section -->
 
       <div class="ptc-card" id="sales-card" style="border-left-color:#1E7A46;">
         <div class="ptc-editing-banner" id="sales-editing-banner">
@@ -3155,6 +3265,7 @@
         </div>
       </div>
 
+      <div id="sales-ledger-section">
       <div class="ptc-log-head">
         <h2>Revenue Ledger</h2>
         <span class="ptc-count" id="sales-count">0 sales</span>
@@ -3209,6 +3320,8 @@
         <button class="ptc-btn ptc-btn-ghost" id="btn-sales-clear-all">Clear All Sales</button>
         <button class="ptc-btn ptc-btn-primary" id="btn-sales-export" style="background:var(--ink);">Download Sales Backup (.xlsx)</button>
       </div>
+
+      </div><!-- /sales-ledger-section -->
 
     </div><!-- /view-sales -->
 
@@ -5739,6 +5852,7 @@
   }
 
   function startEdit(i){
+    if(window.ptcSetPane) window.ptcSetPane('entrydesk');
     editingIndex = i;
     populateForm(entries[i]);
     $('btn-add').textContent = 'Save Changes';
@@ -6449,6 +6563,7 @@
               <button type="button" class="ptc-btn ptc-btn-ghost ptc-adj-btn ptc-search-adj ${(e.adjustmentGiven === 'YES') ? 'ptc-adj-active' : ''}" data-idx="${idx}" data-val="YES" style="padding:6px 14px; font-size:12px;">Yes</button>
             </div>
             ` : ''}
+            ${ptcQuickActions(e, idx)}
             <button class="ptc-btn ptc-btn-ghost ptc-search-edit" data-idx="${idx}" style="padding:6px 14px; font-size:12px;">Edit</button>
             <button class="ptc-btn ptc-btn-ghost ptc-search-del" data-idx="${idx}" style="padding:6px 14px; font-size:12px; border-color:var(--refund); color:var(--refund);">Remove</button>
           </div>
@@ -7352,6 +7467,7 @@
   }
 
   function startSaleEdit(i){
+    if(window.ptcSetPane) window.ptcSetPane('salesdesk');
     salesEditingIndex = i;
     populateSaleForm(salesEntries[i]);
     $('btn-sales-add').textContent = 'Save Changes';
@@ -7626,7 +7742,7 @@
     function goToEntry(idx){
       resultsEl.style.display = 'none';
       input.value = '';
-      if(typeof switchView === 'function') switchView('entry');
+      if(window.ptcSetPane) window.ptcSetPane('entrylog');
       const searchBox = document.getElementById('ptc-search');
       if(searchBox){
         const target = entries[idx];
@@ -7640,7 +7756,7 @@
     function goToSale(idx){
       resultsEl.style.display = 'none';
       input.value = '';
-      if(typeof switchView === 'function') switchView('sales');
+      if(window.ptcSetPane) window.ptcSetPane('saleslog');
       const searchBox = document.getElementById('sales-search');
       if(searchBox){
         const target = salesEntries[idx];
@@ -7680,7 +7796,7 @@
       // Clear the other box so stale results don't linger, then run the existing search renderers.
       if(eBox){ eBox.value = (target === 'entry') ? raw : ''; eBox.dispatchEvent(new Event('input')); }
       if(sBox){ sBox.value = (target === 'sales' || hasSales) ? raw : ''; sBox.dispatchEvent(new Event('input')); }
-      if(typeof switchView === 'function') switchView(target);
+      if(window.ptcSetPane) window.ptcSetPane(target === 'entry' ? 'entrylog' : 'saleslog'); else if(typeof switchView === 'function') switchView(target);
       if(target === 'entry' && typeof window.ptcExpandEntryLog === 'function') window.ptcExpandEntryLog();
       // Bring the results into view automatically (no manual scrolling).
       const resId = target === 'entry' ? 'ptc-search-results' : 'sales-search-results';
@@ -7921,6 +8037,174 @@
       }, 100);
     });
   })();
+
+  // ================= REDESIGN LAYER (UI only — no data/calculation changes) =================
+  const PTC_PANES = { entrydesk:'entry', entrylog:'entry', reports:'entry', salesdesk:'sales', saleslog:'sales' };
+  let ptcPane = 'entrydesk';
+  const __switchViewOrig = switchView;
+  function ptcApplyPane(){
+    root.setAttribute('data-pane', ptcPane);
+    const onDash = $('view-dashboard').classList.contains('active');
+    document.querySelectorAll('#ptc-nav .ptc-nav-btn').forEach(b => b.classList.toggle('active', !onDash && b.dataset.pane === ptcPane));
+  }
+  switchView = function(view){
+    if(view === 'entry' && PTC_PANES[ptcPane] !== 'entry') ptcPane = 'entrydesk';
+    if(view === 'sales' && PTC_PANES[ptcPane] !== 'sales') ptcPane = 'salesdesk';
+    __switchViewOrig(view);
+    ptcApplyPane();
+  };
+  window.ptcSetPane = function(p){
+    if(!PTC_PANES[p]) return;
+    ptcPane = p;
+    __switchViewOrig(PTC_PANES[p]);
+    ptcApplyPane();
+    if(p === 'entrylog' && typeof window.ptcExpandEntryLog === 'function') window.ptcExpandEntryLog();
+    if(p === 'reports') ptcUpdateReports();
+    try{ window.scrollTo({ top: 0 }); }catch(err){}
+  };
+  document.querySelectorAll('#ptc-nav .ptc-nav-btn').forEach(b => b.addEventListener('click', () => window.ptcSetPane(b.dataset.pane)));
+
+  // ---- Today summary ----
+  function ptcTodayStr(){ const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
+  function ptcUpdateToday(){
+    const t = ptcTodayStr();
+    const set = (id, v) => { const el = $(id); if(el) el.textContent = v; };
+    const te = entries.filter(e => e.date === t);
+    set('td-tickets', te.filter(e => e.txn === 'Ticketing').length);
+    set('td-reissues', te.filter(e => e.txn === 'Reissue').length);
+    set('td-refunds', te.filter(e => e.txn === 'Refund').length);
+    set('td-pending', entries.filter(e => e.txn === 'Refund' && e.refundStatus === 'REFUNDED' && e.adjustmentGiven !== 'YES').length);
+    let rev = 0;
+    try{ rev = salesEntries.filter(x => x.date === t).reduce((a, x) => a + (Number(x.price) || 0), 0); }catch(err){ rev = 0; }
+    set('td-revenue', rev.toLocaleString(undefined, { maximumFractionDigits: 0 }));
+  }
+
+  // ---- Reports KPIs (read-only, same formulas the dashboard already uses) ----
+  function ptcUpdateReports(){
+    const box = $('ptc-rep-kpis'); if(!box) return;
+    let vol = 0, earn = 0, pend = 0;
+    entries.forEach(e => {
+      if(e.txn === 'Ticketing') vol += Number(e.totalFare) || 0;
+      if(e.txn === 'Reissue') vol += Number(e.totalCollection) || 0;
+      earn += entryEarnings(e);
+      if(e.txn === 'Refund' && e.refundStatus === 'PENDING') pend++;
+    });
+    const k = [
+      { label:'Total Volume', value:fmtK(vol), sub:'Ticketing + reissue collected', color:'var(--booking)' },
+      { label:'Agency Earnings', value:fmtK(earn), sub:'Markup + service charges', color:'#1E7A46' },
+      { label:'Transactions', value:entries.length, sub:'All entries', color:'var(--reissue)' },
+      { label:'Pending Refund', value:pend, sub:'Awaiting refund', color:'var(--refund)' },
+    ];
+    box.innerHTML = k.map(x => `<div class="ptc-kpi" style="border-top-color:${x.color};"><div class="ptc-kpi-label">${x.label}</div><div class="ptc-kpi-value">${x.value}</div><div class="ptc-kpi-sub">${x.sub}</div></div>`).join('');
+  }
+  $('btn-impact-details').addEventListener('click', () => {
+    const sec = $('ptc-impact-section');
+    const open = sec.classList.toggle('ptc-impact-open');
+    $('btn-impact-details').textContent = open ? 'Collapse charts & Operational Health ▴' : 'Expand charts & Operational Health ▾';
+  });
+
+  // ---- Compact Entry Log (built from the same rows the existing table renders) ----
+  function ptcAmount(e){
+    let v = null;
+    if(e.txn === 'Ticketing') v = e.totalFare;
+    else if(e.txn === 'Reissue') v = e.totalCollection;
+    else if(e.txn === 'Refund') v = e.refundCharge;
+    v = parseFloat(v);
+    return isFinite(v) ? v.toLocaleString(undefined, { minimumFractionDigits:2, maximumFractionDigits:2 }) : '—';
+  }
+  function ptcStatusHtml(e){
+    if(e.txn === 'Refund' && e.refundStatus){
+      const cls = e.refundStatus === 'REFUNDED' ? 'ptc-status-tag-refunded' : 'ptc-status-tag-pending';
+      let h = `<span class="ptc-tag ${cls}">${esc(e.refundStatus)}</span>`;
+      if(e.refundStatus === 'REFUNDED' && e.adjustmentGiven !== 'YES') h += `<div class="ptc-sub">Adjustment pending</div>`;
+      return h;
+    }
+    const label = { Ticketing:'Issued', Reissue:'Reissued', Void:'Voided', Refund:'Refund' }[e.txn] || '';
+    return label ? `<span class="ptc-sub" style="font-weight:600;">${label}</span>` : '';
+  }
+  function ptcDetailHtml(e){
+    const fields = detailFields(e).filter(([, v]) => !(v === '' || v === undefined || v === null));
+    return `<div class="ptc-clog-grid">${fields.map(([l, v]) => `<div><div class="l">${esc(l)}</div><div class="v">${l === 'Passenger' ? formatPassengerNamesHTML(v) : ((l === 'Ticket No.' || l === 'Old Ticket' || l === 'New Ticket') ? fmtTicketListHTML(v) : esc(v))}</div></div>`).join('')}</div>`;
+  }
+  function ptcRenderCompactLog(){
+    const body = $('ptc-clog-body'); if(!body) return;
+    const idxs = Array.from(document.querySelectorAll('#ptc-tbody .ptc-edit')).map(b => parseInt(b.getAttribute('data-idx'), 10));
+    body.innerHTML = '';
+    idxs.forEach(i => {
+      const e = entries[i]; if(!e) return;
+      const color = tagColor[e.txn] || '#6B7280';
+      const tkt = fmtTicketListHTML(e.newTkt || e.oldTkt);
+      const tr = document.createElement('tr');
+      tr.className = 'ptc-cl-main';
+      tr.innerHTML = `
+        <td><div class="mono">${esc(e.pnrGds) || '—'}</div><div class="mono ptc-sub">${esc(e.pnrAirline)}</div></td>
+        <td>${formatPassengerNamesHTML(e.pname) || '—'}</td>
+        <td class="mono">${esc(e.airline)}</td>
+        <td class="mono">${tkt || '—'}</td>
+        <td><span class="ptc-tag" style="background:${color}">${esc(e.txn)}</span><div class="ptc-sub">${esc(e.date || '')}</div></td>
+        <td>${ptcStatusHtml(e)}</td>
+        <td class="ptc-cl-amt">${ptcAmount(e)}</td>
+        <td class="ptc-cl-act"><button type="button" class="ptc-mini ptc-cl-view" data-idx="${i}">Details ▾</button> <button type="button" class="ptc-mini ptc-cl-edit" data-idx="${i}">Edit</button> <button type="button" class="ptc-mini ptc-mini-danger ptc-cl-del" data-idx="${i}" title="Remove entry">✕</button></td>`;
+      const dr = document.createElement('tr');
+      dr.className = 'ptc-cl-detail'; dr.style.display = 'none';
+      dr.innerHTML = `<td colspan="8">${ptcDetailHtml(e)}</td>`;
+      body.appendChild(tr); body.appendChild(dr);
+    });
+    const em = $('ptc-clog-empty'); if(em) em.style.display = idxs.length ? 'none' : 'block';
+    $('ptc-clog').style.display = idxs.length ? '' : 'none';
+  }
+  $('ptc-clog-body').addEventListener('click', (ev) => {
+    const btn = ev.target.closest('button'); if(!btn) return;
+    const i = parseInt(btn.getAttribute('data-idx'), 10);
+    if(btn.classList.contains('ptc-cl-view')){
+      const dr = btn.closest('tr').nextElementSibling;
+      const open = dr.style.display === 'none';
+      dr.style.display = open ? '' : 'none';
+      btn.textContent = open ? 'Details ▴' : 'Details ▾';
+    } else if(btn.classList.contains('ptc-cl-edit')){
+      startEdit(i);
+    } else if(btn.classList.contains('ptc-cl-del')){
+      if(!confirm('Remove this entry?')) return;
+      const old = document.querySelector('#ptc-tbody .ptc-del[data-idx="' + i + '"]');
+      if(old) old.click(); // runs the existing remove logic unchanged
+    }
+  });
+  // "Show Full Details" keeps working: it flips the old table's compact class; mirror that on the page.
+  if(window.MutationObserver){
+    new MutationObserver(() => root.classList.toggle('ptc-fulllog', !$('ptc-table').classList.contains('ptc-compact')))
+      .observe($('ptc-table'), { attributes: true, attributeFilter: ['class'] });
+  }
+
+  // ---- Search-card quick actions: Reissue / Refund / Void prefill the existing Entry form ----
+  function ptcQuickActions(e, idx){
+    const acts = { Ticketing:['Reissue','Refund','Void'], Reissue:['Refund','Void'] }[e.txn] || [];
+    if(!acts.length) return '';
+    return `<span class="ptc-qa-row">${acts.map(a => `<button type="button" class="ptc-btn ptc-btn-ghost ptc-qa" data-act="${a}" data-idx="${idx}" style="padding:6px 12px; font-size:12px;">${a}</button>`).join('')}</span>`;
+  }
+  function ptcPrefill(idx, type){
+    const src = entries[idx]; if(!src) return;
+    ptcSetPane('entrydesk');
+    if(editingIndex !== null){ try{ stopEdit(); }catch(err){} }
+    try{ clearForm(); }catch(err){}
+    const tab = document.querySelector('#f-type-tabs .ptc-txn-tab[data-type="' + type + '"]'); if(tab) tab.click();
+    const setv = (id, v) => { const el = $(id); if(el && v){ el.value = v; el.dispatchEvent(new Event('input', { bubbles:true })); } };
+    setv('f-pnr-gds', src.pnrGds); setv('f-pnr-air', src.pnrAirline); setv('f-pname', src.pname); setv('f-pnum', src.pnum);
+    const sel = (id, v) => { const el = $(id); if(el && v && Array.from(el.options).some(o => o.value === v)){ el.value = v; el.dispatchEvent(new Event('change')); } };
+    sel('f-platform', src.platform); sel('f-airline', src.airline);
+    toast('Started ' + type + ' from this PNR — add the ticket number(s) and details');
+  }
+  $('ptc-search-results').addEventListener('click', (ev) => {
+    const b = ev.target.closest('.ptc-qa'); if(!b) return;
+    ptcPrefill(parseInt(b.getAttribute('data-idx'), 10), b.getAttribute('data-act'));
+  });
+
+  // Keep the new bits in sync whenever the existing renderers run.
+  const __renderOrig = render;
+  render = function(){ __renderOrig.apply(this, arguments); try{ ptcRenderCompactLog(); ptcUpdateToday(); ptcUpdateReports(); }catch(err){ console.error('Redesign layer failed', err); } };
+  const __renderSalesOrig = renderSales;
+  renderSales = function(){ __renderSalesOrig.apply(this, arguments); try{ ptcUpdateToday(); }catch(err){} };
+  try{ ptcRenderCompactLog(); ptcUpdateToday(); ptcUpdateReports(); }catch(err){ console.error('Redesign layer init failed', err); }
+  ptcApplyPane();
 })();
 </script>
 <script>
