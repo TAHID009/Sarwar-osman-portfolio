@@ -1534,6 +1534,50 @@
     .ptc-header-tktautofill .ptc-pdf-import{ width: 100%; box-sizing: border-box; }
   }
 
+  /* ===== Compact header layout: search + status toolbar, connection chips, controls ===== */
+  .ptc-dash-hero{ padding: 14px 18px 12px; margin-bottom: 14px; }
+  .ptc-dash-hero h1{ font-size: 21px; margin: 2px 0 0; }
+  .ptc-dash-hero .ptc-eyebrow{ font-size: 11px; letter-spacing: 1.6px; }
+  .ptc-hero-toolbar{
+    display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+    margin-top:10px; position:relative; z-index:20;
+  }
+  .ptc-hero-toolbar .ptc-global-search-wrap{ flex:1 1 240px; max-width:380px; margin:0; }
+  .ptc-hero-toolbar #ptc-global-search{ padding:7px 12px 7px 32px; font-size:12.5px; border-radius:8px; }
+  .ptc-hero-toolbar .ptc-global-search-icon{ left:11px; font-size:12px; }
+  .ptc-hero-toolbar .ptc-global-search-results{ min-width:300px; right:auto; }
+  .ptc-hero-toolbar .ptc-command-center{ margin:0 0 0 auto; }
+  .ptc-hero-toolbar .ptc-command-status{ padding:4px 10px; font-size:11px; }
+  .ptc-hero-conn{
+    display:grid; grid-template-columns:1fr 1fr; gap:8px;
+    margin-top:10px; align-items:start; position:relative; z-index:1;
+  }
+  .ptc-hero-conn .ptc-connbar{
+    margin:0; background:rgba(255,255,255,0.08);
+    border:1px solid rgba(255,255,255,0.18) !important; border-radius:8px; box-shadow:none;
+  }
+  .ptc-hero-conn .ptc-connbar-summary{ padding:5px 10px; min-height:28px; gap:7px; }
+  .ptc-hero-conn .ptc-connbar-title{ color:#fff; font-size:10.5px; }
+  .ptc-hero-conn .ptc-connbar-status{ color:rgba(255,255,255,0.8) !important; font-size:11.5px; }
+  .ptc-hero-conn .ptc-connbar-toggle{ background:rgba(255,255,255,0.1); border-color:rgba(255,255,255,0.25); color:#fff; padding:2px 8px; }
+  .ptc-hero-conn .ptc-connbar-toggle:hover{ background:rgba(255,255,255,0.22); }
+  .ptc-hero-conn .ptc-connbar-actions{ padding:0 10px 8px 10px; }
+  .ptc-header-controls{ margin:10px 0 0; gap:8px 20px; align-items:center; }
+  .ptc-header-txntype, .ptc-header-tktautofill{ display:flex; align-items:center; gap:8px; }
+  .ptc-header-control-label{ margin:0; white-space:nowrap; }
+  .ptc-header-txntype .ptc-txn-tab{ padding:5px 9px; font-size:11px; }
+  .ptc-header-tktautofill .ptc-pdf-import{ padding:4px 8px; gap:8px; }
+  .ptc-header-tktautofill .ptc-pdf-import-btn{ padding:5px 10px; font-size:11.5px; }
+  .ptc-header-tktautofill .ptc-pdf-import-status{ font-size:10.5px; line-height:1.25; max-width:230px; }
+  .ptc-hero-perf{ margin:10px 0 6px; }
+  .ptc-dash-greeting{ font-size:12px; }
+  @media (max-width: 720px){
+    .ptc-hero-conn{ grid-template-columns:1fr; }
+    .ptc-hero-toolbar .ptc-global-search-wrap{ max-width:none; flex-basis:100%; }
+    .ptc-hero-toolbar .ptc-command-center{ margin-left:0; }
+    .ptc-header-txntype, .ptc-header-tktautofill{ flex-wrap:wrap; }
+  }
+
   /* ===== Entry Log collapsible wrapper ===== */
   .ptc-entrylog-body[hidden]{ display: none; }
 
@@ -2116,6 +2160,7 @@
         <div class="ptc-eyebrow" id="ptc-clock" style="color:rgba(255,255,255,0.75);"></div>
       </div>
 
+      <div class="ptc-hero-toolbar">
       <!-- ===== NEW: unified global search — separate element, does not touch
            the two existing per-tab search boxes or the header row above. ===== -->
       <div class="ptc-global-search-wrap" id="ptc-global-search-wrap">
@@ -2123,13 +2168,94 @@
         <input type="text" id="ptc-global-search" placeholder="Search PNR, ticket number or passenger — details show instantly..." autocomplete="off" />
         <div class="ptc-global-search-results" id="ptc-global-search-results" style="display:none;"></div>
       </div>
-
       <!-- ===== NEW: Command Center strip — system status + quick actions.
            Purely additive; sits below the search bar without touching it. ===== -->
       <div class="ptc-command-center" id="ptc-command-center">
         <div class="ptc-command-status" id="ptc-command-status"></div>
         <!-- Quick-action buttons removed (duplicated the header Transaction Type / TKT AutoFill / Search controls) -->
       </div>
+      </div>
+
+      <div class="ptc-hero-conn">
+    <div class="ptc-connbar" id="ptc-filebar" style="border-left-color:#0B2545;">
+      <div class="ptc-connbar-summary" id="ptc-filebar-summary" role="button" tabindex="0" aria-expanded="false" aria-controls="ptc-filebar-actions">
+        <span id="ptc-file-dot" class="ptc-connbar-dot"></span>
+        <span class="ptc-connbar-title" title="Master Data File (Excel Workbook)">Master Data File</span>
+        <span class="ptc-connbar-status" id="ptc-filestatus" title="Not set — entries save to this browser only.">Not set — entries save to this browser only.</span>
+        <button type="button" class="ptc-connbar-toggle" id="btn-filebar-toggle">Expand ▾</button>
+      </div>
+      <div class="ptc-connbar-actions" id="ptc-filebar-actions" hidden>
+        <button class="ptc-btn ptc-btn-ghost" id="btn-reconnect-file" style="display:none; border-color:var(--booking); color:var(--booking); font-weight:700;">Reconnect</button>
+        <button class="ptc-btn ptc-btn-ghost" id="btn-connect-file">Set Master Data File</button>
+        <button class="ptc-btn ptc-btn-ghost" id="btn-disconnect-file" style="display:none;">Disconnect</button>
+      </div>
+    </div>
+
+    <div class="ptc-connbar" id="ptc-cloudbar" style="border-left-color:#1E7A46;">
+      <div class="ptc-connbar-summary" id="ptc-cloudbar-summary" role="button" tabindex="0" aria-expanded="false" aria-controls="ptc-cloudbar-actions">
+        <span id="ptc-cloud-dot" class="ptc-connbar-dot"></span>
+        <span class="ptc-connbar-title" title="Live Cloud Sync (use this exact same file on any phone, tablet, or computer)">Live Cloud Sync</span>
+        <span class="ptc-connbar-status" id="ptc-cloud-status" title="Not connected — set up once to access your data live from any device.">Not connected — set up once to access your data live from any device.</span>
+        <button type="button" class="ptc-connbar-toggle" id="btn-cloudbar-toggle">Expand ▾</button>
+      </div>
+      <div class="ptc-connbar-actions" id="ptc-cloudbar-actions" hidden>
+        <button class="ptc-btn ptc-btn-ghost" id="btn-cloud-setup" style="display:none; border-color:#1E7A46; color:#1E7A46; font-weight:700;">Set Up Cloud Sync</button>
+        <button class="ptc-btn ptc-btn-ghost" id="btn-cloud-disconnect" style="display:none;">Disconnect</button>
+      </div>
+    </div>
+
+    <script>
+    (function(){
+      // Compact collapsible behavior for the Master Data File / Live Cloud Sync
+      // status bars. Purely a UI toggle — does not touch any connection,
+      // Excel, or cloud sync logic, and does not change any element IDs
+      // that the existing app logic (setFileStatus / setCloudStatus / button
+      // click handlers) already relies on.
+      function wireConnbar(summaryId, toggleId, actionsId){
+        var summary = document.getElementById(summaryId);
+        var toggle = document.getElementById(toggleId);
+        var actions = document.getElementById(actionsId);
+        if(!summary || !toggle || !actions) return;
+        function setExpanded(expanded){
+          actions.hidden = !expanded;
+          toggle.textContent = expanded ? 'Collapse ▴' : 'Expand ▾';
+          summary.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+        }
+        function toggleExpanded(e){
+          if(e) e.stopPropagation();
+          setExpanded(actions.hidden);
+        }
+        toggle.addEventListener('click', toggleExpanded);
+        summary.addEventListener('click', function(e){
+          if(e.target === toggle) return; // avoid double-toggle
+          toggleExpanded();
+        });
+        summary.addEventListener('keydown', function(e){
+          if(e.key === 'Enter' || e.key === ' '){
+            e.preventDefault();
+            toggleExpanded();
+          }
+        });
+        setExpanded(false); // default: collapsed
+      }
+      wireConnbar('ptc-filebar-summary', 'btn-filebar-toggle', 'ptc-filebar-actions');
+      wireConnbar('ptc-cloudbar-summary', 'btn-cloudbar-toggle', 'ptc-cloudbar-actions');
+
+      // Keep the native tooltip (title attribute) in sync with the visible
+      // status text whenever the existing app logic updates it, so the full
+      // message is still available on hover even though the line truncates.
+      function keepTitleInSync(id){
+        var el = document.getElementById(id);
+        if(!el || !window.MutationObserver) return;
+        var mo = new MutationObserver(function(){ el.title = el.textContent; });
+        mo.observe(el, { childList: true, characterData: true, subtree: true });
+      }
+      keepTitleInSync('ptc-filestatus');
+      keepTitleInSync('ptc-cloud-status');
+    })();
+    </script>
+      </div>
+
 
       <!-- ===== Transaction Type + TKT AutoFill — the one and only copy of each,
            moved here from the lower Data Import box (#ptc-card). Same ids, same
@@ -2229,83 +2355,7 @@
     <!-- ============ ENTRY / LOG VIEW ============ -->
     <div class="ptc-view active" id="view-entry">
 
-    <div class="ptc-connbar" id="ptc-filebar" style="border-left-color:#0B2545;">
-      <div class="ptc-connbar-summary" id="ptc-filebar-summary" role="button" tabindex="0" aria-expanded="false" aria-controls="ptc-filebar-actions">
-        <span id="ptc-file-dot" class="ptc-connbar-dot"></span>
-        <span class="ptc-connbar-title" title="Master Data File (Excel Workbook)">Master Data File</span>
-        <span class="ptc-connbar-status" id="ptc-filestatus" title="Not set — entries save to this browser only.">Not set — entries save to this browser only.</span>
-        <button type="button" class="ptc-connbar-toggle" id="btn-filebar-toggle">Expand ▾</button>
-      </div>
-      <div class="ptc-connbar-actions" id="ptc-filebar-actions" hidden>
-        <button class="ptc-btn ptc-btn-ghost" id="btn-reconnect-file" style="display:none; border-color:var(--booking); color:var(--booking); font-weight:700;">Reconnect</button>
-        <button class="ptc-btn ptc-btn-ghost" id="btn-connect-file">Set Master Data File</button>
-        <button class="ptc-btn ptc-btn-ghost" id="btn-disconnect-file" style="display:none;">Disconnect</button>
-      </div>
-    </div>
 
-    <div class="ptc-connbar" id="ptc-cloudbar" style="border-left-color:#1E7A46;">
-      <div class="ptc-connbar-summary" id="ptc-cloudbar-summary" role="button" tabindex="0" aria-expanded="false" aria-controls="ptc-cloudbar-actions">
-        <span id="ptc-cloud-dot" class="ptc-connbar-dot"></span>
-        <span class="ptc-connbar-title" title="Live Cloud Sync (use this exact same file on any phone, tablet, or computer)">Live Cloud Sync</span>
-        <span class="ptc-connbar-status" id="ptc-cloud-status" title="Not connected — set up once to access your data live from any device.">Not connected — set up once to access your data live from any device.</span>
-        <button type="button" class="ptc-connbar-toggle" id="btn-cloudbar-toggle">Expand ▾</button>
-      </div>
-      <div class="ptc-connbar-actions" id="ptc-cloudbar-actions" hidden>
-        <button class="ptc-btn ptc-btn-ghost" id="btn-cloud-setup" style="display:none; border-color:#1E7A46; color:#1E7A46; font-weight:700;">Set Up Cloud Sync</button>
-        <button class="ptc-btn ptc-btn-ghost" id="btn-cloud-disconnect" style="display:none;">Disconnect</button>
-      </div>
-    </div>
-
-    <script>
-    (function(){
-      // Compact collapsible behavior for the Master Data File / Live Cloud Sync
-      // status bars. Purely a UI toggle — does not touch any connection,
-      // Excel, or cloud sync logic, and does not change any element IDs
-      // that the existing app logic (setFileStatus / setCloudStatus / button
-      // click handlers) already relies on.
-      function wireConnbar(summaryId, toggleId, actionsId){
-        var summary = document.getElementById(summaryId);
-        var toggle = document.getElementById(toggleId);
-        var actions = document.getElementById(actionsId);
-        if(!summary || !toggle || !actions) return;
-        function setExpanded(expanded){
-          actions.hidden = !expanded;
-          toggle.textContent = expanded ? 'Collapse ▴' : 'Expand ▾';
-          summary.setAttribute('aria-expanded', expanded ? 'true' : 'false');
-        }
-        function toggleExpanded(e){
-          if(e) e.stopPropagation();
-          setExpanded(actions.hidden);
-        }
-        toggle.addEventListener('click', toggleExpanded);
-        summary.addEventListener('click', function(e){
-          if(e.target === toggle) return; // avoid double-toggle
-          toggleExpanded();
-        });
-        summary.addEventListener('keydown', function(e){
-          if(e.key === 'Enter' || e.key === ' '){
-            e.preventDefault();
-            toggleExpanded();
-          }
-        });
-        setExpanded(false); // default: collapsed
-      }
-      wireConnbar('ptc-filebar-summary', 'btn-filebar-toggle', 'ptc-filebar-actions');
-      wireConnbar('ptc-cloudbar-summary', 'btn-cloudbar-toggle', 'ptc-cloudbar-actions');
-
-      // Keep the native tooltip (title attribute) in sync with the visible
-      // status text whenever the existing app logic updates it, so the full
-      // message is still available on hover even though the line truncates.
-      function keepTitleInSync(id){
-        var el = document.getElementById(id);
-        if(!el || !window.MutationObserver) return;
-        var mo = new MutationObserver(function(){ el.title = el.textContent; });
-        mo.observe(el, { childList: true, characterData: true, subtree: true });
-      }
-      keepTitleInSync('ptc-filestatus');
-      keepTitleInSync('ptc-cloud-status');
-    })();
-    </script>
 
     <div class="ptc-modal-backdrop" id="cloud-modal-backdrop" style="display:none;">
       <div class="ptc-modal">
