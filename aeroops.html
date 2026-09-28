@@ -7611,17 +7611,28 @@
       if(!hasEntries && !hasSales){ clearDetails(); runGlobalSearch(); return; }
       detailsActive = true;
       const eBox = document.getElementById('ptc-search'), sBox = document.getElementById('sales-search');
-      if(hasSales && sBox){ sBox.value = raw; sBox.dispatchEvent(new Event('input')); }
-      if(hasEntries && eBox){
-        if(typeof switchView === 'function') switchView('entry');
-        eBox.value = raw; eBox.dispatchEvent(new Event('input'));
-        if(typeof window.ptcExpandEntryLog === 'function') window.ptcExpandEntryLog();
-        if(firstShow) setTimeout(() => { const r = document.getElementById('ptc-search-results'); if(r) r.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 50);
-      } else if(hasSales){
-        if(typeof switchView === 'function') switchView('sales');
-        if(firstShow) setTimeout(() => { const r = document.getElementById('sales-search-results'); if(r) r.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 50);
-      }
+      // Stay on the tab the user is already on when it has a match; otherwise go to the one that does.
+      const onSales = document.getElementById('view-sales').classList.contains('active');
+      const target = (onSales && hasSales) ? 'sales' : (hasEntries ? 'entry' : 'sales');
+      // Clear the other box so stale results don't linger, then run the existing search renderers.
+      if(eBox){ eBox.value = (target === 'entry') ? raw : ''; eBox.dispatchEvent(new Event('input')); }
+      if(sBox){ sBox.value = (target === 'sales' || hasSales) ? raw : ''; sBox.dispatchEvent(new Event('input')); }
+      if(typeof switchView === 'function') switchView(target);
+      if(target === 'entry' && typeof window.ptcExpandEntryLog === 'function') window.ptcExpandEntryLog();
+      // Bring the results into view automatically (no manual scrolling).
+      const resId = target === 'entry' ? 'ptc-search-results' : 'sales-search-results';
+      setTimeout(() => {
+        const r = document.getElementById(resId);
+        if(!r) return;
+        const top = r.getBoundingClientRect().top;
+        if(top > 220 || top < 0) window.scrollTo({ top: Math.max(0, top + window.pageYOffset - 16), behavior: 'smooth' });
+      }, 120);
     }
+    // Clear Search buttons (log/ledger) also empty the header search box.
+    ['btn-search-clear','btn-sales-search-clear'].forEach(id => {
+      const btn = document.getElementById(id);
+      if(btn) btn.addEventListener('click', () => { input.value = ''; detailsActive = false; resultsEl.style.display = 'none'; });
+    });
     input.addEventListener('keydown', (e) => { if(e.key === 'Enter'){ e.preventDefault(); showFullDetails(); } });
 
     // ---- Hover preview: hovering a result shows its full details + fare chart, built
