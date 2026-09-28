@@ -1569,6 +1569,11 @@
   .ptc-header-tktautofill .ptc-pdf-import{ padding:4px 8px; gap:8px; }
   .ptc-header-tktautofill .ptc-pdf-import-btn{ padding:5px 10px; font-size:11.5px; }
   .ptc-header-tktautofill .ptc-pdf-import-status{ font-size:10.5px; line-height:1.25; max-width:230px; }
+  /* TKT AutoFill: button only — label, helper text and the pill box are hidden. The status
+     span stays in the DOM (hidden) because the existing PDF import code writes to it. */
+  .ptc-header-tktautofill .ptc-header-control-label,
+  .ptc-header-tktautofill .ptc-pdf-import-status{ display:none; }
+  .ptc-header-tktautofill .ptc-pdf-import{ border:none; background:none; padding:0; margin:0; }
   .ptc-hero-perf{ margin:10px 0 6px; }
   .ptc-dash-greeting{ font-size:12px; }
   @media (max-width: 720px){
