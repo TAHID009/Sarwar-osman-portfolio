@@ -1471,6 +1471,64 @@
     .ptc-command-action{ flex: 1 1 auto; justify-content: center; }
   }
 
+  /* ===== Header controls: Transaction Type + TKT AutoFill (moved here from
+       the lower Data Import box so each exists in only one place). ===== */
+  .ptc-header-controls{
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin: 14px 0 2px;
+    position: relative;
+    z-index: 1;
+  }
+  .ptc-header-control-label{
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.65);
+    margin-bottom: 6px;
+  }
+  .ptc-header-txntype .ptc-txn-tabs{
+    grid-template-columns: repeat(4, auto);
+    gap: 6px;
+    margin-top: 0;
+  }
+  .ptc-header-txntype .ptc-txn-tab{
+    background: rgba(255,255,255,0.08);
+    border-color: rgba(255,255,255,0.18);
+    color: #fff;
+    padding: 7px 11px;
+    font-size: 11.5px;
+    border-radius: 8px;
+  }
+  .ptc-header-txntype .ptc-txn-tab:hover{
+    background: rgba(255,255,255,0.18);
+    border-color: rgba(255,255,255,0.35);
+    color: #fff;
+  }
+  .ptc-header-txntype .ptc-txn-tab.ptc-txn-tab-active{ box-shadow: none; }
+  @media (max-width: 720px){
+    .ptc-header-txntype .ptc-txn-tabs{ grid-template-columns: repeat(2, 1fr); width: 100%; }
+  }
+  .ptc-header-tktautofill .ptc-pdf-import{
+    border: 1px solid rgba(255,255,255,0.18);
+    background: rgba(255,255,255,0.08);
+    padding: 8px 12px;
+    margin: 0;
+    gap: 10px;
+  }
+  .ptc-header-tktautofill .ptc-pdf-import-btn{ padding: 7px 12px; font-size: 12px; }
+  .ptc-header-tktautofill .ptc-pdf-import-status{ color: rgba(255,255,255,0.75); font-size: 11.5px; max-width: 260px; }
+  @media (max-width: 720px){
+    .ptc-header-controls{ flex-direction: column; gap: 14px; }
+    .ptc-header-tktautofill .ptc-pdf-import{ width: 100%; box-sizing: border-box; }
+  }
+
+  /* ===== Entry Log collapsible wrapper ===== */
+  .ptc-entrylog-body[hidden]{ display: none; }
+
   .ptc-hero-perf{
     position: relative;
     z-index: 1;
@@ -2054,7 +2112,7 @@
            the two existing per-tab search boxes or the header row above. ===== -->
       <div class="ptc-global-search-wrap" id="ptc-global-search-wrap">
         <span class="ptc-global-search-icon">🔎</span>
-        <input type="text" id="ptc-global-search" placeholder="Search everything — PNR, ticket number, passenger, or route..." autocomplete="off" />
+        <input type="text" id="ptc-global-search" placeholder="Search PNR, ticket number or passenger — press Enter for complete details..." autocomplete="off" />
         <div class="ptc-global-search-results" id="ptc-global-search-results" style="display:none;"></div>
       </div>
 
@@ -2069,6 +2127,39 @@
           <button type="button" class="ptc-command-action" id="qa-reissue" title="Jump to Reissue">🔄 Reissue</button>
           <button type="button" class="ptc-command-action" id="qa-search" title="Focus global search">🔎 Search</button>
           <button type="button" class="ptc-command-action" id="qa-recent" title="View recent operations">🕒 Recent</button>
+        </div>
+      </div>
+
+      <!-- ===== Transaction Type + TKT AutoFill — the one and only copy of each,
+           moved here from the lower Data Import box (#ptc-card). Same ids, same
+           options, same click behavior — the code that wires them up (typeSelect,
+           #f-type-tabs listeners, wirePdfImport) was not changed. ===== -->
+      <div class="ptc-header-controls" id="ptc-header-controls">
+        <div class="ptc-header-txntype" id="ptc-header-txntype">
+          <div class="ptc-header-control-label">Transaction Type <span class="ptc-required">*</span></div>
+          <select id="f-type" class="ptc-method-select-native" aria-hidden="true" tabindex="-1">
+            <option value="" disabled selected>Select Type</option>
+            <option value="Ticketing">Ticketing</option>
+            <option value="Reissue">Reissue</option>
+            <option value="Refund">Refund</option>
+            <option value="Void">Void</option>
+          </select>
+          <div class="ptc-txn-tabs" id="f-type-tabs" role="group" aria-label="Transaction type">
+            <button type="button" class="ptc-txn-tab" data-type="Ticketing" style="--txn-color:#2E6F95;">✈️ Ticketing</button>
+            <button type="button" class="ptc-txn-tab" data-type="Reissue" style="--txn-color:#C97F1E;">🔄 Reissue</button>
+            <button type="button" class="ptc-txn-tab" data-type="Refund" style="--txn-color:#B4453B;">💸 Refund</button>
+            <button type="button" class="ptc-txn-tab" data-type="Void" style="--txn-color:#6B7280;">🚫 Void</button>
+          </div>
+        </div>
+        <div class="ptc-header-tktautofill" id="ptc-header-tktautofill">
+          <div class="ptc-header-control-label">TKT AutoFill</div>
+          <div class="ptc-pdf-import" id="ptc-pdf-import">
+            <label for="pdf-ticket-input" class="ptc-pdf-import-btn" id="pdf-ticket-btn">
+              🎫 TKT AutoFill
+            </label>
+            <input type="file" id="pdf-ticket-input" accept="application/pdf" style="display:none;" />
+            <span class="ptc-pdf-import-status" id="pdf-import-status">Reads a ticket PDF and fills in the fields below — always double-check before saving.</span>
+          </div>
         </div>
       </div>
 
@@ -2246,35 +2337,13 @@
       <div class="ptc-editing-banner" id="ptc-editing-banner">
         <span id="ptc-editing-banner-text">Editing entry #1</span>
       </div>
-      <div class="ptc-pdf-import" id="ptc-pdf-import">
-        <label for="pdf-ticket-input" class="ptc-pdf-import-btn" id="pdf-ticket-btn">
-          🎫 TKT AutoFill
-        </label>
-        <input type="file" id="pdf-ticket-input" accept="application/pdf" style="display:none;" />
-        <span class="ptc-pdf-import-status" id="pdf-import-status">Reads a ticket PDF and fills in the fields below — always double-check before saving.</span>
-      </div>
+      <!-- TKT AutoFill and Transaction Type now live in the header only (see
+           .ptc-header-controls above) — moved, not duplicated, so #pdf-ticket-input,
+           #pdf-ticket-btn, #f-type and #f-type-tabs still work exactly as before. -->
       <div id="pdf-import-banner" style="display:none;">
         ⚠️ Fields were auto-filled from the uploaded PDF — verify every value before saving. Layouts vary by airline/GDS, so extraction can miss or misread a field.
       </div>
 
-      <div class="ptc-row">
-        <div class="ptc-field" style="grid-column: 1 / -1;">
-          <label for="f-type">Transaction Type <span class="ptc-required">*</span></label>
-          <select id="f-type" class="ptc-method-select-native" aria-hidden="true" tabindex="-1">
-            <option value="" disabled selected>Select Type</option>
-            <option value="Ticketing">Ticketing</option>
-            <option value="Reissue">Reissue</option>
-            <option value="Refund">Refund</option>
-            <option value="Void">Void</option>
-          </select>
-          <div class="ptc-txn-tabs" id="f-type-tabs" role="group" aria-label="Transaction type">
-            <button type="button" class="ptc-txn-tab" data-type="Ticketing" style="--txn-color:#2E6F95;">✈️ Ticketing</button>
-            <button type="button" class="ptc-txn-tab" data-type="Reissue" style="--txn-color:#C97F1E;">🔄 Reissue</button>
-            <button type="button" class="ptc-txn-tab" data-type="Refund" style="--txn-color:#B4453B;">💸 Refund</button>
-            <button type="button" class="ptc-txn-tab" data-type="Void" style="--txn-color:#6B7280;">🚫 Void</button>
-          </div>
-        </div>
-      </div>
       <div class="ptc-row">
         <div class="ptc-field">
           <label for="f-date">Date</label>
@@ -2674,15 +2743,19 @@
       </div>
     </div>
 
-    <div class="ptc-log-head">
+    <div class="ptc-log-head" id="ptc-entrylog-head" role="button" tabindex="0" aria-expanded="false" aria-controls="ptc-entrylog-body" style="cursor:pointer;">
       <h2>Entries Log</h2>
       <span class="ptc-count" id="ptc-count">0 entries</span>
       <button type="button" class="ptc-view-toggle" id="btn-toggle-compact">📋 Show Full Details</button>
+      <button type="button" class="ptc-view-toggle" id="btn-entrylog-toggle" style="margin-left:auto;">Expand ▾</button>
     </div>
 
+    <div class="ptc-entrylog-body" id="ptc-entrylog-body" hidden>
     <div class="ptc-card" style="padding:14px 18px; margin-bottom:14px;">
       <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-        <div style="flex:1; min-width:260px; position:relative;">
+        <!-- Inner log search hidden: the header search is the only search bar. The input stays
+             in the DOM because the existing search/render code and the header search drive it. -->
+        <div style="display:none;">
           <span style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--muted); font-size:14px;">🔍</span>
           <input type="text" id="ptc-search" placeholder="Search by PNR, GDS/Airline reference, Ticket Number, or Passenger Name..."
             style="width:100%; box-sizing:border-box; padding:10px 12px 10px 34px; border:1px solid var(--line); border-radius:8px; font-family:inherit; font-size:13px; color:var(--ink);" />
@@ -2775,6 +2848,22 @@
       <button class="ptc-btn ptc-btn-primary" id="btn-export" style="background:var(--ink);">Download Backup Copy (.xlsx)</button>
       <span class="ptc-info" tabindex="0" aria-label="Save details">ⓘ<span class="ptc-tooltip">If you've connected Live Cloud Sync or set a Master Data File above, every entry already auto-saves there — you don't need to export anything manually. "Download Backup Copy" just gives you an extra snapshot (a multi-sheet Excel workbook with a separate tab for each transaction type) any time you want one, e.g. to email or archive. "Import" can load rows back in from either a .csv or .xlsx file — and will upload straight to the cloud if it's connected.</span></span>
     </div>
+    </div><!-- /ptc-entrylog-body -->
+    <script>
+    (function(){
+      // Entries Log: collapsed by default, click header to expand. UI toggle only.
+      var head=document.getElementById('ptc-entrylog-head'), body=document.getElementById('ptc-entrylog-body'), btn=document.getElementById('btn-entrylog-toggle');
+      if(!head||!body||!btn) return;
+      function set(open){ body.hidden=!open; btn.textContent=open?'Collapse ▴':'Expand ▾'; head.setAttribute('aria-expanded',open?'true':'false'); }
+      head.addEventListener('click',function(e){
+        if(e.target.closest('#btn-toggle-compact')) return;
+        set(body.hidden);
+      });
+      head.addEventListener('keydown',function(e){ if((e.key==='Enter'||e.key===' ')&&e.target===head){ e.preventDefault(); set(body.hidden); } });
+      window.ptcExpandEntryLog=function(){ set(true); };
+      set(false);
+    })();
+    </script>
 
     <div class="ptc-log-head" style="margin-top:28px;">
       <h2>Business Impact</h2>
@@ -3010,7 +3099,7 @@
 
       <div class="ptc-card" style="padding:14px 18px; margin-bottom:14px;">
         <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-          <div style="flex:1; min-width:260px; position:relative;">
+          <div style="display:none;">
             <span style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--muted); font-size:14px;">🔍</span>
             <input type="text" id="sales-search" placeholder="Search by GDS/Airline PNR, Ticket Number, or Passenger Name..."
               style="width:100%; box-sizing:border-box; padding:10px 12px 10px 34px; border:1px solid var(--line); border-radius:8px; font-family:inherit; font-size:13px; color:var(--ink);" />
@@ -7481,7 +7570,8 @@
         const q = (target && (target.pnrGds || target.pname)) || '';
         searchBox.value = q;
         searchBox.dispatchEvent(new Event('input'));
-        setTimeout(() => searchBox.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+        if(typeof window.ptcExpandEntryLog === 'function') window.ptcExpandEntryLog();
+        setTimeout(() => { const r = document.getElementById('ptc-search-results'); if(r) r.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 50);
       }
     }
     function goToSale(idx){
@@ -7494,9 +7584,34 @@
         const q = (target && (target.pnrGds || target.pname)) || '';
         searchBox.value = q;
         searchBox.dispatchEvent(new Event('input'));
-        setTimeout(() => searchBox.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+        setTimeout(() => { const r = document.getElementById('sales-search-results'); if(r) r.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 50);
       }
     }
+
+    // Enter = show COMPLETE details for everything matching the typed PNR / ticket / name,
+    // by driving the existing Entries Log and Revenue Ledger search renderers (all
+    // passengers, tickets and transactions sharing that PNR appear as full detail cards).
+    function showFullDetails(){
+      const raw = input.value.trim();
+      const q = norm(raw);
+      if(q.length < 2) return;
+      const hasEntries = (typeof entries !== 'undefined' ? entries : []).some(e => matchesEntry(e, q));
+      const hasSales = (typeof salesEntries !== 'undefined' ? salesEntries : []).some(s => matchesSale(s, q));
+      resultsEl.style.display = 'none';
+      if(!hasEntries && !hasSales){ runGlobalSearch(); return; }
+      const eBox = document.getElementById('ptc-search'), sBox = document.getElementById('sales-search');
+      if(hasSales && sBox){ sBox.value = raw; sBox.dispatchEvent(new Event('input')); }
+      if(hasEntries && eBox){
+        if(typeof switchView === 'function') switchView('entry');
+        eBox.value = raw; eBox.dispatchEvent(new Event('input'));
+        if(typeof window.ptcExpandEntryLog === 'function') window.ptcExpandEntryLog();
+        setTimeout(() => { const r = document.getElementById('ptc-search-results'); if(r) r.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 50);
+      } else if(hasSales){
+        if(typeof switchView === 'function') switchView('sales');
+        setTimeout(() => { const r = document.getElementById('sales-search-results'); if(r) r.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 50);
+      }
+    }
+    input.addEventListener('keydown', (e) => { if(e.key === 'Enter'){ e.preventDefault(); showFullDetails(); } });
 
     let debounceTimer = null;
     input.addEventListener('input', () => {
