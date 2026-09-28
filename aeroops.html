@@ -2120,7 +2120,7 @@
            the two existing per-tab search boxes or the header row above. ===== -->
       <div class="ptc-global-search-wrap" id="ptc-global-search-wrap">
         <span class="ptc-global-search-icon">🔎</span>
-        <input type="text" id="ptc-global-search" placeholder="Search PNR, ticket number or passenger — press Enter for complete details..." autocomplete="off" />
+        <input type="text" id="ptc-global-search" placeholder="Search PNR, ticket number or passenger — details show instantly..." autocomplete="off" />
         <div class="ptc-global-search-results" id="ptc-global-search-results" style="display:none;"></div>
       </div>
 
@@ -6169,7 +6169,6 @@
     const f = [
       ['Date', e.date],
       ['Passenger', e.pname],
-      ['Type', e.ptype],
       ['GDS PNR', e.pnrGds],
       ['Airline PNR', e.pnrAirline],
       ['Platform', e.platform],
@@ -7592,24 +7591,35 @@
     // Enter = show COMPLETE details for everything matching the typed PNR / ticket / name,
     // by driving the existing Entries Log and Revenue Ledger search renderers (all
     // passengers, tickets and transactions sharing that PNR appear as full detail cards).
+    let detailsActive = false;
+    function clearDetails(){
+      if(!detailsActive) return;
+      detailsActive = false;
+      ['ptc-search','sales-search'].forEach(id => {
+        const b = document.getElementById(id);
+        if(b && b.value){ b.value = ''; b.dispatchEvent(new Event('input')); }
+      });
+    }
     function showFullDetails(){
       const raw = input.value.trim();
       const q = norm(raw);
-      if(q.length < 2) return;
+      if(q.length < 2){ clearDetails(); return; }
+      const firstShow = !detailsActive;
       const hasEntries = (typeof entries !== 'undefined' ? entries : []).some(e => matchesEntry(e, q));
       const hasSales = (typeof salesEntries !== 'undefined' ? salesEntries : []).some(s => matchesSale(s, q));
       resultsEl.style.display = 'none';
-      if(!hasEntries && !hasSales){ runGlobalSearch(); return; }
+      if(!hasEntries && !hasSales){ clearDetails(); runGlobalSearch(); return; }
+      detailsActive = true;
       const eBox = document.getElementById('ptc-search'), sBox = document.getElementById('sales-search');
       if(hasSales && sBox){ sBox.value = raw; sBox.dispatchEvent(new Event('input')); }
       if(hasEntries && eBox){
         if(typeof switchView === 'function') switchView('entry');
         eBox.value = raw; eBox.dispatchEvent(new Event('input'));
         if(typeof window.ptcExpandEntryLog === 'function') window.ptcExpandEntryLog();
-        setTimeout(() => { const r = document.getElementById('ptc-search-results'); if(r) r.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 50);
+        if(firstShow) setTimeout(() => { const r = document.getElementById('ptc-search-results'); if(r) r.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 50);
       } else if(hasSales){
         if(typeof switchView === 'function') switchView('sales');
-        setTimeout(() => { const r = document.getElementById('sales-search-results'); if(r) r.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 50);
+        if(firstShow) setTimeout(() => { const r = document.getElementById('sales-search-results'); if(r) r.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 50);
       }
     }
     input.addEventListener('keydown', (e) => { if(e.key === 'Enter'){ e.preventDefault(); showFullDetails(); } });
@@ -7702,9 +7712,8 @@
     let debounceTimer = null;
     input.addEventListener('input', () => {
       clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(runGlobalSearch, 180);
+      debounceTimer = setTimeout(showFullDetails, 250);
     });
-    input.addEventListener('focus', () => { if(input.value.trim()) runGlobalSearch(); });
     document.addEventListener('click', (e) => {
       if(!e.target.closest('#ptc-global-search-wrap')) resultsEl.style.display = 'none';
     });
