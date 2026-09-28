@@ -7628,11 +7628,15 @@
         if(top > 220 || top < 0) window.scrollTo({ top: Math.max(0, top + window.pageYOffset - 16), behavior: 'smooth' });
       }, 120);
     }
-    // Clear Search buttons (log/ledger) also empty the header search box.
-    ['btn-search-clear','btn-sales-search-clear'].forEach(id => {
-      const btn = document.getElementById(id);
-      if(btn) btn.addEventListener('click', () => { input.value = ''; detailsActive = false; resultsEl.style.display = 'none'; });
-    });
+    // Clear Search buttons (log/ledger) also empty the header search box. Delegated in the
+    // capture phase so it always runs, whichever tab is open and whatever the buttons do.
+    document.addEventListener('click', (e) => {
+      if(!e.target.closest || !e.target.closest('#btn-search-clear, #btn-sales-search-clear')) return;
+      clearTimeout(debounceTimer);
+      input.value = '';
+      detailsActive = false;
+      resultsEl.style.display = 'none';
+    }, true);
     input.addEventListener('keydown', (e) => { if(e.key === 'Enter'){ e.preventDefault(); showFullDetails(); } });
 
     // ---- Hover preview: hovering a result shows its full details + fare chart, built
