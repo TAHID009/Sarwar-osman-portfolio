@@ -1674,6 +1674,18 @@
   #ptc-card .ptc-header-txntype .ptc-txn-tab.ptc-txn-tab-active{ background:var(--txn-color, var(--accent)); border-color:var(--txn-color, var(--accent)); color:#fff; box-shadow:none; }
   @media (max-width:640px){ #ptc-card .ptc-header-txntype .ptc-txn-tabs{ grid-template-columns:repeat(2, 1fr); width:100%; } }
 
+  /* TKT AutoFill now sits in the Entry Desk form, on the same row as Transaction Type */
+  #ptc-header-controls{ display:none !important; }
+  .ptc-entry-topbar{ display:flex; align-items:center; justify-content:space-between; gap:10px 16px; flex-wrap:wrap; margin:0 0 10px; padding-bottom:10px; border-bottom:1px solid var(--line); }
+  #ptc-card .ptc-entry-topbar .ptc-header-txntype{ margin:0; padding:0; border:none; }
+  #ptc-card .ptc-header-tktautofill{ display:flex; align-items:center; }
+  #ptc-card .ptc-header-tktautofill .ptc-pdf-import-btn{ padding:7px 14px; font-size:12.5px; }
+  #ptc-today{ grid-template-columns:minmax(0,1.1fr) repeat(5,1fr); }
+  .ptc-today-range{ padding:0; }
+  .ptc-today-range select{ width:100%; border:none; background:transparent; font:inherit; font-size:12px; font-weight:700; color:var(--ink); padding:6px 8px; cursor:pointer; }
+  @media (max-width:720px){ #ptc-today{ grid-template-columns:repeat(3,1fr); } .ptc-today-range{ grid-column:1 / -1; } }
+  @media (max-width:420px){ #ptc-today{ grid-template-columns:repeat(2,1fr); } }
+
   /* ===== Entry Log collapsible wrapper ===== */
   .ptc-entrylog-body[hidden]{ display: none; }
 
@@ -2358,16 +2370,6 @@
            options, same click behavior — the code that wires them up (typeSelect,
            #f-type-tabs listeners, wirePdfImport) was not changed. ===== -->
       <div class="ptc-header-controls" id="ptc-header-controls">
-        <div class="ptc-header-tktautofill" id="ptc-header-tktautofill">
-          <div class="ptc-header-control-label">TKT AutoFill</div>
-          <div class="ptc-pdf-import" id="ptc-pdf-import">
-            <label for="pdf-ticket-input" class="ptc-pdf-import-btn" id="pdf-ticket-btn">
-              🎫 TKT AutoFill
-            </label>
-            <input type="file" id="pdf-ticket-input" accept="application/pdf" style="display:none;" />
-            <span class="ptc-pdf-import-status" id="pdf-import-status">Reads a ticket PDF and fills in the fields below — always double-check before saving.</span>
-          </div>
-        </div>
       </div>
 
       <div class="ptc-hero-perf" aria-hidden="true"></div>
@@ -2388,11 +2390,12 @@
     </nav>
 
     <div id="ptc-today" aria-label="Today summary">
+      <div class="ptc-today-item ptc-today-range"><select id="td-range" aria-label="Summary period"><option value="today" selected>Today</option><option value="7">Last 7 days</option><option value="30">Last 30 days</option><option value="all">All time</option></select></div>
       <div class="ptc-today-item"><span>Tickets</span><b id="td-tickets">0</b></div>
       <div class="ptc-today-item"><span>Reissues</span><b id="td-reissues">0</b></div>
       <div class="ptc-today-item"><span>Refunds</span><b id="td-refunds">0</b></div>
       <div class="ptc-today-item" title="Refunded entries whose adjustment has not been given yet (all dates)"><span>Pending Adj.</span><b id="td-pending">0</b></div>
-      <div class="ptc-today-item" title="Selling price of today's Revenue Desk sales"><span>Revenue</span><b id="td-revenue">0</b></div>
+      <div class="ptc-today-item" title="Agency earnings from entries (markup + service charges) plus Revenue Desk profit, for the selected period"><span>Revenue</span><b id="td-revenue">0</b></div>
     </div>
 
     <!-- ============ DASHBOARD VIEW ============ -->
@@ -2488,6 +2491,7 @@
            .ptc-header-controls above) — moved, not duplicated, so #pdf-ticket-input,
            #pdf-ticket-btn, #f-type and #f-type-tabs still work exactly as before. -->
       <!-- Transaction Type lives here (Entry Desk only) — moved from the header, same ids/handlers. -->
+      <div class="ptc-entry-topbar">
       <div class="ptc-header-txntype" id="ptc-header-txntype">
           <div class="ptc-header-control-label">Transaction Type <span class="ptc-required">*</span></div>
           <select id="f-type" class="ptc-method-select-native" aria-hidden="true" tabindex="-1">
@@ -2504,6 +2508,17 @@
             <button type="button" class="ptc-txn-tab" data-type="Void" style="--txn-color:#6B7280;">🚫 Void</button>
           </div>
         </div>
+      <div class="ptc-header-tktautofill" id="ptc-header-tktautofill">
+          <div class="ptc-header-control-label">TKT AutoFill</div>
+          <div class="ptc-pdf-import" id="ptc-pdf-import">
+            <label for="pdf-ticket-input" class="ptc-pdf-import-btn" id="pdf-ticket-btn">
+              🎫 TKT AutoFill
+            </label>
+            <input type="file" id="pdf-ticket-input" accept="application/pdf" style="display:none;" />
+            <span class="ptc-pdf-import-status" id="pdf-import-status">Reads a ticket PDF and fills in the fields below — always double-check before saving.</span>
+          </div>
+        </div>
+      </div>
 
       <div id="pdf-import-banner" style="display:none;">
         ⚠️ Fields were auto-filled from the uploaded PDF — verify every value before saving. Layouts vary by airline/GDS, so extraction can miss or misread a field.
@@ -8078,17 +8093,24 @@
   // ---- Today summary ----
   function ptcTodayStr(){ const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
   function ptcUpdateToday(){
+    const sel = $('td-range'); const range = sel ? sel.value : 'today';
     const t = ptcTodayStr();
+    let from = t;
+    if(range === '7' || range === '30'){ const d = new Date(); d.setDate(d.getDate() - (parseInt(range, 10) - 1)); from = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
+    const inRange = (dt) => { if(!dt) return false; if(range === 'all') return true; return dt >= from && dt <= t; };
     const set = (id, v) => { const el = $(id); if(el) el.textContent = v; };
-    const te = entries.filter(e => e.date === t);
+    const te = entries.filter(e => inRange(e.date));
     set('td-tickets', te.filter(e => e.txn === 'Ticketing').length);
     set('td-reissues', te.filter(e => e.txn === 'Reissue').length);
     set('td-refunds', te.filter(e => e.txn === 'Refund').length);
     set('td-pending', entries.filter(e => e.txn === 'Refund' && e.refundStatus === 'REFUNDED' && e.adjustmentGiven !== 'YES').length);
     let rev = 0;
-    try{ rev = salesEntries.filter(x => x.date === t).reduce((a, x) => a + (Number(x.price) || 0), 0); }catch(err){ rev = 0; }
+    try{ te.forEach(e => { rev += Number(entryEarnings(e)) || 0; }); }catch(err){}
+    try{ salesEntries.filter(x => inRange(x.date)).forEach(x => { rev += (parseFloat(x.profit) || ((parseFloat(x.price) || 0) - (parseFloat(x.cost) || 0))); }); }catch(err){}
     set('td-revenue', rev.toLocaleString(undefined, { maximumFractionDigits: 0 }));
   }
+  if($('td-range')) $('td-range').addEventListener('change', ptcUpdateToday);
+  setInterval(() => { try{ ptcUpdateToday(); }catch(err){} }, 2000); // also follows cloud/file loads and date rollover
 
   // ---- Reports KPIs (read-only, same formulas the dashboard already uses) ----
   function ptcUpdateReports(){
