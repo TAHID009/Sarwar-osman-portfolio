@@ -1686,6 +1686,16 @@
   @media (max-width:720px){ #ptc-today{ grid-template-columns:repeat(3,1fr); } .ptc-today-range{ grid-column:1 / -1; } }
   @media (max-width:420px){ #ptc-today{ grid-template-columns:repeat(2,1fr); } }
 
+  /* Nav: daily tabs + Pending Adj. + Logs menu; Today strip only on Entry Desk */
+  #ptc-nav{ overflow:visible; flex-wrap:wrap; position:relative; }
+  .ptc-nav-badge{ display:inline-block; min-width:16px; padding:0 5px; margin-left:4px; border-radius:9px; background:var(--refund); color:#fff; font-size:10.5px; font-weight:800; line-height:16px; text-align:center; }
+  .ptc-nav-more{ position:relative; margin-left:auto; }
+  .ptc-nav-menu{ position:absolute; right:0; top:calc(100% + 4px); z-index:60; background:#fff; border:1px solid var(--line); border-radius:8px; box-shadow:0 8px 24px rgba(11,37,69,0.16); padding:4px; min-width:150px; }
+  .ptc-nav-menu[hidden]{ display:none; }
+  .ptc-nav-menu-item{ display:block; width:100%; text-align:left; border:none; background:transparent; font:inherit; font-size:12.5px; font-weight:600; color:var(--ink-soft); padding:7px 10px; border-radius:6px; cursor:pointer; }
+  .ptc-nav-menu-item:hover{ background:#F3F5F8; color:var(--ink); }
+  #ptc-root:not([data-pane="entrydesk"]) #ptc-today{ display:none; }
+
   /* ===== Entry Log collapsible wrapper ===== */
   .ptc-entrylog-body[hidden]{ display: none; }
 
@@ -2382,11 +2392,17 @@
     </div>
 
     <nav id="ptc-nav" aria-label="AeroOps sections">
-      <button type="button" class="ptc-nav-btn active" data-pane="entrydesk">🧾 Entry Desk</button>
-      <button type="button" class="ptc-nav-btn" data-pane="salesdesk">💰 Revenue Desk</button>
-      <button type="button" class="ptc-nav-btn" data-pane="entrylog">📋 Entry Log</button>
-      <button type="button" class="ptc-nav-btn" data-pane="saleslog">📒 Revenue Log</button>
-      <button type="button" class="ptc-nav-btn" data-pane="reports">📊 Reports</button>
+      <button type="button" class="ptc-nav-btn active" data-nav="entrydesk" data-pane="entrydesk">🧾 Entry Desk</button>
+      <button type="button" class="ptc-nav-btn" data-nav="salesdesk" data-pane="salesdesk">💰 Revenue Desk</button>
+      <button type="button" class="ptc-nav-btn" data-nav="pending" id="btn-nav-pending" title="Refunds waiting for their adjustment">⏳ Pending Adj. <span class="ptc-nav-badge" id="nav-pending-badge" style="display:none;">0</span></button>
+      <button type="button" class="ptc-nav-btn" data-nav="reports" data-pane="reports">📊 Reports</button>
+      <div class="ptc-nav-more">
+        <button type="button" class="ptc-nav-btn" data-nav="logs" id="btn-nav-logs" aria-haspopup="true" aria-expanded="false">⋯ Logs ▾</button>
+        <div class="ptc-nav-menu" id="ptc-nav-menu" hidden>
+          <button type="button" class="ptc-nav-menu-item" data-pane="entrylog">📋 Entry Log</button>
+          <button type="button" class="ptc-nav-menu-item" data-pane="saleslog">📒 Revenue Log</button>
+        </div>
+      </div>
     </nav>
 
     <div id="ptc-today" aria-label="Today summary">
@@ -8071,7 +8087,13 @@
   function ptcApplyPane(){
     root.setAttribute('data-pane', ptcPane);
     const onDash = $('view-dashboard').classList.contains('active');
-    document.querySelectorAll('#ptc-nav .ptc-nav-btn').forEach(b => b.classList.toggle('active', !onDash && b.dataset.pane === ptcPane));
+    const pend = ptcPane === 'entrylog' && pendingAdjFilterActive;
+    const logs = (ptcPane === 'entrylog' || ptcPane === 'saleslog') && !pend;
+    document.querySelectorAll('#ptc-nav .ptc-nav-btn').forEach(b => {
+      const n = b.dataset.nav;
+      const on = n === 'pending' ? pend : n === 'logs' ? logs : (n === ptcPane);
+      b.classList.toggle('active', !onDash && on);
+    });
   }
   switchView = function(view){
     if(view === 'entry' && PTC_PANES[ptcPane] !== 'entry') ptcPane = 'entrydesk';
@@ -8088,7 +8110,25 @@
     if(p === 'reports') ptcUpdateReports();
     try{ window.scrollTo({ top: 0 }); }catch(err){}
   };
-  document.querySelectorAll('#ptc-nav .ptc-nav-btn').forEach(b => b.addEventListener('click', () => window.ptcSetPane(b.dataset.pane)));
+  document.querySelectorAll('#ptc-nav .ptc-nav-btn[data-pane]').forEach(b => b.addEventListener('click', () => window.ptcSetPane(b.dataset.pane)));
+  // Logs menu (Entry Log / Revenue Log live here — secondary, not daily)
+  const navMenu = $('ptc-nav-menu'), navLogsBtn = $('btn-nav-logs');
+  function ptcCloseNavMenu(){ navMenu.hidden = true; navLogsBtn.setAttribute('aria-expanded', 'false'); }
+  navLogsBtn.addEventListener('click', (e) => { e.stopPropagation(); navMenu.hidden = !navMenu.hidden; navLogsBtn.setAttribute('aria-expanded', navMenu.hidden ? 'false' : 'true'); });
+  navMenu.querySelectorAll('.ptc-nav-menu-item').forEach(b => b.addEventListener('click', () => {
+    ptcCloseNavMenu();
+    if(pendingAdjFilterActive && b.dataset.pane === 'entrylog'){ $('btn-pending-refund-adj').click(); } // plain log, not the pending list
+    window.ptcSetPane(b.dataset.pane);
+  }));
+  document.addEventListener('click', ptcCloseNavMenu);
+  // Pending Refund Adjustments: one click from anywhere (uses the existing filter/list)
+  $('btn-nav-pending').addEventListener('click', () => {
+    window.ptcSetPane('entrylog');
+    if(!pendingAdjFilterActive) $('btn-pending-refund-adj').click();
+    ptcApplyPane();
+  });
+  $('btn-pending-refund-adj').addEventListener('click', () => setTimeout(ptcApplyPane, 0));
+  $('btn-search-clear').addEventListener('click', () => setTimeout(ptcApplyPane, 0));
 
   // ---- Today summary ----
   function ptcTodayStr(){ const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
@@ -8103,7 +8143,9 @@
     set('td-tickets', te.filter(e => e.txn === 'Ticketing').length);
     set('td-reissues', te.filter(e => e.txn === 'Reissue').length);
     set('td-refunds', te.filter(e => e.txn === 'Refund').length);
-    set('td-pending', entries.filter(e => e.txn === 'Refund' && e.refundStatus === 'REFUNDED' && e.adjustmentGiven !== 'YES').length);
+    const pendN = entries.filter(e => e.txn === 'Refund' && e.refundStatus === 'REFUNDED' && e.adjustmentGiven !== 'YES').length;
+    set('td-pending', pendN);
+    const bd = $('nav-pending-badge'); if(bd){ bd.textContent = pendN; bd.style.display = pendN ? '' : 'none'; }
     let rev = 0;
     try{ te.forEach(e => { rev += Number(entryEarnings(e)) || 0; }); }catch(err){}
     try{ salesEntries.filter(x => inRange(x.date)).forEach(x => { rev += (parseFloat(x.profit) || ((parseFloat(x.price) || 0) - (parseFloat(x.cost) || 0))); }); }catch(err){}
