@@ -1402,6 +1402,14 @@
     overflow-y: auto;
     padding: 6px;
   }
+  .ptc-global-hover{
+    position: fixed; z-index: 100000; display: none; pointer-events: none;
+    background: #fff; border: 1px solid var(--line); border-radius: 12px;
+    box-shadow: 0 18px 48px rgba(0,0,0,0.32); padding: 10px; overflow: hidden;
+    box-sizing: border-box;
+  }
+  .ptc-global-hover .ptc-detail-card{ margin: 0; box-shadow: none; }
+  .ptc-global-search-item{ cursor: pointer; }
   .ptc-global-search-empty{ color: var(--muted); font-size: 12.5px; padding: 12px; text-align: center; }
   .ptc-global-search-group-label{
     font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 800;
@@ -7606,6 +7614,91 @@
     }
     input.addEventListener('keydown', (e) => { if(e.key === 'Enter'){ e.preventDefault(); showFullDetails(); } });
 
+    // ---- Hover preview: hovering a result shows its full details + fare chart, built
+    // with the same detailFields / fareChartHtml helpers the log cards already use. ----
+    const hoverPanel = document.createElement('div');
+    hoverPanel.className = 'ptc-global-hover';
+    document.body.appendChild(hoverPanel);
+    function hideHoverPreview(){ hoverPanel.style.display = 'none'; }
+
+    function entryPreviewHtml(e){
+      const color = tagColor[e.txn] || '#6B7280';
+      let chartHtml = '';
+      if(e.txn === 'Ticketing'){
+        chartHtml = fareChartHtml(e.baseFare, e.taxFare, 'Total Fare');
+      } else if(e.txn === 'Refund' && e.refundType !== 'TAX_ONLY'){
+        const refundTax = parseFloat(e.refTotalTax) || 0;
+        const refundBase = (e.refBaseFare !== undefined && e.refBaseFare !== '' && e.refBaseFare !== null)
+          ? parseFloat(e.refBaseFare) || 0
+          : (parseFloat(e.refTotalFare) || 0) - refundTax;
+        chartHtml = fareChartHtml(refundBase, refundTax, 'Total');
+      }
+      const fields = detailFields(e);
+      return `
+        <div class="ptc-detail-card" style="border-left-color:${color};">
+          <div class="ptc-detail-card-head"><div>
+            <div class="ptc-detail-name">${formatPassengerNamesHTML(e.pname) || 'Unnamed'} <span class="ptc-tag" style="background:${color}; font-size:10px;">${esc(e.txn)}</span></div>
+            <div class="ptc-detail-sub">${esc(e.date || '')} · GDS ${esc(e.pnrGds) || '—'} · Airline PNR ${esc(e.pnrAirline) || '—'}</div>
+          </div></div>
+          ${chartHtml}
+          <div class="ptc-detail-grid">
+            ${fields.map(([label,value]) => `
+              <div>
+                <div class="ptc-detail-field-label">${esc(label)}</div>
+                <div class="ptc-detail-field-value">${(value === '' || value === undefined || value === null) ? '—' : (label === 'Passenger' ? formatPassengerNamesHTML(value) : (label === 'Ticket No.' || label === 'Old Ticket' || label === 'New Ticket') ? fmtTicketListHTML(value) : esc(value))}</div>
+              </div>`).join('')}
+          </div>
+        </div>`;
+    }
+    function salePreviewHtml(sl){
+      const netCost = parseFloat(sl.cost) || 0;
+      const profit = parseFloat(sl.profit) || (parseFloat(sl.price) || 0) - netCost;
+      const chartHtml = fareChartHtml(netCost, profit, 'Selling Price', { baseLabel: 'Net Cost', taxLabel: 'Profit', title: '📊 Revenue Breakdown' });
+      const fields = [
+        ['Date', sl.date], ['Passengers', paxSummary(sl)], ['Contact', sl.phone],
+        ['GDS PNR', sl.pnrGds], ['Airline PNR', sl.pnrAirline], ['Ticket No.', fmtTicketList(sl.tkt)],
+        ['Sector', sl.sector], ['Airline', sl.airline], ['Payment Method', sl.method],
+        ['Paid', fmtMoneySales(sl.paid)], ['Due', fmtMoneySales(sl.due)], ['Status', sl.status], ['Note', sl.note],
+      ];
+      return `
+        <div class="ptc-detail-card" style="border-left-color:#1E7A46;">
+          <div class="ptc-detail-card-head"><div>
+            <div class="ptc-detail-name">${formatPassengerNamesHTML(sl.pname) || 'Unnamed'} <span class="ptc-tag" style="background:#1E7A46; font-size:10px;">SALE</span></div>
+            <div class="ptc-detail-sub">${esc(sl.date || '')} · GDS ${esc(sl.pnrGds) || '—'} · Airline PNR ${esc(sl.pnrAirline) || '—'}</div>
+          </div></div>
+          ${chartHtml}
+          <div class="ptc-detail-grid">
+            ${fields.map(([label,value]) => `
+              <div>
+                <div class="ptc-detail-field-label">${esc(label)}</div>
+                <div class="ptc-detail-field-value">${(value === '' || value === undefined || value === null) ? '—' : (label === 'Ticket No.' ? fmtTicketListHTML(value) : esc(value))}</div>
+              </div>`).join('')}
+          </div>
+        </div>`;
+    }
+    function showHoverPreview(item){
+      try{
+        const idx = parseInt(item.getAttribute('data-idx'), 10);
+        const kind = item.getAttribute('data-kind');
+        hoverPanel.innerHTML = kind === 'entry' ? entryPreviewHtml(entries[idx]) : salePreviewHtml(salesEntries[idx]);
+        const r = resultsEl.getBoundingClientRect();
+        const vw = window.innerWidth, vh = window.innerHeight;
+        let left, top, width;
+        if(vw - r.right >= 340){ left = r.right + 10; top = Math.max(8, r.top); width = Math.min(480, vw - left - 12); }
+        else { left = Math.max(8, r.left); top = r.bottom + 8; width = Math.min(480, vw - 16); }
+        hoverPanel.style.left = left + 'px';
+        hoverPanel.style.top = top + 'px';
+        hoverPanel.style.width = width + 'px';
+        hoverPanel.style.maxHeight = Math.max(160, vh - top - 12) + 'px';
+        hoverPanel.style.display = 'block';
+      }catch(err){ hideHoverPreview(); }
+    }
+    if(window.MutationObserver){
+      new MutationObserver(() => { if(resultsEl.style.display === 'none') hideHoverPreview(); })
+        .observe(resultsEl, { attributes: true, attributeFilter: ['style'] });
+    }
+    resultsEl.addEventListener('mouseleave', hideHoverPreview);
+
     let debounceTimer = null;
     input.addEventListener('input', () => {
       clearTimeout(debounceTimer);
@@ -7648,7 +7741,6 @@
               <div class="ptc-global-search-item-title">${e.pname || 'Unnamed'} — ${e.txn}</div>
               <div class="ptc-global-search-item-meta">${[e.pnrGds, e.sector].filter(Boolean).join(' · ')}</div>
             </div>
-            <div class="ptc-global-search-item-go">View →</div>
           </div>
         `).join('');
       }
@@ -7661,14 +7753,16 @@
               <div class="ptc-global-search-item-title">${s.pname || 'Unnamed'} — Sale</div>
               <div class="ptc-global-search-item-meta">${[s.pnrGds, s.status].filter(Boolean).join(' · ')}</div>
             </div>
-            <div class="ptc-global-search-item-go">View →</div>
           </div>
         `).join('');
       }
       resultsEl.innerHTML = html;
       resultsEl.style.display = 'block';
       resultsEl.querySelectorAll('.ptc-global-search-item').forEach(item => {
+        item.addEventListener('mouseenter', () => showHoverPreview(item));
+        item.addEventListener('mouseleave', hideHoverPreview);
         item.addEventListener('click', () => {
+          hideHoverPreview();
           const idx = parseInt(item.getAttribute('data-idx'), 10);
           if(item.getAttribute('data-kind') === 'entry') goToEntry(idx);
           else goToSale(idx);
@@ -7740,6 +7834,18 @@
       }, 100);
     });
   })();
+})();
+</script>
+<script>
+(function(){
+  // Header Transaction Type + TKT AutoFill only apply to the Entry form, so hide them
+  // while the Revenue Desk tab is open (Revenue Desk has its own TKT AutoFill).
+  var controls = document.getElementById('ptc-header-controls');
+  var sales = document.getElementById('view-sales');
+  if(!controls || !sales) return;
+  function sync(){ controls.style.display = sales.classList.contains('active') ? 'none' : ''; }
+  if(window.MutationObserver) new MutationObserver(sync).observe(sales, { attributes: true, attributeFilter: ['class'] });
+  sync();
 })();
 </script>
 </body></html>
