@@ -2806,6 +2806,7 @@
       <h2>Entries Log</h2>
       <span class="ptc-count" id="ptc-count">0 entries</span>
       <button type="button" class="ptc-view-toggle" id="btn-toggle-compact">📋 Show Full Details</button>
+      <button type="button" class="ptc-btn ptc-btn-ghost" id="btn-pending-refund-adj" style="padding:5px 10px; font-size:11.5px; white-space:nowrap;">⏳ Pending Refund Adj.</button>
       <button type="button" class="ptc-view-toggle" id="btn-entrylog-toggle" style="margin-left:auto;">Expand ▾</button>
     </div>
 
@@ -2820,7 +2821,6 @@
             style="width:100%; box-sizing:border-box; padding:10px 12px 10px 34px; border:1px solid var(--line); border-radius:8px; font-family:inherit; font-size:13px; color:var(--ink);" />
         </div>
         <button class="ptc-btn ptc-btn-ghost" id="btn-search-clear" style="display:none;">Clear Search</button>
-        <button class="ptc-btn ptc-btn-ghost" id="btn-pending-refund-adj" style="padding:9px 14px; font-size:12.5px; white-space:nowrap;">⏳ Pending Refund Adjustments</button>
       </div>
       <div id="ptc-search-meta" style="font-size:11.5px; color:var(--muted); margin-top:8px; display:none;"></div>
       <div id="ptc-search-results" style="margin-top:12px; display:none;"></div>
@@ -2915,11 +2915,13 @@
       if(!head||!body||!btn) return;
       function set(open){ body.hidden=!open; btn.textContent=open?'Collapse ▴':'Expand ▾'; head.setAttribute('aria-expanded',open?'true':'false'); }
       head.addEventListener('click',function(e){
-        if(e.target.closest('#btn-toggle-compact')) return;
+        if(e.target.closest('#btn-toggle-compact, #btn-pending-refund-adj')) return;
         set(body.hidden);
       });
       head.addEventListener('keydown',function(e){ if((e.key==='Enter'||e.key===' ')&&e.target===head){ e.preventDefault(); set(body.hidden); } });
       window.ptcExpandEntryLog=function(){ set(true); };
+      var pend=document.getElementById('btn-pending-refund-adj');
+      if(pend) pend.addEventListener('click',function(){ setTimeout(function(){ if(pend.classList.contains('ptc-btn-active')) set(true); },0); });
       set(false);
     })();
     </script>
