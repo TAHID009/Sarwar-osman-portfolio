@@ -1768,10 +1768,6 @@
   .ptc-side-viewall{ display:block; width:100%; text-align:center; margin-top:8px; background:none; border:none; font:inherit; font-size:11.5px; font-weight:700; color:var(--accent); cursor:pointer; padding:4px; }
   .ptc-recent-ops#ptc-side-recent{ max-height:none; }
   #ptc-side-recent .ptc-recent-ops-item{ padding:7px 0; }
-  .ptc-side-help{ background:#F3F7FC; }
-  .ptc-side-help-text{ font-size:11.5px; color:var(--ink-soft); margin:2px 0 10px; }
-  .ptc-side-support-btn{ display:block; text-align:center; background:#DCEBFA; color:var(--accent); border-radius:8px; padding:8px; font-size:12px; font-weight:700; text-decoration:none; }
-  .ptc-side-support-btn:hover{ background:#CBE1F5; }
 
   /* ===== Entry Log collapsible wrapper ===== */
   .ptc-entrylog-body[hidden]{ display: none; }
@@ -3483,11 +3479,6 @@
         <button type="button" class="ptc-side-viewall" id="qa-view-all-logs">View All Logs →</button>
       </div>
 
-      <div class="ptc-side-panel ptc-side-help">
-        <div class="ptc-side-title">🎧 Need Help?</div>
-        <div class="ptc-side-help-text">Check our guide or contact support</div>
-        <a class="ptc-side-support-btn" id="qa-support" href="#" target="_blank" rel="noreferrer">View Support →</a>
-      </div>
     </aside>
 
     </div><!-- /ptc-body-grid -->
@@ -8466,11 +8457,6 @@
 
   // ---- Sidebar: Recent Activity + View All Logs + Support link ----
   $('qa-view-all-logs').addEventListener('click', () => window.ptcSetPane('reports'));
-  $('qa-support').addEventListener('click', (e) => {
-    e.preventDefault();
-    const el = $('ptc-global-search');
-    toast('For support, contact your AeroOps administrator.');
-  });
 })();
 </script>
 <script>
