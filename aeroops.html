@@ -1740,6 +1740,39 @@
   .ptc-footerbar-status{ display:inline-flex; align-items:center; gap:6px; font-weight:600; }
   .ptc-dot-online{ width:7px; height:7px; border-radius:50%; background:#1E7A46; display:inline-block; }
 
+  /* Top brand bar: connection pills, bell, avatar */
+  .ptc-brandbar{ position:relative; }
+  .ptc-brandbar-right{ margin-left:auto; display:flex; align-items:center; gap:10px; }
+  .ptc-brand-pill{ display:flex; align-items:center; gap:6px; border:1px solid var(--line); background:#fff; border-radius:8px; padding:4px 10px; font:inherit; font-size:10.5px; font-weight:700; color:var(--ink-soft); cursor:pointer; line-height:1.25; text-align:left; }
+  .ptc-brand-pill:hover{ border-color:var(--accent); }
+  .ptc-brand-pill b{ display:block; font-size:11px; color:var(--ink); }
+  .ptc-brand-pill-cloud{ background:#EAF7EF; border-color:#BFE3CC; }
+  .ptc-brand-pill-dot{ width:7px; height:7px; border-radius:50%; background:var(--muted); flex-shrink:0; }
+  #brandbar-cloud-dot.ptc-dot-online{ background:#1E7A46; }
+  .ptc-brandbar-icon{ position:relative; font-size:15px; cursor:default; color:var(--ink-soft); }
+  .ptc-brand-dot-badge{ position:absolute; top:-2px; right:-2px; width:7px; height:7px; border-radius:50%; background:var(--refund); border:1.5px solid #fff; }
+  .ptc-brandbar-avatar{ width:26px; height:26px; border-radius:50%; background:var(--accent); color:#fff; font-size:11px; font-weight:800; display:flex; align-items:center; justify-content:center; }
+  @media (max-width:720px){ .ptc-brandbar-right{ display:none; } }
+
+  /* Top row: nav (main col) + Logs button (sidebar col) share the body grid columns */
+  #ptc-toprow-grid{ margin-bottom:10px; }
+  #ptc-toprow-grid #ptc-nav{ margin-bottom:0; }
+  .ptc-side-logs-btn{ width:100%; height:100%; min-height:40px; display:flex; align-items:center; justify-content:center; gap:6px; background:var(--card); border:1px solid var(--line); border-radius:10px; font:inherit; font-size:12.5px; font-weight:700; color:var(--ink-soft); cursor:pointer; box-shadow:var(--shadow-sm); }
+  .ptc-side-logs-btn:hover{ background:#F3F5F8; }
+  #ptc-nav-menu{ left:auto; right:0; }
+  #ptc-root:not([data-pane="entrydesk"]):not([data-pane="salesdesk"]) #ptc-toprow-grid{ grid-template-columns:1fr; }
+  #ptc-root:not([data-pane="entrydesk"]):not([data-pane="salesdesk"]) .ptc-side-logs-btn{ display:none; }
+
+  /* Sidebar: stack Quick Actions / Recent Activity / Need Help, each its own panel */
+  .ptc-sidebar{ display:flex; flex-direction:column; gap:12px; }
+  .ptc-side-viewall{ display:block; width:100%; text-align:center; margin-top:8px; background:none; border:none; font:inherit; font-size:11.5px; font-weight:700; color:var(--accent); cursor:pointer; padding:4px; }
+  .ptc-recent-ops#ptc-side-recent{ max-height:none; }
+  #ptc-side-recent .ptc-recent-ops-item{ padding:7px 0; }
+  .ptc-side-help{ background:#F3F7FC; }
+  .ptc-side-help-text{ font-size:11.5px; color:var(--ink-soft); margin:2px 0 10px; }
+  .ptc-side-support-btn{ display:block; text-align:center; background:#DCEBFA; color:var(--accent); border-radius:8px; padding:8px; font-size:12px; font-weight:700; text-decoration:none; }
+  .ptc-side-support-btn:hover{ background:#CBE1F5; }
+
   /* ===== Entry Log collapsible wrapper ===== */
   .ptc-entrylog-body[hidden]{ display: none; }
 
@@ -2318,6 +2351,15 @@
       <span class="ptc-brandbar-name">AeroOps</span>
       <span class="ptc-brandbar-sep">|</span>
       <span class="ptc-brandbar-page">🏠 Work Record Database</span>
+      <div class="ptc-brandbar-right">
+        <button type="button" class="ptc-brand-pill ptc-brand-pill-cloud" id="brandbar-cloud-pill" title="Jump to Live Cloud Sync">
+          <span class="ptc-brand-pill-dot" id="brandbar-cloud-dot"></span>
+          <span><b>Cloud Sync</b><br><span id="brandbar-cloud-count">—</span></span>
+        </button>
+        <button type="button" class="ptc-brand-pill" id="brandbar-file-pill" title="Jump to Master Data File">📄 <b>Master Data</b></button>
+        <span class="ptc-brandbar-icon" id="brandbar-bell" title="Notifications">🔔<span class="ptc-brand-dot-badge" id="brandbar-bell-badge" style="display:none;"></span></span>
+        <span class="ptc-brandbar-avatar" id="brandbar-avatar" title="">MS</span>
+      </div>
     </div>
 
     <div class="ptc-dash-hero">
@@ -2443,19 +2485,24 @@
       <button class="ptc-tab" id="tab-btn-sales" data-view="sales">💰 Revenue Desk</button>
     </div>
 
+    <div class="ptc-body-grid" id="ptc-toprow-grid">
     <nav id="ptc-nav" aria-label="AeroOps sections">
       <button type="button" class="ptc-nav-btn active" data-nav="entrydesk" data-pane="entrydesk">🧾 Entry Desk</button>
       <button type="button" class="ptc-nav-btn" data-nav="salesdesk" data-pane="salesdesk">💰 Revenue Desk</button>
       <button type="button" class="ptc-nav-btn" data-nav="pending" id="btn-nav-pending" title="Refunds waiting for their adjustment">⏳ Pending Adj. <span class="ptc-nav-badge" id="nav-pending-badge" style="display:none;">0</span></button>
       <button type="button" class="ptc-nav-btn" data-nav="reports" data-pane="reports">📊 Reports</button>
-      <div class="ptc-nav-more">
-        <button type="button" class="ptc-nav-btn" data-nav="logs" id="btn-nav-logs" aria-haspopup="true" aria-expanded="false">⋯ Logs ▾</button>
-        <div class="ptc-nav-menu" id="ptc-nav-menu" hidden>
-          <button type="button" class="ptc-nav-menu-item" data-pane="entrylog">📋 Entry Log</button>
-          <button type="button" class="ptc-nav-menu-item" data-pane="saleslog">📒 Revenue Log</button>
-        </div>
-      </div>
     </nav>
+    <div class="ptc-nav-more" style="position:relative;">
+      <button type="button" class="ptc-side-logs-btn" data-nav="logs" id="btn-nav-logs" aria-haspopup="true" aria-expanded="false">☰ Logs ▾</button>
+      <div class="ptc-nav-menu" id="ptc-nav-menu" hidden>
+        <button type="button" class="ptc-nav-menu-item" data-pane="entrylog">📋 Entry Log</button>
+        <button type="button" class="ptc-nav-menu-item" data-pane="saleslog">📒 Revenue Log</button>
+      </div>
+    </div>
+    </div><!-- /ptc-toprow-grid -->
+
+    <div class="ptc-body-grid" id="ptc-body-grid">
+    <div class="ptc-body-main">
 
     <div id="ptc-today" aria-label="Today summary">
       <div class="ptc-today-item ptc-today-range"><select id="td-range" aria-label="Summary period"><option value="today" selected>Today</option><option value="7">Last 7 days</option><option value="30">Last 30 days</option><option value="all">All time</option></select></div>
@@ -2465,9 +2512,6 @@
       <div class="ptc-today-item" title="Refunded entries whose adjustment has not been given yet (all dates)"><span>Pending Adj.</span><b id="td-pending">0</b></div>
       <div class="ptc-today-item" title="Agency earnings from entries (markup + service charges) plus Revenue Desk profit, for the selected period"><span>Revenue</span><b id="td-revenue">0</b></div>
     </div>
-
-    <div class="ptc-body-grid" id="ptc-body-grid">
-    <div class="ptc-body-main">
 
     <!-- ============ DASHBOARD VIEW ============ -->
     <div class="ptc-view" id="view-dashboard">
@@ -3431,6 +3475,18 @@
         <button type="button" class="ptc-side-btn" id="qa-tkt-autofill">✈️ TKT Autofill <span>›</span></button>
         <button type="button" class="ptc-side-btn" id="qa-search-pnr">🔎 Search PNR <span>›</span></button>
         <button type="button" class="ptc-side-btn" id="qa-reset-form">🔄 Reset Form <span>›</span></button>
+      </div>
+
+      <div class="ptc-side-panel">
+        <div class="ptc-side-title">🕒 Recent Activity</div>
+        <div class="ptc-recent-ops" id="ptc-side-recent" style="max-height:none;"></div>
+        <button type="button" class="ptc-side-viewall" id="qa-view-all-logs">View All Logs →</button>
+      </div>
+
+      <div class="ptc-side-panel ptc-side-help">
+        <div class="ptc-side-title">🎧 Need Help?</div>
+        <div class="ptc-side-help-text">Check our guide or contact support</div>
+        <a class="ptc-side-support-btn" id="qa-support" href="#" target="_blank" rel="noreferrer">View Support →</a>
       </div>
     </aside>
 
@@ -7747,10 +7803,7 @@
 
     const OPS_ICON = { Ticketing:'🎫', Reissue:'🔄', Refund:'💸', Void:'🚫', Sale:'💰', search:'🔍', import:'📄' };
 
-    function renderRecentOperations(){
-      const el = document.getElementById('ptc-recent-ops');
-      if(!el) return;
-
+    function buildMergedOps(){
       const txnItems = (typeof entries !== 'undefined' ? entries : []).map(e => ({
         icon: OPS_ICON[e.txn] || '•',
         title: (e.pname || 'Unnamed') + ' — ' + e.txn,
@@ -7769,12 +7822,13 @@
         meta: x.kind === 'search' ? 'Search' : 'PDF Import',
         ts: x.ts,
       }));
+      return txnItems.concat(saleItems, logItems).filter(x => x.ts).sort((a, b) => new Date(b.ts) - new Date(a.ts));
+    }
 
-      const merged = txnItems.concat(saleItems, logItems)
-        .filter(x => x.ts)
-        .sort((a, b) => new Date(b.ts) - new Date(a.ts))
-        .slice(0, 10);
-
+    function renderRecentOperations(targetId, limit){
+      const el = document.getElementById(targetId || 'ptc-recent-ops');
+      if(!el) return;
+      const merged = buildMergedOps().slice(0, limit || 10);
       if(!merged.length){
         el.innerHTML = '<div class="ptc-recent-ops-empty">No operations recorded yet.</div>';
         return;
@@ -7790,6 +7844,10 @@
         </div>
       `).join('');
     }
+    window.ptcRenderRecentOps = function(){
+      renderRecentOperations('ptc-recent-ops', 10);
+      renderRecentOperations('ptc-side-recent', 4);
+    };
 
     // Refresh the new panel whenever the dashboard renders — without editing
     // renderDashboard itself, by wrapping the existing function.
@@ -7797,7 +7855,7 @@
       const _origRenderDashboard = renderDashboard;
       renderDashboard = function(){
         _origRenderDashboard();
-        renderRecentOperations();
+        window.ptcRenderRecentOps();
       };
     }
 
@@ -7827,7 +7885,7 @@
       };
     }
 
-    renderRecentOperations();
+    window.ptcRenderRecentOps();
   })();
 
   // ======================================================================
@@ -8350,9 +8408,9 @@
 
   // Keep the new bits in sync whenever the existing renderers run.
   const __renderOrig = render;
-  render = function(){ __renderOrig.apply(this, arguments); try{ ptcRenderCompactLog(); ptcUpdateToday(); ptcUpdateReports(); }catch(err){ console.error('Redesign layer failed', err); } };
+  render = function(){ __renderOrig.apply(this, arguments); try{ ptcRenderCompactLog(); ptcUpdateToday(); ptcUpdateReports(); if(window.ptcRenderRecentOps) window.ptcRenderRecentOps(); }catch(err){ console.error('Redesign layer failed', err); } };
   const __renderSalesOrig = renderSales;
-  renderSales = function(){ __renderSalesOrig.apply(this, arguments); try{ ptcUpdateToday(); }catch(err){} };
+  renderSales = function(){ __renderSalesOrig.apply(this, arguments); try{ ptcUpdateToday(); if(window.ptcRenderRecentOps) window.ptcRenderRecentOps(); }catch(err){} };
   try{ ptcRenderCompactLog(); ptcUpdateToday(); ptcUpdateReports(); }catch(err){ console.error('Redesign layer init failed', err); }
   ptcApplyPane();
 
@@ -8368,6 +8426,50 @@
   $('qa-reset-form').addEventListener('click', () => {
     const btn = ptcPane === 'salesdesk' ? $('btn-sales-clear') : $('btn-clear');
     if(btn) btn.click();
+  });
+
+  // ---- Top brand bar: pills mirror the real connection status (Master Data / Cloud Sync)
+  // and jump to + expand the same panels in the hero — no separate/duplicate state. ----
+  function ptcJumpExpand(summaryId, toggleId, actionsId){
+    const summary = $(summaryId), toggle = $(toggleId), actions = $(actionsId);
+    if(!summary) return;
+    summary.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if(actions && actions.hidden) setTimeout(() => toggle && toggle.click(), 300);
+  }
+  $('brandbar-file-pill').addEventListener('click', () => ptcJumpExpand('ptc-filebar-summary', 'btn-filebar-toggle', 'ptc-filebar-actions'));
+  $('brandbar-cloud-pill').addEventListener('click', () => ptcJumpExpand('ptc-cloudbar-summary', 'btn-cloudbar-toggle', 'ptc-cloudbar-actions'));
+  function ptcSyncBrandbar(){
+    const dot = $('ptc-cloud-dot'), status = $('ptc-cloud-status');
+    const bd = $('brandbar-cloud-dot'), ct = $('brandbar-cloud-count');
+    if(dot && bd) bd.className = 'ptc-brand-pill-dot' + (dot.style.background && /1E7A46|#1e7a46|green/i.test(dot.style.background) ? ' ptc-dot-online' : '');
+    if(status && ct) ct.textContent = /connected/i.test(status.textContent) ? (entries.length + ' entries · synced') : 'Not connected';
+  }
+  setInterval(ptcSyncBrandbar, 1500);
+  ptcSyncBrandbar();
+  // Bell: lights up when something needs attention (reuses the same Pending Adj. count).
+  function ptcSyncBell(){
+    const n = entries.filter(e => e.txn === 'Refund' && e.refundStatus === 'REFUNDED' && e.adjustmentGiven !== 'YES').length;
+    const bd = $('brandbar-bell-badge'); if(bd) bd.style.display = n ? '' : 'none';
+    const bell = $('brandbar-bell'); if(bell) bell.title = n ? n + ' refund' + (n === 1 ? '' : 's') + ' pending adjustment' : 'No notifications';
+  }
+  setInterval(ptcSyncBell, 1500);
+  ptcSyncBell();
+  // Avatar initials — computed from the portfolio's own profile name, not hardcoded.
+  (function(){
+    try{
+      const nm = (typeof profile !== 'undefined' && profile.name) ? profile.name : '';
+      const initials = nm.split(' ').filter(Boolean).slice(0, 2).map(w => w[0].toUpperCase()).join('');
+      const av = $('brandbar-avatar');
+      if(av && initials){ av.textContent = initials; av.title = nm; }
+    }catch(err){}
+  })();
+
+  // ---- Sidebar: Recent Activity + View All Logs + Support link ----
+  $('qa-view-all-logs').addEventListener('click', () => window.ptcSetPane('reports'));
+  $('qa-support').addEventListener('click', (e) => {
+    e.preventDefault();
+    const el = $('ptc-global-search');
+    toast('For support, contact your AeroOps administrator.');
   });
 })();
 </script>
