@@ -1711,6 +1711,35 @@
   #ptc-root.ptc-pending-view #ptc-entrylog-body > .ptc-card:first-child{ display:none !important; }
   #ptc-root.ptc-pending-view .ptc-log-head h2::after{ content:" — Pending Refund Adjustments"; font-weight:600; font-size:13px; color:var(--refund); text-transform:none; letter-spacing:0; }
 
+  /* ===== Brand bar, hero photo, body grid + sidebar, footer (visual redesign layer) ===== */
+  .ptc-brandbar{ display:flex; align-items:center; gap:8px; padding:2px 2px 10px; }
+  .ptc-brandbar-logo{ font-size:16px; }
+  .ptc-brandbar-name{ font-weight:800; font-size:14px; color:var(--ink); letter-spacing:0.2px; }
+  .ptc-brandbar-sep{ color:var(--line); }
+  .ptc-brandbar-page{ font-size:12.5px; font-weight:600; color:var(--ink-soft); }
+
+  .ptc-dash-hero{
+    background-image: linear-gradient(120deg, rgba(8,25,49,0.93), rgba(11,37,69,0.86) 55%, rgba(11,37,69,0.72)), url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1600&q=60');
+    background-size: cover; background-position: center 65%;
+  }
+  .ptc-dash-hero-sub{ color:rgba(255,255,255,0.78); font-size:12.5px; margin-top:2px; }
+
+  .ptc-body-grid{ display:grid; grid-template-columns: 1fr 220px; gap:14px; align-items:start; }
+  #ptc-root:not([data-pane="entrydesk"]):not([data-pane="salesdesk"]) .ptc-body-grid{ grid-template-columns: 1fr; }
+  #ptc-root:not([data-pane="entrydesk"]):not([data-pane="salesdesk"]) .ptc-sidebar{ display:none; }
+  .ptc-sidebar{ position:sticky; top:12px; }
+  .ptc-side-panel{ background:var(--card); border:1px solid var(--line); border-radius:10px; padding:12px; box-shadow:var(--shadow-sm); }
+  .ptc-side-title{ font-size:12px; font-weight:800; color:var(--ink); margin:0 0 8px; display:flex; align-items:center; gap:6px; }
+  .ptc-side-btn{ display:flex; align-items:center; justify-content:space-between; width:100%; text-align:left; background:#F8FAFC; border:1px solid var(--line); border-radius:8px; font:inherit; font-size:12.5px; font-weight:600; color:var(--ink); padding:9px 11px; margin-bottom:7px; cursor:pointer; }
+  .ptc-side-btn:last-child{ margin-bottom:0; }
+  .ptc-side-btn:hover{ background:#EEF3FA; border-color:var(--accent); }
+  .ptc-side-btn span{ color:var(--muted); }
+  @media (max-width:900px){ .ptc-body-grid{ grid-template-columns:1fr; } .ptc-sidebar{ position:static; } }
+
+  .ptc-footerbar{ display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:6px; margin-top:16px; padding:10px 4px 4px; border-top:1px solid var(--line); font-size:11.5px; color:var(--muted); }
+  .ptc-footerbar-status{ display:inline-flex; align-items:center; gap:6px; font-weight:600; }
+  .ptc-dot-online{ width:7px; height:7px; border-radius:50%; background:#1E7A46; display:inline-block; }
+
   /* ===== Entry Log collapsible wrapper ===== */
   .ptc-entrylog-body[hidden]{ display: none; }
 
@@ -2284,11 +2313,19 @@
 
 <div id="ptc-root" data-pane="entrydesk">
   <div class="ptc-shell">
+    <div class="ptc-brandbar">
+      <span class="ptc-brandbar-logo">✈</span>
+      <span class="ptc-brandbar-name">AeroOps</span>
+      <span class="ptc-brandbar-sep">|</span>
+      <span class="ptc-brandbar-page">🏠 Work Record Database</span>
+    </div>
+
     <div class="ptc-dash-hero">
       <div class="ptc-dash-hero-top">
         <div>
           <div class="ptc-eyebrow">✈ Ticketing Back Office</div>
           <h1>Work Record Database</h1>
+          <div class="ptc-dash-hero-sub">Manage your ticketing &amp; reservation records efficiently</div>
         </div>
         <div class="ptc-eyebrow" id="ptc-clock" style="color:rgba(255,255,255,0.75);"></div>
       </div>
@@ -2429,6 +2466,9 @@
       <div class="ptc-today-item" title="Agency earnings from entries (markup + service charges) plus Revenue Desk profit, for the selected period"><span>Revenue</span><b id="td-revenue">0</b></div>
     </div>
 
+    <div class="ptc-body-grid" id="ptc-body-grid">
+    <div class="ptc-body-main">
+
     <!-- ============ DASHBOARD VIEW ============ -->
     <div class="ptc-view" id="view-dashboard">
       <button class="ptc-btn ptc-btn-ghost" id="btn-dashboard-back" style="margin-bottom:14px;">← Back to Entries</button>
@@ -2555,7 +2595,7 @@
         ⚠️ Fields were auto-filled from the uploaded PDF — verify every value before saving. Layouts vary by airline/GDS, so extraction can miss or misread a field.
       </div>
 
-      <div class="ptc-grp"><div class="ptc-grp-title">Booking</div><div class="ptc-grp-body ptc-g3">
+      <div class="ptc-grp"><div class="ptc-grp-body ptc-g3">
       <div class="ptc-row">
         <div class="ptc-field">
           <label for="f-date">Date</label>
@@ -2574,7 +2614,7 @@
         </div>
       </div>
       </div></div>
-      <div class="ptc-grp"><div class="ptc-grp-title">Passenger</div><div class="ptc-grp-body ptc-g2">
+      <div class="ptc-grp"><div class="ptc-grp-body ptc-g2">
       <div class="ptc-row">
         <div class="ptc-field">
           <label for="f-pname">Passenger Name <span class="ptc-required">*</span></label>
@@ -2586,7 +2626,7 @@
         </div>
       </div>
       </div></div>
-      <div class="ptc-grp"><div class="ptc-grp-title">Ticketing</div><div class="ptc-grp-body ptc-g2">
+      <div class="ptc-grp"><div class="ptc-grp-body ptc-g2">
       <div class="ptc-row">
         <div class="ptc-field">
           <label for="f-platform">Platform</label>
@@ -2943,7 +2983,7 @@
 
 
 
-      <div class="ptc-grp"><div class="ptc-grp-title">Notes</div>
+      <div class="ptc-grp">
       <div class="ptc-row" style="margin-top:0;">
         <div class="ptc-field" style="grid-column: 1 / -1;">
           <label for="f-note" class="ptc-sr-only">Remarks</label>
@@ -3383,7 +3423,24 @@
 
     </div><!-- /view-sales -->
 
-  </div>
+    </div><!-- /ptc-body-main -->
+
+    <aside class="ptc-sidebar" id="ptc-sidebar" aria-label="Quick actions">
+      <div class="ptc-side-panel">
+        <div class="ptc-side-title">⚡ Quick Actions</div>
+        <button type="button" class="ptc-side-btn" id="qa-tkt-autofill">✈️ TKT Autofill <span>›</span></button>
+        <button type="button" class="ptc-side-btn" id="qa-search-pnr">🔎 Search PNR <span>›</span></button>
+        <button type="button" class="ptc-side-btn" id="qa-reset-form">🔄 Reset Form <span>›</span></button>
+      </div>
+    </aside>
+
+    </div><!-- /ptc-body-grid -->
+
+    <div class="ptc-footerbar">
+      <span>AeroOps &nbsp;|&nbsp; Smarter Operations. Higher Revenue.</span>
+      <span class="ptc-footerbar-status"><span class="ptc-dot-online"></span> System Online</span>
+    </div>
+  </div><!-- /ptc-shell -->
   <div class="ptc-toast" id="ptc-toast"></div>
 </div>
 
@@ -8298,6 +8355,20 @@
   renderSales = function(){ __renderSalesOrig.apply(this, arguments); try{ ptcUpdateToday(); }catch(err){} };
   try{ ptcRenderCompactLog(); ptcUpdateToday(); ptcUpdateReports(); }catch(err){ console.error('Redesign layer init failed', err); }
   ptcApplyPane();
+
+  // ---- Quick Actions sidebar (Entry Desk / Revenue Desk only) ----
+  $('qa-tkt-autofill').addEventListener('click', () => {
+    const btn = ptcPane === 'salesdesk' ? $('pdf-ticket-btn-sales') : $('pdf-ticket-btn');
+    if(btn) btn.click();
+  });
+  $('qa-search-pnr').addEventListener('click', () => {
+    const el = $('ptc-global-search');
+    if(el){ el.focus(); el.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+  });
+  $('qa-reset-form').addEventListener('click', () => {
+    const btn = ptcPane === 'salesdesk' ? $('btn-sales-clear') : $('btn-clear');
+    if(btn) btn.click();
+  });
 })();
 </script>
 <script>
