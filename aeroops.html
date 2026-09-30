@@ -1719,7 +1719,10 @@
   #ptc-root.ptc-pending-view #ptc-table-wrap,
   #ptc-root.ptc-pending-view #btn-toggle-compact,
   #ptc-root.ptc-pending-view .ptc-log-head #ptc-count,
-  #ptc-root.ptc-pending-view #ptc-entrylog-body > .ptc-card:first-child{ display:none !important; }
+  #ptc-root.ptc-pending-view #ptc-log-filter-row,
+  #ptc-root.ptc-pending-view #ptc-pagination,
+  #ptc-root.ptc-pending-view #ptc-entrylog-head,
+  #ptc-root.ptc-pending-view #ptc-entrylog-body > .ptc-actions{ display:none !important; }
   #ptc-root.ptc-pending-view .ptc-log-head h2::after{ content:" — Pending Refund Adjustments"; font-weight:600; font-size:13px; color:var(--refund); text-transform:none; letter-spacing:0; }
 
   /* ===== Brand bar, hero photo, body grid + sidebar, footer (visual redesign layer) ===== */
@@ -2243,6 +2246,8 @@
 #ptc-root .ptc-nav-btn:hover{ background:#F4F7FB; color:var(--ink); }
 #ptc-root .ptc-nav-btn.active{ background:transparent; color:#2563C9; box-shadow:inset 0 -2.5px 0 #0E9AA7; }
 #ptc-root .ptc-nav-btn svg, #ptc-root .ptc-side-logs-btn svg{ width:16px; height:16px; flex:none; }
+#ptc-root .ptc-nav-more{ display:none; }
+#ptc-root #ptc-toprow-grid{ grid-template-columns:1fr; }
 #ptc-root .ptc-side-logs-btn{ border-radius:10px; font-weight:600; box-shadow:none; }
 #ptc-root .ptc-nav-badge{ font-weight:600; }
 #ptc-root .ptc-card{ border-radius:12px; box-shadow:none; }
@@ -2302,7 +2307,9 @@ table.lb-t{ width:100%; border-collapse:separate; border-spacing:0; font-size:12
 #ptc-root[data-pane="saleslog"] :is(#sales-ledger-section>.ptc-log-head,#sales-ledger-section>.ptc-card,#sales-table-wrap),
 #ptc-root[data-pane="systemlog"] :is(#ptc-card,#ptc-entrylog-head,#ptc-entrylog-body,#ptc-impact-section),
 #lb[data-pane="reports"] :is(.lb-filters,.lb-wrap,#lb-sys), #lb[data-pane="systemlog"] :is(.lb-filters,.lb-wrap), #lb:not([data-pane="systemlog"]) #lb-sys,
-#ptc-root.ptc-pending-view #lb :is(.lb-filters,.lb-wrap,#lb-sys){ display:none !important; }
+#ptc-root.ptc-pending-view #lb :is(.lb-filters,.lb-wrap,#lb-sys,.lb-tabs){ display:none !important; }
+#ptc-root.ptc-pending-view #lb .lb-head{ border-radius:12px; margin-bottom:10px; }
+button.lb-pill.lb-all{ background:rgba(255,255,255,.12); color:#fff; border-color:rgba(255,255,255,.35); }
 #lb[data-pane="reports"] .lb-tabs, #lb[data-pane="systemlog"] .lb-tabs, #ptc-root.ptc-pending-view #lb .lb-tabs{ border-radius:0 0 12px 12px; }
 @media (max-width:1000px) and (min-width:721px){ .c-route{ display:none; } .lb-rt{ display:block; } }
 @media (max-width:720px){
@@ -2590,8 +2597,8 @@ table.lb-t{ width:100%; border-collapse:separate; border-spacing:0; font-size:12
     <section id="lb" aria-label="Log Board">
       <div class="lb-head">
         <div>
-          <h2>Logs</h2>
-          <p>Transaction history &amp; operational records</p>
+          <h2 id="lb-title">Logs</h2>
+          <p id="lb-sub">Transaction history &amp; operational records</p>
         </div>
         <div class="lb-meta"><span class="lb-pill" id="lb-date"></span><button type="button" class="lb-pill" id="lb-pend" hidden title="Open refunds waiting for their adjustment"></button></div>
         <svg class="lb-deco" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg>
@@ -8325,7 +8332,7 @@ table.lb-t{ width:100%; border-collapse:separate; border-spacing:0; font-size:12
     root.classList.toggle('ptc-pending-view', pend);
     document.querySelectorAll('#ptc-nav .ptc-nav-btn').forEach(b => {
       const n = b.dataset.nav;
-      const on = n === 'pending' ? pend : n === 'logs' ? logs : (n === ptcPane);
+      const on = n === 'pending' ? pend : n === 'reports' ? (['entrylog','saleslog','reports','systemlog'].includes(ptcPane) && !pend) : (n === ptcPane);
       b.classList.toggle('active', !onDash && on);
     });
   }
@@ -8344,7 +8351,14 @@ table.lb-t{ width:100%; border-collapse:separate; border-spacing:0; font-size:12
     if(p === 'reports') ptcUpdateReports();
     try{ window.scrollTo({ top: 0 }); }catch(err){}
   };
-  document.querySelectorAll('#ptc-nav .ptc-nav-btn[data-pane]').forEach(b => b.addEventListener('click', () => window.ptcSetPane(b.dataset.pane)));
+  document.querySelectorAll('#ptc-nav .ptc-nav-btn[data-pane]').forEach(b => b.addEventListener('click', () => {
+    let target = b.dataset.pane;
+    if(target === 'reports'){ // Reports opens the log system (Entry / Revenue / Report / System logs)
+      if(pendingAdjFilterActive && $('btn-pending-refund-adj').classList.contains('ptc-btn-active')) $('btn-pending-refund-adj').click();
+      target = (!pendingAdjFilterActive && ['entrylog','saleslog','reports','systemlog'].includes(ptcPane)) ? ptcPane : 'entrylog';
+    }
+    window.ptcSetPane(target);
+  }));
   // Logs menu (Entry Log / Revenue Log live here — secondary, not daily)
   const navMenu = $('ptc-nav-menu'), navLogsBtn = $('btn-nav-logs');
   function ptcCloseNavMenu(){ navMenu.hidden = true; navLogsBtn.setAttribute('aria-expanded', 'false'); }
@@ -8621,8 +8635,11 @@ table.lb-t{ width:100%; border-collapse:separate; border-spacing:0; font-size:12
   }
   function lbHead(){
     $('lb-date').textContent = new Date().toLocaleDateString(undefined, { weekday:'short', day:'numeric', month:'short', year:'numeric' });
-    const p = entries.filter(e => lbStatus(e)[0] === 'Pending Adj.').length, b = $('lb-pend');
-    b.hidden = !p; b.textContent = p + ' pending adj.';
+    const p = entries.filter(e => lbStatus(e)[0] === 'Pending Adj.').length, b = $('lb-pend'), pv = root.classList.contains('ptc-pending-view');
+    $('lb-title').textContent = pv ? 'Pending adjustments' : 'Logs';
+    $('lb-sub').textContent = pv ? 'Refunds waiting for their adjustment' : 'Transaction history & operational records';
+    b.classList.toggle('lb-all', pv);
+    b.hidden = !pv && !p; b.textContent = pv ? 'Show all logs' : p + ' pending adj.';
   }
   function lbRenderSys(){
     const cloud = ($('ptc-cloud-status') || {}).textContent || '';
@@ -8631,6 +8648,7 @@ table.lb-t{ width:100%; border-collapse:separate; border-spacing:0; font-size:12
   }
   function lbRender(){
     lbHead();
+    if(root.classList.contains('ptc-pending-view')) return;
     if(ptcPane === 'systemlog'){ lbRenderSys(); return; }
     if(ptcPane !== 'entrylog' && ptcPane !== 'saleslog') return;
     const sales = lbSales(), m = lbModel(), shown = m.rows.slice(0, lb.limit);
@@ -8672,13 +8690,18 @@ table.lb-t{ width:100%; border-collapse:separate; border-spacing:0; font-size:12
   [['lb-from','from'], ['lb-to','to'], ['lb-type','type'], ['lb-status','status']].forEach(([id, k]) => $(id).addEventListener('change', (ev) => { lb[k] = ev.target.value; lb.limit = 50; lbRender(); }));
   $('lb-clear').addEventListener('click', () => { lb.q = lb.from = lb.to = lb.type = lb.status = ''; lb.limit = 50; ['lb-q','lb-from','lb-to','lb-type','lb-status'].forEach(id => $(id).value = ''); lbRender(); });
   $('lb-more').addEventListener('click', () => { lb.limit += 50; lbRender(); });
-  $('lb-pend').addEventListener('click', () => $('btn-nav-pending').click());
+  $('lb-pend').addEventListener('click', () => {
+    if(root.classList.contains('ptc-pending-view')){
+      if(pendingAdjFilterActive) $('btn-pending-refund-adj').click();
+      window.ptcSetPane('entrylog');
+    } else $('btn-nav-pending').click();
+  });
   lbBody.addEventListener('click', (ev) => {
     const b = ev.target.closest('.lb-go'); if(!b) return;
     const i = parseInt(b.getAttribute('data-i'), 10);
     if(lbSales()) startSaleEdit(i); else startEdit(i); // the existing record workflow
   });
-  new MutationObserver(lbSync).observe(root, { attributes: true, attributeFilter: ['data-pane'] });
+  new MutationObserver(lbSync).observe(root, { attributes: true, attributeFilter: ['data-pane', 'class'] });
   window.addEventListener('resize', lbInd);
   const __toastOrig = toast;
   toast = function(m){ try{ lbSys.unshift({ t:new Date(), m:String(m) }); if(lbSys.length > 200) lbSys.pop(); if(ptcPane === 'systemlog') lbRenderSys(); }catch(err){} return __toastOrig.apply(this, arguments); };
