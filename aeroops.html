@@ -2216,6 +2216,75 @@
     #cloud-auth-modal-backdrop #btn-set-password:hover:not(:disabled){ transform:none; }
   }
 
+
+/* ===== LOG BOARD (presentation layer — no data/logic changes) ===== */
+#lb{ display:none; --n:#0B2545; --bl:#2563C9; --cy:#0E9AA7; --ln:#E3E9F2; --sf:#F4F7FB; --mu:#64748B; margin:0 0 14px; font-family:'IBM Plex Sans',Inter,system-ui,sans-serif; color:var(--n); }
+#ptc-root[data-pane="entrylog"] #lb, #ptc-root[data-pane="saleslog"] #lb, #ptc-root[data-pane="reports"] #lb, #ptc-root[data-pane="systemlog"] #lb{ display:block; }
+#lb [hidden]{ display:none !important; }
+.lb-head{ position:relative; overflow:hidden; background:var(--n); color:#fff; border-radius:12px 12px 0 0; padding:16px 20px; display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+.lb-head::after{ content:""; position:absolute; left:20px; right:64px; bottom:9px; border-top:1.5px dashed rgba(94,214,224,.28); pointer-events:none; }
+.lb-head svg.lb-deco{ position:absolute; right:18px; bottom:1px; color:rgba(94,214,224,.55); }
+.lb-head h2{ margin:0; font-size:22px; font-weight:600; letter-spacing:-.2px; color:#fff; }
+.lb-head p{ margin:2px 0 14px; font-size:12.5px; color:#B6C6DD; }
+.lb-meta{ display:flex; gap:8px; align-items:center; margin-bottom:14px; font-size:12px; color:#D5E0F0; }
+.lb-pill{ border:1px solid rgba(255,255,255,.2); border-radius:999px; padding:3px 10px; background:rgba(255,255,255,.06); font:inherit; font-size:12px; color:inherit; }
+button.lb-pill{ cursor:pointer; background:#FFF1D6; color:#8A5200; border-color:#F2C46B; font-weight:600; transition:transform .15s; }
+button.lb-pill:hover{ transform:translateY(-1px); }
+.lb-tabs{ position:relative; display:flex; gap:2px; background:#fff; border:1px solid var(--ln); border-top:0; padding:0 12px; overflow-x:auto; }
+.lb-tab{ appearance:none; background:none; border:0; padding:11px 14px; font:inherit; font-size:13px; font-weight:600; color:var(--mu); cursor:pointer; white-space:nowrap; transition:color .2s; }
+.lb-tab:hover{ color:var(--n); } .lb-tab.on{ color:var(--bl); }
+.lb-tab:focus-visible, .lb-go:focus-visible, .lb-filters :is(input,select,button):focus-visible{ outline:2px solid var(--cy); outline-offset:1px; }
+#lb-ind{ position:absolute; left:0; bottom:0; height:2.5px; background:linear-gradient(90deg,var(--bl),var(--cy)); border-radius:2px; transition:transform .25s cubic-bezier(.3,.7,.2,1), width .25s, opacity .2s; opacity:0; }
+.lb-filters{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; background:var(--sf); border:1px solid var(--ln); border-top:0; padding:10px 12px; }
+.lb-filters :is(input,select){ height:34px; box-sizing:border-box; border:1px solid #CFD8E6; border-radius:8px; background:#fff; padding:0 10px; font:inherit; font-size:12.5px; color:var(--n); }
+.lb-search{ position:relative; flex:1 1 240px; min-width:200px; }
+.lb-search svg{ position:absolute; left:10px; top:9px; color:var(--mu); }
+.lb-search input{ width:100%; padding-left:32px; }
+.lb-filters label.lb-d{ display:flex; align-items:center; gap:6px; font-size:11.5px; color:var(--mu); }
+.lb-clear{ height:34px; border:0; background:none; color:var(--bl); font:inherit; font-size:12.5px; font-weight:600; cursor:pointer; padding:0 6px; }
+#lb-count{ margin-left:auto; font-size:12px; color:var(--mu); }
+.lb-wrap{ background:#fff; border:1px solid var(--ln); border-top:0; border-radius:0 0 12px 12px; overflow-x:auto; }
+table.lb-t{ width:100%; border-collapse:separate; border-spacing:0; font-size:12.5px; }
+.lb-t th{ position:sticky; top:0; background:#fff; text-align:left; font-size:11px; font-weight:600; color:var(--mu); padding:9px 12px; border-bottom:1px solid var(--ln); white-space:nowrap; }
+.lb-t td{ padding:7px 12px; border-bottom:1px solid #EEF2F7; vertical-align:top; line-height:1.35; }
+.lb-t td small{ display:block; font-size:11px; color:var(--mu); }
+.lb-t .lb-pax{ white-space:nowrap; }
+.lb-r{ animation:lb-in .18s ease-out both; animation-delay:calc(min(var(--i),10) * 14ms); transition:background .15s, box-shadow .15s; }
+.lb-r:hover{ background:#F3F8FE; box-shadow:inset 3px 0 0 var(--cy), 0 2px 6px rgba(11,37,69,.07); }
+@keyframes lb-in{ from{ opacity:0; transform:translateY(4px); } to{ opacity:1; transform:none; } }
+.lb-amt{ text-align:right; font-variant-numeric:tabular-nums; font-weight:600; white-space:nowrap; }
+.lb-ty{ display:inline-flex; align-items:center; gap:6px; font-weight:600; white-space:nowrap; }
+.lb-ty svg{ color:var(--bl); } .lb-ty-Reissue svg{ color:#0F766E; } .lb-ty-Refund svg{ color:#3C5573; } .lb-ty-Void svg{ color:#B45353; }
+.lb-b{ display:inline-block; padding:2px 9px; border-radius:999px; font-size:11.5px; font-weight:600; white-space:nowrap; transition:background .25s, color .25s; }
+.lb-b-ok{ background:#E6F0FF; color:#1D4ED8; } .lb-b-re{ background:#DDF5F3; color:#0F766E; } .lb-b-rf{ background:#E9EFF6; color:#3C5573; }
+.lb-b-vd{ background:#F6E9E9; color:#9B2C2C; } .lb-b-rp{ background:#EEF1F5; color:#55657A; }
+.lb-b-pa{ background:#FFF1D6; color:#8A5200; box-shadow:inset 0 0 0 1px #F2C46B; }
+.lb-go{ width:28px; height:28px; display:grid; place-items:center; border:1px solid var(--ln); border-radius:8px; background:#fff; color:var(--bl); cursor:pointer; transition:background .15s, color .15s, transform .15s; }
+.lb-go:hover{ background:var(--bl); color:#fff; transform:translateX(1px); }
+.lb-rt{ display:none; }
+.lb-none{ padding:28px; text-align:center; color:var(--mu); font-size:13px; }
+.lb-more{ display:block; margin:10px auto; padding:7px 16px; border:1px solid var(--ln); border-radius:8px; background:#fff; color:var(--bl); font:inherit; font-size:12.5px; font-weight:600; cursor:pointer; }
+#lb-sys{ background:#fff; border:1px solid var(--ln); border-top:0; border-radius:0 0 12px 12px; padding:6px 16px 10px; font-size:12.5px; }
+#lb-sys .lb-s{ display:flex; gap:14px; padding:7px 0; border-bottom:1px solid #EEF2F7; } #lb-sys time{ color:var(--mu); font-variant-numeric:tabular-nums; flex:none; }
+/* hide the older log UI that the board replaces (its data + actions stay in the DOM and keep working) */
+#ptc-root[data-pane="entrylog"]:not(.ptc-pending-view) :is(#ptc-entrylog-head,#ptc-entrylog-body>.ptc-card:first-child,#ptc-clog-wrap,#ptc-table-wrap,#ptc-pagination),
+#ptc-root[data-pane="saleslog"] :is(#sales-ledger-section>.ptc-log-head,#sales-ledger-section>.ptc-card,#sales-table-wrap),
+#ptc-root[data-pane="systemlog"] :is(#ptc-card,#ptc-entrylog-head,#ptc-entrylog-body,#ptc-impact-section),
+#lb[data-pane="reports"] :is(.lb-filters,.lb-wrap,#lb-sys), #lb[data-pane="systemlog"] :is(.lb-filters,.lb-wrap), #lb:not([data-pane="systemlog"]) #lb-sys,
+#ptc-root.ptc-pending-view #lb :is(.lb-filters,.lb-wrap,#lb-sys){ display:none !important; }
+#lb[data-pane="reports"] .lb-tabs, #lb[data-pane="systemlog"] .lb-tabs, #ptc-root.ptc-pending-view #lb .lb-tabs{ border-radius:0 0 12px 12px; }
+@media (max-width:1000px) and (min-width:721px){ .c-route{ display:none; } .lb-rt{ display:block; } }
+@media (max-width:720px){
+  .lb-t thead{ display:none; }
+  .lb-t, .lb-t tbody{ display:block; }
+  .lb-t tr.lb-r{ display:grid; grid-template-columns:1fr 1fr; gap:6px 12px; padding:10px 44px 10px 12px; position:relative; border-bottom:1px solid var(--ln); }
+  .lb-t td{ display:block; padding:0; border:0; }
+  .lb-t td[data-l]::before{ content:attr(data-l); display:block; font-size:10px; color:var(--mu); }
+  .lb-t .lb-amt{ text-align:left; } .lb-t .lb-act{ position:absolute; top:10px; right:10px; }
+  .lb-t .lb-pax{ white-space:normal; }
+  #lb-count{ margin-left:0; width:100%; }
+}
+@media (prefers-reduced-motion:reduce){ .lb-r{ animation:none; } #lb *{ transition:none !important; } }
 </style>
 </head><body>
     <div class="ptc-modal-backdrop" id="cloud-auth-modal-backdrop" style="display:flex; z-index:5000;">
@@ -2486,6 +2555,42 @@
       </div>
     </div>
     </div><!-- /ptc-toprow-grid -->
+
+    <section id="lb" aria-label="Log Board">
+      <div class="lb-head">
+        <div>
+          <h2>Logs</h2>
+          <p>Transaction history &amp; operational records</p>
+        </div>
+        <div class="lb-meta"><span class="lb-pill" id="lb-date"></span><button type="button" class="lb-pill" id="lb-pend" hidden title="Open refunds waiting for their adjustment"></button></div>
+        <svg class="lb-deco" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg>
+      </div>
+      <div class="lb-tabs" role="tablist" aria-label="Log types">
+        <button type="button" class="lb-tab" role="tab" data-tab="entry">Entry Log</button>
+        <button type="button" class="lb-tab" role="tab" data-tab="sales">Revenue Log</button>
+        <button type="button" class="lb-tab" role="tab" data-tab="report">Report Log</button>
+        <button type="button" class="lb-tab" role="tab" data-tab="system">System Log</button>
+        <span id="lb-ind"></span>
+      </div>
+      <div class="lb-filters">
+        <label class="lb-search"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg><input type="search" id="lb-q" placeholder="Search PNR, ticket or passenger" autocomplete="off" aria-label="Filter log by PNR, ticket or passenger"></label>
+        <label class="lb-d">From <input type="date" id="lb-from"></label>
+        <label class="lb-d">To <input type="date" id="lb-to"></label>
+        <select id="lb-type" aria-label="Transaction type"><option value="">All types</option><option>Ticketing</option><option>Reissue</option><option>Refund</option><option>Void</option></select>
+        <select id="lb-status" aria-label="Status"></select>
+        <button type="button" class="lb-clear" id="lb-clear">Clear filters</button>
+        <span id="lb-count" aria-live="polite"></span>
+      </div>
+      <div class="lb-wrap">
+        <table class="lb-t">
+          <thead><tr><th>PNR</th><th>Passenger(s)</th><th>TKT No.</th><th>Transaction Type</th><th class="c-route">Route</th><th>Date &amp; Time</th><th>Status</th><th style="text-align:right">Amount</th><th><span class="sr-only" style="position:absolute;left:-9999px">Action</span></th></tr></thead>
+          <tbody id="lb-tbody"></tbody>
+        </table>
+        <div class="lb-none" id="lb-empty" hidden>No records match these filters.</div>
+        <button type="button" class="lb-more" id="lb-more" hidden></button>
+      </div>
+      <div id="lb-sys"></div>
+    </section>
 
     <div class="ptc-body-grid" id="ptc-body-grid">
     <div class="ptc-body-main">
@@ -8193,7 +8298,7 @@
   })();
 
   // ================= REDESIGN LAYER (UI only — no data/calculation changes) =================
-  const PTC_PANES = { entrydesk:'entry', entrylog:'entry', reports:'entry', salesdesk:'sales', saleslog:'sales' };
+  const PTC_PANES = { entrydesk:'entry', entrylog:'entry', reports:'entry', systemlog:'entry', salesdesk:'sales', saleslog:'sales' };
   let ptcPane = 'entrydesk';
   const __switchViewOrig = switchView;
   function ptcApplyPane(){
@@ -8413,6 +8518,141 @@
     new MutationObserver(() => root.classList.toggle('ptc-fulllog', !$('ptc-table').classList.contains('ptc-compact')))
       .observe($('ptc-table'), { attributes: true, attributeFilter: ['class'] });
   }
+
+  // ---- Log Board: a view over the existing `entries` / `salesEntries` (read-only; Action reuses startEdit / startSaleEdit) ----
+  const lbEl = $('lb'), lbBody = $('lb-tbody');
+  const lb = { q:'', from:'', to:'', type:'', status:'', limit:50, sig:'', tab:'' };
+  const lbSys = [{ t:new Date(), m:'Session started' }];
+  const LB_STAT = ['Ticketed','Reissued','Refunded','Voided','Pending Adj.','Refund Pending'];
+  const LB_IC = {
+    Ticketing:'<path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>',
+    Reissue:'<path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/>',
+    Refund:'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>',
+    Void:'<circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/>',
+    go:'<path d="m9 18 6-6-6-6"/>'
+  };
+  const lbIc = (n, s) => `<svg width="${s||15}" height="${s||15}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${LB_IC[n] || LB_IC.Ticketing}</svg>`;
+  const lbSales = () => ptcPane === 'saleslog';
+  function lbStatus(e){
+    if(e.txn === 'Ticketing') return ['Ticketed','ok'];
+    if(e.txn === 'Reissue') return ['Reissued','re'];
+    if(e.txn === 'Void') return ['Voided','vd'];
+    if(e.txn === 'Refund'){
+      if(e.refundStatus === 'PENDING') return ['Refund Pending','rp'];
+      return e.adjustmentGiven === 'YES' ? ['Refunded','rf'] : ['Pending Adj.','pa'];
+    }
+    return ['—','rp'];
+  }
+  function lbSaleStatus(s){
+    const v = String(s.status || '').trim(); if(!v || v === '—') return ['—','rp'];
+    const u = v.toUpperCase();
+    return [v.charAt(0).toUpperCase() + v.slice(1).toLowerCase(), u === 'PAID' ? 'ok' : (u === 'DUE' || u === 'UNPAID') ? 'pa' : 're'];
+  }
+  function lbTime(e){ const d = e.createdAt ? new Date(e.createdAt) : null; return d && !isNaN(d) ? d.toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' }) : ''; }
+  function lbModel(){
+    const sales = lbSales(), src = sales ? salesEntries : entries;
+    const q = lb.q.trim().toLowerCase(), qd = q.replace(/\D/g, '');
+    const out = [];
+    src.forEach((e, i) => {
+      if(lb.from && (!e.date || e.date < lb.from)) return;
+      if(lb.to && (!e.date || e.date > lb.to)) return;
+      if(!sales && lb.type && e.txn !== lb.type) return;
+      const st = sales ? lbSaleStatus(e) : lbStatus(e);
+      if(lb.status && st[0] !== lb.status) return;
+      if(q){
+        const hay = [e.pnrGds, e.pnrAirline, e.pname, sales ? e.tkt : e.newTkt, sales ? '' : e.oldTkt].join(' ').toLowerCase();
+        if(!hay.includes(q) && !(qd.length > 2 && hay.replace(/\D/g, '').includes(qd))) return;
+      }
+      out.push({ e, i, st });
+    });
+    out.sort((a, b) => (b.e.date || '').localeCompare(a.e.date || '') || b.i - a.i);
+    return { rows: out, total: src.length };
+  }
+  function lbRow(r, n, sales){
+    const e = r.e, route = esc(e.sector || '') || '—';
+    const type = sales ? `<span class="lb-ty">${lbIc('Ticketing')}Sale</span>` : `<span class="lb-ty lb-ty-${esc(e.txn)}">${lbIc(e.txn)}${esc(e.txn === 'Ticketing' ? 'Ticketing' : e.txn)}</span>`;
+    const price = parseFloat(sales ? e.price : NaN);
+    const amt = sales ? (isFinite(price) ? price.toLocaleString(undefined, { minimumFractionDigits:2, maximumFractionDigits:2 }) : '—') : ptcAmount(e);
+    const tkt = sales ? fmtTicketListHTML(e.tkt) : fmtTicketListHTML(e.newTkt || e.oldTkt);
+    const tm = sales ? '' : lbTime(e);
+    return `<tr class="lb-r" style="--i:${n}"><td data-l="PNR"><b class="mono">${esc(e.pnrGds) || '—'}</b>${e.pnrAirline ? `<small class="mono">${esc(e.pnrAirline)}</small>` : ''}</td>
+<td data-l="Passenger(s)" class="lb-pax">${formatPassengerNamesHTML(e.pname) || '—'}</td>
+<td data-l="TKT No." class="mono">${tkt || '—'}</td>
+<td data-l="Type">${type}<small class="lb-rt">${route}</small></td>
+<td data-l="Route" class="c-route">${route}</td>
+<td data-l="Date &amp; Time">${esc(e.date || '') || '—'}${tm ? `<small>${tm}</small>` : ''}</td>
+<td data-l="Status"><span class="lb-b lb-b-${r.st[1]}">${esc(r.st[0])}</span></td>
+<td data-l="Amount" class="lb-amt">${amt}</td>
+<td class="lb-act"><button type="button" class="lb-go" data-i="${r.i}" aria-label="Open record">${lbIc('go', 16)}</button></td></tr>`;
+  }
+  function lbHead(){
+    $('lb-date').textContent = new Date().toLocaleDateString(undefined, { weekday:'short', day:'numeric', month:'short', year:'numeric' });
+    const p = entries.filter(e => lbStatus(e)[0] === 'Pending Adj.').length, b = $('lb-pend');
+    b.hidden = !p; b.textContent = p + ' pending adj.';
+  }
+  function lbRenderSys(){
+    const cloud = ($('ptc-cloud-status') || {}).textContent || '';
+    $('lb-sys').innerHTML = (cloud ? `<div class="lb-s"><time>Now</time><span>Cloud sync: ${esc(cloud)}</span></div>` : '') +
+      lbSys.map(x => `<div class="lb-s"><time>${x.t.toLocaleTimeString([], { hour:'2-digit', minute:'2-digit', second:'2-digit' })}</time><span>${esc(x.m)}</span></div>`).join('');
+  }
+  function lbRender(){
+    lbHead();
+    if(ptcPane === 'systemlog'){ lbRenderSys(); return; }
+    if(ptcPane !== 'entrylog' && ptcPane !== 'saleslog') return;
+    const sales = lbSales(), m = lbModel(), shown = m.rows.slice(0, lb.limit);
+    const html = shown.map((r, n) => lbRow(r, n, sales)).join('');
+    if(ptcPane + html !== lb.sig){ lb.sig = ptcPane + html; lbBody.innerHTML = html; }
+    $('lb-empty').hidden = m.rows.length > 0;
+    $('lb-more').hidden = m.rows.length <= lb.limit;
+    $('lb-more').textContent = 'Show ' + Math.min(50, m.rows.length - lb.limit) + ' more';
+    const f = lb.q || lb.from || lb.to || lb.type || lb.status;
+    $('lb-count').textContent = m.rows.length + (m.rows.length === 1 ? ' record' : ' records') + (f ? ' of ' + m.total : '');
+  }
+  function lbInd(){
+    const a = lbEl.querySelector('.lb-tab.on'), i = $('lb-ind');
+    if(!a){ i.style.opacity = 0; return; }
+    i.style.width = a.offsetWidth + 'px'; i.style.transform = 'translateX(' + a.offsetLeft + 'px)'; i.style.opacity = 1;
+  }
+  function lbSync(){
+    const p = root.getAttribute('data-pane'), key = { entrylog:'entry', saleslog:'sales', reports:'report', systemlog:'system' }[p];
+    lbEl.setAttribute('data-pane', p);
+    lbEl.querySelectorAll('.lb-tab').forEach(b => { const on = b.dataset.tab === key; b.classList.toggle('on', on); b.setAttribute('aria-selected', on ? 'true' : 'false'); });
+    if(p === 'entrylog' || p === 'saleslog'){
+      if(lb.tab !== p){
+        lb.tab = p; lb.type = ''; lb.status = ''; lb.limit = 50; $('lb-type').value = '';
+        const st = p === 'saleslog' ? Array.from(new Set(salesEntries.map(s => lbSaleStatus(s)[0]).filter(x => x !== '—'))) : LB_STAT;
+        $('lb-status').innerHTML = '<option value="">All statuses</option>' + st.map(s => `<option>${esc(s)}</option>`).join('');
+        $('lb-type').hidden = p === 'saleslog';
+      }
+    }
+    lbInd(); lbRender();
+  }
+  const LB_PANE = { entry:'entrylog', sales:'saleslog', report:'reports', system:'systemlog' };
+  lbEl.querySelector('.lb-tabs').addEventListener('click', (ev) => {
+    const b = ev.target.closest('.lb-tab'); if(!b) return;
+    if(pendingAdjFilterActive && $('btn-pending-refund-adj').classList.contains('ptc-btn-active')) $('btn-pending-refund-adj').click();
+    window.ptcSetPane(LB_PANE[b.dataset.tab]);
+  });
+  let lbT = null;
+  $('lb-q').addEventListener('input', (ev) => { clearTimeout(lbT); lbT = setTimeout(() => { lb.q = ev.target.value; lb.limit = 50; lbRender(); }, 120); });
+  [['lb-from','from'], ['lb-to','to'], ['lb-type','type'], ['lb-status','status']].forEach(([id, k]) => $(id).addEventListener('change', (ev) => { lb[k] = ev.target.value; lb.limit = 50; lbRender(); }));
+  $('lb-clear').addEventListener('click', () => { lb.q = lb.from = lb.to = lb.type = lb.status = ''; lb.limit = 50; ['lb-q','lb-from','lb-to','lb-type','lb-status'].forEach(id => $(id).value = ''); lbRender(); });
+  $('lb-more').addEventListener('click', () => { lb.limit += 50; lbRender(); });
+  $('lb-pend').addEventListener('click', () => $('btn-nav-pending').click());
+  lbBody.addEventListener('click', (ev) => {
+    const b = ev.target.closest('.lb-go'); if(!b) return;
+    const i = parseInt(b.getAttribute('data-i'), 10);
+    if(lbSales()) startSaleEdit(i); else startEdit(i); // the existing record workflow
+  });
+  new MutationObserver(lbSync).observe(root, { attributes: true, attributeFilter: ['data-pane'] });
+  window.addEventListener('resize', lbInd);
+  const __toastOrig = toast;
+  toast = function(m){ try{ lbSys.unshift({ t:new Date(), m:String(m) }); if(lbSys.length > 200) lbSys.pop(); if(ptcPane === 'systemlog') lbRenderSys(); }catch(err){} return __toastOrig.apply(this, arguments); };
+  const __renderLb = render;
+  render = function(){ const r = __renderLb.apply(this, arguments); try{ lbRender(); }catch(err){ console.error('Log Board failed', err); } return r; };
+  const __renderSalesLb = renderSales;
+  renderSales = function(){ const r = __renderSalesLb.apply(this, arguments); try{ lbRender(); }catch(err){} return r; };
+  try{ lbSync(); }catch(err){ console.error('Log Board init failed', err); }
 
   // ---- Search-card quick actions: Reissue / Refund / Void prefill the existing Entry form ----
   function ptcQuickActions(e, idx){
