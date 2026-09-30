@@ -1595,12 +1595,24 @@
   .ptc-nav-btn{ flex:1 0 auto; border:none; background:transparent; font:inherit; font-size:12.5px; font-weight:700; color:var(--ink-soft); padding:7px 14px; border-radius:7px; cursor:pointer; white-space:nowrap; }
   .ptc-nav-btn:hover{ background:rgba(255,255,255,0.55); }
   .ptc-nav-btn.active{ background:#fff; color:var(--ink); box-shadow:var(--shadow-sm); }
-  #ptc-today{ display:grid; grid-template-columns:repeat(5,1fr); gap:6px; margin-bottom:10px; }
-  .ptc-today-item{ background:var(--card); border:1px solid var(--line); border-radius:8px; padding:5px 10px; display:flex; align-items:baseline; justify-content:space-between; gap:6px; min-width:0; }
-  .ptc-today-item span{ font-size:10px; text-transform:uppercase; letter-spacing:0.4px; color:var(--muted); font-weight:700; white-space:nowrap; }
-  .ptc-today-item b{ font-size:15px; color:var(--ink); font-variant-numeric:tabular-nums; }
-  @media (max-width:720px){ #ptc-today{ grid-template-columns:repeat(3,1fr); } }
-  @media (max-width:420px){ #ptc-today{ grid-template-columns:repeat(2,1fr); } }
+  #ptc-today{ display:grid; grid-template-columns:repeat(6,1fr); gap:8px; margin-bottom:10px; }
+  .ptc-stat-card{ background:var(--card); border:1px solid var(--line); border-radius:10px; padding:9px 12px; min-height:56px; box-shadow:var(--shadow-sm); display:flex; align-items:center; gap:10px; min-width:0; }
+  .ptc-stat-icon{ flex-shrink:0; width:20px; height:20px; color:var(--accent); display:flex; }
+  .ptc-stat-icon svg{ width:20px; height:20px; display:block; }
+  .ptc-stat-icon.ptc-stat-blue{ color:var(--booking); }
+  .ptc-stat-icon.ptc-stat-green{ color:#1E7A46; }
+  .ptc-stat-valrow{ display:flex; align-items:baseline; gap:6px; min-width:0; }
+  .ptc-stat-delta{ font-size:10.5px; font-weight:700; white-space:nowrap; }
+  .ptc-stat-delta:empty{ display:none; }
+  .ptc-stat-delta.ptc-delta-up{ color:#1E7A46; }
+  .ptc-stat-delta.ptc-delta-down{ color:var(--refund); }
+  .ptc-stat-delta.ptc-delta-flat{ color:var(--muted); }
+  .ptc-stat-text{ min-width:0; display:flex; flex-direction:column; gap:1px; }
+  .ptc-stat-label{ font-size:10.5px; font-weight:600; color:var(--ink-soft); letter-spacing:0.2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .ptc-stat-value{ font-size:16px; font-weight:800; color:var(--ink); font-variant-numeric:tabular-nums; line-height:1.15; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .ptc-stat-select{ border:none; background:transparent; padding:0; -webkit-appearance:none; appearance:none; cursor:pointer; }
+  @media (max-width:900px){ #ptc-today{ grid-template-columns:repeat(3,1fr); } }
+  @media (max-width:480px){ #ptc-today{ grid-template-columns:repeat(2,1fr); } .ptc-stat-value{ font-size:14.5px; } }
 
   /* panes: each nav tab shows one workspace */
   #ptc-root[data-pane="entrydesk"] #ptc-entrylog-head,
@@ -1680,11 +1692,7 @@
   #ptc-card .ptc-entry-topbar .ptc-header-txntype{ margin:0; padding:0; border:none; }
   #ptc-card .ptc-header-tktautofill{ display:flex; align-items:center; }
   #ptc-card .ptc-header-tktautofill .ptc-pdf-import-btn{ padding:7px 14px; font-size:12.5px; }
-  #ptc-today{ grid-template-columns:minmax(0,1.1fr) repeat(5,1fr); }
-  .ptc-today-range{ padding:0; }
-  .ptc-today-range select{ width:100%; border:none; background:transparent; font:inherit; font-size:12px; font-weight:700; color:var(--ink); padding:6px 8px; cursor:pointer; }
-  @media (max-width:720px){ #ptc-today{ grid-template-columns:repeat(3,1fr); } .ptc-today-range{ grid-column:1 / -1; } }
-  @media (max-width:420px){ #ptc-today{ grid-template-columns:repeat(2,1fr); } }
+
 
   /* Nav: daily tabs + Pending Adj. + Logs menu; Today strip only on Entry Desk */
   #ptc-nav{ overflow:visible; flex-wrap:wrap; position:relative; }
@@ -1742,17 +1750,6 @@
 
   /* Top brand bar: connection pills, bell, avatar */
   .ptc-brandbar{ position:relative; }
-  .ptc-brandbar-right{ margin-left:auto; display:flex; align-items:center; gap:10px; }
-  .ptc-brand-pill{ display:flex; align-items:center; gap:6px; border:1px solid var(--line); background:#fff; border-radius:8px; padding:4px 10px; font:inherit; font-size:10.5px; font-weight:700; color:var(--ink-soft); cursor:pointer; line-height:1.25; text-align:left; }
-  .ptc-brand-pill:hover{ border-color:var(--accent); }
-  .ptc-brand-pill b{ display:block; font-size:11px; color:var(--ink); }
-  .ptc-brand-pill-cloud{ background:#EAF7EF; border-color:#BFE3CC; }
-  .ptc-brand-pill-dot{ width:7px; height:7px; border-radius:50%; background:var(--muted); flex-shrink:0; }
-  #brandbar-cloud-dot.ptc-dot-online{ background:#1E7A46; }
-  .ptc-brandbar-icon{ position:relative; font-size:15px; cursor:default; color:var(--ink-soft); }
-  .ptc-brand-dot-badge{ position:absolute; top:-2px; right:-2px; width:7px; height:7px; border-radius:50%; background:var(--refund); border:1.5px solid #fff; }
-  .ptc-brandbar-avatar{ width:26px; height:26px; border-radius:50%; background:var(--accent); color:#fff; font-size:11px; font-weight:800; display:flex; align-items:center; justify-content:center; }
-  @media (max-width:720px){ .ptc-brandbar-right{ display:none; } }
 
   /* Top row: nav (main col) + Logs button (sidebar col) share the body grid columns */
   #ptc-toprow-grid{ margin-bottom:10px; }
@@ -2347,15 +2344,6 @@
       <span class="ptc-brandbar-name">AeroOps</span>
       <span class="ptc-brandbar-sep">|</span>
       <span class="ptc-brandbar-page">🏠 Work Record Database</span>
-      <div class="ptc-brandbar-right">
-        <button type="button" class="ptc-brand-pill ptc-brand-pill-cloud" id="brandbar-cloud-pill" title="Jump to Live Cloud Sync">
-          <span class="ptc-brand-pill-dot" id="brandbar-cloud-dot"></span>
-          <span><b>Cloud Sync</b><br><span id="brandbar-cloud-count">—</span></span>
-        </button>
-        <button type="button" class="ptc-brand-pill" id="brandbar-file-pill" title="Jump to Master Data File">📄 <b>Master Data</b></button>
-        <span class="ptc-brandbar-icon" id="brandbar-bell" title="Notifications">🔔<span class="ptc-brand-dot-badge" id="brandbar-bell-badge" style="display:none;"></span></span>
-        <span class="ptc-brandbar-avatar" id="brandbar-avatar" title="">MS</span>
-      </div>
     </div>
 
     <div class="ptc-dash-hero">
@@ -2500,13 +2488,13 @@
     <div class="ptc-body-grid" id="ptc-body-grid">
     <div class="ptc-body-main">
 
-    <div id="ptc-today" aria-label="Today summary">
-      <div class="ptc-today-item ptc-today-range"><select id="td-range" aria-label="Summary period"><option value="today" selected>Today</option><option value="7">Last 7 days</option><option value="30">Last 30 days</option><option value="all">All time</option></select></div>
-      <div class="ptc-today-item"><span>Tickets</span><b id="td-tickets">0</b></div>
-      <div class="ptc-today-item"><span>Reissues</span><b id="td-reissues">0</b></div>
-      <div class="ptc-today-item"><span>Refunds</span><b id="td-refunds">0</b></div>
-      <div class="ptc-today-item" title="Refunded entries whose adjustment has not been given yet (all dates)"><span>Pending Adj.</span><b id="td-pending">0</b></div>
-      <div class="ptc-today-item" title="Agency earnings from entries (markup + service charges) plus Revenue Desk profit, for the selected period"><span>Revenue</span><b id="td-revenue">0</b></div>
+    <div id="ptc-today" aria-label="Summary statistics">
+      <div class="ptc-stat-card"><span class="ptc-stat-icon ptc-stat-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9.5h18"/><path d="M8 3v4M16 3v4"/></svg></span><div class="ptc-stat-text"><span class="ptc-stat-label">Today</span><span class="ptc-stat-valrow"><select id="td-range" class="ptc-stat-value ptc-stat-select" aria-label="Summary period"><option value="today" selected>Today</option><option value="7">Last 7 days</option><option value="30">Last 30 days</option><option value="all">All time</option></select></span></div></div>
+      <div class="ptc-stat-card"><span class="ptc-stat-icon ptc-stat-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4Z"/><path d="M10 6v2M10 11v2M10 16v2"/></svg></span><div class="ptc-stat-text"><span class="ptc-stat-label">Tickets</span><span class="ptc-stat-valrow"><b class="ptc-stat-value" id="td-tickets">0</b><span class="ptc-stat-delta" id="td-tickets-delta"></span></span></div></div>
+      <div class="ptc-stat-card"><span class="ptc-stat-icon ptc-stat-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11A8 8 0 0 0 6.3 6.3L4 8.6"/><path d="M4 4v4.6h4.6"/><path d="M4 13a8 8 0 0 0 13.7 4.7l2.3-2.3"/><path d="M20 20v-4.6h-4.6"/></svg></span><div class="ptc-stat-text"><span class="ptc-stat-label">Reissues</span><span class="ptc-stat-valrow"><b class="ptc-stat-value" id="td-reissues">0</b><span class="ptc-stat-delta" id="td-reissues-delta"></span></span></div></div>
+      <div class="ptc-stat-card"><span class="ptc-stat-icon ptc-stat-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11A8 8 0 0 1 17.7 6.3L20 8.6"/><path d="M20 4v4.6h-4.6"/><path d="M20 13a8 8 0 0 1-13.7 4.7L4 15.4"/><path d="M4 20v-4.6h4.6"/></svg></span><div class="ptc-stat-text"><span class="ptc-stat-label">Refunds</span><span class="ptc-stat-valrow"><b class="ptc-stat-value" id="td-refunds">0</b><span class="ptc-stat-delta" id="td-refunds-delta"></span></span></div></div>
+      <div class="ptc-stat-card"><span class="ptc-stat-icon ptc-stat-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 2"/></svg></span><div class="ptc-stat-text"><span class="ptc-stat-label">Pending Adj.</span><span class="ptc-stat-valrow"><b class="ptc-stat-value" id="td-pending" title="Refunded entries whose adjustment has not been given yet (all dates)">0</b><span class="ptc-stat-delta" id="td-pending-delta"></span></span></div></div>
+      <div class="ptc-stat-card"><span class="ptc-stat-icon ptc-stat-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="13" height="7" rx="2"/><rect x="7" y="9.5" width="13" height="7" rx="2"/><rect x="4" y="15" width="13" height="5" rx="2"/></svg></span><div class="ptc-stat-text"><span class="ptc-stat-label">Revenue</span><span class="ptc-stat-valrow"><b class="ptc-stat-value" id="td-revenue" title="Agency earnings from entries (markup + service charges) plus Revenue Desk profit, for the selected period">0</b><span class="ptc-stat-delta" id="td-revenue-delta"></span></span></div></div>
     </div>
 
     <!-- ============ DASHBOARD VIEW ============ -->
@@ -8259,21 +8247,71 @@
   function ptcUpdateToday(){
     const sel = $('td-range'); const range = sel ? sel.value : 'today';
     const t = ptcTodayStr();
-    let from = t;
-    if(range === '7' || range === '30'){ const d = new Date(); d.setDate(d.getDate() - (parseInt(range, 10) - 1)); from = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
+    const dstr = (d) => d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+    let from = t, prevFrom = null, prevTo = null;
+    if(range === '7' || range === '30'){
+      const n = parseInt(range, 10);
+      const d1 = new Date(); d1.setDate(d1.getDate() - (n - 1)); from = dstr(d1);
+      const d2 = new Date(); d2.setDate(d2.getDate() - (2 * n - 1)); prevFrom = dstr(d2);
+      const d3 = new Date(); d3.setDate(d3.getDate() - n); prevTo = dstr(d3);
+    } else if(range === 'today'){
+      const d2 = new Date(); d2.setDate(d2.getDate() - 1); prevFrom = prevTo = dstr(d2);
+    }
     const inRange = (dt) => { if(!dt) return false; if(range === 'all') return true; return dt >= from && dt <= t; };
+    const inPrevRange = (dt) => { if(!dt || !prevFrom) return false; return dt >= prevFrom && dt <= prevTo; };
     const set = (id, v) => { const el = $(id); if(el) el.textContent = v; };
+    // Delta chip vs. the immediately preceding period of the same length. "All time" and
+    // Pending Adj. (a snapshot, not a per-period count) show no delta — there's nothing to compare.
+    function setDelta(id, cur, prev){
+      const el = $(id); if(!el) return;
+      el.className = 'ptc-stat-delta';
+      if(range === 'all' || prevFrom === null){ el.textContent = ''; return; }
+      const diff = cur - prev;
+      if(diff > 0){ el.textContent = '↑ +' + diff; el.classList.add('ptc-delta-up'); }
+      else if(diff < 0){ el.textContent = '↓ ' + diff; el.classList.add('ptc-delta-down'); }
+      else { el.textContent = '—'; el.classList.add('ptc-delta-flat'); }
+    }
     const te = entries.filter(e => inRange(e.date));
-    set('td-tickets', te.filter(e => e.txn === 'Ticketing').length);
-    set('td-reissues', te.filter(e => e.txn === 'Reissue').length);
-    set('td-refunds', te.filter(e => e.txn === 'Refund').length);
+    const tePrev = entries.filter(e => inPrevRange(e.date));
+    const curTickets = te.filter(e => e.txn === 'Ticketing').length;
+    const curReissues = te.filter(e => e.txn === 'Reissue').length;
+    const curRefunds = te.filter(e => e.txn === 'Refund').length;
+    set('td-tickets', curTickets);
+    set('td-reissues', curReissues);
+    set('td-refunds', curRefunds);
+    setDelta('td-tickets-delta', curTickets, tePrev.filter(e => e.txn === 'Ticketing').length);
+    setDelta('td-reissues-delta', curReissues, tePrev.filter(e => e.txn === 'Reissue').length);
+    setDelta('td-refunds-delta', curRefunds, tePrev.filter(e => e.txn === 'Refund').length);
     const pendN = entries.filter(e => e.txn === 'Refund' && e.refundStatus === 'REFUNDED' && e.adjustmentGiven !== 'YES').length;
     set('td-pending', pendN);
+    const pendDeltaEl = $('td-pending-delta'); if(pendDeltaEl){ pendDeltaEl.className = 'ptc-stat-delta ptc-delta-flat'; pendDeltaEl.textContent = '—'; }
     const bd = $('nav-pending-badge'); if(bd){ bd.textContent = pendN; bd.style.display = pendN ? '' : 'none'; }
-    let rev = 0;
-    try{ te.forEach(e => { rev += Number(entryEarnings(e)) || 0; }); }catch(err){}
-    try{ salesEntries.filter(x => inRange(x.date)).forEach(x => { rev += (parseFloat(x.profit) || ((parseFloat(x.price) || 0) - (parseFloat(x.cost) || 0))); }); }catch(err){}
-    set('td-revenue', rev.toLocaleString(undefined, { maximumFractionDigits: 0 }));
+    function periodRevenue(list, salesList){
+      let rev = 0;
+      try{ list.forEach(e => { rev += Number(entryEarnings(e)) || 0; }); }catch(err){}
+      try{ salesList.forEach(x => { rev += (parseFloat(x.profit) || ((parseFloat(x.price) || 0) - (parseFloat(x.cost) || 0))); }); }catch(err){}
+      return rev;
+    }
+    let salesCur = [], salesPrev = [];
+    try{ salesCur = salesEntries.filter(x => inRange(x.date)); }catch(err){}
+    try{ salesPrev = salesEntries.filter(x => inPrevRange(x.date)); }catch(err){}
+    const rev = periodRevenue(te, salesCur);
+    set('td-revenue', 'BDT ' + rev.toLocaleString(undefined, { maximumFractionDigits: 0 }));
+    const revDeltaEl = $('td-revenue-delta');
+    if(revDeltaEl){
+      revDeltaEl.className = 'ptc-stat-delta';
+      if(range === 'all' || prevFrom === null){ revDeltaEl.textContent = ''; }
+      else{
+        const prevRev = periodRevenue(tePrev, salesPrev);
+        if(prevRev === 0){ revDeltaEl.textContent = ''; }
+        else{
+          const pct = Math.round(((rev - prevRev) / Math.abs(prevRev)) * 100);
+          if(pct > 0){ revDeltaEl.textContent = '↑ +' + pct + '%'; revDeltaEl.classList.add('ptc-delta-up'); }
+          else if(pct < 0){ revDeltaEl.textContent = '↓ ' + pct + '%'; revDeltaEl.classList.add('ptc-delta-down'); }
+          else { revDeltaEl.textContent = '—'; revDeltaEl.classList.add('ptc-delta-flat'); }
+        }
+      }
+    }
   }
   if($('td-range')) $('td-range').addEventListener('change', ptcUpdateToday);
   setInterval(() => { try{ ptcUpdateToday(); }catch(err){} }, 2000); // also follows cloud/file loads and date rollover
@@ -8418,42 +8456,6 @@
     const btn = ptcPane === 'salesdesk' ? $('btn-sales-clear') : $('btn-clear');
     if(btn) btn.click();
   });
-
-  // ---- Top brand bar: pills mirror the real connection status (Master Data / Cloud Sync)
-  // and jump to + expand the same panels in the hero — no separate/duplicate state. ----
-  function ptcJumpExpand(summaryId, toggleId, actionsId){
-    const summary = $(summaryId), toggle = $(toggleId), actions = $(actionsId);
-    if(!summary) return;
-    summary.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    if(actions && actions.hidden) setTimeout(() => toggle && toggle.click(), 300);
-  }
-  $('brandbar-file-pill').addEventListener('click', () => ptcJumpExpand('ptc-filebar-summary', 'btn-filebar-toggle', 'ptc-filebar-actions'));
-  $('brandbar-cloud-pill').addEventListener('click', () => ptcJumpExpand('ptc-cloudbar-summary', 'btn-cloudbar-toggle', 'ptc-cloudbar-actions'));
-  function ptcSyncBrandbar(){
-    const dot = $('ptc-cloud-dot'), status = $('ptc-cloud-status');
-    const bd = $('brandbar-cloud-dot'), ct = $('brandbar-cloud-count');
-    if(dot && bd) bd.className = 'ptc-brand-pill-dot' + (dot.style.background && /1E7A46|#1e7a46|green/i.test(dot.style.background) ? ' ptc-dot-online' : '');
-    if(status && ct) ct.textContent = /connected/i.test(status.textContent) ? (entries.length + ' entries · synced') : 'Not connected';
-  }
-  setInterval(ptcSyncBrandbar, 1500);
-  ptcSyncBrandbar();
-  // Bell: lights up when something needs attention (reuses the same Pending Adj. count).
-  function ptcSyncBell(){
-    const n = entries.filter(e => e.txn === 'Refund' && e.refundStatus === 'REFUNDED' && e.adjustmentGiven !== 'YES').length;
-    const bd = $('brandbar-bell-badge'); if(bd) bd.style.display = n ? '' : 'none';
-    const bell = $('brandbar-bell'); if(bell) bell.title = n ? n + ' refund' + (n === 1 ? '' : 's') + ' pending adjustment' : 'No notifications';
-  }
-  setInterval(ptcSyncBell, 1500);
-  ptcSyncBell();
-  // Avatar initials — computed from the portfolio's own profile name, not hardcoded.
-  (function(){
-    try{
-      const nm = (typeof profile !== 'undefined' && profile.name) ? profile.name : '';
-      const initials = nm.split(' ').filter(Boolean).slice(0, 2).map(w => w[0].toUpperCase()).join('');
-      const av = $('brandbar-avatar');
-      if(av && initials){ av.textContent = initials; av.title = nm; }
-    }catch(err){}
-  })();
 
   // ---- Sidebar: Recent Activity + View All Logs + Support link ----
   $('qa-view-all-logs').addEventListener('click', () => window.ptcSetPane('reports'));
