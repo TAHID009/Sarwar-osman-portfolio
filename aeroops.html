@@ -1595,26 +1595,27 @@
   .ptc-nav-btn{ flex:1 0 auto; border:none; background:transparent; font:inherit; font-size:12.5px; font-weight:700; color:var(--ink-soft); padding:7px 14px; border-radius:7px; cursor:pointer; white-space:nowrap; }
   .ptc-nav-btn:hover{ background:rgba(255,255,255,0.55); }
   .ptc-nav-btn.active{ background:#fff; color:var(--ink); box-shadow:var(--shadow-sm); }
-  #ptc-today{ display:grid; grid-template-columns:repeat(6,1fr); gap:8px; margin-bottom:10px; }
-  .ptc-stat-card{ background:var(--card); border:1px solid var(--line); border-radius:10px; padding:9px 10px; min-height:56px; box-shadow:var(--shadow-sm); display:flex; align-items:center; gap:8px; min-width:0; overflow:hidden; }
-  .ptc-stat-icon{ flex-shrink:0; width:20px; height:20px; color:var(--accent); display:flex; }
-  .ptc-stat-icon svg{ width:20px; height:20px; display:block; }
+  #ptc-today{ display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:6px; margin-bottom:8px; }
+  .ptc-stat-card{ position:relative; background:var(--card); border:1px solid var(--line); border-radius:8px; padding:6px 10px; height:56px; box-sizing:border-box; box-shadow:var(--shadow-sm); display:flex; align-items:center; gap:7px; min-width:0; overflow:hidden; }
+  .ptc-stat-card:focus-within{ box-shadow:0 0 0 2px var(--accent); }
+  .ptc-stat-icon{ flex-shrink:0; width:17px; height:17px; color:var(--accent); display:flex; }
+  .ptc-stat-icon svg{ width:17px; height:17px; display:block; }
   .ptc-stat-icon.ptc-stat-blue{ color:var(--booking); }
   .ptc-stat-icon.ptc-stat-green{ color:#1E7A46; }
   .ptc-stat-valrow{ display:flex; align-items:baseline; gap:6px; min-width:0; max-width:100%; overflow:hidden; }
-  .ptc-stat-delta{ font-size:10.5px; font-weight:700; white-space:nowrap; }
+  .ptc-stat-delta{ display:none !important; } /* trend chips removed from the compact row; elements stay so existing code keeps working */
   .ptc-stat-delta:empty{ display:none; }
   .ptc-stat-delta.ptc-delta-up{ color:#1E7A46; }
   .ptc-stat-delta.ptc-delta-down{ color:var(--refund); }
   .ptc-stat-delta.ptc-delta-flat{ color:var(--muted); }
-  .ptc-stat-text{ min-width:0; display:flex; flex-direction:column; gap:1px; }
-  .ptc-stat-label{ font-size:10px; font-weight:600; color:var(--ink-soft); letter-spacing:0.1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; }
-  .ptc-stat-value{ font-size:16px; font-weight:800; color:var(--ink); font-variant-numeric:tabular-nums; line-height:1.15; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .ptc-stat-select{ border:none; background:transparent; padding:0; margin:0; max-width:100%; -webkit-appearance:none; appearance:none; cursor:pointer; border-radius:6px; }
-  .ptc-stat-select:focus{ outline:none; box-shadow:0 0 0 2px var(--accent); }
-  .ptc-stat-select:focus-visible{ outline:none; box-shadow:0 0 0 2px var(--accent); }
-  @media (max-width:900px){ #ptc-today{ grid-template-columns:repeat(3,1fr); } }
-  @media (max-width:480px){ #ptc-today{ grid-template-columns:repeat(2,1fr); } .ptc-stat-value{ font-size:14.5px; } }
+  .ptc-stat-text{ min-width:0; flex:1; display:flex; flex-direction:column; gap:1px; }
+  .ptc-stat-label{ display:flex; align-items:center; gap:3px; font-size:10.5px; line-height:1.2; font-weight:600; color:var(--ink-soft); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; }
+  .ptc-stat-value{ font-size:16px; font-weight:800; color:var(--ink); font-variant-numeric:tabular-nums; line-height:1.2; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0; }
+  .ptc-stat-select{ position:absolute; inset:0; width:100%; height:100%; opacity:0; cursor:pointer; font-size:14px; }
+  .ptc-stat-select{ border:none; background:transparent; padding:0; margin:0; -webkit-appearance:none; appearance:none; border-radius:8px; }
+  .ptc-stat-select:focus,.ptc-stat-select:focus-visible{ outline:none; }
+  @media (max-width:900px){ #ptc-today{ grid-template-columns:repeat(3,minmax(0,1fr)); } }
+  @media (max-width:480px){ #ptc-today{ grid-template-columns:repeat(2,minmax(0,1fr)); } .ptc-stat-value{ font-size:15px; } }
 
   /* panes: each nav tab shows one workspace */
   #ptc-root[data-pane="entrydesk"] #ptc-entrylog-head,
@@ -2596,11 +2597,11 @@ table.lb-t{ width:100%; border-collapse:separate; border-spacing:0; font-size:12
     <div class="ptc-body-main">
 
     <div id="ptc-today" aria-label="Summary statistics">
-      <div class="ptc-stat-card"><span class="ptc-stat-icon ptc-stat-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9.5h18"/><path d="M8 3v4M16 3v4"/></svg></span><div class="ptc-stat-text"><span class="ptc-stat-label">Today</span><span class="ptc-stat-valrow"><select id="td-range" class="ptc-stat-value ptc-stat-select" aria-label="Summary period"><option value="today" selected>Today</option><option value="7">7 Days</option><option value="30">30 Days</option><option value="all">All Time</option></select></span></div></div>
+      <div class="ptc-stat-card"><span class="ptc-stat-icon ptc-stat-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9.5h18"/><path d="M8 3v4M16 3v4"/></svg></span><div class="ptc-stat-text"><span class="ptc-stat-label"><span id="td-range-label">Today</span><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span><b class="ptc-stat-value" id="td-date"></b></div><select id="td-range" class="ptc-stat-select" aria-label="Summary period"><option value="today" selected>Today</option><option value="7">7 Days</option><option value="30">30 Days</option><option value="all">All Time</option></select></div>
       <div class="ptc-stat-card"><span class="ptc-stat-icon ptc-stat-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4Z"/><path d="M10 6v2M10 11v2M10 16v2"/></svg></span><div class="ptc-stat-text"><span class="ptc-stat-label">Tickets</span><span class="ptc-stat-valrow"><b class="ptc-stat-value" id="td-tickets">0</b><span class="ptc-stat-delta" id="td-tickets-delta"></span></span></div></div>
       <div class="ptc-stat-card"><span class="ptc-stat-icon ptc-stat-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11A8 8 0 0 0 6.3 6.3L4 8.6"/><path d="M4 4v4.6h4.6"/><path d="M4 13a8 8 0 0 0 13.7 4.7l2.3-2.3"/><path d="M20 20v-4.6h-4.6"/></svg></span><div class="ptc-stat-text"><span class="ptc-stat-label">Reissues</span><span class="ptc-stat-valrow"><b class="ptc-stat-value" id="td-reissues">0</b><span class="ptc-stat-delta" id="td-reissues-delta"></span></span></div></div>
       <div class="ptc-stat-card"><span class="ptc-stat-icon ptc-stat-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11A8 8 0 0 1 17.7 6.3L20 8.6"/><path d="M20 4v4.6h-4.6"/><path d="M20 13a8 8 0 0 1-13.7 4.7L4 15.4"/><path d="M4 20v-4.6h4.6"/></svg></span><div class="ptc-stat-text"><span class="ptc-stat-label">Refunds</span><span class="ptc-stat-valrow"><b class="ptc-stat-value" id="td-refunds">0</b><span class="ptc-stat-delta" id="td-refunds-delta"></span></span></div></div>
-      <div class="ptc-stat-card"><span class="ptc-stat-icon ptc-stat-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 2"/></svg></span><div class="ptc-stat-text"><span class="ptc-stat-label" title="Pending Adj.">Pending</span><span class="ptc-stat-valrow"><b class="ptc-stat-value" id="td-pending" title="Refunded entries whose adjustment has not been given yet (all dates)">0</b><span class="ptc-stat-delta" id="td-pending-delta"></span></span></div></div>
+      <div class="ptc-stat-card"><span class="ptc-stat-icon ptc-stat-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 2"/></svg></span><div class="ptc-stat-text"><span class="ptc-stat-label" title="Pending Adj.">Pending Adj.</span><span class="ptc-stat-valrow"><b class="ptc-stat-value" id="td-pending" title="Refunded entries whose adjustment has not been given yet (all dates)">0</b><span class="ptc-stat-delta" id="td-pending-delta"></span></span></div></div>
       <div class="ptc-stat-card"><span class="ptc-stat-icon ptc-stat-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="13" height="7" rx="2"/><rect x="7" y="9.5" width="13" height="7" rx="2"/><rect x="4" y="15" width="13" height="5" rx="2"/></svg></span><div class="ptc-stat-text"><span class="ptc-stat-label">Revenue</span><span class="ptc-stat-valrow"><b class="ptc-stat-value" id="td-revenue" title="Agency earnings from entries (markup + service charges) plus Revenue Desk profit, for the selected period">0</b><span class="ptc-stat-delta" id="td-revenue-delta"></span></span></div></div>
     </div>
 
@@ -8420,6 +8421,24 @@ table.lb-t{ width:100%; border-collapse:separate; border-spacing:0; font-size:12
       }
     }
   }
+  const __ptcUpdateTodayBase = ptcUpdateToday;
+  ptcUpdateToday = function(){
+    __ptcUpdateTodayBase.apply(this, arguments);
+    try{
+      const sel = $('td-range'), fmt = (d) => d.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+      const fmtS = (d) => d.toLocaleDateString('en-US', { month:'short', day:'numeric' });
+      const now = new Date(), r = sel ? sel.value : 'today';
+      let txt = fmt(now);
+      if(r === '7' || r === '30'){ const f = new Date(); f.setDate(f.getDate() - (parseInt(r, 10) - 1)); txt = fmtS(f) + ' – ' + fmtS(now); }
+      else if(r === 'all') txt = 'All time';
+      const dEl = $('td-date'); if(dEl) dEl.textContent = txt;
+      const lEl = $('td-range-label'); if(lEl && sel) lEl.textContent = sel.options[sel.selectedIndex].text;
+      document.querySelectorAll('#ptc-today .ptc-stat-value').forEach(el => {
+        el.style.fontSize = ''; el.title = el.title || '';
+        let fs = 16; while(el.scrollWidth > el.clientWidth + 1 && fs > 11){ fs -= 0.5; el.style.fontSize = fs + 'px'; }
+      });
+    }catch(err){}
+  };
   if($('td-range')) $('td-range').addEventListener('change', ptcUpdateToday);
   setInterval(() => { try{ ptcUpdateToday(); }catch(err){} }, 2000); // also follows cloud/file loads and date rollover
 
