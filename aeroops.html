@@ -1735,7 +1735,7 @@
   }
   .ptc-dash-hero-sub{ color:rgba(255,255,255,0.78); font-size:12.5px; margin-top:2px; }
 
-  .ptc-body-grid{ display:grid; grid-template-columns: 1fr 220px; gap:14px; align-items:start; }
+  .ptc-body-grid{ display:grid; grid-template-columns: 1fr; gap:14px; align-items:start; }
   #ptc-root:not([data-pane="entrydesk"]):not([data-pane="salesdesk"]) .ptc-body-grid{ grid-template-columns: 1fr; }
   #ptc-root:not([data-pane="entrydesk"]):not([data-pane="salesdesk"]) .ptc-sidebar{ display:none; }
   .ptc-sidebar{ position:sticky; top:12px; }
@@ -1755,7 +1755,8 @@
   .ptc-brandbar{ position:relative; }
 
   /* Top row: nav (main col) + Logs button (sidebar col) share the body grid columns */
-  #ptc-toprow-grid{ margin-bottom:10px; }
+  #ptc-toprow-grid{ margin-bottom:10px; grid-template-columns:1fr 150px; }
+  @media (max-width:900px){ #ptc-toprow-grid{ grid-template-columns:1fr; } }
   #ptc-toprow-grid #ptc-nav{ margin-bottom:0; }
   .ptc-side-logs-btn{ width:100%; height:100%; min-height:40px; display:flex; align-items:center; justify-content:center; gap:6px; background:var(--card); border:1px solid var(--line); border-radius:10px; font:inherit; font-size:12.5px; font-weight:700; color:var(--ink-soft); cursor:pointer; box-shadow:var(--shadow-sm); }
   .ptc-side-logs-btn:hover{ background:#F3F5F8; }
@@ -2218,6 +2219,35 @@
   }
 
 
+
+/* ===== AEROOPS UI REFRESH (visual layer only) ===== */
+#ptc-root{ font-family:'IBM Plex Sans',Inter,system-ui,sans-serif; }
+#ptc-root :is(input,select,textarea,button){ font-family:inherit; }
+#ptc-root .ptc-brandbar{ padding:0 2px 8px; }
+#ptc-root .ptc-brandbar-logo{ color:#0E9AA7; font-size:18px; }
+#ptc-root .ptc-brandbar-name{ font-size:15px; font-weight:600; letter-spacing:0; }
+#ptc-root .ptc-brandbar-page{ font-weight:500; }
+#ptc-root .ptc-dash-hero{ display:flex; flex-wrap:wrap; align-items:center; gap:8px 14px; background:#0B2545; border-radius:12px; padding:10px 14px; margin-bottom:8px; box-shadow:none; overflow:visible; }
+#ptc-root .ptc-dash-hero::after{ display:none; }
+#ptc-root .ptc-dash-hero-top > div:first-child, #ptc-root .ptc-dash-greeting, #ptc-root .ptc-hero-perf{ display:none; }
+#ptc-root .ptc-hero-toolbar{ order:1; flex:1 1 320px; margin-top:0; }
+#ptc-root .ptc-dash-hero-top{ order:2; margin-left:auto; flex:none; }
+#ptc-root .ptc-dash-hero-top .ptc-eyebrow{ font-size:11.5px; letter-spacing:0; text-transform:none; font-weight:500; }
+#ptc-root .ptc-hero-conn{ order:3; flex:1 0 100%; margin-top:0; gap:6px; }
+#ptc-root .ptc-hero-toolbar .ptc-global-search-wrap{ max-width:460px; }
+#ptc-root .ptc-hero-toolbar #ptc-global-search{ height:34px; border-radius:8px; background:rgba(255,255,255,.1); border-color:rgba(255,255,255,.16); }
+#ptc-root .ptc-hero-toolbar .ptc-command-status{ font-weight:500; border-radius:999px; }
+#ptc-root #ptc-toprow-grid{ gap:8px; margin-bottom:8px; }
+#ptc-root #ptc-nav{ background:#fff; border:1px solid var(--line); border-radius:10px; padding:0 6px; gap:0; }
+#ptc-root .ptc-nav-btn{ display:inline-flex; align-items:center; gap:7px; flex:0 0 auto; padding:11px 14px; border-radius:0; font-weight:600; color:var(--ink-soft); box-shadow:inset 0 -2.5px 0 transparent; transition:color .2s, box-shadow .2s, background .15s; }
+#ptc-root .ptc-nav-btn:hover{ background:#F4F7FB; color:var(--ink); }
+#ptc-root .ptc-nav-btn.active{ background:transparent; color:#2563C9; box-shadow:inset 0 -2.5px 0 #0E9AA7; }
+#ptc-root .ptc-nav-btn svg, #ptc-root .ptc-side-logs-btn svg{ width:16px; height:16px; flex:none; }
+#ptc-root .ptc-side-logs-btn{ border-radius:10px; font-weight:600; box-shadow:none; }
+#ptc-root .ptc-nav-badge{ font-weight:600; }
+#ptc-root .ptc-card{ border-radius:12px; box-shadow:none; }
+#ptc-root .ptc-stat-card{ box-shadow:none; }
+
 /* ===== LOG BOARD (presentation layer — no data/logic changes) ===== */
 #lb{ display:none; --n:#0B2545; --bl:#2563C9; --cy:#0E9AA7; --ln:#E3E9F2; --sf:#F4F7FB; --mu:#64748B; margin:0 0 14px; font-family:'IBM Plex Sans',Inter,system-ui,sans-serif; color:var(--n); }
 #ptc-root[data-pane="entrylog"] #lb, #ptc-root[data-pane="saleslog"] #lb, #ptc-root[data-pane="reports"] #lb, #ptc-root[data-pane="systemlog"] #lb{ display:block; }
@@ -2543,16 +2573,16 @@ table.lb-t{ width:100%; border-collapse:separate; border-spacing:0; font-size:12
 
     <div class="ptc-body-grid" id="ptc-toprow-grid">
     <nav id="ptc-nav" aria-label="AeroOps sections">
-      <button type="button" class="ptc-nav-btn active" data-nav="entrydesk" data-pane="entrydesk">🧾 Entry Desk</button>
-      <button type="button" class="ptc-nav-btn" data-nav="salesdesk" data-pane="salesdesk">💰 Revenue Desk</button>
-      <button type="button" class="ptc-nav-btn" data-nav="pending" id="btn-nav-pending" title="Refunds waiting for their adjustment">⏳ Pending Adj. <span class="ptc-nav-badge" id="nav-pending-badge" style="display:none;">0</span></button>
-      <button type="button" class="ptc-nav-btn" data-nav="reports" data-pane="reports">📊 Reports</button>
+      <button type="button" class="ptc-nav-btn active" data-nav="entrydesk" data-pane="entrydesk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2M13 11v2M13 17v2"/></svg>Entry Desk</button>
+      <button type="button" class="ptc-nav-btn" data-nav="salesdesk" data-pane="salesdesk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg>Revenue Desk</button>
+      <button type="button" class="ptc-nav-btn" data-nav="pending" id="btn-nav-pending" title="Refunds waiting for their adjustment"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>Pending Adj. <span class="ptc-nav-badge" id="nav-pending-badge" style="display:none;">0</span></button>
+      <button type="button" class="ptc-nav-btn" data-nav="reports" data-pane="reports"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18M18 17V9M13 17V5M8 17v-3"/></svg>Reports</button>
     </nav>
     <div class="ptc-nav-more" style="position:relative;">
-      <button type="button" class="ptc-side-logs-btn" data-nav="logs" id="btn-nav-logs" aria-haspopup="true" aria-expanded="false">☰ Logs ▾</button>
+      <button type="button" class="ptc-side-logs-btn" data-nav="logs" id="btn-nav-logs" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>Logs</button>
       <div class="ptc-nav-menu" id="ptc-nav-menu" hidden>
-        <button type="button" class="ptc-nav-menu-item" data-pane="entrylog">📋 Entry Log</button>
-        <button type="button" class="ptc-nav-menu-item" data-pane="saleslog">📒 Revenue Log</button>
+        <button type="button" class="ptc-nav-menu-item" data-pane="entrylog">Entry Log</button>
+        <button type="button" class="ptc-nav-menu-item" data-pane="saleslog">Revenue Log</button>
       </div>
     </div>
     </div><!-- /ptc-toprow-grid -->
@@ -3561,21 +3591,6 @@ table.lb-t{ width:100%; border-collapse:separate; border-spacing:0; font-size:12
 
     </div><!-- /ptc-body-main -->
 
-    <aside class="ptc-sidebar" id="ptc-sidebar" aria-label="Quick actions">
-      <div class="ptc-side-panel">
-        <div class="ptc-side-title">⚡ Quick Actions</div>
-        <button type="button" class="ptc-side-btn" id="qa-tkt-autofill">✈️ TKT Autofill <span>›</span></button>
-        <button type="button" class="ptc-side-btn" id="qa-search-pnr">🔎 Search PNR <span>›</span></button>
-        <button type="button" class="ptc-side-btn" id="qa-reset-form">🔄 Reset Form <span>›</span></button>
-      </div>
-
-      <div class="ptc-side-panel">
-        <div class="ptc-side-title">🕒 Recent Activity</div>
-        <div class="ptc-recent-ops" id="ptc-side-recent" style="max-height:none;"></div>
-        <button type="button" class="ptc-side-viewall" id="qa-view-all-logs">View All Logs →</button>
-      </div>
-
-    </aside>
 
     </div><!-- /ptc-body-grid -->
 
@@ -8704,22 +8719,6 @@ table.lb-t{ width:100%; border-collapse:separate; border-spacing:0; font-size:12
   try{ ptcRenderCompactLog(); ptcUpdateToday(); ptcUpdateReports(); }catch(err){ console.error('Redesign layer init failed', err); }
   ptcApplyPane();
 
-  // ---- Quick Actions sidebar (Entry Desk / Revenue Desk only) ----
-  $('qa-tkt-autofill').addEventListener('click', () => {
-    const btn = ptcPane === 'salesdesk' ? $('pdf-ticket-btn-sales') : $('pdf-ticket-btn');
-    if(btn) btn.click();
-  });
-  $('qa-search-pnr').addEventListener('click', () => {
-    const el = $('ptc-global-search');
-    if(el){ el.focus(); el.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
-  });
-  $('qa-reset-form').addEventListener('click', () => {
-    const btn = ptcPane === 'salesdesk' ? $('btn-sales-clear') : $('btn-clear');
-    if(btn) btn.click();
-  });
-
-  // ---- Sidebar: Recent Activity + View All Logs + Support link ----
-  $('qa-view-all-logs').addEventListener('click', () => window.ptcSetPane('reports'));
 })();
 </script>
 <script>
