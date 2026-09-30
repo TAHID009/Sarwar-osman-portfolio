@@ -2303,7 +2303,8 @@ table.lb-t{ width:100%; border-collapse:separate; border-spacing:0; font-size:12
 #lb-sys{ background:#fff; border:1px solid var(--ln); border-top:0; border-radius:0 0 12px 12px; padding:6px 16px 10px; font-size:12.5px; }
 #lb-sys .lb-s{ display:flex; gap:14px; padding:7px 0; border-bottom:1px solid #EEF2F7; } #lb-sys time{ color:var(--mu); font-variant-numeric:tabular-nums; flex:none; }
 /* hide the older log UI that the board replaces (its data + actions stay in the DOM and keep working) */
-#ptc-root[data-pane="entrylog"]:not(.ptc-pending-view) :is(#ptc-entrylog-head,#ptc-entrylog-body>.ptc-card:first-child,#ptc-clog-wrap,#ptc-table-wrap,#ptc-pagination),
+#ptc-root[data-pane="entrylog"] #ptc-entrylog-body>.ptc-card:first-child,
+#ptc-root[data-pane="entrylog"]:not(.ptc-pending-view) :is(#ptc-entrylog-head,#ptc-clog-wrap,#ptc-table-wrap,#ptc-pagination),
 #ptc-root[data-pane="saleslog"] :is(#sales-ledger-section>.ptc-log-head,#sales-ledger-section>.ptc-card,#sales-table-wrap),
 #ptc-root[data-pane="systemlog"] :is(#ptc-card,#ptc-entrylog-head,#ptc-entrylog-body,#ptc-impact-section),
 #lb[data-pane="reports"] :is(.lb-filters,.lb-wrap,#lb-sys), #lb[data-pane="systemlog"] :is(.lb-filters,.lb-wrap), #lb:not([data-pane="systemlog"]) #lb-sys,
@@ -2322,6 +2323,16 @@ button.lb-pill.lb-all{ background:rgba(255,255,255,.12); color:#fff; border-colo
   .lb-t .lb-pax{ white-space:normal; }
   #lb-count{ margin-left:0; width:100%; }
 }
+#lb-details{ background:#fff; border:1px solid var(--ln); border-top:0; border-radius:0 0 12px 12px; padding:2px 12px 12px; }
+#lb-details:not(:has(:is(#ptc-search-results,#sales-search-results)[style*="block"])){ display:none; }
+#lb-details #ptc-search-meta, #lb-details #sales-search-meta{ margin:8px 0 0 !important; display:inline-block; }
+#lb-details :is(#btn-search-clear,#btn-sales-search-clear){ margin-left:10px; padding:3px 10px; font-size:12px; }
+#lb[data-pane="entrylog"] :is(#sales-search-meta,#sales-search-results,#btn-sales-search-clear),
+#lb[data-pane="saleslog"] :is(#ptc-search-meta,#ptc-search-results,#btn-search-clear),
+#lb[data-pane="reports"] #lb-details, #lb[data-pane="systemlog"] #lb-details{ display:none !important; }
+#lb[data-pane="entrylog"]:has(#ptc-search-results[style*="block"]) .lb-wrap,
+#lb[data-pane="saleslog"]:has(#sales-search-results[style*="block"]) .lb-wrap{ display:none; }
+#ptc-root.ptc-pending-view #btn-search-clear{ display:none !important; }
 @media (prefers-reduced-motion:reduce){ .lb-r{ animation:none; } #lb *{ transition:none !important; } }
 </style>
 </head><body>
@@ -2611,7 +2622,6 @@ button.lb-pill.lb-all{ background:rgba(255,255,255,.12); color:#fff; border-colo
         <span id="lb-ind"></span>
       </div>
       <div class="lb-filters">
-        <label class="lb-search"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg><input type="search" id="lb-q" placeholder="Search PNR, ticket or passenger" autocomplete="off" aria-label="Filter log by PNR, ticket or passenger"></label>
         <label class="lb-d">From <input type="date" id="lb-from"></label>
         <label class="lb-d">To <input type="date" id="lb-to"></label>
         <select id="lb-type" aria-label="Transaction type"><option value="">All types</option><option>Ticketing</option><option>Reissue</option><option>Refund</option><option>Void</option></select>
@@ -2619,6 +2629,7 @@ button.lb-pill.lb-all{ background:rgba(255,255,255,.12); color:#fff; border-colo
         <button type="button" class="lb-clear" id="lb-clear">Clear filters</button>
         <span id="lb-count" aria-live="polite"></span>
       </div>
+      <div id="lb-details" aria-live="polite"></div>
       <div class="lb-wrap">
         <table class="lb-t">
           <thead><tr><th>PNR</th><th>Passenger(s)</th><th>TKT No.</th><th>Transaction Type</th><th class="c-route">Route</th><th>Date &amp; Time</th><th>Status</th><th style="text-align:right">Amount</th><th><span class="sr-only" style="position:absolute;left:-9999px">Action</span></th></tr></thead>
@@ -8568,8 +8579,10 @@ button.lb-pill.lb-all{ background:rgba(255,255,255,.12); color:#fff; border-colo
   }
 
   // ---- Log Board: a view over the existing `entries` / `salesEntries` (read-only; Action reuses startEdit / startSaleEdit) ----
-  const lbEl = $('lb'), lbBody = $('lb-tbody');
-  const lb = { q:'', from:'', to:'', type:'', status:'', limit:50, sig:'', tab:'' };
+  const lbEl = $('lb'), lbBody = $('lb-tbody'), lbGs = $('ptc-global-search');
+  // The detail cards and their Clear button are the existing renderers' elements; show them inside the Log Board.
+  ['ptc-search-meta','btn-search-clear','ptc-search-results','sales-search-meta','btn-sales-search-clear','sales-search-results'].forEach(id => { const el = $(id); if(el) $('lb-details').appendChild(el); });
+  const lb = { from:'', to:'', type:'', status:'', limit:50, sig:'', tab:'' };
   const lbSys = [{ t:new Date(), m:'Session started' }];
   const LB_STAT = ['Ticketed','Reissued','Refunded','Voided','Pending Adj.','Refund Pending'];
   const LB_IC = {
@@ -8599,7 +8612,7 @@ button.lb-pill.lb-all{ background:rgba(255,255,255,.12); color:#fff; border-colo
   function lbTime(e){ const d = e.createdAt ? new Date(e.createdAt) : null; return d && !isNaN(d) ? d.toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' }) : ''; }
   function lbModel(){
     const sales = lbSales(), src = sales ? salesEntries : entries;
-    const q = lb.q.trim().toLowerCase(), qd = q.replace(/\D/g, '');
+    const q = (lbGs ? lbGs.value : '').trim().toLowerCase(), qd = q.replace(/\D/g, '');
     const out = [];
     src.forEach((e, i) => {
       if(lb.from && (!e.date || e.date < lb.from)) return;
@@ -8657,7 +8670,7 @@ button.lb-pill.lb-all{ background:rgba(255,255,255,.12); color:#fff; border-colo
     $('lb-empty').hidden = m.rows.length > 0;
     $('lb-more').hidden = m.rows.length <= lb.limit;
     $('lb-more').textContent = 'Show ' + Math.min(50, m.rows.length - lb.limit) + ' more';
-    const f = lb.q || lb.from || lb.to || lb.type || lb.status;
+    const f = (lbGs && lbGs.value.trim()) || lb.from || lb.to || lb.type || lb.status;
     $('lb-count').textContent = m.rows.length + (m.rows.length === 1 ? ' record' : ' records') + (f ? ' of ' + m.total : '');
   }
   function lbInd(){
@@ -8686,9 +8699,16 @@ button.lb-pill.lb-all{ background:rgba(255,255,255,.12); color:#fff; border-colo
     window.ptcSetPane(LB_PANE[b.dataset.tab]);
   });
   let lbT = null;
-  $('lb-q').addEventListener('input', (ev) => { clearTimeout(lbT); lbT = setTimeout(() => { lb.q = ev.target.value; lb.limit = 50; lbRender(); }, 120); });
+  lbGs.addEventListener('input', () => { clearTimeout(lbT); lbT = setTimeout(() => { lb.limit = 50; lbRender(); }, 120); });
+  document.addEventListener('click', (ev) => { if(ev.target.closest && ev.target.closest('#btn-search-clear, #btn-sales-search-clear')) setTimeout(lbRender, 0); });
   [['lb-from','from'], ['lb-to','to'], ['lb-type','type'], ['lb-status','status']].forEach(([id, k]) => $(id).addEventListener('change', (ev) => { lb[k] = ev.target.value; lb.limit = 50; lbRender(); }));
-  $('lb-clear').addEventListener('click', () => { lb.q = lb.from = lb.to = lb.type = lb.status = ''; lb.limit = 50; ['lb-q','lb-from','lb-to','lb-type','lb-status'].forEach(id => $(id).value = ''); lbRender(); });
+  $('lb-clear').addEventListener('click', () => {
+    lb.from = lb.to = lb.type = lb.status = ''; lb.limit = 50;
+    ['lb-from','lb-to','lb-type','lb-status'].forEach(id => $(id).value = '');
+    lbGs.value = '';
+    ['btn-search-clear','btn-sales-search-clear'].forEach(id => { const b = $(id); if(b && b.style.display !== 'none' && !b.matches(':disabled')) b.click(); });
+    lbRender();
+  });
   $('lb-more').addEventListener('click', () => { lb.limit += 50; lbRender(); });
   $('lb-pend').addEventListener('click', () => {
     if(root.classList.contains('ptc-pending-view')){
