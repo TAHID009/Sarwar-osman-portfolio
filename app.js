@@ -118,7 +118,7 @@
   // Mobile nav — multi-page links
   const toggle = el("mobileToggle"), links = el("mobileLinks");
   if (toggle && links) {
-    links.innerHTML = `<a href="index.html">Home</a><a href="about.html">About</a><a href="experience.html">Experience</a><a href="skills.html">Skills</a><a href="education.html">Education</a><a href="activities.html">Activities</a><a href="aeroops.html">AeroOps Desk</a><a href="contact.html">Contact</a>`;
+    links.innerHTML = `<a href="index.html">Home</a><a href="about.html">About</a><a href="experience.html">Experience</a><a href="skills.html">Skills</a><a class="v2-only" href="index.html#aeroops">Projects</a><a href="education.html">Education</a><a href="activities.html">Activities</a><a href="aeroops.html">AeroOps Desk</a><a href="contact.html">Contact</a>`;
     // The header is sticky and can be anywhere relative to the document depending
     // on scroll, but #mobileLinks is a normal sibling below it in the page flow.
     // Without this, opening the menu while scrolled down places it back up at the

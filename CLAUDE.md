@@ -31,3 +31,10 @@ All website files intentionally live in the repository root to minimize GitHub P
 8. After every change, verify all HTML pages, CSS, JS, images and CV links.
 9. Keep the professional positioning focused on airline reservation, ticketing, GDS, NDC, OTA, fare rules and travel operations.
 10. Report which files were changed.
+
+## UI versions (v1 / v2)
+- v2 = current professional aviation design (default). v1 = previous design, kept intact and restorable.
+- `style.css` is the v1 design. `style-v2.css` layers v2 on top and is switched off when v1 is selected (`ui-version.js`).
+- AeroOps (`aeroops.html`) uses the same switch and key (`aeroops.ui.version` in localStorage). Design only; data, auth and sync are never touched.
+- Hidden switch (not linked anywhere): add `?ui=v1` or `?ui=v2` to a URL once, or press Ctrl+Alt+Shift+U.
+- New pages must include `<link rel="stylesheet" href="./style-v2.css" id="ui-v2-css"><script src="./ui-version.js"></script>` right after `style.css`.

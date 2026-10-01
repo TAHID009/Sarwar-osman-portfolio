@@ -1,0 +1,144 @@
+/* ==========================================================================
+   Portfolio UI v2 — professional aviation design
+   Loaded after style.css. Switched off by ui-version.js when the site is set
+   to v1 (previous design), so style.css alone always renders the old look.
+   Design only: no content, data or script behaviour is changed here.
+   ========================================================================== */
+:root{
+  --navy:#0A2342; --navy-2:#12325C; --blue:#1B5FC4; --blue-soft:#E8F0FC; --sky:#5ED6E0;
+  --bg:#F3F6FA; --surface:#fff; --ink:#0F1F36; --muted:#5B6B82; --line:#DCE4EF;
+  --ok:#1E7A46; --warn:#B7791F; --err:#B4453B;
+  --accent:#0A2342; --accent-2:#1B5FC4;
+  --radius:12px; --shadow:0 1px 2px rgba(10,35,66,.06),0 6px 20px rgba(10,35,66,.06);
+}
+html,body{ background:var(--bg); }
+body{ color:var(--ink); line-height:1.6; }
+.v2-only{ display:revert; }
+.site-shell{ padding:0 0 28px; }
+.container{ width:min(1200px,calc(100% - 40px)); }
+
+/* ---------- header ---------- */
+.header{ top:0; transform:none; will-change:auto; background:#fff; border-bottom:1px solid var(--line); }
+.header.scrolled{ box-shadow:0 4px 18px rgba(10,35,66,.08); }
+.header .container.nav-wrap{ width:100%; max-width:none; background:transparent; border:0; box-shadow:none; border-radius:0; backdrop-filter:none; -webkit-backdrop-filter:none; }
+.header.scrolled .nav-wrap{ box-shadow:none; }
+.nav{ width:min(1200px,calc(100% - 40px)); margin:auto; padding:0; min-height:62px; gap:20px; }
+.logo{ font-size:15px; letter-spacing:.14em; }
+.logo-mark{ width:32px; height:32px; border-radius:8px; background:var(--navy); font-size:15px; }
+.logo span:last-child{ color:var(--navy); }
+.nav-links{ gap:22px; }
+.nav-links a{ font-size:13px; font-weight:600; color:var(--muted); padding:22px 0; }
+.nav-links a:hover,.nav-links a.active{ color:var(--navy); }
+.nav-links a:after{ bottom:0; height:2px; background:var(--blue); border-radius:0; }
+.btn{ padding:11px 20px; border-radius:8px; background:var(--navy); box-shadow:none; font-size:13px; letter-spacing:.01em; }
+.btn:hover{ transform:translateY(-1px); box-shadow:0 8px 20px rgba(10,35,66,.22); filter:none; background:var(--navy-2); }
+.btn-outline{ background:#fff; color:var(--navy); border:1px solid var(--line); }
+.btn-outline:hover{ border-color:var(--blue); color:var(--blue); box-shadow:none; background:#fff; }
+.btn-soft{ background:var(--blue-soft); color:var(--blue); border:1px solid #cfdcf3; }
+.btn-soft:hover{ background:#dce8fa; box-shadow:none; }
+.btn-ghost{ background:rgba(255,255,255,.08); color:#fff; border:1px solid rgba(255,255,255,.4); }
+.btn-ghost:hover{ background:rgba(255,255,255,.18); box-shadow:none; }
+.btn-light{ background:#fff; color:var(--navy); }
+.btn-light:hover{ background:#EAF1FC; box-shadow:none; }
+.mobile-menu{ border-radius:12px; }
+.mobile-menu a.active{ background:var(--blue-soft); color:var(--blue); }
+
+/* ---------- typography / shared pieces ---------- */
+.kicker{ color:var(--blue); font-size:11px; letter-spacing:.14em; }
+.kicker:before{ width:22px; background:var(--blue); }
+.section{ padding:56px 0; }
+.section-title{ font-size:clamp(24px,3.2vw,32px); letter-spacing:-.02em; }
+.section-sub{ font-size:14px; }
+.about-teaser,.card,.job-card,.edu-card,.contact-item,.fact,.skill-group,.skill-card,.impact-stat,.note{ border-radius:var(--radius); border-color:var(--line); box-shadow:var(--shadow); }
+.about-teaser{ padding:22px 24px; }
+.card{ padding:22px; }
+.card:hover,.job-card:hover,.edu-card:hover,.contact-item:hover,.impact-stat:hover,.skill-card:hover{ transform:translateY(-2px); box-shadow:0 10px 28px rgba(10,35,66,.12); border-color:#c6d6ee; }
+.card-icon{ width:38px; height:38px; border-radius:9px; background:var(--blue-soft); color:var(--blue); font-size:13px; }
+.card h3{ font-size:15px; }
+.pill{ border-radius:6px; background:var(--blue-soft); border-color:#cfdcf3; color:var(--blue); font-size:10.5px; font-weight:600; }
+.impact-stat{ border-top:3px solid var(--blue); }
+.impact-value{ color:var(--navy); }
+.timeline-dot{ background:var(--blue); }
+.job-card h4,.skill-group h4{ color:var(--blue); }
+.note{ border-left:4px solid var(--blue); }
+.contact-band{ background:var(--navy); border:0; border-radius:16px; color:#fff; }
+.contact-band h3{ color:#fff; font-size:22px; }
+.contact-band p{ color:#B8C7DE; }
+.contact-band .icon{ background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.25); }
+.contact-band .btn{ background:#fff; color:var(--navy); }
+
+/* ---------- inner-page banner ---------- */
+.page-hero{ margin-top:14px; width:min(1200px,calc(100% - 40px)); margin-left:auto; margin-right:auto; text-align:left; border-radius:16px; padding:46px 44px; box-shadow:none; color:#fff;
+  background:linear-gradient(90deg,#0A2342 0%,rgba(10,35,66,.9) 50%,rgba(10,35,66,.55) 100%),url("./hero-bg.webp") center 62%/cover no-repeat,var(--navy); }
+.page-hero .container{ width:100%; }
+.page-hero .kicker{ color:#8EC5FF; }
+.page-hero .kicker:before{ background:#8EC5FF; }
+.page-hero h1{ font-size:clamp(30px,4.4vw,42px); letter-spacing:-.02em; margin:10px 0; color:#fff; }
+.page-hero p{ margin:0; color:#C5D3E8; max-width:640px; }
+
+/* ---------- home: v2 hero ---------- */
+.hero{ display:none; }
+.hero-v2{ margin:14px auto 0; width:min(1200px,calc(100% - 40px)); border-radius:18px; overflow:hidden; color:#fff;
+  background:linear-gradient(90deg,#0A2342 0%,rgba(10,35,66,.93) 42%,rgba(10,35,66,.5) 100%),url("./hero-bg.webp") 70% 60%/cover no-repeat,var(--navy); }
+.hero-v2 .container{ width:100%; }
+.hero-v2-grid{ display:grid; grid-template-columns:minmax(0,1.25fr) minmax(0,.75fr); align-items:center; gap:36px; padding:56px 52px; }
+.hero-v2-copy{ min-width:0; }
+.v2-eyebrow{ display:inline-block; font-size:11px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:#8EC5FF; padding:5px 10px; border:1px solid rgba(142,197,255,.35); border-radius:6px; }
+.hero-v2 h1{ font-size:clamp(34px,5vw,54px); line-height:1.05; letter-spacing:-.035em; margin:18px 0 10px; color:#fff; }
+.v2-role{ font-size:clamp(17px,2vw,21px); font-weight:600; margin:0; color:#fff; max-width:none; }
+.v2-tags{ margin:8px 0 0; font-size:14px; font-weight:600; letter-spacing:.06em; color:#B8D4F5; max-width:none; }
+.v2-triad{ margin:18px 0 0; font-size:13px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:#fff; max-width:none; }
+.v2-triad span{ color:var(--sky); padding:0 4px; }
+.v2-cta{ display:flex; flex-wrap:wrap; align-items:center; gap:12px; margin-top:28px; }
+.hero-v2 .v2-cta .btn:not(.btn-ghost){ background:#fff; color:var(--navy); }
+.hero-v2 .v2-cta .btn:not(.btn-ghost):hover{ background:#EAF1FC; }
+.v2-link{ color:#C5D3E8; font-size:13px; font-weight:600; text-decoration:underline; text-underline-offset:3px; }
+.v2-link:hover{ color:#fff; }
+.hero-v2-photo{ justify-self:end; width:min(300px,100%); aspect-ratio:4/5; border-radius:14px; overflow:hidden; border:1px solid rgba(255,255,255,.25); box-shadow:0 18px 40px rgba(0,0,0,.35); background:#12325C; }
+.hero-v2-photo img{ width:100%; height:100%; object-fit:cover; object-position:center top; }
+
+/* ---------- home: AeroOps feature ---------- */
+.aero-section{ padding:40px 0 28px; scroll-margin-top:72px; }
+.aero-feature{ display:grid; grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr); gap:36px; align-items:center; padding:38px; border-radius:18px; color:#fff; background:linear-gradient(135deg,#0A2342,#12325C); box-shadow:0 18px 44px rgba(10,35,66,.25); }
+.aero-copy{ min-width:0; }
+.aero-copy h2{ font-size:clamp(34px,4.6vw,48px); letter-spacing:.04em; margin:16px 0 4px; line-height:1; }
+.aero-sub{ margin:0; font-size:16px; font-weight:600; color:#B8D4F5; }
+.aero-desc{ margin:14px 0 0; font-size:14px; color:#C5D3E8; max-width:460px; }
+.aero-caps{ list-style:none; padding:0; margin:20px 0 0; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px 18px; }
+.aero-caps li{ position:relative; padding-left:22px; font-size:13px; font-weight:600; color:#fff; }
+.aero-caps li:before{ content:""; position:absolute; left:2px; top:.45em; width:9px; height:5px; border-left:2px solid var(--sky); border-bottom:2px solid var(--sky); transform:rotate(-45deg); }
+.aero-shot{ margin:0; min-width:0; border-radius:12px; overflow:hidden; background:#fff; border:1px solid rgba(255,255,255,.2); box-shadow:0 22px 50px rgba(0,0,0,.4); }
+.aero-shot-bar{ display:flex; align-items:center; gap:6px; padding:8px 12px; background:#E6ECF5; font-size:11px; font-weight:600; color:var(--muted); }
+.aero-shot-bar i{ width:9px; height:9px; border-radius:50%; background:#B7C3D6; }
+.aero-shot-bar span{ margin-left:8px; }
+.aero-shot img{ width:100%; height:auto; }
+
+/* ---------- footer ---------- */
+.footer{ padding-top:30px; }
+.footer-grid{ background:var(--navy); border:0; border-radius:16px; }
+.footer h4{ color:#fff; }
+.footer p,.footer a,.footer li{ color:#AFC0D8; }
+.footer a:hover{ color:#fff; }
+.footer .logo span:last-child{ color:#fff; }
+.footer .logo-mark{ background:rgba(255,255,255,.14); }
+.copy{ color:#7F90A8; }
+
+@media (prefers-reduced-motion:reduce){ *{ transition:none !important; scroll-behavior:auto !important; } }
+
+/* ---------- tablet / mobile ---------- */
+@media (max-width:1000px){
+  .nav{ width:min(100% - 28px,1200px); }
+  .hero-v2-grid{ grid-template-columns:1fr; padding:40px 28px; }
+  .hero-v2-photo{ justify-self:start; width:200px; }
+  .aero-feature{ grid-template-columns:1fr; padding:28px; }
+  .page-hero{ padding:36px 28px; }
+}
+@media (max-width:680px){
+  .container,.page-hero,.hero-v2{ width:calc(100% - 24px); }
+  .hero-v2-grid{ padding:30px 20px; }
+  .v2-cta .btn{ flex:1 1 100%; }
+  .aero-feature{ padding:22px 18px; border-radius:14px; }
+  .aero-caps{ grid-template-columns:1fr 1fr; }
+  .page-hero{ padding:28px 20px; }
+  .section{ padding:40px 0; }
+}
