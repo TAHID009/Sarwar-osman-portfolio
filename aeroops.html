@@ -1,6 +1,14 @@
 <!doctype html>
 <html lang="en">
 <head>
+<script>
+/* AeroOps UI version: v2 = new professional design (default), v1 = previous design.
+   Presentation only — stored under its own localStorage key; no data, auth or sync state is touched.
+   Hidden switch: add ?ui=v1 or ?ui=v2 to the URL once, or press Ctrl+Alt+Shift+U while signed in. */
+(function(){var K="aeroops.ui.version",v="v2";try{var q=new URLSearchParams(location.search).get("ui");if(q==="v1"||q==="v2")localStorage.setItem(K,q);var st=localStorage.getItem(K);if(st==="v1"||st==="v2")v=st;}catch(e){}
+document.documentElement.setAttribute("data-ui",v);window.__aeroUI=v;
+window.addEventListener("keydown",function(e){if(e.ctrlKey&&e.altKey&&e.shiftKey&&(e.key==="U"||e.key==="u")){var n=window.__aeroUI==="v1"?"v2":"v1";if(confirm("Switch AeroOps design to "+n+"? (UI only — your data is not affected)")){try{localStorage.setItem(K,n);}catch(x){}location.reload();}}});})();
+</script>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <script>
 (function(){
@@ -2335,6 +2343,10 @@ button.lb-pill.lb-all{ background:rgba(255,255,255,.12); color:#fff; border-colo
 #ptc-root.ptc-pending-view #btn-search-clear{ display:none !important; }
 @media (prefers-reduced-motion:reduce){ .lb-r{ animation:none; } #lb *{ transition:none !important; } }
 
+/* UI version helpers: v2-only elements stay hidden unless the v2 stylesheet is active */
+.aero-v2-only, .aero-greet, .ptc-back-profile, .ptc-brandbar-sub{ display:none; }
+</style>
+<style id="aero-ui-v2">
 /* ===== AEROOPS UI v2 — professional ops shell (presentation only; no logic/IDs changed) ===== */
 #ptc-root{ --navy:#0B2545; --navy-2:#12325C; --blue:#2563C9; --side-ink:#B9C8DE; --ok:#1E7A46; --warn:#B7791F; --err:#B4453B; }
 #ptc-root .ptc-shell{ max-width:1440px; display:grid; grid-template-columns:200px minmax(0,1fr); column-gap:14px; row-gap:0; align-items:start; }
@@ -2385,7 +2397,7 @@ button.lb-pill.lb-all{ background:rgba(255,255,255,.12); color:#fff; border-colo
 #ptc-root #refund-step5-result{ margin-top:12px; }
 #ptc-root #refund-result-panel [id*="final"], #ptc-root #refund-result-panel [id*="client"]{ font-weight:800; }
 /* dashboard: retire Recent Activity block (kept in DOM) */
-#ptc-recent-activity-panel[hidden]{ display:none !important; }
+#ptc-recent-activity-panel{ display:none !important; }
 /* motion: subtle only */
 #ptc-root .ptc-stat-card, #ptc-root .ptc-nav-btn{ transition:background .15s, color .15s, box-shadow .15s; }
 @media (prefers-reduced-motion:reduce){ #ptc-root *{ transition:none !important; } }
@@ -2539,7 +2551,11 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
 
 /* Logs entry removed from sidebar — Reports already shows every log */
 #ptc-root .ptc-nav-more, #ptc-root #btn-nav-logs{ display:none !important; }
+
+#ptc-root .aero-v1-only{ display:none !important; }
+#ptc-root .aero-v2-only{ display:inline-flex; align-items:center; }
 </style>
+<script>(function(){var el=document.getElementById("aero-ui-v2");if(el)el.media=(document.documentElement.getAttribute("data-ui")==="v1")?"not all":"all";})();</script>
 </head><body>
     <div class="ptc-modal-backdrop" id="cloud-auth-modal-backdrop" style="display:flex; z-index:5000;">
       <div class="aero-auth-topbar">
@@ -2665,10 +2681,10 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
 <div id="ptc-root" data-pane="entrydesk">
   <div class="ptc-shell">
     <div class="ptc-brandbar">
-      <span class="ptc-brandbar-logo"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg></span>
+      <span class="ptc-brandbar-logo"><span class="aero-v1-only">✈</span><span class="aero-v2-only"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg></span></span>
       <span class="ptc-brandbar-text"><span class="ptc-brandbar-name">AeroOps</span><span class="ptc-brandbar-sub">Airline Operations Platform</span></span>
       <span class="ptc-brandbar-sep">|</span>
-      <span class="ptc-brandbar-page">Work Record Database</span>
+      <span class="ptc-brandbar-page"><span class="aero-v1-only">🏠 </span>Work Record Database</span>
     </div>
 
     <div class="ptc-dash-hero">
@@ -2686,7 +2702,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
       <!-- ===== NEW: unified global search — separate element, does not touch
            the two existing per-tab search boxes or the header row above. ===== -->
       <div class="ptc-global-search-wrap" id="ptc-global-search-wrap">
-        <span class="ptc-global-search-icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></span>
+        <span class="ptc-global-search-icon"><span class="aero-v1-only">🔎</span><span class="aero-v2-only"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></span></span>
         <input type="text" id="ptc-global-search" placeholder="Search PNR, ticket number or passenger — details show instantly..." autocomplete="off" />
         <div class="ptc-global-search-results" id="ptc-global-search-results" style="display:none;"></div>
       </div>
@@ -2887,7 +2903,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
             <h3>Top Airlines by Volume</h3>
             <div class="ptc-panel-canvas-wrap"><canvas id="chart-airline"></canvas></div>
           </div>
-          <div class="ptc-panel" id="ptc-recent-activity-panel" hidden>
+          <div class="ptc-panel" id="ptc-recent-activity-panel">
             <h3>Recent Activity</h3>
             <div class="ptc-feed" id="ptc-feed"></div>
           </div>
@@ -3073,7 +3089,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
 
       <!-- ===== TICKETING FIELDS ===== -->
       <div id="section-Ticketing">
-        <div class="ptc-section-label" style="--sec-color:#2E6F95;">Ticketing Details</div>
+        <div class="ptc-section-label" style="--sec-color:#2E6F95;"><span class="aero-v1-only">✈️ </span>Ticketing Details</div>
         <div class="ptc-row">
           <div class="ptc-field">
             <label for="f-newtkt-t-input">Ticket Number(s) <span class="ptc-required">*</span></label>
@@ -3140,7 +3156,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
 
       <!-- ===== REISSUE FIELDS ===== -->
       <div id="section-Reissue" style="display:none;">
-        <div class="ptc-section-label" style="--sec-color:#C97F1E;">Reissue Details</div>
+        <div class="ptc-section-label" style="--sec-color:#C97F1E;"><span class="aero-v1-only">🔄 </span>Reissue Details</div>
         <div class="ptc-row">
           <div class="ptc-field">
             <label for="f-oldtkt-r-input">Old Ticket Number(s) <span class="ptc-required">*</span></label>
@@ -3195,7 +3211,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
 
       <!-- ===== REFUND / VOID FIELDS ===== -->
       <div id="section-Refund" style="display:none;">
-        <div class="ptc-section-label" id="refund-void-label" style="--sec-color:#B4453B;">Refund Details</div>
+        <div class="ptc-section-label" id="refund-void-label" style="--sec-color:#B4453B;"><span class="aero-v1-only">💸 </span>Refund Details</div>
 
         <div class="ptc-row">
           <div class="ptc-field">
@@ -3552,10 +3568,10 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
 
       <div class="ptc-impact-grid" id="impact-headline"></div>
 
-      <div class="ptc-section-label">Value Contribution by Type</div>
+      <div class="ptc-section-label"><span class="aero-v1-only">📊 </span>Value Contribution by Type</div>
       <div id="impact-contribution"></div>
 
-      <div class="ptc-section-label">Operational Health</div>
+      <div class="ptc-section-label"><span class="aero-v1-only">⚖️ </span>Operational Health</div>
       <div class="ptc-impact-grid" id="impact-health"></div>
 
     </div>
@@ -3594,7 +3610,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
           <span id="sales-editing-banner-text">Editing sale #1</span>
         </div>
         <div class="ptc-section-row">
-          <div class="ptc-section-label" style="--sec-color:#1E7A46; margin:0;">Ticket Sale Information</div>
+          <div class="ptc-section-label" style="--sec-color:#1E7A46; margin:0;"><span class="aero-v1-only">🎫 </span>Ticket Sale Information</div>
           <div class="ptc-pdf-import" id="ptc-pdf-import-sales">
           <label for="pdf-ticket-input-sales" class="ptc-pdf-import-btn" id="pdf-ticket-btn-sales">
             🎫 TKT AutoFill
@@ -3676,7 +3692,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
           </div>
         </div>
 
-        <div class="ptc-section-label" style="--sec-color:#1E7A46;">Payment &amp; Settlement</div>
+        <div class="ptc-section-label" style="--sec-color:#1E7A46;"><span class="aero-v1-only">💰 </span>Payment &amp; Settlement</div>
 
         <div class="ptc-payment-panel">
 
@@ -5407,7 +5423,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
       const statusWrap = $('refund-status-wrap');
       const adjWrap = $('refund-adjustment-wrap');
       if(type === 'Void'){
-        label.textContent = 'Void Details';
+        label.textContent = (window.__aeroUI === 'v1' ? '🚫 ' : '') + 'Void Details';
         label.style.setProperty('--sec-color', '#6B7280');
         modeWrap.style.display = 'none';
         fareRow.style.display = 'none';
@@ -5439,7 +5455,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
         chargeInput.style.fontSize = '13.5px';
         chargeInput.style.color = 'var(--ink)';
       } else {
-        label.textContent = 'Refund Details';
+        label.textContent = (window.__aeroUI === 'v1' ? '💸 ' : '') + 'Refund Details';
         label.style.setProperty('--sec-color', '#B4453B');
         modeWrap.style.display = 'block';
         fareRow.style.display = 'grid';
@@ -6865,7 +6881,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
       );
     } else if(e.txn === 'Refund'){
       f.push(['Ticket No.', fmtTicketList(e.oldTkt)], ['Refund Type', refundTypeLabel(e.refundType)]);
-      if(e.refundType === 'PARTIAL'){
+      if(e.refundType === 'PARTIAL' && window.__aeroUI !== 'v1'){
         // Partial Refund: display order = PNR basic info, Used Seg Fare, Used Seg Tax,
         // Non-Refundable Tax, Airline Refundable Amount, Airline Penalty, Commission, Service Charge.
         // (Presentation only — same stored values, no calculation changes.)
@@ -6883,6 +6899,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
         if(e.note) f.push(['Note', e.note]);
         return f;
       }
+      if(e.refundType === 'PARTIAL') f.push(['Used Segment Fare', fmtMoney(e.usedSegmentFare)]);
       // Base Fare + Tax are shown together as the Fare Breakdown chart for every
       // refund type except Tax Refund, which has no base fare — just the tax itself.
       if(e.refundType === 'TAX_ONLY'){
@@ -7064,7 +7081,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
             `).join('')}
           </div>          ${e.txn === 'Refund' ? `
           <div class="ptc-client-refund-callout">
-            <span class="ptc-client-refund-callout-label">${e.refundType === 'PARTIAL' ? 'Adjustment Amount to Client' : '💵 Client Refund'}</span>
+            <span class="ptc-client-refund-callout-label">${(e.refundType === 'PARTIAL' && window.__aeroUI !== 'v1') ? 'Adjustment Amount to Client' : '💵 Client Refund'}</span>
             <span class="ptc-client-refund-callout-value">${fmtMoney(e.refundCharge)}</span>
           </div>
           ` : ''}
