@@ -6871,14 +6871,14 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
         // (Presentation only — same stored values, no calculation changes.)
         f.push(
           ['Used Segment Fare', fmtMoney(e.usedSegmentFare)],
+          ['Refundable Base Fare', fmtMoney(e.refundableFare)],
           ['Used Segment Tax', fmtMoney(e.usedSegmentTax)],
+          ['Refundable Tax', fmtMoney(e.refundableTax)],
           ['Non-Refundable Tax', fmtMoney(e.refNonRefundTax)],
           ['Airline Refundable Amount', fmtMoney(e.airlineRefund)],
           ['Airline Penalty', fmtMoney(e.airlineCharge)],
           ['Commission Amount', fmtMoney(e.commissionAdj)],
-          ['Service Charge', fmtMoney(e.svc)],
-          ['Refundable Base Fare', fmtMoney(e.refundableFare)],
-          ['Refundable Tax', fmtMoney(e.refundableTax)]
+          ['Service Charge', fmtMoney(e.svc)]
         );
         if(e.note) f.push(['Note', e.note]);
         return f;
