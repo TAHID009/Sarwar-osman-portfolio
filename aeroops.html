@@ -2556,6 +2556,202 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
 #ptc-root .aero-v2-only{ display:inline-flex; align-items:center; }
 </style>
 <script>(function(){var el=document.getElementById("aero-ui-v2");if(el)el.media=(document.documentElement.getAttribute("data-ui")==="v1")?"not all":"all";})();</script>
+<style id="pwi-style">
+/* ===== Professional Work Intelligence (PWI) — additive module. Scoped to #pwi-root; touches nothing else. ===== */
+#pwi-root{display:none;font-family:'IBM Plex Sans',Inter,system-ui,sans-serif;color:#0B2545;font-size:13px;line-height:1.45;
+  --pwi-ink:#0B2545;--pwi-soft:#3C5573;--pwi-muted:#6B7A8D;--pwi-line:#DCE3EC;--pwi-paper:#F1F4F9;--pwi-card:#fff;
+  --pwi-blue:#2563C9;--pwi-teal:#0E9AA7;--pwi-ok:#1E7A46;--pwi-ok-bg:#E6F4EC;--pwi-warn:#B7791F;--pwi-warn-bg:#FBF0DC;--pwi-fu:#2563C9;--pwi-fu-bg:#E6EEFB;--pwi-err:#B4453B;}
+#ptc-root.pwi-active #pwi-root{display:block}
+#ptc-root.pwi-active #lb,#ptc-root.pwi-active #ptc-body-grid{display:none !important}
+#pwi-root *,#pwi-root *::before,#pwi-root *::after{box-sizing:border-box}
+#pwi-root :is(input,select,textarea,button){font-family:inherit;font-size:13px;color:inherit}
+#pwi-root [hidden]{display:none !important}
+#pwi-root h2,#pwi-root h3,#pwi-root p{margin:0}
+
+/* header */
+#pwi-root .pwi-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:10px 16px;margin:2px 0 12px}
+#pwi-root .pwi-kicker{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--pwi-teal)}
+#pwi-root .pwi-head h2{font-size:21px;font-weight:700;letter-spacing:-.01em;color:var(--pwi-ink)}
+#pwi-root .pwi-head p{color:var(--pwi-muted);font-size:12.5px;margin-top:2px}
+#pwi-root .pwi-head-r{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+#pwi-root .pwi-sync{font-size:11.5px;font-weight:600;padding:4px 10px;border-radius:999px;background:#fff;border:1px solid var(--pwi-line);color:var(--pwi-muted);white-space:nowrap}
+#pwi-root .pwi-sync.on{color:var(--pwi-ok);border-color:#BFE0CC;background:var(--pwi-ok-bg)}
+#pwi-root .pwi-sync.warn{color:var(--pwi-warn);border-color:#EBD3A3;background:var(--pwi-warn-bg)}
+#pwi-root details.pwi-data{position:relative}
+#pwi-root details.pwi-data>summary{list-style:none;cursor:pointer;padding:6px 12px;border:1px solid var(--pwi-line);border-radius:8px;background:#fff;font-weight:600;color:var(--pwi-soft)}
+#pwi-root details.pwi-data>summary::-webkit-details-marker{display:none}
+#pwi-root details.pwi-data[open]>summary{border-color:var(--pwi-blue);color:var(--pwi-blue)}
+#pwi-root .pwi-data-menu{position:absolute;right:0;top:calc(100% + 6px);z-index:40;min-width:230px;background:#fff;border:1px solid var(--pwi-line);border-radius:10px;box-shadow:0 12px 32px rgba(11,37,69,.14);padding:8px;display:flex;flex-direction:column;gap:4px}
+#pwi-root .pwi-data-menu button,#pwi-root .pwi-data-menu label.pwi-menu-row{text-align:left;border:0;background:transparent;padding:8px 10px;border-radius:7px;cursor:pointer;font-weight:500;display:flex;align-items:center;justify-content:space-between;gap:10px}
+#pwi-root .pwi-data-menu button:hover{background:var(--pwi-paper)}
+#pwi-root .pwi-data-menu select{border:1px solid var(--pwi-line);border-radius:6px;padding:3px 6px;background:#fff}
+#pwi-root .pwi-data-menu hr{border:0;border-top:1px solid var(--pwi-line);margin:4px 0;width:100%}
+
+/* sub tabs */
+#pwi-root .pwi-subtabs{display:inline-flex;gap:2px;background:#E6ECF4;border-radius:10px;padding:3px;margin-bottom:12px}
+#pwi-root .pwi-subtabs button{border:0;background:transparent;padding:7px 16px;border-radius:8px;font-weight:600;color:var(--pwi-soft);cursor:pointer}
+#pwi-root .pwi-subtabs button.on{background:#fff;color:var(--pwi-ink);box-shadow:0 1px 3px rgba(11,37,69,.12)}
+
+/* cards */
+#pwi-root .pwi-card{background:var(--pwi-card);border:1px solid var(--pwi-line);border-radius:12px;padding:14px 16px;min-width:0}
+#pwi-root .pwi-card h3{font-size:13px;font-weight:700;color:var(--pwi-ink);letter-spacing:.01em}
+#pwi-root .pwi-card-h{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+#pwi-root .pwi-sub{font-size:11.5px;color:var(--pwi-muted);font-weight:500}
+#pwi-root .pwi-empty{padding:18px 8px;text-align:center;color:var(--pwi-muted);font-size:12.5px}
+
+/* quick entry */
+#pwi-root .pwi-entry-grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:12px;align-items:start}
+#pwi-root .pwi-field{margin-bottom:12px;border-radius:8px;transition:box-shadow .2s}
+#pwi-root .pwi-field.bad{box-shadow:0 0 0 2px rgba(180,69,59,.35);padding:4px 6px;margin-left:-6px;margin-right:-6px}
+#pwi-root .pwi-field>label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--pwi-soft);margin-bottom:5px}
+#pwi-root .pwi-field>label em{font-style:normal;font-weight:500;text-transform:none;letter-spacing:0;color:var(--pwi-muted);margin-left:4px}
+#pwi-root .pwi-row{display:flex;flex-wrap:wrap;gap:0 22px}
+#pwi-root .pwi-chips{display:flex;flex-wrap:wrap;gap:6px}
+#pwi-root .pwi-chip{border:1px solid var(--pwi-line);background:#fff;border-radius:999px;padding:6px 12px;cursor:pointer;font-weight:600;color:var(--pwi-soft);transition:background .12s,border-color .12s,color .12s;white-space:nowrap}
+#pwi-root .pwi-chip:hover{border-color:#9DB4D3;background:#F7FAFD}
+#pwi-root .pwi-chip[aria-pressed="true"]{background:var(--pwi-blue);border-color:var(--pwi-blue);color:#fff}
+#pwi-root .pwi-chip.st-Resolved[aria-pressed="true"]{background:var(--pwi-ok);border-color:var(--pwi-ok)}
+#pwi-root .pwi-chip.st-Pending[aria-pressed="true"]{background:var(--pwi-warn);border-color:var(--pwi-warn)}
+#pwi-root .pwi-chip.st-Follow-up[aria-pressed="true"]{background:var(--pwi-fu);border-color:var(--pwi-fu)}
+#pwi-root .pwi-chips.small .pwi-chip{padding:3px 10px;font-size:11.5px;font-weight:500;background:var(--pwi-paper)}
+#pwi-root .pwi-chips.small{margin-top:6px}
+#pwi-root .pwi-field input[type=text],#pwi-root .pwi-field input:not([type]),#pwi-root .pwi-in{width:100%;border:1px solid var(--pwi-line);border-radius:8px;padding:9px 11px;background:#fff;outline:none}
+#pwi-root .pwi-in{width:auto}
+#pwi-root input:focus,#pwi-root select:focus,#pwi-root textarea:focus{border-color:var(--pwi-blue);box-shadow:0 0 0 3px rgba(37,99,201,.15)}
+#pwi-root .pwi-preview{font-size:12px;font-weight:600;color:var(--pwi-teal);min-height:18px}
+#pwi-root .pwi-preview.dim{color:var(--pwi-muted);font-weight:500}
+#pwi-root .pwi-foot{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin-top:4px}
+#pwi-root .pwi-link{border:0;background:transparent;color:var(--pwi-blue);font-weight:600;cursor:pointer;padding:4px 0}
+#pwi-root .pwi-keep{display:inline-flex;align-items:center;gap:6px;color:var(--pwi-soft);cursor:pointer}
+#pwi-root .pwi-save{margin-left:auto;background:var(--pwi-blue);color:#fff;border:0;border-radius:9px;padding:10px 22px;font-weight:700;cursor:pointer;box-shadow:0 2px 6px rgba(37,99,201,.3)}
+#pwi-root .pwi-save:hover{background:#1D52A8}
+#pwi-root .pwi-hint{min-height:18px;margin-top:8px;font-size:12px;color:var(--pwi-muted)}
+#pwi-root .pwi-hint.err{color:var(--pwi-err);font-weight:600}
+#pwi-root .pwi-hint.ok{color:var(--pwi-ok);font-weight:600}
+#pwi-root #pwi-date-wrap{display:inline-flex;gap:6px}
+#pwi-root #pwi-date-wrap input{border:1px solid var(--pwi-line);border-radius:7px;padding:5px 8px}
+
+/* side lists */
+#pwi-root .pwi-side{display:flex;flex-direction:column;gap:12px;min-width:0}
+#pwi-root .pwi-list{display:flex;flex-direction:column;max-height:380px;overflow:auto;margin:0 -6px}
+#pwi-root .pwi-li{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:2px 10px;align-items:center;padding:7px 6px;border-top:1px solid #EEF2F7}
+#pwi-root .pwi-li:first-child{border-top:0}
+#pwi-root .pwi-li-time{font-size:11px;color:var(--pwi-muted);font-variant-numeric:tabular-nums;min-width:40px}
+#pwi-root .pwi-li-main{min-width:0}
+#pwi-root .pwi-li-t{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#pwi-root .pwi-li-s{font-size:11.5px;color:var(--pwi-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#pwi-root .pwi-li-a{display:flex;align-items:center;gap:4px}
+#pwi-root .pwi-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;vertical-align:baseline}
+#pwi-root .pwi-ico{border:0;background:transparent;cursor:pointer;color:var(--pwi-muted);padding:3px 6px;border-radius:6px;font-size:13px}
+#pwi-root .pwi-ico:hover{background:var(--pwi-paper);color:var(--pwi-ink)}
+#pwi-root .pwi-ico.del:hover{color:var(--pwi-err)}
+#pwi-root select.pwi-st{border:1px solid transparent;border-radius:999px;padding:3px 6px;font-weight:600;font-size:11.5px;cursor:pointer;appearance:none;-webkit-appearance:none;text-align:center;min-width:78px}
+#pwi-root select.pwi-st.Resolved{background:var(--pwi-ok-bg);color:var(--pwi-ok)}
+#pwi-root select.pwi-st.Pending{background:var(--pwi-warn-bg);color:var(--pwi-warn)}
+#pwi-root select.pwi-st.Follow-up{background:var(--pwi-fu-bg);color:var(--pwi-fu)}
+#pwi-root .pwi-mini{display:flex;gap:8px;flex-wrap:wrap;font-size:11.5px;color:var(--pwi-muted)}
+#pwi-root .pwi-mini b{color:var(--pwi-ink)}
+
+/* dashboard */
+#pwi-root .pwi-rangebar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin-bottom:10px}
+#pwi-root .pwi-seg{display:inline-flex;background:#E6ECF4;border-radius:10px;padding:3px;gap:2px;flex-wrap:wrap}
+#pwi-root .pwi-seg button{border:0;background:transparent;padding:6px 13px;border-radius:8px;font-weight:600;color:var(--pwi-soft);cursor:pointer}
+#pwi-root .pwi-seg button.on{background:#fff;color:var(--pwi-ink);box-shadow:0 1px 3px rgba(11,37,69,.12)}
+#pwi-root .pwi-custom{display:inline-flex;align-items:center;gap:6px;color:var(--pwi-soft);font-weight:600}
+#pwi-root .pwi-custom input{border:1px solid var(--pwi-line);border-radius:7px;padding:5px 8px;background:#fff}
+#pwi-root .pwi-range-label{color:var(--pwi-muted);font-weight:500;margin-left:auto}
+#pwi-root .pwi-filterbar{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-bottom:10px;min-height:0}
+#pwi-root .pwi-fchip{display:inline-flex;align-items:center;gap:6px;background:#E6EEFB;color:var(--pwi-blue);border:1px solid #C5D6F3;border-radius:999px;padding:3px 6px 3px 11px;font-weight:600;font-size:12px}
+#pwi-root .pwi-fchip button{border:0;background:rgba(37,99,201,.15);color:var(--pwi-blue);width:18px;height:18px;border-radius:50%;cursor:pointer;line-height:1;font-size:11px;padding:0}
+#pwi-root .pwi-fclear{border:0;background:transparent;color:var(--pwi-muted);cursor:pointer;font-weight:600;text-decoration:underline}
+#pwi-root .pwi-fjump{margin-left:auto;border:1px solid var(--pwi-blue);background:#fff;color:var(--pwi-blue);border-radius:8px;padding:4px 12px;font-weight:600;cursor:pointer}
+
+#pwi-root .pwi-kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-bottom:12px}
+#pwi-root .pwi-kpi{text-align:left;background:#fff;border:1px solid var(--pwi-line);border-radius:12px;padding:12px 14px;cursor:pointer;border-top:3px solid var(--k,#2563C9);transition:box-shadow .15s,transform .15s}
+#pwi-root .pwi-kpi:hover{box-shadow:0 4px 16px rgba(11,37,69,.1);transform:translateY(-1px)}
+#pwi-root .pwi-kpi.sel{box-shadow:0 0 0 2px var(--k,#2563C9)}
+#pwi-root .pwi-kpi-l{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--pwi-muted)}
+#pwi-root .pwi-kpi-v{font-size:28px;font-weight:700;letter-spacing:-.02em;color:var(--pwi-ink);line-height:1.15;font-variant-numeric:tabular-nums}
+#pwi-root .pwi-kpi-s{font-size:11.5px;color:var(--pwi-muted)}
+
+#pwi-root .pwi-dgrid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:12px;margin-bottom:12px}
+#pwi-root .c12{grid-column:span 12}#pwi-root .c8{grid-column:span 8}#pwi-root .c6{grid-column:span 6}#pwi-root .c4{grid-column:span 4}
+#pwi-root .pwi-chartbox{position:relative;height:260px}
+#pwi-root .pwi-chartbox.s{height:170px}
+#pwi-root select.pwi-mini-sel{border:1px solid var(--pwi-line);border-radius:7px;padding:3px 6px;background:#fff;font-size:12px}
+#pwi-root .pwi-tabs-s{display:inline-flex;background:var(--pwi-paper);border-radius:8px;padding:2px;gap:2px}
+#pwi-root .pwi-tabs-s button{border:0;background:transparent;padding:3px 10px;border-radius:6px;font-size:11.5px;font-weight:600;color:var(--pwi-soft);cursor:pointer}
+#pwi-root .pwi-tabs-s button.on{background:#fff;color:var(--pwi-ink);box-shadow:0 1px 2px rgba(11,37,69,.12)}
+
+/* bar rows */
+#pwi-root .pwi-bars{display:flex;flex-direction:column;gap:3px}
+#pwi-root .pwi-bar{display:grid;grid-template-columns:minmax(110px,42%) minmax(0,1fr) auto;align-items:center;gap:8px;padding:4px 6px;border-radius:7px;cursor:pointer;border:0;background:transparent;text-align:left;width:100%}
+#pwi-root .pwi-bar:hover{background:var(--pwi-paper)}
+#pwi-root .pwi-bar.sel{background:#E6EEFB}
+#pwi-root .pwi-bar.dim{opacity:.45}
+#pwi-root .pwi-bar-n{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#pwi-root .pwi-bar-t{height:9px;background:#EDF1F6;border-radius:99px;overflow:hidden}
+#pwi-root .pwi-bar-t i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#2563C9,#0E9AA7)}
+#pwi-root .pwi-bar-v{font-variant-numeric:tabular-nums;font-weight:700;min-width:28px;text-align:right}
+#pwi-root .pwi-bar-v small{font-weight:500;color:var(--pwi-muted);margin-left:4px}
+#pwi-root .pwi-more{margin-top:6px;border:0;background:transparent;color:var(--pwi-blue);font-weight:600;cursor:pointer;padding:4px 6px}
+#pwi-root .pwi-donut{display:grid;grid-template-columns:150px minmax(0,1fr);gap:10px;align-items:center}
+#pwi-root .pwi-donut .pwi-chartbox{height:150px}
+#pwi-root .pwi-kw{display:flex;flex-wrap:wrap;gap:6px}
+#pwi-root .pwi-kw button{border:1px solid var(--pwi-line);background:#fff;border-radius:999px;padding:3px 10px;cursor:pointer;font-weight:600;color:var(--pwi-soft)}
+#pwi-root .pwi-kw button b{color:var(--pwi-blue);margin-left:5px}
+#pwi-root .pwi-kw button.sel{background:#E6EEFB;border-color:#C5D6F3}
+
+/* summary */
+#pwi-root .pwi-sum{display:grid;grid-template-columns:1fr 1fr;gap:8px 14px;margin-bottom:10px}
+#pwi-root .pwi-sum div{min-width:0}
+#pwi-root .pwi-sum span{display:block;font-size:11px;color:var(--pwi-muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+#pwi-root .pwi-sum b{font-size:15px;font-variant-numeric:tabular-nums}
+#pwi-root .pwi-note{font-size:11.5px;color:var(--pwi-muted);border-top:1px dashed var(--pwi-line);padding-top:8px;margin-top:8px}
+#pwi-root .pwi-wd{display:flex;align-items:flex-end;gap:4px;height:54px;margin-top:6px}
+#pwi-root .pwi-wd div{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;font-size:10px;color:var(--pwi-muted)}
+#pwi-root .pwi-wd i{display:block;width:100%;background:#9DB4D3;border-radius:4px 4px 0 0;min-height:2px}
+
+/* records */
+#pwi-root .pwi-search{border:1px solid var(--pwi-line);border-radius:8px;padding:6px 10px;min-width:180px;background:#fff}
+#pwi-root .pwi-btn{border:1px solid var(--pwi-line);background:#fff;border-radius:8px;padding:6px 12px;font-weight:600;color:var(--pwi-soft);cursor:pointer}
+#pwi-root .pwi-btn:hover{border-color:#9DB4D3}
+#pwi-root .pwi-btn.pri{background:var(--pwi-blue);border-color:var(--pwi-blue);color:#fff}
+#pwi-root .pwi-btn.danger{color:var(--pwi-err);border-color:#E9C4C0}
+#pwi-root .pwi-twrap{overflow-x:auto;margin:0 -4px}
+#pwi-root table.pwi-t{width:100%;border-collapse:collapse;min-width:760px}
+#pwi-root .pwi-t th{text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--pwi-muted);font-weight:700;padding:7px 8px;border-bottom:1px solid var(--pwi-line);white-space:nowrap}
+#pwi-root .pwi-t td{padding:7px 8px;border-bottom:1px solid #EEF2F7;vertical-align:middle}
+#pwi-root .pwi-t tr:hover td{background:#F8FAFD}
+#pwi-root .pwi-t td.n{max-width:300px;color:var(--pwi-soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#pwi-root .pwi-t td.d{white-space:nowrap;font-variant-numeric:tabular-nums}
+#pwi-root .pwi-t td.d small{color:var(--pwi-muted);margin-left:6px}
+
+/* modal + toast */
+#pwi-root .pwi-modal{position:fixed;inset:0;z-index:9000;background:rgba(11,37,69,.45);display:flex;align-items:center;justify-content:center;padding:16px}
+#pwi-root .pwi-modal-box{background:#fff;border-radius:14px;padding:18px 20px;width:100%;max-width:520px;max-height:92vh;overflow:auto;box-shadow:0 24px 60px rgba(11,37,69,.35)}
+#pwi-root .pwi-modal-box h3{font-size:16px;margin-bottom:12px}
+#pwi-root .pwi-mgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#pwi-root .pwi-mgrid .full{grid-column:1/-1}
+#pwi-root .pwi-mgrid label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--pwi-soft);margin-bottom:4px}
+#pwi-root .pwi-mgrid :is(input,select,textarea){width:100%;border:1px solid var(--pwi-line);border-radius:8px;padding:8px 10px;background:#fff}
+#pwi-root .pwi-mfoot{display:flex;gap:8px;align-items:center;margin-top:14px}
+#pwi-root .pwi-mfoot .sp{flex:1}
+#pwi-root .pwi-toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:9100;background:#0B2545;color:#fff;padding:9px 14px;border-radius:10px;box-shadow:0 8px 24px rgba(11,37,69,.35);display:flex;gap:12px;align-items:center;font-weight:500}
+#pwi-root .pwi-toast button{border:0;background:transparent;color:#7FD6DE;font-weight:700;cursor:pointer;padding:0}
+
+@media (max-width:1100px){
+  #pwi-root .pwi-entry-grid{grid-template-columns:1fr}
+  #pwi-root .c8,#pwi-root .c6,#pwi-root .c4{grid-column:span 12}
+  #pwi-root .pwi-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media (max-width:640px){
+  #pwi-root .pwi-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #pwi-root .pwi-donut{grid-template-columns:1fr}
+  #pwi-root .pwi-range-label{margin-left:0;width:100%}
+  #pwi-root .pwi-save{width:100%;margin-left:0}
+}
+</style>
 </head><body>
     <div class="ptc-modal-backdrop" id="cloud-auth-modal-backdrop" style="display:flex; z-index:5000;">
       <div class="aero-auth-topbar">
@@ -2817,6 +3013,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
       <button type="button" class="ptc-nav-btn" data-nav="salesdesk" data-pane="salesdesk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg>Revenue Desk</button>
       <button type="button" class="ptc-nav-btn" data-nav="pending" id="btn-nav-pending" title="Refunds waiting for their adjustment"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>Pending Adj. <span class="ptc-nav-badge" id="nav-pending-badge" style="display:none;">0</span></button>
       <button type="button" class="ptc-nav-btn" data-nav="reports" data-pane="reports"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18M18 17V9M13 17V5M8 17v-3"/></svg>Reports</button>
+      <button type="button" class="ptc-nav-btn" data-nav="pwi" id="pwi-nav-btn" title="Professional Work Intelligence"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Work Intelligence</button>
     </nav>
     <div class="ptc-nav-more" style="position:relative;">
       <button type="button" class="ptc-side-logs-btn" data-nav="logs" id="btn-nav-logs" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>Logs</button>
@@ -3835,6 +4032,156 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
 
 
     </div><!-- /ptc-body-grid -->
+
+    <!-- ===== Professional Work Intelligence (PWI) — additive module ===== -->
+    <section id="pwi-root" aria-label="Professional Work Intelligence">
+      <div class="pwi-head">
+        <div>
+          <div class="pwi-kicker">Capture → Measure → Analyze → Review</div>
+          <h2>Professional Work Intelligence</h2>
+          <p>One query or task = one lightweight record. Facts only — you decide what they mean.</p>
+        </div>
+        <div class="pwi-head-r">
+          <span class="pwi-sync" id="pwi-sync">● Saved on this device</span>
+          <details class="pwi-data" id="pwi-data">
+            <summary>Data ▾</summary>
+            <div class="pwi-data-menu">
+              <button type="button" data-act="export-all">Export all activities (CSV)</button>
+              <button type="button" data-act="backup">Backup (JSON)</button>
+              <button type="button" data-act="restore">Restore from backup…</button>
+              <hr>
+              <label class="pwi-menu-row">Week starts on
+                <select id="pwi-weekstart"><option value="1">Monday</option><option value="0">Sunday</option><option value="6">Saturday</option></select>
+              </label>
+            </div>
+          </details>
+          <input type="file" id="pwi-restore-file" accept="application/json,.json" hidden>
+        </div>
+      </div>
+
+      <div class="pwi-subtabs" role="tablist" aria-label="PWI sections">
+        <button type="button" role="tab" data-act="tab" data-v="entry" class="on">⚡ Quick Entry</button>
+        <button type="button" role="tab" data-act="tab" data-v="dash">📊 Dashboard</button>
+      </div>
+
+      <!-- Quick Entry -->
+      <div id="pwi-pane-entry">
+        <div class="pwi-entry-grid">
+          <div class="pwi-card">
+            <div class="pwi-card-h"><h3>Quick Activity Entry</h3><span class="pwi-preview dim" id="pwi-preview"></span></div>
+            <div class="pwi-field" data-g="source"><label>Source</label><div class="pwi-chips" id="pwi-src" role="group" aria-label="Source"></div></div>
+            <div class="pwi-field" data-g="company">
+              <label for="pwi-company">Company / Client</label>
+              <input type="text" id="pwi-company" list="pwi-co-list" autocomplete="off" placeholder="e.g. ABC Travel" maxlength="80">
+              <datalist id="pwi-co-list"></datalist>
+              <div class="pwi-chips small" id="pwi-co-recent"></div>
+            </div>
+            <div class="pwi-field" data-g="category"><label>Work / Query</label><div class="pwi-chips" id="pwi-cat" role="group" aria-label="Work or query category"></div></div>
+            <div class="pwi-row">
+              <div class="pwi-field" data-g="status"><label>Status</label><div class="pwi-chips" id="pwi-stat" role="group" aria-label="Status"></div></div>
+              <div class="pwi-field"><label>Effort <em>optional</em></label><div class="pwi-chips" id="pwi-eff" aria-label="Effort level"></div></div>
+            </div>
+            <div class="pwi-field"><label for="pwi-note">Note <em>optional</em></label><input type="text" id="pwi-note" maxlength="240" placeholder="Short note — e.g. DAC–DXB fare for 3 pax" autocomplete="off"></div>
+            <div class="pwi-foot">
+              <button type="button" class="pwi-link" id="pwi-date-toggle">📅 Today</button>
+              <span id="pwi-date-wrap" hidden><input type="date" id="pwi-date" aria-label="Activity date"><input type="time" id="pwi-time" aria-label="Activity time"></span>
+              <label class="pwi-keep"><input type="checkbox" id="pwi-keep"> Keep client for next</label>
+              <button type="button" class="pwi-save" id="pwi-save">Save activity</button>
+            </div>
+            <div class="pwi-hint" id="pwi-hint" aria-live="polite">Tip: press Enter in the client or note field to save.</div>
+          </div>
+
+          <div class="pwi-side">
+            <div class="pwi-card">
+              <div class="pwi-card-h"><h3>Today</h3><div class="pwi-mini" id="pwi-today-mini"></div></div>
+              <div class="pwi-list" id="pwi-today-list"></div>
+            </div>
+            <div class="pwi-card">
+              <div class="pwi-card-h"><h3>Open items</h3><span class="pwi-sub" id="pwi-open-sub">Pending &amp; follow-up, any date</span></div>
+              <div class="pwi-list" id="pwi-open-list"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dashboard -->
+      <div id="pwi-pane-dash" hidden>
+        <div class="pwi-rangebar">
+          <div class="pwi-seg" id="pwi-range" role="group" aria-label="Date range">
+            <button type="button" data-act="range" data-v="today">Today</button>
+            <button type="button" data-act="range" data-v="week">This Week</button>
+            <button type="button" data-act="range" data-v="month">This Month</button>
+            <button type="button" data-act="range" data-v="year">This Year</button>
+            <button type="button" data-act="range" data-v="custom">Custom</button>
+          </div>
+          <span class="pwi-custom" id="pwi-custom" hidden>From <input type="date" id="pwi-from"> To <input type="date" id="pwi-to"></span>
+          <span class="pwi-range-label" id="pwi-range-label"></span>
+        </div>
+        <div class="pwi-filterbar" id="pwi-filterbar"></div>
+        <div class="pwi-kpis" id="pwi-kpis"></div>
+
+        <div class="pwi-dgrid">
+          <div class="pwi-card c8">
+            <div class="pwi-card-h"><h3>Workload Trend</h3>
+              <label class="pwi-sub">Group by <select class="pwi-mini-sel" id="pwi-gran"><option value="auto">Auto</option><option value="day">Day</option><option value="week">Week</option><option value="month">Month</option></select></label>
+            </div>
+            <div class="pwi-chartbox"><canvas id="pwi-c-trend" aria-label="Workload trend chart"></canvas></div>
+          </div>
+          <div class="pwi-card c4"><div class="pwi-card-h"><h3>Workload Summary</h3></div><div id="pwi-summary"></div></div>
+
+          <div class="pwi-card c4"><div class="pwi-card-h"><h3>Query Type Breakdown</h3><span class="pwi-sub">click to drill down</span></div><div id="pwi-cat-bars"></div></div>
+          <div class="pwi-card c4"><div class="pwi-card-h"><h3>Work Source Breakdown</h3></div>
+            <div class="pwi-donut"><div class="pwi-chartbox"><canvas id="pwi-c-src" aria-label="Source breakdown chart"></canvas></div><div id="pwi-src-legend"></div></div>
+          </div>
+          <div class="pwi-card c4"><div class="pwi-card-h"><h3>Company / Client Workload</h3></div><div id="pwi-co-bars"></div></div>
+
+          <div class="pwi-card c6">
+            <div class="pwi-card-h"><h3>Most Frequent Cases</h3>
+              <div class="pwi-tabs-s" id="pwi-pat-tabs"><button type="button" data-act="pat" data-v="cc" class="on">Type + Client</button><button type="button" data-act="pat" data-v="cs">Type + Source</button><button type="button" data-act="pat" data-v="kw">Note keywords</button></div>
+            </div>
+            <div id="pwi-patterns"></div>
+          </div>
+          <div class="pwi-card c6">
+            <div class="pwi-card-h"><h3>Weekly / Monthly / Yearly</h3>
+              <div class="pwi-tabs-s" id="pwi-wmy-tabs"><button type="button" data-act="wmy" data-v="weekly" class="on">Weekly</button><button type="button" data-act="wmy" data-v="monthly">Monthly</button><button type="button" data-act="wmy" data-v="yearly">Yearly</button></div>
+            </div>
+            <div class="pwi-chartbox"><canvas id="pwi-c-wmy" aria-label="Weekly, monthly and yearly activity chart"></canvas></div>
+            <div class="pwi-sub" style="margin-top:6px">Click a bar to set the dashboard to that period.</div>
+          </div>
+        </div>
+
+        <div class="pwi-card" id="pwi-records">
+          <div class="pwi-card-h">
+            <h3>Activity Records <span class="pwi-sub" id="pwi-rec-count"></span></h3>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+              <input type="search" class="pwi-search" id="pwi-search" placeholder="Search client, note…" aria-label="Search records">
+              <button type="button" class="pwi-btn" data-act="export-view">Export view (CSV)</button>
+            </div>
+          </div>
+          <div class="pwi-twrap"><table class="pwi-t"><thead><tr><th>Date</th><th>Source</th><th>Client</th><th>Type</th><th>Status</th><th>Effort</th><th>Note</th><th></th></tr></thead><tbody id="pwi-rec-body"></tbody></table></div>
+          <div id="pwi-rec-more"></div>
+        </div>
+      </div>
+
+      <!-- Edit modal -->
+      <div class="pwi-modal" id="pwi-modal" hidden>
+        <div class="pwi-modal-box" role="dialog" aria-modal="true" aria-label="Edit activity">
+          <h3>Edit activity</h3>
+          <div class="pwi-mgrid">
+            <div><label for="pwi-m-date">Date</label><input type="date" id="pwi-m-date"></div>
+            <div><label for="pwi-m-time">Time</label><input type="time" id="pwi-m-time"></div>
+            <div><label for="pwi-m-source">Source</label><select id="pwi-m-source"></select></div>
+            <div><label for="pwi-m-company">Company / Client</label><input type="text" id="pwi-m-company" list="pwi-co-list" maxlength="80"></div>
+            <div><label for="pwi-m-cat">Work / Query</label><select id="pwi-m-cat"></select></div>
+            <div><label for="pwi-m-status">Status</label><select id="pwi-m-status"></select></div>
+            <div><label for="pwi-m-effort">Effort</label><select id="pwi-m-effort"></select></div>
+            <div class="full"><label for="pwi-m-note">Note</label><textarea id="pwi-m-note" rows="2" maxlength="240"></textarea></div>
+          </div>
+          <div class="pwi-mfoot"><button type="button" class="pwi-btn danger" id="pwi-m-del">Delete</button><span class="sp"></span><button type="button" class="pwi-btn" id="pwi-m-cancel">Cancel</button><button type="button" class="pwi-btn pri" id="pwi-m-save">Save changes</button></div>
+        </div>
+      </div>
+      <div class="pwi-toast" id="pwi-toast" hidden></div>
+    </section>
 
     <div class="ptc-footerbar">
       <span>AeroOps &nbsp;|&nbsp; Smarter Operations. Higher Revenue.</span>
@@ -9016,6 +9363,752 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
   function sync(){ controls.style.display = sales.classList.contains('active') ? 'none' : ''; }
   if(window.MutationObserver) new MutationObserver(sync).observe(sales, { attributes: true, attributeFilter: ['class'] });
   sync();
+})();
+</script>
+<script>
+/* ===== Professional Work Intelligence (PWI) — additive module =====
+   Self-contained. Own storage keys, own Firestore collection, own DOM (#pwi-root).
+   It only READS existing AeroOps data (counts for context) and never writes to it. */
+(function(){
+  'use strict';
+  var rootEl = document.getElementById('ptc-root'), pwi = document.getElementById('pwi-root'), navBtn = document.getElementById('pwi-nav-btn');
+  if(!rootEl || !pwi || !navBtn) return;
+
+  /* ---------- constants ---------- */
+  var KEY = 'aeroops_pwi_v1', SKEY = 'aeroops_pwi_settings_v1', SYNCKEY = 'aeroops_pwi_synced_v1', COLL = 'work_record_pwi';
+  var SOURCES = ['WhatsApp','Support','Email','Phone','Internal','Other'];
+  var CATS = ['Fare Query','Availability','Booking Support','Ticketing','Reissue','Refund','Cancellation','Hotel','Flight Information','Fare Rule / Policy','Problem Solving','Other'];
+  var STATUSES = ['Resolved','Pending','Follow-up'];
+  var EFFORTS = ['Quick','Standard','Deep'];
+  var SRC_COLOR = {WhatsApp:'#1E9E5A',Support:'#2563C9',Email:'#7C5CC4',Phone:'#C97F1E',Internal:'#0E9AA7',Other:'#8A97A8'};
+  var STAT_COLOR = {Resolved:'#1E7A46',Pending:'#D9A441',  'Follow-up':'#2563C9'};
+  var MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var DAY = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  var FONT = {family:"'IBM Plex Sans',Inter,system-ui,sans-serif", size:11};
+
+  /* ---------- helpers ---------- */
+  function $(id){ return document.getElementById(id); }
+  function pad(n){ return String(n).padStart(2,'0'); }
+  function iso(d){ return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
+  function parseISO(s){ var p = String(s).split('-'); return new Date(+p[0], +p[1]-1, +p[2]); }
+  function addDays(d,n){ var x = new Date(d.getFullYear(), d.getMonth(), d.getDate()+n); return x; }
+  function todayISO(){ return iso(new Date()); }
+  function nowTime(){ var d = new Date(); return pad(d.getHours())+':'+pad(d.getMinutes()); }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function uid(){ return (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : Date.now().toString(36)+Math.random().toString(36).slice(2,10); }
+  function normCo(s){ return String(s||'').trim().replace(/\s+/g,' '); }
+  function coKey(s){ return normCo(s).toLowerCase(); }
+  function fmtDate(s){ var d = parseISO(s); return pad(d.getDate())+' '+MON[d.getMonth()]+' '+d.getFullYear(); }
+  function fmtShort(d){ return pad(d.getDate())+' '+MON[d.getMonth()]; }
+  function srcColor(s){ return SRC_COLOR[s] || '#8A97A8'; }
+  function pct(n,t){ return t ? Math.round(n*100/t)+'%' : '0%'; }
+
+  /* ---------- state ---------- */
+  var acts = [];
+  var settings = {weekStart:1, lastSource:'', range:'today', from:'', to:'', keep:false};
+  var synced = {};
+  var st = {tab:'entry', pat:'cc', cycle:'weekly', gran:'auto', coAll:false, recLimit:50, editId:null,
+            filters:{source:null, company:null, category:null, status:null, kw:null, bucket:null, q:''}};
+  var form = {source:'', category:'', status:'Resolved', effort:'', date:'', time:''};
+  var coNames = {};
+  var active = false, dirty = true, charts = {}, lastDeleted = null, toastTimer = null;
+
+  function load(){
+    try{ var r = JSON.parse(localStorage.getItem(KEY) || '[]'); acts = (Array.isArray(r) ? r : []).map(clean).filter(Boolean); }catch(e){ acts = []; }
+    try{ var s = JSON.parse(localStorage.getItem(SKEY) || '{}'); Object.keys(s).forEach(function(k){ if(k in settings) settings[k] = s[k]; }); }catch(e){}
+    try{ synced = JSON.parse(localStorage.getItem(SYNCKEY) || '{}') || {}; }catch(e){ synced = {}; }
+    form.source = SOURCES.indexOf(settings.lastSource) > -1 ? settings.lastSource : '';
+  }
+  function save(){ try{ localStorage.setItem(KEY, JSON.stringify(acts)); }catch(e){ toast('Could not save — browser storage may be full or blocked.'); } }
+  function saveSettings(){ try{ localStorage.setItem(SKEY, JSON.stringify(settings)); }catch(e){} }
+  function saveSynced(){ try{ localStorage.setItem(SYNCKEY, JSON.stringify(synced)); }catch(e){} }
+
+  function clean(v){
+    if(!v || typeof v !== 'object') return null;
+    var d = String(v.date||'').slice(0,10);
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(d)) return null;
+    var t = String(v.time||''); t = /^\d{2}:\d{2}/.test(t) ? t.slice(0,5) : '00:00';
+    return {
+      id: String(v.id || uid()), date: d, time: t,
+      source: SOURCES.indexOf(v.source) > -1 ? v.source : 'Other',
+      company: normCo(v.company) || 'Unknown',
+      category: CATS.indexOf(v.category) > -1 ? v.category : 'Other',
+      status: STATUSES.indexOf(v.status) > -1 ? v.status : 'Resolved',
+      effort: EFFORTS.indexOf(v.effort) > -1 ? v.effort : '',
+      note: String(v.note||'').slice(0,240),
+      created: String(v.created||''), updated: String(v.updated||v.created||'')
+    };
+  }
+  function sortActs(){ acts.sort(function(a,b){ return (b.date+b.time+b.created).localeCompare(a.date+a.time+a.created); }); }
+
+  /* ---------- toast ---------- */
+  function toast(msg, label, fn){
+    var el = $('pwi-toast'); el.hidden = false; el.innerHTML = '<span>'+esc(msg)+'</span>' + (label ? '<button type="button">'+esc(label)+'</button>' : '');
+    if(label){ el.querySelector('button').onclick = function(){ el.hidden = true; if(fn) fn(); }; }
+    clearTimeout(toastTimer); toastTimer = setTimeout(function(){ el.hidden = true; }, label ? 6000 : 2200);
+  }
+
+  /* ---------- optional cloud sync (own collection; fails safe to local-only) ---------- */
+  var cloud = {db:null, unsub:null, uid:null, failed:false, on:false};
+  function setSync(kind){
+    var el = $('pwi-sync'); if(!el) return;
+    var map = {
+      local:['● Saved on this device','',''],
+      connecting:['● Connecting to cloud…','',''],
+      on:['● Cloud sync on','on',''],
+      blocked:['● Saved on this device (cloud blocked)','warn','Your Firestore rules do not allow the "'+COLL+'" collection yet. Add a rule for it to sync PWI across devices. Your data is safe in this browser.'],
+      offline:['● Cloud unreachable','warn','Could not reach the cloud right now. Data is saved on this device and will sync later.']
+    };
+    var m = map[kind] || map.local; el.textContent = m[0]; el.className = 'pwi-sync ' + m[1]; el.title = m[2];
+  }
+  function cloudErr(err){
+    var c = err && err.code || '';
+    if(c === 'permission-denied'){ cloud.failed = true; cloud.on = false; if(cloud.unsub){ try{ cloud.unsub(); }catch(e){} cloud.unsub = null; } setSync('blocked'); }
+    else setSync('offline');
+  }
+  function cloudPut(a){
+    if(!cloud.on || !cloud.db) return;
+    cloud.db.collection(COLL).doc(a.id).set(a).then(function(){ synced[a.id] = 1; saveSynced(); }).catch(cloudErr);
+  }
+  function cloudDel(id){
+    delete synced[id]; saveSynced();
+    if(!cloud.on || !cloud.db) return;
+    cloud.db.collection(COLL).doc(id).delete().catch(cloudErr);
+  }
+  function onSnap(snap){
+    if(snap.metadata && snap.metadata.fromCache && snap.size === 0) return;
+    cloud.on = true; setSync('on');
+    var remote = {};
+    snap.forEach(function(d){ var v = clean(Object.assign({id:d.id}, d.data())); if(v){ v.id = d.id; remote[d.id] = v; } });
+    var out = Object.keys(remote).map(function(k){ return remote[k]; });
+    acts.forEach(function(a){
+      if(remote[a.id]) return;
+      if(synced[a.id]) return;                 // it existed in the cloud before, so it was deleted elsewhere
+      out.push(a); cloudPut(a);                 // local-only record: upload it
+    });
+    Object.keys(remote).forEach(function(id){ synced[id] = 1; });
+    acts = out; sortActs(); save(); saveSynced(); renderAll();
+  }
+  function cloudTick(){
+    try{
+      if(cloud.failed || !window.firebase || !firebase.apps || !firebase.apps.length || typeof firebase.auth !== 'function' || typeof firebase.firestore !== 'function') return;
+      var u = firebase.auth().currentUser;
+      if(!u){
+        if(cloud.unsub){ try{ cloud.unsub(); }catch(e){} cloud.unsub = null; }
+        cloud.db = null; cloud.uid = null; cloud.on = false; setSync('local'); return;
+      }
+      if(cloud.unsub && cloud.uid === u.uid) return;
+      cloud.uid = u.uid; cloud.db = firebase.firestore(); setSync('connecting');
+      cloud.unsub = cloud.db.collection(COLL).onSnapshot(onSnap, cloudErr);
+    }catch(e){ /* stay local */ }
+  }
+
+  /* ---------- date ranges ---------- */
+  function weekStartOf(d){ var diff = (d.getDay() - settings.weekStart + 7) % 7; return addDays(d, -diff); }
+  function getRange(){
+    var n = new Date(), t = new Date(n.getFullYear(), n.getMonth(), n.getDate()), from, to, r = settings.range;
+    if(r === 'today'){ from = to = t; }
+    else if(r === 'week'){ from = weekStartOf(t); to = addDays(from, 6); }
+    else if(r === 'month'){ from = new Date(t.getFullYear(), t.getMonth(), 1); to = new Date(t.getFullYear(), t.getMonth()+1, 0); }
+    else if(r === 'year'){ from = new Date(t.getFullYear(), 0, 1); to = new Date(t.getFullYear(), 11, 31); }
+    else {
+      from = settings.from ? parseISO(settings.from) : addDays(t, -29);
+      to = settings.to ? parseISO(settings.to) : t;
+      if(from > to){ var x = from; from = to; to = x; }
+    }
+    return {from:from, to:to, f:iso(from), t:iso(to), days:Math.round((to-from)/864e5)+1};
+  }
+  function rangeLabel(r){
+    if(r.f === r.t) return DAY[r.from.getDay()]+', '+fmtDate(r.f);
+    return fmtDate(r.f)+' – '+fmtDate(r.t);
+  }
+
+  /* ---------- filtering (cross-filter model: each widget ignores its own dimension) ---------- */
+  var STOP = new Set('the and for with from that this was were are not but has have had you your our their about into per via pls please sir mam ok okay as at by of on in to is it be or an a if we he she they them his her its who what when where which while will would can could should may might also than then there here been being just more some any all out off one two new old get got give gave send sent need needs needed asked ask asking client customer pax passenger passengers query info information regarding re fwd'.split(' '));
+  function words(a){
+    var seen = {}, out = [];
+    String(a.note||'').toLowerCase().replace(/[^a-z0-9\u0980-\u09ff\- ]+/g,' ').split(/\s+/).forEach(function(w){
+      w = w.replace(/^-+|-+$/g,'');
+      if(w.length >= 3 && !STOP.has(w) && !/^\d+$/.test(w) && !seen[w]){ seen[w] = 1; out.push(w); }
+    });
+    return out;
+  }
+  function hay(a){ return (a.company+' '+a.note+' '+a.category+' '+a.source+' '+a.status).toLowerCase(); }
+  function dimOk(a, ex){
+    var f = st.filters; ex = ex || '';
+    if(f.source && ex.indexOf('source') < 0 && a.source !== f.source) return false;
+    if(f.category && ex.indexOf('category') < 0 && a.category !== f.category) return false;
+    if(f.status && ex.indexOf('status') < 0 && a.status !== f.status) return false;
+    if(f.company && ex.indexOf('company') < 0 && coKey(a.company) !== f.company) return false;
+    if(f.kw && ex.indexOf('kw') < 0 && words(a).indexOf(f.kw) < 0) return false;
+    if(f.q && ex.indexOf('q') < 0 && hay(a).indexOf(f.q) < 0) return false;
+    return true;
+  }
+  function hourOf(a){ return parseInt(String(a.time||'0').slice(0,2), 10) || 0; }
+  function bucketOk(a){
+    var b = st.filters.bucket; if(!b) return true;
+    if(a.date < b.from || a.date > b.to) return false;
+    if(b.hour != null && hourOf(a) !== b.hour) return false;
+    return true;
+  }
+  /* ex: dimensions to ignore · noRange: ignore the date range · noBucket: ignore the trend-bar filter */
+  function sel(ex, noRange, noBucket){
+    var r = getRange();
+    return acts.filter(function(a){
+      if(!noRange && (a.date < r.f || a.date > r.t)) return false;
+      if(!noBucket && !bucketOk(a)) return false;
+      return dimOk(a, ex);
+    });
+  }
+  function countBy(list, fn){ var m = {}; list.forEach(function(a){ var k = fn(a); m[k] = (m[k]||0) + 1; }); return m; }
+  function distinct(list, fn){ var m = {}; list.forEach(function(a){ m[fn(a)] = 1; }); return Object.keys(m).length; }
+
+  function buildCoNames(){
+    var per = {};
+    acts.forEach(function(a){ var k = coKey(a.company); if(!k) return; var o = per[k] || (per[k] = {}); o[a.company] = (o[a.company]||0) + 1; });
+    coNames = {};
+    Object.keys(per).forEach(function(k){ var best = '', bn = -1; Object.keys(per[k]).forEach(function(n){ if(per[k][n] > bn){ bn = per[k][n]; best = n; } }); coNames[k] = best; });
+  }
+  function coName(a){ return coNames[coKey(a.company)] || a.company; }
+
+  /* ---------- quick entry ---------- */
+  function chip(g, v, cls){ return '<button type="button" class="pwi-chip '+(cls||'')+'" data-act="pick" data-g="'+g+'" data-v="'+esc(v)+'" aria-pressed="false">'+esc(v)+'</button>'; }
+  function initEntry(){
+    $('pwi-src').innerHTML = SOURCES.map(function(v){ return chip('source', v); }).join('');
+    $('pwi-cat').innerHTML = CATS.map(function(v){ return chip('category', v); }).join('');
+    $('pwi-stat').innerHTML = STATUSES.map(function(v){ return chip('status', v, 'st-'+v); }).join('');
+    $('pwi-eff').innerHTML = EFFORTS.map(function(v){ return chip('effort', v); }).join('');
+    ['pwi-m-source','pwi-m-cat','pwi-m-status','pwi-m-effort'].forEach(function(id){ $(id).innerHTML = ''; });
+    $('pwi-m-source').innerHTML = SOURCES.map(function(v){ return '<option>'+esc(v)+'</option>'; }).join('');
+    $('pwi-m-cat').innerHTML = CATS.map(function(v){ return '<option>'+esc(v)+'</option>'; }).join('');
+    $('pwi-m-status').innerHTML = STATUSES.map(function(v){ return '<option>'+esc(v)+'</option>'; }).join('');
+    $('pwi-m-effort').innerHTML = '<option value="">Not set</option>' + EFFORTS.map(function(v){ return '<option>'+esc(v)+'</option>'; }).join('');
+    $('pwi-weekstart').value = String(settings.weekStart);
+    $('pwi-keep').checked = !!settings.keep;
+    syncChips(); updatePreview();
+  }
+  function syncChips(){
+    pwi.querySelectorAll('#pwi-pane-entry [data-act="pick"]').forEach(function(b){
+      b.setAttribute('aria-pressed', form[b.dataset.g] === b.dataset.v ? 'true' : 'false');
+    });
+  }
+  function updatePreview(){
+    var co = normCo($('pwi-company').value);
+    var parts = [form.source, co, form.category, form.status].filter(Boolean);
+    var el = $('pwi-preview');
+    if(form.source || co || form.category){ el.textContent = parts.join(' → '); el.className = 'pwi-preview'; }
+    else { el.textContent = 'e.g. WhatsApp → ABC Travel → Fare Query → Resolved'; el.className = 'pwi-preview dim'; }
+  }
+  function hint(msg, kind){ var h = $('pwi-hint'); h.textContent = msg; h.className = 'pwi-hint ' + (kind||''); }
+  function flag(g){
+    var el = pwi.querySelector('.pwi-field[data-g="'+g+'"]'); if(!el) return;
+    el.classList.add('bad'); setTimeout(function(){ el.classList.remove('bad'); }, 1800);
+  }
+  function canonCompany(name){ var k = coKey(name); return coNames[k] || normCo(name); }
+  function nowISO(){ return new Date().toISOString(); }
+
+  function saveForm(){
+    var co = normCo($('pwi-company').value), miss = [];
+    if(!form.source) miss.push('source'); if(!co) miss.push('company'); if(!form.category) miss.push('category');
+    if(miss.length){
+      miss.forEach(flag);
+      hint('Still needed: ' + miss.map(function(m){ return {source:'Source',company:'Company / Client',category:'Work / Query'}[m]; }).join(', ') + '.', 'err');
+      if(miss.indexOf('company') > -1 && miss.length === 1) $('pwi-company').focus();
+      return;
+    }
+    var a = {id:uid(), date:form.date || todayISO(), time:form.time || nowTime(), source:form.source, company:canonCompany(co),
+             category:form.category, status:form.status, effort:form.effort, note:$('pwi-note').value.trim().slice(0,240),
+             created:nowISO(), updated:nowISO()};
+    acts.push(a); sortActs(); save(); cloudPut(a);
+    settings.lastSource = form.source; settings.keep = $('pwi-keep').checked; saveSettings();
+    var msg = [a.source, a.company, a.category, a.status].join(' → ');
+    form.category = ''; form.status = 'Resolved'; form.effort = ''; form.date = ''; form.time = '';
+    $('pwi-note').value = '';
+    if(!settings.keep) $('pwi-company').value = '';
+    $('pwi-date-wrap').hidden = true; $('pwi-date-toggle').textContent = '📅 Today';
+    syncChips(); updatePreview();
+    hint('Saved: ' + msg, 'ok');
+    renderAll();
+    $('pwi-company').focus(); $('pwi-company').select();
+  }
+
+  function stSelect(a){
+    return '<select class="pwi-st '+a.status+'" data-act="setstatus" data-id="'+esc(a.id)+'" aria-label="Status">' +
+      STATUSES.map(function(s){ return '<option'+(s === a.status ? ' selected' : '')+'>'+s+'</option>'; }).join('') + '</select>';
+  }
+  function acts2(a){
+    return '<button type="button" class="pwi-ico" data-act="edit" data-id="'+esc(a.id)+'" title="Edit" aria-label="Edit">✎</button>' +
+           '<button type="button" class="pwi-ico del" data-act="del" data-id="'+esc(a.id)+'" title="Delete" aria-label="Delete">✕</button>';
+  }
+  function liRow(a, left){
+    return '<div class="pwi-li"><span class="pwi-li-time">'+esc(left)+'</span><div class="pwi-li-main"><div class="pwi-li-t"><i class="pwi-dot" style="background:'+srcColor(a.source)+'"></i>'+esc(coName(a))+'</div>' +
+      '<div class="pwi-li-s">'+esc(a.category)+' · '+esc(a.source)+(a.note ? ' · '+esc(a.note) : '')+'</div></div><div class="pwi-li-a">'+stSelect(a)+acts2(a)+'</div></div>';
+  }
+  function renderEntryLists(){
+    buildCoNames();
+    // datalist + recent chips
+    var cnt = countBy(acts, function(a){ return coKey(a.company); });
+    var keys = Object.keys(cnt).sort(function(a,b){ return cnt[b] - cnt[a]; });
+    $('pwi-co-list').innerHTML = keys.slice(0,300).map(function(k){ return '<option value="'+esc(coNames[k])+'"></option>'; }).join('');
+    var cutoff = iso(addDays(new Date(), -90));
+    var rc = countBy(acts.filter(function(a){ return a.date >= cutoff; }), function(a){ return coKey(a.company); });
+    var rk = Object.keys(rc).sort(function(a,b){ return rc[b] - rc[a]; });
+    if(!rk.length) rk = keys;
+    $('pwi-co-recent').innerHTML = rk.slice(0,8).map(function(k){ return '<button type="button" class="pwi-chip" data-act="co" data-v="'+esc(coNames[k])+'">'+esc(coNames[k])+'</button>'; }).join('');
+    // today
+    var t = todayISO(), today = acts.filter(function(a){ return a.date === t; });
+    var c = countBy(today, function(a){ return a.status; });
+    $('pwi-today-mini').innerHTML = '<span><b>'+today.length+'</b> total</span><span><b>'+(c.Resolved||0)+'</b> resolved</span><span><b>'+(c.Pending||0)+'</b> pending</span><span><b>'+(c['Follow-up']||0)+'</b> follow-up</span>';
+    $('pwi-today-list').innerHTML = today.length ? today.map(function(a){ return liRow(a, a.time); }).join('') : '<div class="pwi-empty">Nothing logged yet today.<br>Your first record takes about five seconds.</div>';
+    // open items
+    var open = acts.filter(function(a){ return a.status !== 'Resolved'; }).sort(function(a,b){ return (a.date+a.time).localeCompare(b.date+b.time); });
+    var now = parseISO(t);
+    $('pwi-open-sub').textContent = open.length ? open.length + ' open · oldest first' : 'Pending & follow-up, any date';
+    $('pwi-open-list').innerHTML = open.length ? open.slice(0,15).map(function(a){
+      var d = Math.round((now - parseISO(a.date)) / 864e5);
+      return liRow(a, d <= 0 ? 'today' : d + 'd');
+    }).join('') + (open.length > 15 ? '<div class="pwi-empty">+ '+(open.length-15)+' more — use the Dashboard to filter by status.</div>' : '') : '<div class="pwi-empty">No pending or follow-up items.</div>';
+  }
+
+  /* ---------- edit modal ---------- */
+  function openEdit(id){
+    var a = acts.filter(function(x){ return x.id === id; })[0]; if(!a) return;
+    st.editId = id;
+    $('pwi-m-date').value = a.date; $('pwi-m-time').value = a.time; $('pwi-m-source').value = a.source;
+    $('pwi-m-company').value = coName(a); $('pwi-m-cat').value = a.category; $('pwi-m-status').value = a.status;
+    $('pwi-m-effort').value = a.effort || ''; $('pwi-m-note').value = a.note;
+    $('pwi-modal').hidden = false; $('pwi-m-company').focus();
+  }
+  function closeEdit(){ $('pwi-modal').hidden = true; st.editId = null; }
+  function saveEdit(){
+    var a = acts.filter(function(x){ return x.id === st.editId; })[0]; if(!a){ closeEdit(); return; }
+    var co = normCo($('pwi-m-company').value), d = $('pwi-m-date').value;
+    if(!co || !/^\d{4}-\d{2}-\d{2}$/.test(d)){ toast('Client and date are required.'); return; }
+    a.date = d; a.time = $('pwi-m-time').value || a.time; a.source = $('pwi-m-source').value; a.company = canonCompany(co);
+    a.category = $('pwi-m-cat').value; a.status = $('pwi-m-status').value; a.effort = $('pwi-m-effort').value;
+    a.note = $('pwi-m-note').value.trim().slice(0,240); a.updated = nowISO();
+    sortActs(); save(); cloudPut(a); closeEdit(); renderAll(); toast('Changes saved.');
+  }
+  function deleteAct(id){
+    var i = -1; acts.forEach(function(a,k){ if(a.id === id) i = k; }); if(i < 0) return;
+    var a = acts.splice(i,1)[0]; lastDeleted = a; save(); cloudDel(id); renderAll();
+    toast('Activity deleted.', 'Undo', function(){ if(!lastDeleted) return; acts.push(lastDeleted); sortActs(); save(); cloudPut(lastDeleted); lastDeleted = null; renderAll(); });
+  }
+  function setStatus(id, s){
+    var a = acts.filter(function(x){ return x.id === id; })[0]; if(!a || STATUSES.indexOf(s) < 0) return;
+    a.status = s; a.updated = nowISO(); save(); cloudPut(a); renderAll();
+  }
+
+  /* ---------- dashboard: charts ---------- */
+  var valuePlugin = {
+    id:'pwiVals',
+    afterDatasetsDraw:function(ch, args, o){
+      if(!o || !o.on) return;
+      var ctx = ch.ctx; ctx.save(); ctx.font = '600 11px '+FONT.family; ctx.fillStyle = '#3C5573'; ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
+      var n = ch.data.labels.length; if(n > 45){ ctx.restore(); return; }
+      for(var j = 0; j < n; j++){
+        var sum = 0, top = Infinity, x = null;
+        ch.data.datasets.forEach(function(ds, i){
+          if(!ch.isDatasetVisible(i)) return; var meta = ch.getDatasetMeta(i);
+          var v = ds.data[j]; if(!(v > 0)) return;
+          var el = meta.data[j]; if(!el) return;
+          sum += v; x = el.x; if(el.y < top) top = el.y;
+          if(!o.stack){ ctx.fillText(v, el.x, el.y - 3); }
+        });
+        if(o.stack && sum > 0 && x != null) ctx.fillText(sum, x, top - 3);
+      }
+      ctx.restore();
+    }
+  };
+  function noChartMsg(cv, show){
+    var box = cv.parentNode, m = box.querySelector('.pwi-empty');
+    if(show){ cv.style.display = 'none'; if(!m){ m = document.createElement('div'); m.className = 'pwi-empty'; m.textContent = 'Charts load from the internet (Chart.js). Reconnect and reopen this tab — the tables below still work.'; box.appendChild(m); } }
+    else { cv.style.display = ''; if(m) m.remove(); }
+  }
+  function mk(key, canvasId, cfg){
+    var cv = $(canvasId); if(!cv) return null;
+    var had = !!charts[key];
+    if(charts[key]){ try{ charts[key].destroy(); }catch(e){} charts[key] = null; }
+    if(typeof window.Chart === 'undefined'){ noChartMsg(cv, true); return null; }
+    noChartMsg(cv, false);
+    cfg.options.animation = had ? false : {duration:300};
+    try{ charts[key] = new window.Chart(cv.getContext('2d'), cfg); }catch(e){ console.error('PWI chart failed', e); }
+    return charts[key];
+  }
+  function hoverPtr(e, els){ if(e && e.native && e.native.target) e.native.target.style.cursor = els.length ? 'pointer' : 'default'; }
+  function alpha(hex, on){ return on ? hex : hex + '55'; }
+
+  function autoGran(r){ if(settings.range === 'today') return 'hour'; return r.days <= 45 ? 'day' : r.days <= 190 ? 'week' : 'month'; }
+  function makeBuckets(r, gran){
+    var out = [], d, s, e;
+    if(gran === 'hour'){ for(var h = 0; h < 24; h++) out.push({key:h, label:pad(h), title:'Hour '+pad(h)+':00–'+pad(h)+':59', from:r.f, to:r.t, hour:h}); }
+    else if(gran === 'day'){
+      for(d = new Date(r.from); d <= r.to; d = addDays(d,1)){ s = iso(d); out.push({key:s, label:r.days <= 8 ? DAY[d.getDay()]+' '+d.getDate() : String(d.getDate()), title:DAY[d.getDay()]+' '+fmtDate(s), from:s, to:s}); }
+    } else if(gran === 'week'){
+      for(d = weekStartOf(r.from); d <= r.to; d = addDays(d,7)){ s = iso(d); e = iso(addDays(d,6)); out.push({key:s, label:fmtShort(d), title:'Week of '+fmtDate(s), from:s, to:e}); }
+    } else {
+      for(d = new Date(r.from.getFullYear(), r.from.getMonth(), 1); d <= r.to; d = new Date(d.getFullYear(), d.getMonth()+1, 1)){
+        s = iso(d); e = iso(new Date(d.getFullYear(), d.getMonth()+1, 0));
+        out.push({key:s.slice(0,7), label:MON[d.getMonth()]+(r.days > 366 ? ' '+String(d.getFullYear()).slice(2) : ''), title:MON[d.getMonth()]+' '+d.getFullYear(), from:s, to:e});
+      }
+    }
+    return out;
+  }
+  function bucketKey(a, gran){
+    if(gran === 'hour') return hourOf(a);
+    if(gran === 'day') return a.date;
+    if(gran === 'week') return iso(weekStartOf(parseISO(a.date)));
+    return a.date.slice(0,7);
+  }
+  function sameBucket(b, x){ return b && x && String(b.key) === String(x.key) && b.gran === x.gran; }
+
+  function renderTrend(){
+    var r = getRange(), gran = settings.range === 'today' ? 'hour' : (st.gran === 'auto' ? autoGran(r) : st.gran);
+    $('pwi-gran').disabled = settings.range === 'today';
+    var buckets = makeBuckets(r, gran); buckets.forEach(function(b){ b.gran = gran; });
+    var idx = {}; buckets.forEach(function(b,i){ idx[b.key] = i; });
+    var data = {}; STATUSES.forEach(function(s){ data[s] = buckets.map(function(){ return 0; }); });
+    sel('', false, true).forEach(function(a){ var i = idx[bucketKey(a, gran)]; if(i != null) data[a.status][i]++; });
+    var chosen = st.filters.bucket;
+    mk('trend', 'pwi-c-trend', {
+      type:'bar', plugins:[valuePlugin],
+      data:{labels:buckets.map(function(b){ return b.label; }), datasets:STATUSES.map(function(s){
+        return {label:s, data:data[s], stack:'s', borderRadius:3, maxBarThickness:42,
+                backgroundColor:buckets.map(function(b){ return alpha(STAT_COLOR[s], !chosen || sameBucket(b, chosen)); })};
+      })},
+      options:{responsive:true, maintainAspectRatio:false, interaction:{mode:'index', intersect:false},
+        scales:{x:{stacked:true, grid:{display:false}, ticks:{font:FONT, maxRotation:0, autoSkip:true}}, y:{stacked:true, beginAtZero:true, ticks:{precision:0, font:FONT}, grid:{color:'#EEF2F7'}}},
+        plugins:{legend:{position:'bottom', labels:{boxWidth:10, boxHeight:10, font:FONT}}, pwiVals:{on:true, stack:true},
+          tooltip:{callbacks:{title:function(it){ return buckets[it[0].dataIndex].title; }, footer:function(it){ var t = 0; it.forEach(function(x){ t += x.parsed.y; }); return 'Total: '+t; }}}},
+        onHover:hoverPtr,
+        onClick:function(e, els, chart){
+          var el = chart.getElementsAtEventForMode(e, 'index', {intersect:false}, true);
+          if(!el.length) return;
+          var b = buckets[el[0].index];
+          st.filters.bucket = sameBucket(chosen, b) ? null : {key:b.key, gran:gran, from:b.from, to:b.to, hour:b.hour, title:b.title};
+          st.recLimit = 50; renderDash();
+        }}
+    });
+  }
+
+  function renderSourceChart(list, total){
+    var counts = countBy(list, function(a){ return a.source; });
+    var names = SOURCES.filter(function(s){ return counts[s] || st.filters.source === s; });
+    var empty = !total;
+    mk('src', 'pwi-c-src', {
+      type:'doughnut',
+      data:{labels:empty ? ['No data'] : names, datasets:[{data:empty ? [1] : names.map(function(s){ return counts[s]||0; }),
+        backgroundColor:empty ? ['#EDF1F6'] : names.map(function(s){ return alpha(srcColor(s), !st.filters.source || st.filters.source === s); }), borderColor:'#fff', borderWidth:2}]},
+      options:{responsive:true, maintainAspectRatio:false, cutout:'62%', plugins:{legend:{display:false}, tooltip:{enabled:!empty}}, onHover:hoverPtr,
+        onClick:function(e, els){ if(els.length && !empty){ toggleFilter('source', names[els[0].index]); } }}
+    });
+    $('pwi-src-legend').innerHTML = empty ? '<div class="pwi-empty">No activities in this period.</div>' :
+      '<div class="pwi-bars">' + SOURCES.filter(function(s){ return counts[s] || st.filters.source === s; }).map(function(s){
+        var on = st.filters.source === s;
+        return '<button type="button" class="pwi-bar'+(on?' sel':'')+(st.filters.source && !on?' dim':'')+'" style="grid-template-columns:minmax(0,1fr) auto" data-act="flt" data-dim="source" data-v="'+esc(s)+'">' +
+          '<span class="pwi-bar-n"><i class="pwi-dot" style="background:'+srcColor(s)+'"></i>'+esc(s)+'</span><span class="pwi-bar-v">'+(counts[s]||0)+'<small>'+pct(counts[s]||0,total)+'</small></span></button>';
+      }).join('') + '</div>';
+  }
+
+  function renderWMY(){
+    var list = sel('', true, true), today = new Date(), t0 = new Date(today.getFullYear(), today.getMonth(), today.getDate()), buckets = [], keyOf, i, d;
+    if(st.cycle === 'weekly'){
+      var cur = weekStartOf(t0);
+      for(i = 11; i >= 0; i--){ d = addDays(cur, -7*i); buckets.push({key:iso(d), label:fmtShort(d), title:'Week of '+fmtDate(iso(d)), from:iso(d), to:iso(addDays(d,6))}); }
+      keyOf = function(a){ return iso(weekStartOf(parseISO(a.date))); };
+    } else if(st.cycle === 'monthly'){
+      for(i = 11; i >= 0; i--){ d = new Date(t0.getFullYear(), t0.getMonth()-i, 1); var s = iso(d); buckets.push({key:s.slice(0,7), label:MON[d.getMonth()]+' '+String(d.getFullYear()).slice(2), title:MON[d.getMonth()]+' '+d.getFullYear(), from:s, to:iso(new Date(d.getFullYear(), d.getMonth()+1, 0))}); }
+      keyOf = function(a){ return a.date.slice(0,7); };
+    } else {
+      var y0 = t0.getFullYear(); acts.forEach(function(a){ var y = +a.date.slice(0,4); if(y < y0) y0 = y; });
+      y0 = Math.max(y0, t0.getFullYear() - 9);
+      for(var y = y0; y <= t0.getFullYear(); y++) buckets.push({key:String(y), label:String(y), title:'Year '+y, from:y+'-01-01', to:y+'-12-31'});
+      keyOf = function(a){ return a.date.slice(0,4); };
+    }
+    var idx = {}; buckets.forEach(function(b,k){ idx[b.key] = k; });
+    var vals = buckets.map(function(){ return 0; });
+    list.forEach(function(a){ var k = idx[keyOf(a)]; if(k != null) vals[k]++; });
+    var r = getRange();
+    mk('wmy', 'pwi-c-wmy', {
+      type:'bar', plugins:[valuePlugin],
+      data:{labels:buckets.map(function(b){ return b.label; }), datasets:[{label:'Activities', data:vals, borderRadius:4, maxBarThickness:46,
+        backgroundColor:buckets.map(function(b){ return (b.from === r.f && b.to === r.t) ? '#0E9AA7' : '#9DB4D3'; })}]},
+      options:{responsive:true, maintainAspectRatio:false,
+        scales:{x:{grid:{display:false}, ticks:{font:FONT, maxRotation:0}}, y:{beginAtZero:true, ticks:{precision:0, font:FONT}, grid:{color:'#EEF2F7'}}},
+        plugins:{legend:{display:false}, pwiVals:{on:true}, tooltip:{callbacks:{title:function(it){ return buckets[it[0].dataIndex].title; }}}},
+        onHover:hoverPtr,
+        onClick:function(e, els){
+          if(!els.length) return; var b = buckets[els[0].index];
+          settings.range = 'custom'; settings.from = b.from; settings.to = b.to; saveSettings(); st.filters.bucket = null; st.recLimit = 50; renderDash();
+        }}
+    });
+  }
+
+  /* ---------- dashboard: HTML widgets ---------- */
+  function barRow(dim, v, label, n, max, total, on, anySel, extra){
+    return '<button type="button" class="pwi-bar'+(on?' sel':'')+(anySel && !on?' dim':'')+'" '+(extra || 'data-act="flt" data-dim="'+dim+'" data-v="'+esc(v)+'"')+'>' +
+      '<span class="pwi-bar-n" title="'+esc(label)+'">'+esc(label)+'</span><span class="pwi-bar-t"><i style="width:'+(max ? Math.max(3, Math.round(n*100/max)) : 0)+'%"></i></span>' +
+      '<span class="pwi-bar-v">'+n+'<small>'+pct(n,total)+'</small></span></button>';
+  }
+  function renderKPIs(){
+    var all = sel(''), sc = countBy(sel('status'), function(a){ return a.status; }), sTot = (sc.Resolved||0)+(sc.Pending||0)+(sc['Follow-up']||0);
+    var days = distinct(all, function(a){ return a.date; }), cos = distinct(all, function(a){ return coKey(a.company); });
+    var cards = [
+      ['total','Total Activities',all.length,days+' active day'+(days===1?'':'s'),'#2563C9',false],
+      ['Resolved','Resolved',sc.Resolved||0,pct(sc.Resolved||0,sTot)+' of activities',STAT_COLOR.Resolved,st.filters.status==='Resolved'],
+      ['Pending','Pending',sc.Pending||0,pct(sc.Pending||0,sTot)+' of activities',STAT_COLOR.Pending,st.filters.status==='Pending'],
+      ['Follow-up','Follow-up',sc['Follow-up']||0,pct(sc['Follow-up']||0,sTot)+' of activities',STAT_COLOR['Follow-up'],st.filters.status==='Follow-up'],
+      ['companies','Companies Supported',cos,'distinct clients','#0E9AA7',false]
+    ];
+    $('pwi-kpis').innerHTML = cards.map(function(c){
+      return '<button type="button" class="pwi-kpi'+(c[5]?' sel':'')+'" style="--k:'+c[4]+'" data-act="kpi" data-v="'+c[0]+'"><div class="pwi-kpi-l">'+c[1]+'</div><div class="pwi-kpi-v">'+c[2]+'</div><div class="pwi-kpi-s">'+c[3]+'</div></button>';
+    }).join('');
+  }
+  function renderFilterBar(){
+    var f = st.filters, chips = [];
+    if(f.bucket) chips.push(['bucket','Period: '+f.bucket.title]);
+    if(f.status) chips.push(['status','Status: '+f.status]);
+    if(f.category) chips.push(['category','Type: '+f.category]);
+    if(f.source) chips.push(['source','Source: '+f.source]);
+    if(f.company) chips.push(['company','Client: '+(coNames[f.company] || f.company)]);
+    if(f.kw) chips.push(['kw','Keyword: '+f.kw]);
+    $('pwi-filterbar').innerHTML = chips.map(function(c){ return '<span class="pwi-fchip">'+esc(c[1])+'<button type="button" data-act="unflt" data-dim="'+c[0]+'" aria-label="Remove filter">✕</button></span>'; }).join('') +
+      (chips.length > 1 ? '<button type="button" class="pwi-fclear" data-act="clearflt">Clear all</button>' : '') +
+      (chips.length ? '<button type="button" class="pwi-fjump" data-act="jump">View records ↓</button>' : '');
+  }
+  function renderCategoryBars(){
+    var list = sel('category'), m = countBy(list, function(a){ return a.category; }), total = list.length;
+    var rows = CATS.filter(function(c){ return m[c] || st.filters.category === c; }).sort(function(a,b){ return (m[b]||0) - (m[a]||0); });
+    var max = rows.length ? (m[rows[0]]||0) : 0;
+    $('pwi-cat-bars').innerHTML = rows.length ? '<div class="pwi-bars">' + rows.map(function(c){ return barRow('category', c, c, m[c]||0, max, total, st.filters.category === c, !!st.filters.category); }).join('') + '</div>' : '<div class="pwi-empty">No activities in this period yet.</div>';
+  }
+  function renderCompanyBars(){
+    var list = sel('company'), m = countBy(list, function(a){ return coKey(a.company); }), total = list.length;
+    var keys = Object.keys(m).sort(function(a,b){ return m[b] - m[a] || (coNames[a]||a).localeCompare(coNames[b]||b); });
+    var shown = st.coAll ? keys : keys.slice(0,10);
+    if(st.filters.company && shown.indexOf(st.filters.company) < 0) shown.push(st.filters.company);
+    var max = keys.length ? m[keys[0]] : 0;
+    $('pwi-co-bars').innerHTML = keys.length ? '<div class="pwi-bars">' + shown.map(function(k){ return barRow('company', k, coNames[k] || k, m[k]||0, max, total, st.filters.company === k, !!st.filters.company); }).join('') + '</div>' +
+      (keys.length > 10 ? '<button type="button" class="pwi-more" data-act="coall">'+(st.coAll ? 'Show top 10' : 'Show all '+keys.length+' clients')+'</button>' : '') : '<div class="pwi-empty">No activities in this period yet.</div>';
+  }
+  function renderPatterns(){
+    var el = $('pwi-patterns');
+    pwi.querySelectorAll('#pwi-pat-tabs button').forEach(function(b){ b.classList.toggle('on', b.dataset.v === st.pat); });
+    var f = st.filters, html = '';
+    if(st.pat === 'kw'){
+      var list = sel('kw'), m = {};
+      list.forEach(function(a){ words(a).forEach(function(w){ m[w] = (m[w]||0) + 1; }); });
+      var ks = Object.keys(m).filter(function(w){ return m[w] >= 2 || f.kw === w; }).sort(function(a,b){ return m[b] - m[a] || a.localeCompare(b); }).slice(0,30);
+      html = ks.length ? '<div class="pwi-kw">' + ks.map(function(w){ return '<button type="button" class="'+(f.kw === w ? 'sel' : '')+'" data-act="flt" data-dim="kw" data-v="'+esc(w)+'">'+esc(w)+'<b>'+(m[w]||0)+'</b></button>'; }).join('') + '</div>' : '<div class="pwi-empty">Keywords appear once the same word shows up in 2+ notes.<br>Short, consistent notes make this panel useful.</div>';
+    } else {
+      var d1 = 'category', d2 = st.pat === 'cc' ? 'company' : 'source';
+      var l2 = sel('category,'+d2), pm = {}, total = l2.length;
+      l2.forEach(function(a){ var v2 = d2 === 'company' ? coKey(a.company) : a.source, k = a.category+'|'+v2; (pm[k] || (pm[k] = {c:a.category, v:v2, n:0})).n++; });
+      var rows = Object.keys(pm).map(function(k){ return pm[k]; }).sort(function(a,b){ return b.n - a.n || a.c.localeCompare(b.c); }).slice(0,10), max = rows.length ? rows[0].n : 0;
+      html = rows.length ? '<div class="pwi-bars">' + rows.map(function(p){
+        var on = f.category === p.c && f[d2] === p.v, label = p.c+' · '+(d2 === 'company' ? (coNames[p.v] || p.v) : p.v);
+        return barRow('', '', label, p.n, max, total, on, !!(f.category && f[d2]), 'data-act="flt2" data-d1="category" data-v1="'+esc(p.c)+'" data-d2="'+d2+'" data-v2="'+esc(p.v)+'"');
+      }).join('') + '</div>' : '<div class="pwi-empty">No activities in this period yet.</div>';
+    }
+    el.innerHTML = html;
+  }
+  function readLS(k){ try{ var v = JSON.parse(localStorage.getItem(k) || '[]'); return Array.isArray(v) ? v : []; }catch(e){ return []; } }
+  function renderSummary(){
+    var list = sel(''), r = getRange(), byDay = countBy(list, function(a){ return a.date; }), days = Object.keys(byDay);
+    var busiest = null; days.forEach(function(d){ if(!busiest || byDay[d] > byDay[busiest]) busiest = d; });
+    var ef = countBy(list, function(a){ return a.effort || 'none'; });
+    var wd = [0,0,0,0,0,0,0]; list.forEach(function(a){ wd[parseISO(a.date).getDay()]++; });
+    var order = []; for(var i = 0; i < 7; i++) order.push((settings.weekStart + i) % 7);
+    var wmax = Math.max.apply(null, wd.concat([1]));
+    function inR(x){ var d = String(x && x.date || '').slice(0,10); return d >= r.f && d <= r.t; }
+    var eN = readLS('pnr_entries_v1').filter(inR).length, sN = readLS('pnr_sales_v1').filter(inR).length;
+    $('pwi-summary').innerHTML =
+      '<div class="pwi-sum"><div><span>Activities</span><b>'+list.length+'</b></div><div><span>Active days</span><b>'+days.length+'</b></div>' +
+      '<div><span>Avg / active day</span><b>'+(days.length ? (list.length/days.length).toFixed(1) : '0')+'</b></div>' +
+      '<div><span>Busiest day</span><b>'+(busiest ? fmtShort(parseISO(busiest))+' · '+byDay[busiest] : '—')+'</b></div>' +
+      '<div><span>Clients</span><b>'+distinct(list, function(a){ return coKey(a.company); })+'</b></div>' +
+      '<div><span>Query types</span><b>'+distinct(list, function(a){ return a.category; })+'</b></div></div>' +
+      '<span class="pwi-sub">Effort logged</span><div class="pwi-mini" style="margin:2px 0 8px">Quick <b>'+(ef.Quick||0)+'</b> · Standard <b>'+(ef.Standard||0)+'</b> · Deep <b>'+(ef.Deep||0)+'</b> · Not set <b>'+(ef.none||0)+'</b></div>' +
+      '<span class="pwi-sub">By weekday</span><div class="pwi-wd">' + order.map(function(d){ return '<div title="'+DAY[d]+': '+wd[d]+'"><i style="height:'+Math.round(wd[d]/wmax*36)+'px"></i>'+DAY[d]+'</div>'; }).join('') + '</div>' +
+      '<div class="pwi-note">Also recorded in AeroOps this period: Entry Log <b>'+eN+'</b> · Revenue Desk <b>'+sN+'</b>. Shown for context only — not added to PWI counts.</div>';
+  }
+  function renderRecords(){
+    var list = sel(''), total = list.length, shown = list.slice(0, st.recLimit);
+    $('pwi-rec-count').textContent = '· ' + total + ' record' + (total === 1 ? '' : 's');
+    $('pwi-rec-body').innerHTML = shown.length ? shown.map(function(a){
+      return '<tr><td class="d">'+fmtDate(a.date)+'<small>'+esc(a.time)+'</small></td><td><i class="pwi-dot" style="background:'+srcColor(a.source)+'"></i>'+esc(a.source)+'</td><td>'+esc(coName(a))+'</td><td>'+esc(a.category)+'</td><td>'+stSelect(a)+'</td><td>'+esc(a.effort || '—')+'</td><td class="n" title="'+esc(a.note)+'">'+esc(a.note)+'</td><td style="white-space:nowrap">'+acts2(a)+'</td></tr>';
+    }).join('') : '<tr><td colspan="8"><div class="pwi-empty">No records match the current period and filters.</div></td></tr>';
+    $('pwi-rec-more').innerHTML = total > shown.length ? '<button type="button" class="pwi-more" data-act="more">Show '+Math.min(50, total - shown.length)+' more ('+(total - shown.length)+' remaining)</button>' : '';
+  }
+  function syncRangeUI(){
+    var r = getRange();
+    pwi.querySelectorAll('#pwi-range button').forEach(function(b){ b.classList.toggle('on', b.dataset.v === settings.range); });
+    $('pwi-custom').hidden = settings.range !== 'custom';
+    $('pwi-from').value = r.f; $('pwi-to').value = r.t;
+    $('pwi-range-label').textContent = rangeLabel(r);
+    $('pwi-gran').value = st.gran;
+  }
+  function renderDash(){
+    buildCoNames(); syncRangeUI();
+    renderKPIs(); renderFilterBar(); renderTrend(); renderSummary(); renderCategoryBars();
+    renderSourceChart(sel('source'), sel('source').length);
+    renderCompanyBars(); renderPatterns(); renderWMY(); renderRecords();
+  }
+  function renderAll(){
+    if(!active){ dirty = true; return; }
+    dirty = false; renderEntryLists();
+    if(st.tab === 'dash') renderDash();
+  }
+
+  /* ---------- filter actions ---------- */
+  function toggleFilter(dim, v){ st.filters[dim] = st.filters[dim] === v ? null : v; st.recLimit = 50; renderDash(); }
+  function setTab(t){
+    st.tab = t;
+    $('pwi-pane-entry').hidden = t !== 'entry'; $('pwi-pane-dash').hidden = t !== 'dash';
+    pwi.querySelectorAll('.pwi-subtabs button').forEach(function(b){ b.classList.toggle('on', b.dataset.v === t); });
+    renderAll();
+  }
+
+  /* ---------- export / backup ---------- */
+  function csvCell(v){ v = String(v == null ? '' : v); return /[",\n\r]/.test(v) ? '"' + v.replace(/"/g,'""') + '"' : v; }
+  function download(name, text, mime, bom){
+    var b = new Blob([(bom ? '\ufeff' : '') + text], {type:mime}), u = URL.createObjectURL(b), a = document.createElement('a');
+    a.href = u; a.download = name; document.body.appendChild(a); a.click();
+    setTimeout(function(){ document.body.removeChild(a); URL.revokeObjectURL(u); }, 0);
+  }
+  function exportCSV(list, name){
+    var rows = [['Date','Time','Source','Client','Type','Status','Effort','Note']].concat(list.map(function(a){ return [a.date, a.time, a.source, coName(a), a.category, a.status, a.effort, a.note]; }));
+    download(name, rows.map(function(r){ return r.map(csvCell).join(','); }).join('\r\n'), 'text/csv;charset=utf-8', true);
+    toast('Exported ' + list.length + ' record' + (list.length === 1 ? '' : 's') + '.');
+  }
+  function restore(file){
+    var rd = new FileReader();
+    rd.onload = function(){
+      try{
+        var j = JSON.parse(rd.result), arr = Array.isArray(j) ? j : j.activities;
+        if(!Array.isArray(arr)) throw new Error('bad');
+        var added = 0, updated = 0, byId = {}; acts.forEach(function(a){ byId[a.id] = a; });
+        arr.map(clean).filter(Boolean).forEach(function(n){
+          var o = byId[n.id];
+          if(!o){ acts.push(n); byId[n.id] = n; added++; cloudPut(n); }
+          else if((n.updated||'') > (o.updated||'')){ Object.assign(o, n); updated++; cloudPut(o); }
+        });
+        sortActs(); save(); renderAll(); toast('Restored: ' + added + ' added, ' + updated + ' updated.');
+      }catch(e){ toast('That file is not a valid PWI backup.'); }
+    };
+    rd.readAsText(file);
+  }
+
+  /* ---------- activation / navigation ---------- */
+  function activate(){
+    if(active) return; active = true;
+    rootEl.classList.add('pwi-active');
+    document.querySelectorAll('#ptc-nav .ptc-nav-btn').forEach(function(b){ b.classList.remove('active'); });
+    navBtn.classList.add('active');
+    try{ window.scrollTo({top:0}); }catch(e){}
+    renderAll();
+  }
+  function deactivate(){
+    if(!active) return; active = false;
+    rootEl.classList.remove('pwi-active'); navBtn.classList.remove('active');
+  }
+  navBtn.addEventListener('click', function(e){ e.stopPropagation(); activate(); });
+  document.querySelectorAll('#ptc-nav .ptc-nav-btn, #ptc-nav-menu .ptc-nav-menu-item').forEach(function(b){
+    if(b !== navBtn) b.addEventListener('click', deactivate, true);
+  });
+  (function(){
+    var orig = window.ptcSetPane;
+    if(typeof orig === 'function') window.ptcSetPane = function(){ deactivate(); return orig.apply(this, arguments); };
+  })();
+  if(window.MutationObserver){
+    ['view-dashboard','view-entry','view-sales'].forEach(function(id){ var el = $(id); if(el) new MutationObserver(function(){ deactivate(); }).observe(el, {attributes:true, attributeFilter:['class']}); });
+    new MutationObserver(function(){ if(active && !navBtn.classList.contains('active')) navBtn.classList.add('active'); }).observe(navBtn, {attributes:true, attributeFilter:['class']});
+  }
+
+  /* ---------- events ---------- */
+  pwi.addEventListener('click', function(e){
+    var t = e.target.closest('[data-act]'); if(!t || !pwi.contains(t)) return;
+    var act = t.dataset.act, v = t.dataset.v, id = t.dataset.id;
+    if(act === 'tab') return setTab(v);
+    if(act === 'pick'){
+      var g = t.dataset.g;
+      form[g] = (g === 'effort' && form[g] === v) ? '' : v;
+      var fe = pwi.querySelector('.pwi-field[data-g="'+g+'"]'); if(fe) fe.classList.remove('bad');
+      syncChips(); updatePreview(); hint('Tip: press Enter in the client or note field to save.'); return;
+    }
+    if(act === 'co'){ $('pwi-company').value = v; updatePreview(); $('pwi-company').focus(); return; }
+    if(act === 'edit') return openEdit(id);
+    if(act === 'del') return deleteAct(id);
+    if(act === 'range'){
+      if(v === 'custom' && settings.range !== 'custom'){ var r0 = getRange(); settings.from = r0.f; settings.to = r0.t; }
+      settings.range = v; saveSettings(); st.filters.bucket = null; st.recLimit = 50; return renderDash();
+    }
+    if(act === 'kpi'){
+      if(v === 'total'){ var rc = $('pwi-records'); if(rc) rc.scrollIntoView({behavior:'smooth', block:'start'}); return; }
+      if(v === 'companies'){ var cb = $('pwi-co-bars'); if(cb) cb.scrollIntoView({behavior:'smooth', block:'center'}); return; }
+      return toggleFilter('status', v);
+    }
+    if(act === 'flt') return toggleFilter(t.dataset.dim, v);
+    if(act === 'flt2'){
+      var d1 = t.dataset.d1, v1 = t.dataset.v1, d2 = t.dataset.d2, v2 = t.dataset.v2;
+      if(st.filters[d1] === v1 && st.filters[d2] === v2){ st.filters[d1] = null; st.filters[d2] = null; } else { st.filters[d1] = v1; st.filters[d2] = v2; }
+      st.recLimit = 50; return renderDash();
+    }
+    if(act === 'unflt'){ st.filters[t.dataset.dim] = null; st.recLimit = 50; return renderDash(); }
+    if(act === 'clearflt'){ ['source','company','category','status','kw','bucket'].forEach(function(k){ st.filters[k] = null; }); st.recLimit = 50; return renderDash(); }
+    if(act === 'jump'){ $('pwi-records').scrollIntoView({behavior:'smooth', block:'start'}); return; }
+    if(act === 'pat'){ st.pat = v; return renderPatterns(); }
+    if(act === 'wmy'){ st.cycle = v; pwi.querySelectorAll('#pwi-wmy-tabs button').forEach(function(b){ b.classList.toggle('on', b.dataset.v === v); }); return renderWMY(); }
+    if(act === 'coall'){ st.coAll = !st.coAll; return renderCompanyBars(); }
+    if(act === 'more'){ st.recLimit += 50; return renderRecords(); }
+    if(act === 'export-view') return exportCSV(sel(''), 'aeroops-pwi-view-' + todayISO() + '.csv');
+    if(act === 'export-all'){ $('pwi-data').open = false; return exportCSV(acts, 'aeroops-pwi-all-' + todayISO() + '.csv'); }
+    if(act === 'backup'){ $('pwi-data').open = false; download('aeroops-pwi-backup-' + todayISO() + '.json', JSON.stringify({app:'AeroOps PWI', version:1, exported:nowISO(), activities:acts}, null, 1), 'application/json'); toast('Backup downloaded.'); return; }
+    if(act === 'restore'){ $('pwi-data').open = false; $('pwi-restore-file').value = ''; $('pwi-restore-file').click(); return; }
+  });
+  pwi.addEventListener('change', function(e){
+    var t = e.target;
+    if(t.matches('select[data-act="setstatus"]')) return setStatus(t.dataset.id, t.value);
+    if(t.id === 'pwi-gran'){ st.gran = t.value; st.filters.bucket = null; return renderDash(); }
+    if(t.id === 'pwi-from' || t.id === 'pwi-to'){
+      if($('pwi-from').value) settings.from = $('pwi-from').value; if($('pwi-to').value) settings.to = $('pwi-to').value;
+      settings.range = 'custom'; saveSettings(); st.filters.bucket = null; return renderDash();
+    }
+    if(t.id === 'pwi-weekstart'){ settings.weekStart = +t.value; saveSettings(); return renderAll(); }
+    if(t.id === 'pwi-keep'){ settings.keep = t.checked; saveSettings(); return; }
+    if(t.id === 'pwi-restore-file' && t.files && t.files[0]) return restore(t.files[0]);
+    if(t.id === 'pwi-date' || t.id === 'pwi-time'){
+      form.date = $('pwi-date').value || ''; form.time = $('pwi-time').value || '';
+      $('pwi-date-toggle').textContent = '📅 ' + (!form.date || form.date === todayISO() ? 'Today' : fmtDate(form.date)); return;
+    }
+    if(t.id === 'pwi-company') updatePreview();
+  });
+  pwi.addEventListener('input', function(e){
+    var t = e.target;
+    if(t.id === 'pwi-company'){ updatePreview(); var cf = pwi.querySelector('.pwi-field[data-g="company"]'); if(cf) cf.classList.remove('bad'); }
+    if(t.id === 'pwi-search'){ clearTimeout(t._tm); t._tm = setTimeout(function(){ st.filters.q = t.value.trim().toLowerCase(); st.recLimit = 50; renderKPIsAndRecords(); }, 150); }
+  });
+  function renderKPIsAndRecords(){ renderDash(); }
+  pwi.addEventListener('keydown', function(e){
+    var t = e.target;
+    if(e.key === 'Enter' && (t.id === 'pwi-company' || t.id === 'pwi-note')){ e.preventDefault(); saveForm(); }
+    else if(e.key === 'Enter' && (e.ctrlKey || e.metaKey) && st.tab === 'entry'){ e.preventDefault(); saveForm(); }
+  });
+  $('pwi-save').addEventListener('click', saveForm);
+  $('pwi-date-toggle').addEventListener('click', function(){
+    var w = $('pwi-date-wrap');
+    if(w.hidden){ w.hidden = false; $('pwi-date').value = form.date || todayISO(); $('pwi-time').value = form.time || nowTime(); form.date = $('pwi-date').value; form.time = $('pwi-time').value; $('pwi-date').focus(); }
+    else { w.hidden = true; form.date = ''; form.time = ''; this.textContent = '📅 Today'; }
+  });
+  $('pwi-m-save').addEventListener('click', saveEdit);
+  $('pwi-m-cancel').addEventListener('click', closeEdit);
+  $('pwi-m-del').addEventListener('click', function(){ var id = st.editId; closeEdit(); if(id) deleteAct(id); });
+  $('pwi-modal').addEventListener('click', function(e){ if(e.target === this) closeEdit(); });
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && !$('pwi-modal').hidden) closeEdit(); });
+
+  /* ---------- boot ---------- */
+  load(); sortActs(); initEntry(); setSync('local');
+  setInterval(cloudTick, 2500); setTimeout(cloudTick, 800);
 })();
 </script>
 </body></html>
