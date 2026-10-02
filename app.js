@@ -101,6 +101,47 @@
       </article>`).join("");
   }
 
+  // Hero statement (v2) — same summary text as the v1 hero
+  document.querySelectorAll("[data-profile-summary]").forEach(n => n.textContent = profile.summary);
+
+  // Home: career timeline (v2) — most recent roles, first line of detail each
+  if (el("homeTimeline")) {
+    el("homeTimeline").innerHTML = profile.experience.map(x => `
+      <li class="tl-item">
+        <div class="tl-when">${esc(x.period || "")}</div>
+        <div class="tl-body">
+          <h3>${esc(x.role)}</h3>
+          <p class="tl-org">${esc(x.company)} · ${esc(x.location)}</p>
+          ${x.bullets && x.bullets[0] ? `<p class="tl-note">${esc(x.bullets[0])}</p>` : ""}
+        </div>
+      </li>`).join("");
+  }
+
+  // Home: grouped expertise (v2) — grouped lists, no scores
+  if (el("expertiseGroups") && profile.expertiseGroups) {
+    el("expertiseGroups").innerHTML = profile.expertiseGroups.map(g => `
+      <div class="xp-group">
+        <h3>${esc(g.title)}</h3>
+        <ul>${g.items.map(i => `<li>${esc(i)}</li>`).join("")}</ul>
+      </div>`).join("");
+  }
+
+  // Home: research interests (v2)
+  if (el("researchList") && profile.researchInterests) {
+    el("researchList").innerHTML = profile.researchInterests.map(i => `<li>${esc(i)}</li>`).join("");
+  }
+
+  // Home: education timeline (v2)
+  if (el("eduTimeline")) {
+    el("eduTimeline").innerHTML = profile.education.map(x => `
+      <li class="tl-item">
+        <div class="tl-body">
+          <h3>${esc(x.degree)}</h3>
+          <p class="tl-org">${esc(x.institution)}</p>
+        </div>
+      </li>`).join("");
+  }
+
   // Contact links (footer + simple text links)
   document.querySelectorAll("[data-email-link]").forEach(a => { a.href = `mailto:${profile.email}`; a.textContent = profile.email; });
   document.querySelectorAll("[data-phone-link]").forEach(a => { a.href = `tel:${profile.phone.replace(/\s+/g,'')}`; a.textContent = profile.phone; });
@@ -118,7 +159,7 @@
   // Mobile nav — multi-page links
   const toggle = el("mobileToggle"), links = el("mobileLinks");
   if (toggle && links) {
-    links.innerHTML = `<a href="index.html">Home</a><a href="about.html">About</a><a href="experience.html">Experience</a><a href="skills.html">Skills</a><a class="v2-only" href="index.html#aeroops">Projects</a><a href="education.html">Education</a><a href="activities.html">Activities</a><a href="aeroops.html">AeroOps Desk</a><a href="contact.html">Contact</a>`;
+    links.innerHTML = `<a href="index.html">Home</a><a href="about.html">About</a><a href="experience.html">Experience</a><a href="skills.html">Skills</a><a class="v2-only" href="index.html#projects">Projects</a><a class="v2-only" href="index.html#research">Research</a><a href="education.html">Education</a><a href="activities.html">Activities</a><a href="aeroops.html">AeroOps Desk</a><a href="contact.html">Contact</a>`;
     // The header is sticky and can be anywhere relative to the document depending
     // on scroll, but #mobileLinks is a normal sibling below it in the page flow.
     // Without this, opening the menu while scrolled down places it back up at the

@@ -84,6 +84,13 @@ const profile = {
     ["Volunteering","Assisted with career talks and student guidance activities."],
     ["Event Coordination","Supported execution of an inter-university quiz competition."]
   ],
+  expertiseGroups: [
+    { title: "Airline Operations", items: ["Ticketing","Reservation","Reissue","Refund","Void","Fare Rules"] },
+    { title: "GDS & Distribution", items: ["Sabre","Galileo","Amadeus","NDC","OTA","LCC"] },
+    { title: "Business", items: ["Revenue Operations","Agency Support","Corporate Sales","International Business"] },
+    { title: "Technology & Analytics", items: ["Power BI","Operational Data","Web Technologies","MS Office"] }
+  ],
+  researchInterests: ["Aviation","Airfare Pricing","Airline Revenue","Tourism","Hospitality","International Business","Entrepreneurship","Technology in Travel"],
   // Live counts, not estimates — pulled straight from the real ticketing log via
   // public-stats.js (reads a small public Firestore summary AeroOps keeps updated
   // whenever entries change). The numbers below are only the fallback shown

@@ -52,7 +52,7 @@
 <nav class="nav-links" aria-label="Primary navigation">
 <a href="index.html">Home</a><a href="about.html">About</a>
 <a href="experience.html">Experience</a><a href="skills.html">Skills</a>
-<a class="v2-only" href="index.html#aeroops">Projects</a><a href="education.html">Education</a><a href="activities.html">Activities</a>
+<a class="v2-only" href="index.html#projects">Projects</a><a class="v2-only" href="index.html#research">Research</a><a href="education.html">Education</a><a href="activities.html">Activities</a>
 <a href="aeroops.html">AeroOps Desk</a>
 </nav>
 <a class="btn" href="contact.html">Contact</a><button id="mobileToggle" class="mobile-toggle" aria-label="Open menu">☰</button>
@@ -61,17 +61,22 @@
 
 <main>
 
-<!-- ===== V2 HERO (new design only; v1 hero below is kept intact) ===== -->
-<section class="hero-v2 v2-only"><div class="container hero-v2-grid">
+<!-- ===== V2 HERO (new design only; the v1 hero below is kept intact) ===== -->
+<section class="hero-v2 v2-only"><div class="container">
+<div class="hero-v2-grid">
+<svg class="hero-route" viewBox="0 0 600 300" aria-hidden="true" focusable="false"><path d="M10 270 C 160 40, 400 20, 590 120" fill="none" stroke="currentColor" stroke-width="1.2" stroke-dasharray="3 7"/><circle cx="10" cy="270" r="4" fill="currentColor"/><circle cx="590" cy="120" r="4" fill="currentColor"/></svg>
 <div class="hero-v2-copy">
-<span class="v2-eyebrow">Aviation Operations &amp; Reservation</span>
+<p class="eyebrow">Personal Portfolio</p>
 <h1 data-profile-name>Md Sarwar Osman Sagar</h1>
-<p class="v2-role" data-profile-title>Air Ticketing &amp; Reservation Professional</p>
-<p class="v2-tags">GDS &bull; NDC &bull; OTA &bull; Aviation Operations</p>
-<p class="v2-triad">Business <span>&times;</span> Technology <span>&times;</span> Research</p>
-<div class="v2-cta"><a class="btn" href="experience.html">Explore Experience</a><a class="btn btn-ghost" href="#aeroops">Explore AeroOps</a><a class="v2-link" data-cv-link href="#" target="_blank" rel="noopener">Download CV</a></div>
+<p class="hero-role" data-profile-title>Air Ticketing &amp; Reservation Professional</p>
+<p class="hero-stack">GDS &bull; NDC &bull; OTA &bull; Aviation Operations</p>
+<p class="hero-fields"><span>International Business</span><span>Technology</span><span>Research</span></p>
+<p class="hero-statement" data-profile-summary></p>
+<div class="hero-cta"><a class="btn" href="experience.html">View Experience</a><a class="btn btn-secondary" href="#projects">Explore My Work</a></div>
 </div>
-<div class="hero-v2-photo"><img src="./profile-portrait.jpg" alt="Portrait of Md Sarwar Osman Sagar"></div>
+<figure class="hero-v2-photo"><img src="./profile-portrait.jpg" alt="Portrait of Md Sarwar Osman Sagar" width="640" height="800"></figure>
+</div>
+<div class="horizon" aria-hidden="true"></div>
 </div></section>
 
 <!-- ===== HERO — the only large photo on the home page ===== -->
@@ -91,23 +96,6 @@
 <div class="hero-visual"><div class="photo-card"><img src="./profile-portrait.jpg" alt="Portrait of Sarwar, Aviation Reservation and Ticketing Professional"></div></div>
 </div></section>
 
-<!-- ===== V2 FEATURED PROJECT: AEROOPS ===== -->
-<section class="section aero-section v2-only" id="aeroops"><div class="container">
-<div class="aero-feature">
-<div class="aero-copy">
-<span class="v2-eyebrow">Featured Project</span>
-<h2>AeroOps</h2>
-<p class="aero-sub">Airline Operations &amp; Revenue Management System</p>
-<p class="aero-desc">A working operations desk built around real airline ticketing workflows, from the first PNR entry to the final revenue record.</p>
-<ul class="aero-caps">
-<li>PNR Management</li><li>Ticketing</li><li>Refund</li><li>Reissue</li><li>Void</li><li>Revenue</li><li>Operational Logs</li><li>Cloud Data</li>
-</ul>
-<div class="v2-cta"><a class="btn btn-light" href="./aeroops.html">Explore AeroOps</a></div>
-</div>
-<figure class="aero-shot"><div class="aero-shot-bar"><i></i><i></i><i></i><span>AeroOps &middot; Entry Desk</span></div><img src="./aeroops-preview.webp" alt="AeroOps Entry Desk showing global search, six daily summary counters and the ticket entry form" loading="lazy" width="1280" height="760"></figure>
-</div>
-</div></section>
-
 <!-- ===== ABOUT TEASER — text only, no second photo ===== -->
 <section class="section" style="padding-top:0"><div class="container">
 <div class="about-teaser">
@@ -117,9 +105,22 @@
 </div></section>
 
 <!-- ===== PROFESSIONAL EXPERTISE / PERFORMANCE VISUALIZATION ===== -->
-<section class="section" style="padding-top:0"><div class="container">
+<section class="section v1-only" style="padding-top:0"><div class="container">
 <div class="section-head"><div><span class="kicker">What I Handle</span><h2 class="section-title">Professional expertise</h2><p class="section-sub">Core areas of my day-to-day work — not scored, just where I actually spend my time.</p></div><a class="btn btn-soft" href="skills.html">Full Skill Breakdown ↗</a></div>
 <div id="expertiseGrid" class="cards"></div>
+</div></section>
+
+<!-- ===== V2 EXPERIENCE TIMELINE ===== -->
+<section class="section v2-only" id="experience"><div class="container">
+<div class="sec-head"><span class="kicker">Experience</span><h2 class="section-title">Career</h2></div>
+<ol class="timeline" id="homeTimeline"></ol>
+<p class="more"><a class="text-link" href="experience.html">Full experience</a></p>
+</div></section>
+
+<!-- ===== V2 EXPERTISE (grouped, no scores) ===== -->
+<section class="section v2-only" id="expertise"><div class="container">
+<div class="sec-head"><span class="kicker">Expertise</span><h2 class="section-title">What I work with</h2></div>
+<div class="xp-grid" id="expertiseGroups"></div>
 </div></section>
 
 <!-- ===== PERFORMANCE IMPACT ===== -->
@@ -129,11 +130,54 @@
 </div></section>
 
 <!-- ===== EXPERIENCE TEASER ===== -->
-<section class="section" style="padding-top:0"><div class="container">
+<section class="section v1-only" style="padding-top:0"><div class="container">
 <div class="about-teaser">
 <div><span class="kicker">Career</span><p id="experienceTeaser" style="font-size:16px;max-width:640px;margin-top:10px"></p></div>
 <a class="btn btn-soft" href="experience.html">View Full Experience →</a>
 </div>
+</div></section>
+
+<!-- ===== V2 PROJECT ===== -->
+<section class="section v2-only" id="projects"><div class="container">
+<div class="sec-head"><span class="kicker">Project</span><h2 class="section-title">Something I built for my own work</h2></div>
+<article class="project">
+<figure class="project-visual"><img src="./aeroops-preview.webp" alt="AeroOps refund workspace filled with sample figures: used segment fare, tax, penalty, commission, service charge and the resulting amount to the client" loading="lazy" width="1026" height="963"><figcaption>Sample figures only. No real passenger, ticket or company records are shown.</figcaption></figure>
+<div class="project-body">
+<p class="project-type">Personal work record database</p>
+<h3>AeroOps</h3>
+<p>A personal system I use to organise my daily aviation work records: PNRs, ticketing, refunds, reissues and voids, with the refund calculations and revenue totals kept in one place.</p>
+<dl class="project-meta">
+<div><dt>My role</dt><dd>Concept, workflow design and daily use</dd></div>
+<div><dt>Built with</dt><dd>HTML, CSS, JavaScript, Firebase</dd></div>
+<div><dt>Key contribution</dt><dd>One structured record for each ticketing action, with refund and reissue figures calculated the way airline rules require</dd></div>
+</dl>
+<p class="project-note">Private workspace. Sign-in is required, and the records are not public.</p>
+<a class="text-link" href="./aeroops.html">Open workspace</a>
+</div>
+</article>
+</div></section>
+
+<!-- ===== V2 RESEARCH & INTERESTS ===== -->
+<section class="section v2-only" id="research"><div class="container">
+<div class="sec-head"><span class="kicker">Research &amp; Interests</span><h2 class="section-title">Where my curiosity leads</h2></div>
+<div class="research">
+<div>
+<p class="research-lede">Alongside day-to-day airline work, I study how travel, pricing and business fit together. These are areas I follow and want to explore further.</p>
+<ul class="research-list" id="researchList"></ul>
+</div>
+<dl class="status-key">
+<div><dt>Research interest</dt><dd>Topics I read about and follow. Listed on this page.</dd></div>
+<div><dt>Research concept</dt><dd>Structured ideas I am developing. None listed yet.</dd></div>
+<div><dt>Published work</dt><dd>Will appear here once available.</dd></div>
+</dl>
+</div>
+</div></section>
+
+<!-- ===== V2 EDUCATION ===== -->
+<section class="section v2-only" id="education"><div class="container">
+<div class="sec-head"><span class="kicker">Education</span><h2 class="section-title">Academic background</h2></div>
+<ol class="timeline timeline-plain" id="eduTimeline"></ol>
+<p class="more"><a class="text-link" href="education.html">Education and training</a></p>
 </div></section>
 
 <!-- ===== CONTACT CTA ===== -->
