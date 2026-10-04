@@ -4,28 +4,24 @@
 This is a static GitHub Pages portfolio for Md Sarwar Osman Sagar, an Air Ticketing & Reservation Professional.
 
 ## Project structure
-All website files intentionally live in the repository root to minimize GitHub Pages path errors.
+Pages live in the repository root (URLs must not change). Everything else is in `assets/`.
 
-- `index.html` — home page
-- `about.html` — profile/about
-- `experience.html` — career history
-- `education.html` — education
-- `skills.html` — reservation/GDS/NDC/OTA expertise
-- `activities.html` — activities
-- `contact.html` — contact
-- `style.css` — shared design system
-- `app.js` — shared rendering/navigation logic
-- `profile.js` — central editable profile data
-- `profile-portrait.jpg` — profile image
-- `workspace.jpg` — supporting image
-- `Md-Sarwar-Osman-Sagar-CV.pdf` — CV
+- `index.html`, `about.html`, `experience.html`, `education.html`, `skills.html`, `activities.html`, `contact.html` — portfolio pages
+- `aeroops.html` — AeroOps workspace (separate app, see below)
+- `assets/css/style.css` — shared design system
+- `assets/js/app.js` — shared rendering/navigation logic
+- `assets/js/profile.js` — central editable profile data
+- `assets/js/public-stats.js` — public stats on the home page
+- `assets/img/` — profile photo, workspace photo, AeroOps preview, favicons, `og-image.png`
+- `assets/docs/Md-Sarwar-Osman-Sagar-CV.pdf` — CV
+- Root-only files: `favicon.ico`, `apple-touch-icon.png`, `robots.txt`, `sitemap.xml`, `vercel.json` (redirects from old flat URLs)
 
 ## Editing rules
 1. Read this file and the relevant HTML before changing anything.
 2. Prefer editing reusable information in `profile.js`.
-3. Keep all internal links relative and root-based (for example `./style.css`, `./app.js`).
+3. Keep all internal links relative (for example `./assets/css/style.css`, `./assets/js/app.js`, `./about.html`).
 4. Preserve GitHub Pages compatibility; no server-side code.
-5. Do not move files into new folders unless explicitly requested.
+5. Put new files in the matching `assets/` folder; do not create other folders or move pages out of the root unless explicitly requested.
 6. Do not invent employers, qualifications, achievements or dates.
 7. Preserve responsive/mobile behavior.
 8. After every change, verify all HTML pages, CSS, JS, images and CV links.
@@ -33,7 +29,6 @@ All website files intentionally live in the repository root to minimize GitHub P
 10. Report which files were changed.
 
 ## UI design
-- The portfolio uses a single design: `style.css` (the former "v1" design). It is the primary and only portfolio design.
-- The v1/v2 switch has been removed from the portfolio pages (`ui-version.js` and `style-v2.css` deleted; they remain in git history).
-- `aeroops.html` is intentionally unchanged and keeps its own self-contained UI handling. Do not edit it as part of portfolio design work.
-- New pages need only `<link rel="stylesheet" href="./style.css">`.
+- The portfolio uses a single design: `assets/css/style.css`. There is no v1/v2 switch.
+- `aeroops.html` is locked to its v2 design (the old switch was removed). It is a separate, large app with its own Firebase sign-in and data; do not edit it as part of portfolio changes.
+- New pages need `<link rel="stylesheet" href="./assets/css/style.css">` and `<script src="./assets/js/profile.js"></script><script defer src="./assets/js/app.js"></script>`.
