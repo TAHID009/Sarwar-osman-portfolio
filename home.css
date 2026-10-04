@@ -37,4 +37,4 @@
 .home .nav-wrap{background:transparent;border:0;box-shadow:none;border-radius:0;backdrop-filter:none;padding:0}
 .home main>section:nth-of-type(2){padding-top:48px!important}
 @media(max-width:900px){.home .nav-links{display:none}.home .nav{justify-content:space-between}.h-grid{grid-template-columns:1fr;padding:40px 0 56px}.h-visual{justify-self:start;margin-top:8px}}
-@media(max-width:600px){.home .logo{font-size:12px;white-space:nowrap;gap:6px}.home .nav{gap:10px}.home .header .btn{padding:9px 12px}}
+@media(max-width:600px){.home .logo{font-size:12px;white-space:nowrap;gap:6px}.home .nav{gap:10px}.home .header .btn{padding:9px 10px}.home .mobile-toggle{padding:0 6px}}
