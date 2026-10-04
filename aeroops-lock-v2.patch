@@ -1,0 +1,21 @@
+diff --git a/aeroops.html b/aeroops.html
+index 63f7107..69d97e8 100644
+--- a/aeroops.html
++++ b/aeroops.html
+@@ -2,12 +2,10 @@
+ <html lang="en">
+ <head>
+ <script>
+-/* AeroOps UI version: v2 = new professional design (default), v1 = previous design.
+-   Presentation only — stored under its own localStorage key; no data, auth or sync state is touched.
+-   Hidden switch: add ?ui=v1 or ?ui=v2 to the URL once, or press Ctrl+Alt+Shift+U while signed in. */
+-(function(){var K="aeroops.ui.version",v="v2";try{var q=new URLSearchParams(location.search).get("ui");if(q==="v1"||q==="v2")localStorage.setItem(K,q);var st=localStorage.getItem(K);if(st==="v1"||st==="v2")v=st;}catch(e){}
+-document.documentElement.setAttribute("data-ui",v);window.__aeroUI=v;
+-window.addEventListener("keydown",function(e){if(e.ctrlKey&&e.altKey&&e.shiftKey&&(e.key==="U"||e.key==="u")){var n=window.__aeroUI==="v1"?"v2":"v1";if(confirm("Switch AeroOps design to "+n+"? (UI only — your data is not affected)")){try{localStorage.setItem(K,n);}catch(x){}location.reload();}}});})();
++/* AeroOps UI: v2 (new professional design) is the only design. The old v1/v2 switch was removed, so a design
++   saved in the browser, ?ui=v1 in the address, or Ctrl+Alt+Shift+U can no longer change it.
++   Presentation only: no data, auth or sync state is touched. */
++document.documentElement.setAttribute("data-ui","v2");window.__aeroUI="v2";
+ </script>
+ <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+ <script>
