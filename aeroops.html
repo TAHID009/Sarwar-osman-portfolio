@@ -2752,6 +2752,89 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
   #pwi-root .pwi-save{width:100%;margin-left:0}
 }
 </style>
+<style id="sx-style">
+/* ===== Summary row upgrade: date picker + clickable boxes + date-scoped detail panel. Additive, scoped to #ptc-root. ===== */
+#ptc-root .ptc-stat-card.sx-click{cursor:pointer;user-select:none;padding-right:20px;transition:border-color .15s,box-shadow .15s,background .15s,transform .1s}
+#ptc-root .ptc-stat-card.sx-click:hover{border-color:#9DB4D3;background:#FBFDFF;box-shadow:0 2px 8px rgba(11,37,69,.10)}
+#ptc-root .ptc-stat-card.sx-click:active{transform:translateY(1px)}
+#ptc-root .ptc-stat-card.sx-click:focus-visible{outline:2px solid #2563C9;outline-offset:1px}
+#ptc-root .ptc-stat-card.sx-click.is-active{border-color:#2563C9;background:#F2F7FF;box-shadow:0 0 0 1px #2563C9 inset}
+#ptc-root .ptc-stat-card.sx-click::after{content:"\203A";position:absolute;right:8px;top:50%;transform:translateY(-52%);font-size:17px;font-weight:600;line-height:1;color:#7F9ABF;opacity:0;transition:opacity .15s,right .15s}
+#ptc-root .ptc-stat-card.sx-click:hover::after,#ptc-root .ptc-stat-card.sx-click:focus-visible::after,#ptc-root .ptc-stat-card.sx-click.is-active::after{opacity:1;right:6px}
+#ptc-root .ptc-stat-card.sx-date::after{content:"\25BE";font-size:12px;transform:translateY(-50%);opacity:.7}
+#ptc-root .ptc-stat-card.sx-date:hover::after{opacity:1}
+#ptc-root .ptc-stat-card.sx-date.is-open{border-color:#2563C9;box-shadow:0 0 0 1px #2563C9 inset}
+#ptc-root .ptc-stat-card.sx-date.is-filtered{border-color:#8FB0E6;background:#F2F7FF}
+#ptc-root .ptc-stat-card.sx-date .ptc-stat-label svg{display:none}
+#ptc-root .ptc-stat-card.sx-click .ptc-stat-value{pointer-events:none}
+
+/* calendar popover */
+#ptc-root .sx-cal{position:fixed;z-index:9300;width:268px;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 14px 36px rgba(11,37,69,.20);padding:10px 10px 8px;font-size:12.5px;color:var(--ink)}
+#ptc-root .sx-cal[hidden]{display:none}
+#ptc-root .sx-cal-h{display:flex;align-items:center;gap:4px;margin-bottom:6px}
+#ptc-root .sx-cal-h select{flex:1;min-width:0;border:1px solid var(--line);border-radius:7px;padding:4px 4px;background:#fff;font:inherit;font-weight:600;color:var(--ink);cursor:pointer}
+#ptc-root .sx-cal-h select:last-of-type{flex:0 0 66px}
+#ptc-root .sx-nav{flex:0 0 28px;height:28px;border:1px solid var(--line);border-radius:7px;background:#fff;cursor:pointer;color:var(--ink-soft);font-size:15px;line-height:1;padding:0}
+#ptc-root .sx-nav:hover{border-color:#9DB4D3;color:#2563C9}
+#ptc-root .sx-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+#ptc-root .sx-wd{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);text-align:center;padding:3px 0}
+#ptc-root .sx-day{position:relative;height:32px;border:0;border-radius:8px;background:transparent;cursor:pointer;font:inherit;font-variant-numeric:tabular-nums;color:var(--ink);padding:0}
+#ptc-root .sx-day:hover{background:#EEF3FA}
+#ptc-root .sx-day.out{color:#A9B5C4}
+#ptc-root .sx-day.today{box-shadow:inset 0 0 0 1.5px #0E9AA7;font-weight:700}
+#ptc-root .sx-day.sel{background:#2563C9;color:#fff;font-weight:700}
+#ptc-root .sx-day.has::after{content:"";position:absolute;left:50%;bottom:3px;width:4px;height:4px;margin-left:-2px;border-radius:50%;background:#2563C9;opacity:.75}
+#ptc-root .sx-day.sel.has::after{background:#fff}
+#ptc-root .sx-day:focus-visible{outline:2px solid #2563C9;outline-offset:1px}
+#ptc-root .sx-cal-f{display:flex;align-items:center;gap:6px;margin-top:8px;padding-top:8px;border-top:1px solid #EEF2F7}
+#ptc-root .sx-cal-f button{border:1px solid var(--line);background:#fff;border-radius:7px;padding:4px 10px;font:inherit;font-weight:600;color:var(--ink-soft);cursor:pointer}
+#ptc-root .sx-cal-f button:hover{border-color:#2563C9;color:#2563C9}
+#ptc-root .sx-cal-f .sx-leg{margin-left:auto;font-size:10.5px;color:var(--muted)}
+
+/* detail panel */
+#ptc-root .sx-back{position:fixed;inset:0;z-index:9200;background:rgba(11,37,69,.45);display:flex;align-items:flex-start;justify-content:center;padding:4vh 14px 14px;overflow:auto}
+#ptc-root .sx-back[hidden]{display:none}
+#ptc-root .sx-panel{background:#fff;border-radius:14px;width:100%;max-width:1120px;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 24px 60px rgba(11,37,69,.35);overflow:hidden}
+#ptc-root .sx-ph{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:14px 18px;border-bottom:1px solid var(--line)}
+#ptc-root .sx-ph h3{margin:0;font-size:16px;color:var(--ink)}
+#ptc-root .sx-ph .sx-sub{font-size:12px;color:var(--muted);margin-top:1px}
+#ptc-root .sx-step{display:inline-flex;align-items:center;gap:4px}
+#ptc-root .sx-step button{height:28px;border:1px solid var(--line);background:#fff;border-radius:7px;cursor:pointer;color:var(--ink-soft);font:inherit;font-weight:600;padding:0 9px}
+#ptc-root .sx-step button:hover{border-color:#2563C9;color:#2563C9}
+#ptc-root .sx-step .sx-dt{min-width:150px;text-align:center;color:var(--ink)}
+#ptc-root .sx-tot{margin-left:auto;text-align:right}
+#ptc-root .sx-tot span{display:block;font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+#ptc-root .sx-tot b{font-size:19px;color:var(--ink);font-variant-numeric:tabular-nums}
+#ptc-root .sx-x{border:0;background:transparent;font-size:22px;line-height:1;cursor:pointer;color:var(--muted);padding:2px 8px;border-radius:7px}
+#ptc-root .sx-x:hover{background:#F1F4F9;color:var(--ink)}
+#ptc-root .sx-pb{overflow:auto;padding:4px 18px 16px}
+#ptc-root .sx-pb h4{margin:14px 0 6px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);display:flex;gap:10px;align-items:baseline}
+#ptc-root .sx-pb h4 em{font-style:normal;margin-left:auto;color:var(--ink);text-transform:none;letter-spacing:0;font-weight:700}
+#ptc-root .sx-tw{overflow-x:auto}
+#ptc-root table.sx-t{width:100%;border-collapse:collapse;min-width:900px;font-size:12.5px}
+#ptc-root .sx-t th{text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:700;padding:7px 8px;border-bottom:1px solid var(--line);white-space:nowrap;position:sticky;top:0;background:#fff}
+#ptc-root .sx-t td{padding:7px 8px;border-bottom:1px solid #EEF2F7;vertical-align:top}
+#ptc-root .sx-t td.r,#ptc-root .sx-t th.r{text-align:right;font-variant-numeric:tabular-nums}
+#ptc-root .sx-t td small{display:block;color:var(--muted);font-size:11px}
+#ptc-root .sx-t tr:hover td{background:#F8FAFD}
+#ptc-root .sx-go{border:1px solid var(--line);background:#fff;border-radius:6px;cursor:pointer;color:var(--ink-soft);padding:3px 9px;font:inherit;font-weight:600}
+#ptc-root .sx-go:hover{border-color:#2563C9;color:#2563C9}
+#ptc-root .sx-empty{padding:26px 6px;text-align:center;color:var(--muted)}
+#ptc-root .sx-empty b{display:block;color:var(--ink);margin-bottom:2px}
+@media (max-width:640px){#ptc-root .sx-ph{padding:12px}#ptc-root .sx-pb{padding:4px 10px 12px}#ptc-root .sx-tot{margin-left:0}}
+
+/* seven boxes now (Void added): keep the strip aligned at every width */
+#ptc-root #ptc-today{grid-template-columns:repeat(7,minmax(0,1fr))}
+@media (max-width:1100px){#ptc-root #ptc-today{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media (max-width:520px){#ptc-root #ptc-today{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* the date box is now a calendar button (7 Days / 30 Days / All Time live inside the calendar) */
+#ptc-root #td-range{display:none}
+#ptc-root .sx-cal-f{flex-wrap:wrap}
+#ptc-root .sx-cal-f .sx-leg{flex-basis:100%;margin-left:0;text-align:right}
+#ptc-root .sx-cal-f button.on{border-color:#2563C9;color:#2563C9;background:#F2F7FF}
+#ptc-root .ptc-stat-card.sx-date{padding-right:15px}
+</style>
 </head><body>
     <div class="ptc-modal-backdrop" id="cloud-auth-modal-backdrop" style="display:flex; z-index:5000;">
       <div class="aero-auth-topbar">
@@ -3066,10 +3149,11 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
     <div class="aero-greet" id="aero-greet"><div class="aero-greet-t"><span id="aero-greet-hi">Good Morning</span>, <span data-profile-name>Md Sarwar Osman Sagar</span></div><div class="aero-greet-s">Your airline operations at a glance</div></div>
     <script>(function(){var h=new Date().getHours(),e=document.getElementById("aero-greet-hi");if(e)e.textContent=h<12?"Good Morning":h<18?"Good Afternoon":"Good Evening";})();</script>
     <div id="ptc-today" aria-label="Summary statistics">
-      <div class="ptc-stat-card"><span class="ptc-stat-icon ptc-stat-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9.5h18"/><path d="M8 3v4M16 3v4"/></svg></span><div class="ptc-stat-text"><span class="ptc-stat-label"><span id="td-range-label">Today</span><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span><b class="ptc-stat-value" id="td-date"></b></div><select id="td-range" class="ptc-stat-select" aria-label="Summary period"><option value="today" selected>Today</option><option value="7">7 Days</option><option value="30">30 Days</option><option value="all">All Time</option></select></div>
+      <div class="ptc-stat-card"><span class="ptc-stat-icon ptc-stat-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9.5h18"/><path d="M8 3v4M16 3v4"/></svg></span><div class="ptc-stat-text"><span class="ptc-stat-label"><span id="td-range-label">Today</span><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span><b class="ptc-stat-value" id="td-date"></b></div><select id="td-range" class="ptc-stat-select" aria-label="Summary period"><option value="today" selected>Today</option><option value="date">Selected date</option><option value="7">7 Days</option><option value="30">30 Days</option><option value="all">All Time</option></select></div>
       <div class="ptc-stat-card"><span class="ptc-stat-icon ptc-stat-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4Z"/><path d="M10 6v2M10 11v2M10 16v2"/></svg></span><div class="ptc-stat-text"><span class="ptc-stat-label">Tickets</span><span class="ptc-stat-valrow"><b class="ptc-stat-value" id="td-tickets">0</b><span class="ptc-stat-delta" id="td-tickets-delta"></span></span></div></div>
       <div class="ptc-stat-card"><span class="ptc-stat-icon ptc-stat-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11A8 8 0 0 0 6.3 6.3L4 8.6"/><path d="M4 4v4.6h4.6"/><path d="M4 13a8 8 0 0 0 13.7 4.7l2.3-2.3"/><path d="M20 20v-4.6h-4.6"/></svg></span><div class="ptc-stat-text"><span class="ptc-stat-label">Reissues</span><span class="ptc-stat-valrow"><b class="ptc-stat-value" id="td-reissues">0</b><span class="ptc-stat-delta" id="td-reissues-delta"></span></span></div></div>
       <div class="ptc-stat-card"><span class="ptc-stat-icon ptc-stat-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11A8 8 0 0 1 17.7 6.3L20 8.6"/><path d="M20 4v4.6h-4.6"/><path d="M20 13a8 8 0 0 1-13.7 4.7L4 15.4"/><path d="M4 20v-4.6h4.6"/></svg></span><div class="ptc-stat-text"><span class="ptc-stat-label">Refunds</span><span class="ptc-stat-valrow"><b class="ptc-stat-value" id="td-refunds">0</b><span class="ptc-stat-delta" id="td-refunds-delta"></span></span></div></div>
+      <div class="ptc-stat-card"><span class="ptc-stat-icon ptc-stat-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m5.6 5.6 12.8 12.8"/></svg></span><div class="ptc-stat-text"><span class="ptc-stat-label">Void</span><span class="ptc-stat-valrow"><b class="ptc-stat-value" id="td-voids">0</b></span></div></div>
       <div class="ptc-stat-card"><span class="ptc-stat-icon ptc-stat-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 2"/></svg></span><div class="ptc-stat-text"><span class="ptc-stat-label" title="Pending Adj.">Pending Adj.</span><span class="ptc-stat-valrow"><b class="ptc-stat-value" id="td-pending" title="Refunded entries whose adjustment has not been given yet (all dates)">0</b><span class="ptc-stat-delta" id="td-pending-delta"></span></span></div></div>
       <div class="ptc-stat-card"><span class="ptc-stat-icon ptc-stat-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="13" height="7" rx="2"/><rect x="7" y="9.5" width="13" height="7" rx="2"/><rect x="4" y="15" width="13" height="5" rx="2"/></svg></span><div class="ptc-stat-text"><span class="ptc-stat-label">Revenue</span><span class="ptc-stat-valrow"><b class="ptc-stat-value" id="td-revenue" title="Agency earnings from entries (markup + service charges) plus Revenue Desk profit, for the selected period">0</b><span class="ptc-stat-delta" id="td-revenue-delta"></span></span></div></div>
     </div>
@@ -8981,11 +9065,12 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
 
   // ---- Today summary ----
   function ptcTodayStr(){ const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
+  let ptcSelDate = ''; // 'YYYY-MM-DD' while the summary shows one chosen day (range 'date')
   function ptcUpdateToday(){
     const sel = $('td-range'); const range = sel ? sel.value : 'today';
     const t = ptcTodayStr();
     const dstr = (d) => d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
-    let from = t, prevFrom = null, prevTo = null;
+    let from = t, to = t, prevFrom = null, prevTo = null;
     if(range === '7' || range === '30'){
       const n = parseInt(range, 10);
       const d1 = new Date(); d1.setDate(d1.getDate() - (n - 1)); from = dstr(d1);
@@ -8993,8 +9078,11 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
       const d3 = new Date(); d3.setDate(d3.getDate() - n); prevTo = dstr(d3);
     } else if(range === 'today'){
       const d2 = new Date(); d2.setDate(d2.getDate() - 1); prevFrom = prevTo = dstr(d2);
+    } else if(range === 'date' && ptcSelDate){
+      const pp = ptcSelDate.split('-'); from = to = ptcSelDate;
+      prevFrom = prevTo = dstr(new Date(+pp[0], +pp[1] - 1, +pp[2] - 1));
     }
-    const inRange = (dt) => { if(!dt) return false; if(range === 'all') return true; return dt >= from && dt <= t; };
+    const inRange = (dt) => { if(!dt) return false; if(range === 'all') return true; return dt >= from && dt <= to; };
     const inPrevRange = (dt) => { if(!dt || !prevFrom) return false; return dt >= prevFrom && dt <= prevTo; };
     const set = (id, v) => { const el = $(id); if(el) el.textContent = v; };
     // Delta chip vs. the immediately preceding period of the same length. "All time" and
@@ -9349,6 +9437,315 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
   const __renderSalesOrig = renderSales;
   renderSales = function(){ __renderSalesOrig.apply(this, arguments); try{ ptcUpdateToday(); if(window.ptcRenderRecentOps) window.ptcRenderRecentOps(); }catch(err){} };
   try{ ptcRenderCompactLog(); ptcUpdateToday(); ptcUpdateReports(); }catch(err){ console.error('Redesign layer init failed', err); }
+
+  // ================= SUMMARY ROW UPGRADE (UI only — reads existing entries / salesEntries; no data or calculation changes) =================
+  // 1) The date box opens a calendar; the chosen date drives the existing summary logic (td-range + ptcSelDate).
+  // 2) Every box opens a detail panel listing the underlying records for that same period, from the same arrays and
+  //    the same predicates the counts use, so a box's number always equals the rows in its panel.
+  (function(){
+    const strip = $('ptc-today'); if(!strip) return;
+    const cards = Array.from(strip.querySelectorAll('.ptc-stat-card')); if(cards.length < 7) return;
+    const dateCard = cards[0], rangeSel = $('td-range');
+    const KIND_BY_LABEL = { 'Tickets':'Ticketing', 'Reissues':'Reissue', 'Refunds':'Refund', 'Void':'Void', 'Pending Adj.':'pending', 'Revenue':'revenue' };
+    const KIND_TITLE = { Ticketing:'Tickets', Reissue:'Reissues', Refund:'Refunds', Void:'Void', pending:'Pending adjustments', revenue:'Revenue' };
+    const KIND_NOUN = { Ticketing:'ticket', Reissue:'reissue', Refund:'refund', Void:'void', pending:'pending adjustment', revenue:'revenue' };
+    const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    const pad2 = (n) => String(n).padStart(2, '0');
+    const dstr = (d) => d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
+    const parse = (s) => { const p = String(s).split('-'); return new Date(+p[0], +p[1] - 1, +p[2]); };
+    const fmtLong = (s) => parse(s).toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric', year:'numeric' });
+    const money = (n) => (Number(n) || 0).toLocaleString(undefined, { minimumFractionDigits:2, maximumFractionDigits:2 });
+    const bdt = (n) => 'BDT ' + (Number(n) || 0).toLocaleString(undefined, { maximumFractionDigits:0 });
+
+    // ---- period currently shown by the summary boxes (mirrors ptcUpdateToday's own ranges) ----
+    function scope(){
+      const r = rangeSel ? rangeSel.value : 'today', t = ptcTodayStr();
+      if(r === 'all') return { all:true, from:'', to:'', day:false, label:'All time' };
+      if(r === '7' || r === '30'){ const n = parseInt(r, 10), d = new Date(); d.setDate(d.getDate() - (n - 1)); return { from:dstr(d), to:t, day:false, label:'Last ' + n + ' days' }; }
+      const d = (r === 'date' && ptcSelDate) ? ptcSelDate : t;
+      return { from:d, to:d, day:true, label:fmtLong(d), iso:d };
+    }
+    const inScope = (dt, sc) => !!dt && (sc.all || (dt >= sc.from && dt <= sc.to));
+
+    // ---- records: same predicates as the counts in ptcUpdateToday ----
+    function entryRecords(kind, sc){
+      const out = [];
+      entries.forEach((e, i) => {
+        if(!inScope(e.date, sc)) return;
+        if(kind === 'pending'){ if(!(e.txn === 'Refund' && e.refundStatus === 'REFUNDED' && e.adjustmentGiven !== 'YES')) return; }
+        else if(kind !== 'revenue' && e.txn !== kind) return;
+        out.push({ e, i });
+      });
+      out.sort((a, b) => (b.e.date || '').localeCompare(a.e.date || '') || String(b.e.createdAt || '').localeCompare(String(a.e.createdAt || '')) || b.i - a.i);
+      return out;
+    }
+    function saleRecords(sc){
+      const out = [];
+      try{ salesEntries.forEach((s, i) => { if(inScope(s.date, sc)) out.push({ s, i }); }); }catch(err){}
+      out.sort((a, b) => (b.s.date || '').localeCompare(a.s.date || '') || b.i - a.i);
+      return out;
+    }
+    const saleProfit = (s) => parseFloat(s.profit) || ((parseFloat(s.price) || 0) - (parseFloat(s.cost) || 0));
+    const earn = (e) => { try{ return Number(entryEarnings(e)) || 0; }catch(err){ return 0; } };
+
+    // ---- detail panel ----
+    const back = document.createElement('div');
+    back.className = 'sx-back'; back.hidden = true;
+    back.innerHTML = '<div class="sx-panel" role="dialog" aria-modal="true" aria-labelledby="sx-title">' +
+      '<div class="sx-ph"><div><h3 id="sx-title"></h3><div class="sx-sub" id="sx-sub"></div></div>' +
+      '<div class="sx-step" id="sx-step"><button type="button" data-sx="prev" aria-label="Previous day">‹</button>' +
+      '<button type="button" class="sx-dt" id="sx-dt" data-sx="cal" aria-haspopup="dialog" title="Choose a date"></button>' +
+      '<button type="button" data-sx="next" aria-label="Next day">›</button><button type="button" data-sx="today">Today</button></div>' +
+      '<div class="sx-tot" id="sx-tot"></div><button type="button" class="sx-x" data-sx="close" aria-label="Close">×</button></div>' +
+      '<div class="sx-pb" id="sx-body"></div></div>';
+    root.appendChild(back);
+    const panel = back.firstChild, sxBody = $('sx-body');
+    let cur = null, sig = '', trigger = null;
+
+    function entryRow(r){
+      const e = r.e, st = lbStatus(e), tkt = fmtTicketListHTML(e.newTkt || e.oldTkt), tm = lbTime(e), v = earn(e);
+      return '<tr><td><b class="mono">' + (esc(e.pnrGds) || '—') + '</b>' + (e.pnrAirline ? '<small class="mono">' + esc(e.pnrAirline) + '</small>' : '') + '</td>' +
+        '<td>' + (formatPassengerNamesHTML(e.pname) || '—') + '</td><td class="mono">' + (tkt || '—') + '</td>' +
+        '<td><span class="lb-ty lb-ty-' + esc(e.txn) + '">' + lbIc(e.txn) + esc(e.txn) + '</span></td>' +
+        '<td>' + (esc(e.sector) || '—') + (e.airline || e.platform ? '<small>' + esc([e.airline, e.platform].filter(Boolean).join(' · ')) + '</small>' : '') + '</td>' +
+        '<td>' + (esc(e.date) || '—') + (tm ? '<small>' + esc(tm) + '</small>' : '') + '</td>' +
+        '<td><span class="lb-b lb-b-' + st[1] + '">' + esc(st[0]) + '</span></td>' +
+        '<td class="r">' + ptcAmount(e) + '</td><td class="r">' + (v ? money(v) : '—') + '</td>' +
+        '<td><button type="button" class="sx-go" data-sx-open="e" data-i="' + r.i + '" aria-label="Open record">Open</button></td></tr>';
+    }
+    const ENTRY_HEAD = '<thead><tr><th>PNR</th><th>Passenger(s)</th><th>TKT No.</th><th>Type</th><th>Route / Airline</th><th>Date &amp; Time</th><th>Status</th><th class="r">Amount</th><th class="r">Revenue</th><th></th></tr></thead>';
+    function saleRow(r){
+      const s = r.s, st = lbSaleStatus(s), price = parseFloat(s.price), cost = parseFloat(s.cost);
+      return '<tr><td>' + (esc(s.date) || '—') + '</td><td>' + (formatPassengerNamesHTML(s.pname) || '—') + '</td><td class="mono">' + (fmtTicketListHTML(s.tkt) || '—') + '</td>' +
+        '<td><b class="mono">' + (esc(s.pnrGds) || '—') + '</b>' + (s.pnrAirline ? '<small class="mono">' + esc(s.pnrAirline) + '</small>' : '') + '</td>' +
+        '<td>' + (esc(s.sector) || '—') + (s.airline ? '<small>' + esc(s.airline) + '</small>' : '') + '</td><td>' + (esc(s.responsible) || '—') + '</td>' +
+        '<td><span class="lb-b lb-b-' + st[1] + '">' + esc(st[0]) + '</span></td>' +
+        '<td class="r">' + (isFinite(price) ? money(price) : '—') + '</td><td class="r">' + (isFinite(cost) ? money(cost) : '—') + '</td><td class="r">' + money(saleProfit(s)) + '</td>' +
+        '<td><button type="button" class="sx-go" data-sx-open="s" data-i="' + r.i + '" aria-label="Open sale">Open</button></td></tr>';
+    }
+    const SALE_HEAD = '<thead><tr><th>Date</th><th>Passenger(s)</th><th>TKT No.</th><th>PNR</th><th>Route / Airline</th><th>Responsible</th><th>Status</th><th class="r">Price</th><th class="r">Cost</th><th class="r">Profit</th><th></th></tr></thead>';
+    const empty = (kind, sc) => '<div class="sx-empty"><b>No ' + KIND_NOUN[kind] + (kind === 'revenue' ? ' records' : ' records') + ' for ' + esc(sc.label) + '</b>' + (sc.day ? 'Use the arrows or the calendar to look at another date.' : '') + '</div>';
+
+    function renderDetail(){
+      if(!cur) return;
+      const kind = cur.kind, sc = scope();
+      $('sx-title').textContent = KIND_TITLE[kind];
+      $('sx-step').style.display = sc.day ? '' : 'none';
+      $('sx-dt').textContent = sc.label;
+      let html, count, totLabel, totVal, sub;
+      if(kind === 'revenue'){
+        const er = entryRecords('revenue', sc), sr = saleRecords(sc);
+        const eSum = er.reduce((a, r) => a + earn(r.e), 0), sSum = sr.reduce((a, r) => a + saleProfit(r.s), 0);
+        count = er.length + sr.length; totLabel = 'Total revenue'; totVal = bdt(eSum + sSum);
+        sub = er.length + ' entr' + (er.length === 1 ? 'y' : 'ies') + ' · ' + sr.length + ' Revenue Desk sale' + (sr.length === 1 ? '' : 's') + ' · ' + sc.label;
+        html = count ? (er.length ? '<h4>Entry Log earnings <em>' + bdt(eSum) + '</em></h4><div class="sx-tw"><table class="sx-t">' + ENTRY_HEAD + '<tbody>' + er.map(entryRow).join('') + '</tbody></table></div>' : '') +
+          (sr.length ? '<h4>Revenue Desk profit <em>' + bdt(sSum) + '</em></h4><div class="sx-tw"><table class="sx-t">' + SALE_HEAD + '<tbody>' + sr.map(saleRow).join('') + '</tbody></table></div>' : '') : empty(kind, sc);
+      } else {
+        const er = entryRecords(kind, sc);
+        count = er.length; totLabel = 'Records'; totVal = String(count);
+        sub = count + ' record' + (count === 1 ? '' : 's') + ' · ' + sc.label;
+        html = count ? '<div class="sx-tw"><table class="sx-t">' + ENTRY_HEAD + '<tbody>' + er.map(entryRow).join('') + '</tbody></table></div>' : empty(kind, sc);
+      }
+      $('sx-sub').textContent = sub;
+      $('sx-tot').innerHTML = '<span>' + totLabel + '</span><b>' + esc(totVal) + '</b>';
+      const s = kind + '|' + html;
+      if(s !== sig){ sig = s; sxBody.innerHTML = html; }
+    }
+    function openDetail(kind, from){
+      cur = { kind }; trigger = from || null; sig = '';
+      cards.forEach(c => c.classList.toggle('is-active', c.dataset.sxKind === kind));
+      back.hidden = false; renderDetail();
+      const x = panel.querySelector('[data-sx="close"]'); if(x) x.focus();
+    }
+    function closeDetail(restoreFocus){
+      if(back.hidden) return;
+      back.hidden = true; cur = null; sig = '';
+      cards.forEach(c => c.classList.remove('is-active'));
+      closeCal();
+      if(restoreFocus !== false && trigger && trigger.focus) try{ trigger.focus(); }catch(err){}
+    }
+
+    // ---- choosing a date: the existing summary logic does the recalculation ----
+    function setDate(iso){
+      const t = ptcTodayStr();
+      ptcSelDate = iso;
+      if(rangeSel) rangeSel.value = (iso === t) ? 'today' : 'date';
+      ptcUpdateToday(); // recalculates every box and (via the wrapper below) refreshes an open detail panel
+    }
+    function stepDay(n){ const sc = scope(); if(!sc.day) return; const d = parse(sc.iso); d.setDate(d.getDate() + n); setDate(dstr(d)); }
+
+    // ---- calendar popover ----
+    const cal = document.createElement('div');
+    cal.className = 'sx-cal'; cal.hidden = true; cal.setAttribute('role', 'dialog'); cal.setAttribute('aria-label', 'Choose a date');
+    root.appendChild(cal);
+    let calAnchor = null, vY = 0, vM = 0, focusISO = '';
+    function weekStart(){ // shares the week-start setting of the Work Intelligence module when it exists (read-only)
+      try{ const w = Number((JSON.parse(localStorage.getItem('aeroops_pwi_settings_v1') || '{}')).weekStart); if(isFinite(w) && w >= 0 && w <= 6) return w; }catch(err){}
+      return 1;
+    }
+    function dataDays(){
+      const m = {}; let minY = 9999;
+      const add = (d) => { if(d){ m[d] = 1; const y = +String(d).slice(0, 4); if(y && y < minY) minY = y; } };
+      try{ entries.forEach(e => add(e.date)); }catch(err){}
+      try{ salesEntries.forEach(s => add(s.date)); }catch(err){}
+      return { m, minY };
+    }
+    function renderCal(){
+      const ws = weekStart(), t = ptcTodayStr(), sel = scope().day ? scope().iso : '', dd = dataDays(), thisY = new Date().getFullYear();
+      const y0 = Math.min(thisY - 8, dd.minY, vY), y1 = Math.max(thisY + 1, vY);
+      const lead = (new Date(vY, vM, 1).getDay() - ws + 7) % 7, start = new Date(vY, vM, 1 - lead);
+      let h = '<div class="sx-cal-h"><button type="button" class="sx-nav" data-cal="pm" aria-label="Previous month">‹</button>' +
+        '<select data-cal="month" aria-label="Month">' + MONTHS.map((m, i) => '<option value="' + i + '"' + (i === vM ? ' selected' : '') + '>' + m + '</option>').join('') + '</select>' +
+        '<select data-cal="year" aria-label="Year">';
+      for(let y = y0; y <= y1; y++) h += '<option' + (y === vY ? ' selected' : '') + '>' + y + '</option>';
+      h += '</select><button type="button" class="sx-nav" data-cal="nm" aria-label="Next month">›</button></div><div class="sx-grid" role="grid">';
+      for(let i = 0; i < 7; i++){ const w = new Date(2024, 0, 7 + ((ws + i) % 7)); h += '<div class="sx-wd">' + w.toLocaleDateString('en-US', { weekday:'short' }).slice(0, 2) + '</div>'; }
+      for(let i = 0; i < 42; i++){
+        const d = new Date(start.getFullYear(), start.getMonth(), start.getDate() + i), s = dstr(d);
+        h += '<button type="button" class="sx-day' + (d.getMonth() !== vM ? ' out' : '') + (s === t ? ' today' : '') + (s === sel ? ' sel' : '') + (dd.m[s] ? ' has' : '') + '" data-d="' + s + '" tabindex="' + (s === focusISO ? 0 : -1) + '" aria-label="' + fmtLong(s) + (dd.m[s] ? ', has records' : '') + '"' + (s === sel ? ' aria-pressed="true"' : '') + '>' + d.getDate() + '</button>';
+      }
+      h += '</div><div class="sx-cal-f"><button type="button" data-cal="today">Today</button><button type="button" data-cal="yday">Yesterday</button>' +
+        ['7','30','all'].map(v => '<button type="button" data-cal="r' + v + '"' + (rangeSel && rangeSel.value === v ? ' class="on"' : '') + '>' + ({ '7':'7 Days', '30':'30 Days', all:'All time' })[v] + '</button>').join('') +
+        '<span class="sx-leg">● day has records</span></div>';
+      cal.innerHTML = h;
+    }
+    function placeCal(){
+      if(cal.hidden || !calAnchor) return;
+      const a = calAnchor.getBoundingClientRect(), w = cal.offsetWidth || 268, h = cal.offsetHeight || 330;
+      let left = Math.min(Math.max(8, a.left), window.innerWidth - w - 8), top = a.bottom + 6;
+      if(top + h > window.innerHeight - 8 && a.top - h - 6 > 8) top = a.top - h - 6;
+      cal.style.left = left + 'px'; cal.style.top = Math.max(8, top) + 'px';
+    }
+    function openCal(anchor){
+      calAnchor = anchor;
+      const sc = scope(), base = sc.day ? sc.iso : ptcTodayStr(), d = parse(base);
+      vY = d.getFullYear(); vM = d.getMonth(); focusISO = base;
+      renderCal(); cal.hidden = false; placeCal();
+      dateCard.classList.add('is-open'); dateCard.setAttribute('aria-expanded', 'true');
+      const b = cal.querySelector('.sx-day[tabindex="0"]'); if(b) b.focus();
+    }
+    function closeCal(){
+      if(cal.hidden) return;
+      cal.hidden = true; dateCard.classList.remove('is-open'); dateCard.setAttribute('aria-expanded', 'false');
+    }
+    function pickDate(iso){
+      const a = calAnchor; closeCal(); setDate(iso);
+      if(a && a.focus) try{ a.focus(); }catch(err){}
+    }
+    function moveFocus(days, months){
+      const d = parse(focusISO);
+      if(months){ const day = d.getDate(); d.setDate(1); d.setMonth(d.getMonth() + months); const last = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate(); d.setDate(Math.min(day, last)); }
+      else d.setDate(d.getDate() + days);
+      focusISO = dstr(d); vY = d.getFullYear(); vM = d.getMonth(); renderCal(); placeCal();
+      const b = cal.querySelector('.sx-day[data-d="' + focusISO + '"]'); if(b) b.focus();
+    }
+    cal.addEventListener('click', (ev) => {
+      const day = ev.target.closest('.sx-day'); if(day){ pickDate(day.dataset.d); return; }
+      const c = ev.target.closest('[data-cal]'); if(!c) return;
+      const k = c.dataset.cal;
+      if(k === 'pm' || k === 'nm'){ vM += (k === 'nm' ? 1 : -1); if(vM < 0){ vM = 11; vY--; } if(vM > 11){ vM = 0; vY++; } focusISO = vY + '-' + pad2(vM + 1) + '-01'; renderCal(); placeCal(); }
+      else if(k === 'today') pickDate(ptcTodayStr());
+      else if(k === 'yday'){ const d = new Date(); d.setDate(d.getDate() - 1); pickDate(dstr(d)); }
+      else if(k === 'r7' || k === 'r30' || k === 'rall'){ const a = calAnchor; closeCal(); if(rangeSel) rangeSel.value = k.slice(1); ptcUpdateToday(); if(a && a.focus) try{ a.focus(); }catch(err){} }
+    });
+    cal.addEventListener('change', (ev) => {
+      const s = ev.target.closest('select[data-cal]'); if(!s) return;
+      if(s.dataset.cal === 'month') vM = +s.value; else vY = +s.value;
+      focusISO = vY + '-' + pad2(vM + 1) + '-01'; renderCal(); placeCal();
+    });
+    cal.addEventListener('keydown', (ev) => {
+      if(!ev.target.classList || !ev.target.classList.contains('sx-day')) return;
+      const k = ev.key, m = { ArrowLeft:[-1,0], ArrowRight:[1,0], ArrowUp:[-7,0], ArrowDown:[7,0], PageUp:[0,-1], PageDown:[0,1] }[k];
+      if(m){ ev.preventDefault(); moveFocus(m[0], m[1]); }
+    });
+    document.addEventListener('mousedown', (ev) => {
+      if(cal.hidden) return;
+      if(cal.contains(ev.target) || (calAnchor && calAnchor.contains(ev.target))) return;
+      closeCal();
+    });
+    window.addEventListener('resize', placeCal);
+    window.addEventListener('scroll', placeCal, true);
+
+    // ---- wire the boxes ----
+    dateCard.classList.add('sx-click', 'sx-date');
+    dateCard.setAttribute('role', 'button'); dateCard.setAttribute('tabindex', '0');
+    dateCard.setAttribute('aria-haspopup', 'dialog'); dateCard.setAttribute('aria-expanded', 'false');
+    dateCard.title = 'Choose a date — every summary box follows it';
+    function toggleCal(){ if(cal.hidden) openCal(dateCard); else closeCal(); }
+    dateCard.addEventListener('click', (ev) => { if(ev.target.closest('select')) return; toggleCal(); });
+    dateCard.addEventListener('keydown', (ev) => {
+      if(ev.target !== dateCard) return;
+      if(ev.key === 'Enter' || ev.key === ' ' || ev.key === 'ArrowDown'){ ev.preventDefault(); if(cal.hidden) openCal(dateCard); }
+    });
+    if(rangeSel) rangeSel.addEventListener('change', () => { // classic (v1) period dropdown: picking "Selected date" opens the calendar
+      if(rangeSel.value === 'date'){ if(!ptcSelDate) ptcSelDate = ptcTodayStr(); ptcUpdateToday(); openCal(dateCard); }
+    });
+    cards.slice(1).forEach(c => {
+      const lab = (c.querySelector('.ptc-stat-label') || {}).textContent || '', kind = KIND_BY_LABEL[lab.trim()];
+      if(!kind) return;
+      c.dataset.sxKind = kind;
+      c.classList.add('sx-click'); c.setAttribute('role', 'button'); c.setAttribute('tabindex', '0'); c.setAttribute('aria-haspopup', 'dialog');
+      c.title = 'Show ' + KIND_TITLE[kind].toLowerCase() + ' for the selected date';
+      c.addEventListener('click', () => openDetail(kind, c));
+      c.addEventListener('keydown', (ev) => { if(ev.key === 'Enter' || ev.key === ' '){ ev.preventDefault(); openDetail(kind, c); } });
+    });
+    back.addEventListener('click', (ev) => {
+      if(ev.target === back){ closeDetail(); return; }
+      const open = ev.target.closest('[data-sx-open]');
+      if(open){ const i = parseInt(open.dataset.i, 10), kind = open.dataset.sxOpen; closeDetail(false); if(kind === 's') startSaleEdit(i); else startEdit(i); return; }
+      const b = ev.target.closest('[data-sx]'); if(!b) return;
+      const k = b.dataset.sx;
+      if(k === 'close') closeDetail();
+      else if(k === 'prev') stepDay(-1);
+      else if(k === 'next') stepDay(1);
+      else if(k === 'today') setDate(ptcTodayStr());
+      else if(k === 'cal'){ if(cal.hidden) openCal(b); else closeCal(); }
+    });
+    document.addEventListener('keydown', (ev) => {
+      if(ev.key === 'Escape'){
+        if(!cal.hidden){ const a = calAnchor; closeCal(); if(a && a.focus) try{ a.focus(); }catch(err){} ev.stopPropagation(); return; }
+        if(!back.hidden){ closeDetail(); ev.stopPropagation(); }
+        return;
+      }
+      if(ev.key === 'Tab' && !back.hidden && cal.hidden){ // keep keyboard focus inside the open panel
+        const f = Array.from(panel.querySelectorAll('button:not([disabled])')).filter(x => x.offsetParent !== null);
+        if(!f.length) return;
+        const first = f[0], last = f[f.length - 1];
+        if(!panel.contains(document.activeElement)){ ev.preventDefault(); first.focus(); }
+        else if(ev.shiftKey && document.activeElement === first){ ev.preventDefault(); last.focus(); }
+        else if(!ev.shiftKey && document.activeElement === last){ ev.preventDefault(); first.focus(); }
+      }
+    }, true);
+
+    // ---- keep visuals and any open panel in step with every recalculation ----
+    function syncSummary(){
+      const sc = scope();
+      // Void count: same date logic and same record filter as the Tickets / Reissues / Refunds counts above.
+      const vEl = $('td-voids'); if(vEl) vEl.textContent = entries.filter(e => inScope(e.date, sc) && e.txn === 'Void').length;
+      // Pending Adj. follows the selected period too (same predicate as before; the sidebar badge still counts every date).
+      const pEl = $('td-pending'); if(pEl){ pEl.textContent = entries.filter(e => inScope(e.date, sc) && e.txn === 'Refund' && e.refundStatus === 'REFUNDED' && e.adjustmentGiven !== 'YES').length;
+        pEl.title = 'Refunded entries whose adjustment has not been given yet, for the selected period (the sidebar badge counts every date)'; }
+      // Label for a chosen date (the existing code only knows Today / 7 / 30 / All).
+      if(rangeSel && rangeSel.value === 'date' && ptcSelDate){
+        const dd = parse(ptcSelDate), yy = new Date(); yy.setDate(yy.getDate() - 1);
+        const dEl = $('td-date'), lEl = $('td-range-label');
+        if(dEl) dEl.textContent = dd.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+        if(lEl) lEl.textContent = dd.toDateString() === yy.toDateString() ? 'Yesterday' : dd.toLocaleDateString('en-US', { weekday:'long' });
+      }
+      dateCard.classList.toggle('is-filtered', !!rangeSel && rangeSel.value !== 'today');
+      dateCard.setAttribute('aria-label', 'Date filter: ' + sc.label + '. Choose a date.');
+      cards.slice(1).forEach(c => {
+        const v = c.querySelector('.ptc-stat-value'), kind = c.dataset.sxKind; if(!v || !kind) return;
+        c.setAttribute('aria-label', KIND_TITLE[kind] + ': ' + v.textContent + '. Show records for ' + sc.label + '.');
+      });
+      // re-fit the values after the overrides above (the existing fit step runs before them)
+      strip.querySelectorAll('.ptc-stat-value').forEach(el => { el.style.fontSize = ''; let fs = 16; while(el.scrollWidth > el.clientWidth + 1 && fs > 10.5){ fs -= 0.5; el.style.fontSize = fs + 'px'; } });
+      if(!back.hidden) renderDetail();
+    }
+    const __sxBase = ptcUpdateToday;
+    ptcUpdateToday = function(){ const r = __sxBase.apply(this, arguments); try{ syncSummary(); }catch(err){ console.error('Summary sync failed', err); } return r; };
+    try{ syncSummary(); }catch(err){}
+  })();
   ptcApplyPane();
 
 })();
