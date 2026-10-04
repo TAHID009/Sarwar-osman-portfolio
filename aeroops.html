@@ -2719,7 +2719,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
 #pwi-root .pwi-btn.pri{background:var(--pwi-blue);border-color:var(--pwi-blue);color:#fff}
 #pwi-root .pwi-btn.danger{color:var(--pwi-err);border-color:#E9C4C0}
 #pwi-root .pwi-twrap{overflow-x:auto;margin:0 -4px}
-#pwi-root table.pwi-t{width:100%;border-collapse:collapse;min-width:760px}
+#pwi-root table.pwi-t{width:100%;border-collapse:collapse;min-width:820px}
 #pwi-root .pwi-t th{text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--pwi-muted);font-weight:700;padding:7px 8px;border-bottom:1px solid var(--pwi-line);white-space:nowrap}
 #pwi-root .pwi-t td{padding:7px 8px;border-bottom:1px solid #EEF2F7;vertical-align:middle}
 #pwi-root .pwi-t tr:hover td{background:#F8FAFD}
@@ -2750,6 +2750,128 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
   #pwi-root .pwi-donut{grid-template-columns:1fr}
   #pwi-root .pwi-range-label{margin-left:0;width:100%}
   #pwi-root .pwi-save{width:100%;margin-left:0}
+}
+
+/* ===== PWI v2 — outcome language, workflow stepper, confirmation panel. Scoped to #pwi-root. ===== */
+#pwi-root{--pwi-solved:#15803D;--pwi-solved-bg:#E3F5EA;--pwi-resolved:#0B7285;--pwi-resolved-bg:#E3F4F7}
+#pwi-root .pwi-ttl{font-size:17px;font-weight:700;letter-spacing:-.01em;color:var(--pwi-ink)}
+#pwi-root .pwi-lede{font-size:12.5px;color:var(--pwi-muted);margin-top:2px}
+#pwi-root .pwi-subhead{font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--pwi-muted);margin:14px 0 2px;padding-top:12px;border-top:1px solid var(--pwi-line)}
+#pwi-root .pwi-link svg{width:13px;height:13px;vertical-align:-2px;margin-right:5px}
+
+/* workflow stepper */
+#pwi-root .pwi-flow{display:flex;list-style:none;margin:0 0 16px;padding:0;border:1px solid var(--pwi-line);border-radius:10px;overflow:hidden;background:#F8FAFD}
+#pwi-root .pwi-flow li{flex:1;min-width:0;display:flex;align-items:center;gap:8px;padding:8px 10px;font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#8896A8;border-left:1px solid var(--pwi-line);transition:color .2s,background .2s}
+#pwi-root .pwi-flow li:first-child{border-left:0}
+#pwi-root .pwi-flow li i{flex:none;width:18px;height:18px;border-radius:50%;border:1.5px solid #B7C3D3;display:grid;place-items:center;font-style:normal;font-size:10px;letter-spacing:0;transition:background .2s,border-color .2s,color .2s}
+#pwi-root .pwi-flow li.done{color:var(--pwi-ink)}
+#pwi-root .pwi-flow li.done i{background:var(--pwi-solved);border-color:var(--pwi-solved);color:#fff}
+#pwi-root .pwi-flow li.now{color:var(--pwi-blue);background:#F0F5FD}
+#pwi-root .pwi-flow li.now i{border-color:var(--pwi-blue);color:var(--pwi-blue)}
+
+/* case selector (New Task / Repeat) */
+#pwi-root .pwi-kind{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#pwi-root .pwi-kbtn{text-align:left;border:1px solid var(--pwi-line);background:#fff;border-radius:10px;padding:9px 12px;cursor:pointer;transition:border-color .15s,background .15s,box-shadow .15s}
+#pwi-root .pwi-kbtn b{display:block;font-weight:700;color:var(--pwi-ink)}
+#pwi-root .pwi-kbtn span{display:block;font-size:11.5px;color:var(--pwi-muted);margin-top:1px}
+#pwi-root .pwi-kbtn:hover{border-color:#9DB4D3}
+#pwi-root .pwi-kbtn[aria-pressed="true"]{border-color:var(--pwi-blue);background:#F2F7FF;box-shadow:0 0 0 1px var(--pwi-blue) inset}
+
+/* history match / suggestion */
+#pwi-root .pwi-ctx{margin:-2px 0 12px}
+#pwi-root .pwi-suggest{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;padding:8px 10px;border-radius:9px;background:var(--pwi-resolved-bg);border:1px solid #B5DCE4;color:#0A4F5C;font-size:12px;animation:pwiIn .22s ease}
+#pwi-root .pwi-suggest svg{width:15px;height:15px;flex:none;color:var(--pwi-resolved)}
+#pwi-root .pwi-suggest>span{flex:1 1 220px;min-width:0}
+#pwi-root .pwi-suggest .pwi-btn{padding:4px 11px;font-size:12px}
+#pwi-root .pwi-suggest.ok{background:#F4F8FC;border-color:var(--pwi-line);color:var(--pwi-soft)}
+#pwi-root .pwi-suggest.warn{background:#FBF6EA;border-color:#EBD9B0;color:#7A5410}
+#pwi-root .pwi-suggest.warn svg{color:var(--pwi-warn)}
+
+/* outcome selector */
+#pwi-root .pwi-status{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+#pwi-root .pwi-sbtn{display:flex;flex-direction:column;align-items:center;gap:5px;padding:10px 6px;border:1px solid var(--pwi-line);border-radius:10px;background:#fff;cursor:pointer;font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--pwi-soft);transition:background .15s,border-color .15s,color .15s,transform .1s}
+#pwi-root .pwi-sbtn:active{transform:scale(.98)}
+#pwi-root .pwi-sbtn svg{width:17px;height:17px}
+#pwi-root .pwi-sbtn:hover{border-color:#9DB4D3}
+#pwi-root .pwi-sbtn.Solved svg{color:var(--pwi-solved)}
+#pwi-root .pwi-sbtn.Resolved svg{color:var(--pwi-resolved)}
+#pwi-root .pwi-sbtn.Pending svg{color:var(--pwi-warn)}
+#pwi-root .pwi-sbtn.Follow-up svg{color:var(--pwi-fu)}
+#pwi-root .pwi-sbtn[aria-pressed="true"]{box-shadow:0 1px 4px rgba(11,37,69,.12)}
+#pwi-root .pwi-sbtn.Solved[aria-pressed="true"]{background:var(--pwi-solved);border-color:var(--pwi-solved);color:#fff}
+#pwi-root .pwi-sbtn.Solved[aria-pressed="true"] svg{color:#fff}
+#pwi-root .pwi-sbtn.Resolved[aria-pressed="true"]{background:var(--pwi-resolved-bg);border:1.5px solid var(--pwi-resolved);color:var(--pwi-resolved)}
+#pwi-root .pwi-sbtn.Pending[aria-pressed="true"]{background:var(--pwi-warn-bg);border:1.5px solid var(--pwi-warn);color:#8A5A0F}
+#pwi-root .pwi-sbtn.Follow-up[aria-pressed="true"]{background:var(--pwi-fu-bg);border:1.5px solid var(--pwi-fu);color:var(--pwi-fu)}
+#pwi-root .pwi-explain{display:flex;align-items:flex-start;gap:7px;margin-top:8px;font-size:12px;color:var(--pwi-soft);animation:pwiIn .2s ease}
+#pwi-root .pwi-explain svg{width:14px;height:14px;flex:none;margin-top:2px}
+#pwi-root .pwi-explain.Solved svg{color:var(--pwi-solved)}
+#pwi-root .pwi-explain.Resolved svg{color:var(--pwi-resolved)}
+#pwi-root .pwi-explain.Pending svg{color:var(--pwi-warn)}
+#pwi-root .pwi-explain.Follow-up svg{color:var(--pwi-fu)}
+#pwi-root .pwi-explain em{font-style:normal;color:var(--pwi-muted)}
+#pwi-root .pwi-entry .pwi-preview{margin:2px 0 10px;padding-top:10px;border-top:1px dashed var(--pwi-line)}
+
+/* status badges (icon + text, never colour alone) */
+#pwi-root .pwi-badge{position:relative;display:inline-flex;align-items:center;gap:5px;padding:3px 7px;border-radius:6px;border:1px solid transparent;font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;white-space:nowrap;line-height:1.3;cursor:pointer}
+#pwi-root .pwi-badge svg{width:12px;height:12px;flex:none}
+#pwi-root .pwi-badge svg.cv{width:9px;height:9px;opacity:.6;margin-left:1px}
+#pwi-root .pwi-badge select{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;border:0;padding:0}
+#pwi-root .pwi-badge:focus-within{outline:2px solid var(--pwi-blue);outline-offset:2px}
+#pwi-root .pwi-badge.Solved{background:var(--pwi-solved);color:#fff}
+#pwi-root .pwi-badge.Resolved{background:var(--pwi-resolved-bg);color:var(--pwi-resolved);border-color:#9AD3DD}
+#pwi-root .pwi-badge.Pending{background:var(--pwi-warn-bg);color:#8A5A0F;border-color:#EBD3A3}
+#pwi-root .pwi-badge.Follow-up{background:var(--pwi-fu-bg);color:var(--pwi-fu);border-color:#BDD0F2}
+
+/* recent activity rows */
+#pwi-root .pwi-li{grid-template-columns:58px minmax(0,1fr) auto;align-items:start}
+#pwi-root .pwi-li-time{font-weight:600;color:var(--pwi-soft);line-height:1.25;padding-top:2px}
+#pwi-root .pwi-li-time small{display:block;font-weight:500;color:var(--pwi-muted);font-size:10.5px}
+#pwi-root .pwi-li-n{font-size:11.5px;color:var(--pwi-soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:1px}
+#pwi-root .pwi-li-a{padding-top:1px}
+#pwi-root .pwi-rp{color:var(--pwi-resolved);font-weight:600}
+#pwi-root .pwi-case{font-size:11.5px;font-weight:600;color:var(--pwi-muted);white-space:nowrap}
+#pwi-root .pwi-case.rp{color:var(--pwi-resolved)}
+
+/* today stats */
+#pwi-root .pwi-tstats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+#pwi-root .pwi-tstat{border:1px solid var(--pwi-line);border-top:2px solid var(--c);border-radius:8px;padding:6px 8px;min-width:0}
+#pwi-root .pwi-tstat span{display:block;font-size:9.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--pwi-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#pwi-root .pwi-tstat b{font-size:19px;line-height:1.2;font-variant-numeric:tabular-nums;color:var(--pwi-ink)}
+#pwi-root .pwi-trates{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px}
+#pwi-root .pwi-trates div{background:#F4F8FC;border-radius:8px;padding:6px 10px;font-size:11.5px;color:var(--pwi-soft)}
+#pwi-root .pwi-trates b{float:right;color:var(--pwi-ink);font-variant-numeric:tabular-nums}
+
+/* dashboard KPI grid: 8 cards */
+#pwi-root .pwi-kpis{grid-template-columns:repeat(4,minmax(0,1fr))}
+#pwi-root .pwi-kpi.static{cursor:default}
+#pwi-root .pwi-kpi.static:hover{box-shadow:none;transform:none}
+
+/* completion panel */
+#pwi-root .pwi-done{position:fixed;left:50%;bottom:24px;z-index:9150;display:flex;align-items:center;gap:12px;min-width:270px;max-width:min(92vw,380px);padding:12px 16px 12px 14px;background:#fff;border:1px solid var(--pwi-line);border-left:4px solid var(--c,var(--pwi-solved));border-radius:12px;box-shadow:0 14px 36px rgba(11,37,69,.22);opacity:0;visibility:hidden;transform:translate(-50%,14px);transition:opacity .25s ease,transform .25s ease,visibility 0s .25s;cursor:pointer}
+#pwi-root .pwi-done.show{opacity:1;visibility:visible;transform:translate(-50%,0);transition:opacity .25s ease,transform .25s ease}
+#pwi-root .pwi-done.Solved{--c:var(--pwi-solved)}#pwi-root .pwi-done.Resolved{--c:var(--pwi-resolved)}#pwi-root .pwi-done.Pending{--c:var(--pwi-warn)}#pwi-root .pwi-done.Follow-up{--c:var(--pwi-fu)}
+#pwi-root .pwi-done-i{flex:none;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:var(--c);color:#fff}
+#pwi-root .pwi-done-i svg{width:17px;height:17px}
+#pwi-root .pwi-done.Resolved .pwi-done-i,#pwi-root .pwi-done.Pending .pwi-done-i,#pwi-root .pwi-done.Follow-up .pwi-done-i{background:color-mix(in srgb,var(--c) 12%,#fff);color:var(--c);box-shadow:0 0 0 1.5px var(--c) inset}
+#pwi-root .pwi-done.show .pwi-done-i svg path,#pwi-root .pwi-done.show .pwi-done-i svg circle{stroke-dasharray:60;stroke-dashoffset:60;animation:pwiDraw .5s .12s ease forwards}
+#pwi-root .pwi-done b{display:block;font-size:13.5px;color:var(--pwi-ink)}
+#pwi-root .pwi-done span.s{display:block;font-size:12px;color:var(--pwi-soft)}
+#pwi-root .pwi-done em{display:block;font-style:normal;font-size:11px;color:var(--pwi-muted);margin-top:2px}
+@keyframes pwiDraw{to{stroke-dashoffset:0}}
+@keyframes pwiIn{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){
+  #pwi-root .pwi-done,#pwi-root .pwi-done.show,#pwi-root .pwi-suggest,#pwi-root .pwi-explain{transition:none !important;animation:none !important}
+  #pwi-root .pwi-done.show .pwi-done-i svg path,#pwi-root .pwi-done.show .pwi-done-i svg circle{animation:none !important;stroke-dashoffset:0}
+}
+@media (max-width:1100px){#pwi-root .pwi-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:640px){
+  #pwi-root .pwi-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #pwi-root .pwi-status{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #pwi-root .pwi-kind{grid-template-columns:1fr}
+  #pwi-root .pwi-flow li i{display:none}
+  #pwi-root .pwi-flow li{padding:8px 6px;justify-content:center;letter-spacing:.04em}
+  #pwi-root .pwi-tstats{grid-template-columns:repeat(3,minmax(0,1fr))}
 }
 </style>
 <style id="sx-style">
@@ -4121,9 +4243,9 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
     <section id="pwi-root" aria-label="Professional Work Intelligence">
       <div class="pwi-head">
         <div>
-          <div class="pwi-kicker">Capture → Measure → Analyze → Review</div>
+          <div class="pwi-kicker">Capture → Process → Outcome → Insight</div>
           <h2>Professional Work Intelligence</h2>
-          <p>One query or task = one lightweight record. Facts only — you decide what they mean.</p>
+          <p>Every task is recorded. Every outcome is measurable. Repeated issues become visible.</p>
         </div>
         <div class="pwi-head-r">
           <span class="pwi-sync" id="pwi-sync">● Saved on this device</span>
@@ -4144,15 +4266,16 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
       </div>
 
       <div class="pwi-subtabs" role="tablist" aria-label="PWI sections">
-        <button type="button" role="tab" data-act="tab" data-v="entry" class="on">⚡ Quick Entry</button>
-        <button type="button" role="tab" data-act="tab" data-v="dash">📊 Dashboard</button>
+        <button type="button" role="tab" data-act="tab" data-v="entry" class="on">Quick Entry</button>
+        <button type="button" role="tab" data-act="tab" data-v="dash">Dashboard</button>
       </div>
 
       <!-- Quick Entry -->
       <div id="pwi-pane-entry">
         <div class="pwi-entry-grid">
-          <div class="pwi-card">
-            <div class="pwi-card-h"><h3>Quick Activity Entry</h3><span class="pwi-preview dim" id="pwi-preview"></span></div>
+          <div class="pwi-card pwi-entry">
+            <div class="pwi-card-h"><div><h3 class="pwi-ttl">Log New Work</h3><p class="pwi-lede">Capture the task, record the outcome, and build your work intelligence.</p></div></div>
+            <ol class="pwi-flow" id="pwi-flow" aria-label="Workflow: capture, process, outcome, insight"><li><i>1</i>Capture</li><li><i>2</i>Process</li><li><i>3</i>Outcome</li><li><i>4</i>Insight</li></ol>
             <div class="pwi-field" data-g="source"><label>Source</label><div class="pwi-chips" id="pwi-src" role="group" aria-label="Source"></div></div>
             <div class="pwi-field" data-g="company">
               <label for="pwi-company">Company / Client</label>
@@ -4161,13 +4284,14 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
               <div class="pwi-chips small" id="pwi-co-recent"></div>
             </div>
             <div class="pwi-field" data-g="category"><label>Work / Query</label><div class="pwi-chips" id="pwi-cat" role="group" aria-label="Work or query category"></div></div>
-            <div class="pwi-row">
-              <div class="pwi-field" data-g="status"><label>Status</label><div class="pwi-chips" id="pwi-stat" role="group" aria-label="Status"></div></div>
-              <div class="pwi-field"><label>Effort <em>optional</em></label><div class="pwi-chips" id="pwi-eff" aria-label="Effort level"></div></div>
-            </div>
+            <div class="pwi-ctx" id="pwi-ctx" aria-live="polite" hidden></div>
+            <div class="pwi-field" data-g="kind"><label>Case</label><div class="pwi-kind" id="pwi-kind" role="group" aria-label="New task or repeat issue"></div></div>
+            <div class="pwi-field" data-g="status"><label>Outcome</label><div class="pwi-status" id="pwi-stat" role="group" aria-label="Outcome"></div><div class="pwi-explain" id="pwi-explain" aria-live="polite"></div></div>
+            <div class="pwi-field"><label>Effort <em>optional</em></label><div class="pwi-chips" id="pwi-eff" aria-label="Effort level"></div></div>
             <div class="pwi-field"><label for="pwi-note">Note <em>optional</em></label><input type="text" id="pwi-note" maxlength="240" placeholder="Short note — e.g. DAC–DXB fare for 3 pax" autocomplete="off"></div>
+            <div class="pwi-preview dim" id="pwi-preview"></div>
             <div class="pwi-foot">
-              <button type="button" class="pwi-link" id="pwi-date-toggle">📅 Today</button>
+              <button type="button" class="pwi-link" id="pwi-date-toggle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18"/></svg><span id="pwi-date-lbl">Today</span></button>
               <span id="pwi-date-wrap" hidden><input type="date" id="pwi-date" aria-label="Activity date"><input type="time" id="pwi-time" aria-label="Activity time"></span>
               <label class="pwi-keep"><input type="checkbox" id="pwi-keep"> Keep client for next</label>
               <button type="button" class="pwi-save" id="pwi-save">Save activity</button>
@@ -4177,7 +4301,9 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
 
           <div class="pwi-side">
             <div class="pwi-card">
-              <div class="pwi-card-h"><h3>Today</h3><div class="pwi-mini" id="pwi-today-mini"></div></div>
+              <div class="pwi-card-h"><h3>Today</h3><span class="pwi-sub" id="pwi-today-date"></span></div>
+              <div id="pwi-today-mini"></div>
+              <div class="pwi-subhead">Recent activity</div>
               <div class="pwi-list" id="pwi-today-list"></div>
             </div>
             <div class="pwi-card">
@@ -4242,7 +4368,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
               <button type="button" class="pwi-btn" data-act="export-view">Export view (CSV)</button>
             </div>
           </div>
-          <div class="pwi-twrap"><table class="pwi-t"><thead><tr><th>Date</th><th>Source</th><th>Client</th><th>Type</th><th>Status</th><th>Effort</th><th>Note</th><th></th></tr></thead><tbody id="pwi-rec-body"></tbody></table></div>
+          <div class="pwi-twrap"><table class="pwi-t"><thead><tr><th>Date</th><th>Source</th><th>Client</th><th>Type</th><th>Case</th><th>Status</th><th>Effort</th><th>Note</th><th></th></tr></thead><tbody id="pwi-rec-body"></tbody></table></div>
           <div id="pwi-rec-more"></div>
         </div>
       </div>
@@ -4259,12 +4385,14 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
             <div><label for="pwi-m-cat">Work / Query</label><select id="pwi-m-cat"></select></div>
             <div><label for="pwi-m-status">Status</label><select id="pwi-m-status"></select></div>
             <div><label for="pwi-m-effort">Effort</label><select id="pwi-m-effort"></select></div>
+            <div><label for="pwi-m-kind">Case</label><select id="pwi-m-kind"></select></div>
             <div class="full"><label for="pwi-m-note">Note</label><textarea id="pwi-m-note" rows="2" maxlength="240"></textarea></div>
           </div>
           <div class="pwi-mfoot"><button type="button" class="pwi-btn danger" id="pwi-m-del">Delete</button><span class="sp"></span><button type="button" class="pwi-btn" id="pwi-m-cancel">Cancel</button><button type="button" class="pwi-btn pri" id="pwi-m-save">Save changes</button></div>
         </div>
       </div>
       <div class="pwi-toast" id="pwi-toast" hidden></div>
+      <div class="pwi-done" id="pwi-done" role="status" aria-live="polite"></div>
     </section>
 
     <div class="ptc-footerbar">
@@ -9775,10 +9903,31 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
   var KEY = 'aeroops_pwi_v1', SKEY = 'aeroops_pwi_settings_v1', SYNCKEY = 'aeroops_pwi_synced_v1', COLL = 'work_record_pwi';
   var SOURCES = ['WhatsApp','Support','Email','Phone','Internal','Other'];
   var CATS = ['Fare Query','Availability','Booking Support','Ticketing','Reissue','Refund','Cancellation','Hotel','Flight Information','Fare Rule / Policy','Problem Solving','Other'];
-  var STATUSES = ['Resolved','Pending','Follow-up'];
+  var STATUSES = ['Solved','Resolved','Pending','Follow-up'];
   var EFFORTS = ['Quick','Standard','Deep'];
   var SRC_COLOR = {WhatsApp:'#1E9E5A',Support:'#2563C9',Email:'#7C5CC4',Phone:'#C97F1E',Internal:'#0E9AA7',Other:'#8A97A8'};
-  var STAT_COLOR = {Resolved:'#1E7A46',Pending:'#D9A441',  'Follow-up':'#2563C9'};
+  var STAT_COLOR = {Solved:'#1E7A46', Resolved:'#0B7285', Pending:'#D9A441', 'Follow-up':'#2563C9'};
+  var KINDS = [['new','New Task','First-time query or task'],['repeat','Repeat / Existing Issue','Same client, issue is back']];
+  var EXPLAIN = {Solved:'First-time task successfully handled.', Resolved:'Repeated or returning issue successfully handled.', Pending:'Requires further action.', 'Follow-up':'Requires action at a later time.'};
+  var DONE = {Solved:['Task Solved','Work activity recorded successfully.'], Resolved:['Issue Resolved','Returning issue has been recorded as resolved.'],
+              Pending:['Marked Pending','Recorded — it stays in Open items until completed.'], 'Follow-up':['Follow-up Logged','Recorded — it stays in Open items until you act on it.']};
+  function svgi(p){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + p + '</svg>'; }
+  var ICON = {
+    Solved: svgi('<path d="M5 12.5l4.5 4.5L19 7.5"/>'),
+    Resolved: svgi('<path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/><path d="M9 12.5l2.2 2.2 3.8-4.4"/>'),
+    Pending: svgi('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'),
+    'Follow-up': svgi('<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>')
+  };
+  function fmtTime(t){ var p = String(t||'00:00').split(':'), h = +p[0] || 0; return (h % 12 || 12) + ':' + (p[1] || '00') + ' ' + (h < 12 ? 'AM' : 'PM'); }
+  function rate(n, t){ return t ? Math.round(n * 100 / t) + '%' : '—'; }
+  /* Legacy = a "Resolved" record saved before New/Repeat existed (no kind). It stays Resolved and counts toward the
+     Resolution Rate, but is NOT counted as a repeated issue because we cannot know it was one. */
+  function stats(list){
+    var c = {Solved:0, Resolved:0, Pending:0, 'Follow-up':0}, legacy = 0;
+    list.forEach(function(a){ if(c[a.status] != null) c[a.status]++; if(a.status === 'Resolved' && !a.kind) legacy++; });
+    var n = list.length, res = c.Solved + c.Resolved, rep = c.Resolved - legacy;
+    return {total:n, Solved:c.Solved, Resolved:c.Resolved, Pending:c.Pending, FU:c['Follow-up'], legacy:legacy, res:res, repN:rep, rate:rate(res, n), rep:rate(rep, n)};
+  }
   var MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   var DAY = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
   var FONT = {family:"'IBM Plex Sans',Inter,system-ui,sans-serif", size:11};
@@ -9806,7 +9955,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
   var synced = {};
   var st = {tab:'entry', pat:'cc', cycle:'weekly', gran:'auto', coAll:false, recLimit:50, editId:null,
             filters:{source:null, company:null, category:null, status:null, kw:null, bucket:null, q:''}};
-  var form = {source:'', category:'', status:'Resolved', effort:'', date:'', time:''};
+  var form = {source:'', category:'', status:'Solved', kind:'new', effort:'', date:'', time:'', dismissed:false, ctxKey:''};
   var coNames = {};
   var active = false, dirty = true, charts = {}, lastDeleted = null, toastTimer = null;
 
@@ -9831,6 +9980,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
       company: normCo(v.company) || 'Unknown',
       category: CATS.indexOf(v.category) > -1 ? v.category : 'Other',
       status: STATUSES.indexOf(v.status) > -1 ? v.status : 'Resolved',
+      kind: v.kind === 'repeat' ? 'repeat' : v.kind === 'new' ? 'new' : '',
       effort: EFFORTS.indexOf(v.effort) > -1 ? v.effort : '',
       note: String(v.note||'').slice(0,240),
       created: String(v.created||''), updated: String(v.updated||v.created||'')
@@ -9973,13 +10123,15 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
   function initEntry(){
     $('pwi-src').innerHTML = SOURCES.map(function(v){ return chip('source', v); }).join('');
     $('pwi-cat').innerHTML = CATS.map(function(v){ return chip('category', v); }).join('');
-    $('pwi-stat').innerHTML = STATUSES.map(function(v){ return chip('status', v, 'st-'+v); }).join('');
+    $('pwi-stat').innerHTML = STATUSES.map(function(v){ return '<button type="button" class="pwi-sbtn '+v+'" data-act="pick" data-g="status" data-v="'+v+'" aria-pressed="false">'+ICON[v]+'<span>'+v+'</span></button>'; }).join('');
+    $('pwi-kind').innerHTML = KINDS.map(function(k){ return '<button type="button" class="pwi-kbtn" data-act="pick" data-g="kind" data-v="'+k[0]+'" aria-pressed="false"><b>'+k[1]+'</b><span>'+k[2]+'</span></button>'; }).join('');
     $('pwi-eff').innerHTML = EFFORTS.map(function(v){ return chip('effort', v); }).join('');
-    ['pwi-m-source','pwi-m-cat','pwi-m-status','pwi-m-effort'].forEach(function(id){ $(id).innerHTML = ''; });
+    ['pwi-m-source','pwi-m-cat','pwi-m-status','pwi-m-effort','pwi-m-kind'].forEach(function(id){ $(id).innerHTML = ''; });
     $('pwi-m-source').innerHTML = SOURCES.map(function(v){ return '<option>'+esc(v)+'</option>'; }).join('');
     $('pwi-m-cat').innerHTML = CATS.map(function(v){ return '<option>'+esc(v)+'</option>'; }).join('');
     $('pwi-m-status').innerHTML = STATUSES.map(function(v){ return '<option>'+esc(v)+'</option>'; }).join('');
     $('pwi-m-effort').innerHTML = '<option value="">Not set</option>' + EFFORTS.map(function(v){ return '<option>'+esc(v)+'</option>'; }).join('');
+    $('pwi-m-kind').innerHTML = '<option value="">Not set</option><option value="new">New task</option><option value="repeat">Repeat / existing issue</option>';
     $('pwi-weekstart').value = String(settings.weekStart);
     $('pwi-keep').checked = !!settings.keep;
     syncChips(); updatePreview();
@@ -9993,8 +10145,62 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
     var co = normCo($('pwi-company').value);
     var parts = [form.source, co, form.category, form.status].filter(Boolean);
     var el = $('pwi-preview');
-    if(form.source || co || form.category){ el.textContent = parts.join(' → '); el.className = 'pwi-preview'; }
-    else { el.textContent = 'e.g. WhatsApp → ABC Travel → Fare Query → Resolved'; el.className = 'pwi-preview dim'; }
+    if(form.source || co || form.category){ el.textContent = parts.join(' → ') + (form.kind === 'repeat' ? '  ·  Repeat issue' : ''); el.className = 'pwi-preview'; }
+    else { el.textContent = 'e.g. WhatsApp → ABC Travel → Fare Query → Solved'; el.className = 'pwi-preview dim'; }
+    updateExplain(); updateContext(); updateFlow();
+  }
+  /* A "match" is deliberately strict: same client (case/space-insensitive) AND the exact same work type, never "Other".
+     It only ever SUGGESTS — the user's choice always wins. */
+  function history(){
+    var k = coKey($('pwi-company').value);
+    if(!k || !form.category || form.category === 'Other') return [];
+    return acts.filter(function(a){ return coKey(a.company) === k && a.category === form.category; });
+  }
+  function setKind(v){
+    form.kind = v;
+    if(form.status === 'Solved' || form.status === 'Resolved') form.status = v === 'repeat' ? 'Resolved' : 'Solved';
+  }
+  function updateExplain(){
+    var el = $('pwi-explain'); if(!el) return;
+    var extra = '';
+    if(form.status === 'Solved' && form.kind === 'repeat') extra = ' <em>Usually “Resolved” for a repeat issue — keep Solved only if intended.</em>';
+    if(form.status === 'Resolved' && form.kind === 'new') extra = ' <em>Usually “Solved” for a new task — keep Resolved only if intended.</em>';
+    var key = form.status + form.kind;
+    if(el.dataset.k === key) return;
+    el.dataset.k = key; el.className = 'pwi-explain ' + form.status;
+    el.innerHTML = ICON[form.status] + '<span>' + esc(EXPLAIN[form.status]) + extra + '</span>';
+  }
+  function updateContext(){
+    var el = $('pwi-ctx'); if(!el) return;
+    var co = normCo($('pwi-company').value), key = coKey(co) + '|' + form.category;
+    if(key !== form.ctxKey){ form.ctxKey = key; form.dismissed = false; }
+    var h = history(), html = '';
+    if(h.length){
+      var n = h.length, who = '<b>' + esc(coName(h[0])) + ' · ' + esc(form.category) + '</b>', when = esc(fmtDate(h[0].date));
+      if(form.kind === 'new' && !form.dismissed)
+        html = '<div class="pwi-suggest">' + ICON.Resolved + '<span>' + who + ' was logged ' + n + ' time' + (n === 1 ? '' : 's') + ' before (last ' + when + '). Is this a returning issue?</span>' +
+               '<button type="button" class="pwi-btn pri" data-act="suggest-yes">Yes, repeat</button><button type="button" class="pwi-link" data-act="suggest-no">Not this time</button></div>';
+      else if(form.kind === 'repeat')
+        html = '<div class="pwi-suggest ok">' + ICON.Resolved + '<span>Matches ' + n + ' earlier record' + (n === 1 ? '' : 's') + ' for ' + who + ' — last ' + when + '.</span></div>';
+    } else if(form.kind === 'repeat' && co && form.category){
+      html = '<div class="pwi-suggest warn">' + ICON.Pending + '<span>No earlier record for this client and type on this device. You can still log it as a repeat.</span></div>';
+    }
+    if(el.dataset.h !== html){ el.dataset.h = html; el.innerHTML = html; }
+    el.hidden = !html;
+  }
+  function updateFlow(){
+    var fl = $('pwi-flow'); if(!fl) return;
+    var cap = !!(form.source && normCo($('pwi-company').value) && form.category), done = [cap, cap, cap, false], now = cap ? 3 : 0;
+    fl.querySelectorAll('li').forEach(function(li, i){ li.className = done[i] ? 'done' : (i === now ? 'now' : ''); li.firstChild.textContent = done[i] ? '✓' : String(i + 1); });
+  }
+  var doneTimer = null;
+  function showDone(a){
+    var el = $('pwi-done'); if(!el) return;
+    var m = DONE[a.status] || DONE.Solved;
+    el.className = 'pwi-done ' + a.status;
+    el.innerHTML = '<span class="pwi-done-i">' + ICON[a.status] + '</span><div><b>' + esc(m[0]) + '</b><span class="s">' + esc(m[1]) + '</span><em>' + esc([a.source, a.company, a.category].join(' · ')) + '</em></div>';
+    void el.offsetWidth; el.classList.add('show');
+    clearTimeout(doneTimer); doneTimer = setTimeout(function(){ el.classList.remove('show'); }, 3400);
   }
   function hint(msg, kind){ var h = $('pwi-hint'); h.textContent = msg; h.className = 'pwi-hint ' + (kind||''); }
   function flag(g){
@@ -10014,32 +10220,38 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
       return;
     }
     var a = {id:uid(), date:form.date || todayISO(), time:form.time || nowTime(), source:form.source, company:canonCompany(co),
-             category:form.category, status:form.status, effort:form.effort, note:$('pwi-note').value.trim().slice(0,240),
+             category:form.category, status:form.status, kind:form.kind, effort:form.effort, note:$('pwi-note').value.trim().slice(0,240),
              created:nowISO(), updated:nowISO()};
     acts.push(a); sortActs(); save(); cloudPut(a);
     settings.lastSource = form.source; settings.keep = $('pwi-keep').checked; saveSettings();
-    var msg = [a.source, a.company, a.category, a.status].join(' → ');
-    form.category = ''; form.status = 'Resolved'; form.effort = ''; form.date = ''; form.time = '';
+    form.category = ''; form.status = 'Solved'; form.kind = 'new'; form.dismissed = false; form.effort = ''; form.date = ''; form.time = '';
     $('pwi-note').value = '';
     if(!settings.keep) $('pwi-company').value = '';
-    $('pwi-date-wrap').hidden = true; $('pwi-date-toggle').textContent = '📅 Today';
+    $('pwi-date-wrap').hidden = true; $('pwi-date-lbl').textContent = 'Today';
+    renderAll();                       // history now includes this record
     syncChips(); updatePreview();
-    hint('Saved: ' + msg, 'ok');
-    renderAll();
+    hint('Tip: press Enter in the client or note field to save.');
+    showDone(a);
     $('pwi-company').focus(); $('pwi-company').select();
   }
 
   function stSelect(a){
-    return '<select class="pwi-st '+a.status+'" data-act="setstatus" data-id="'+esc(a.id)+'" aria-label="Status">' +
-      STATUSES.map(function(s){ return '<option'+(s === a.status ? ' selected' : '')+'>'+s+'</option>'; }).join('') + '</select>';
+    var s = STATUSES.indexOf(a.status) > -1 ? a.status : 'Resolved';
+    return '<label class="pwi-badge '+s+'">'+ICON[s]+'<span>'+s+'</span><svg class="cv" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>' +
+      '<select data-act="setstatus" data-id="'+esc(a.id)+'" aria-label="Status: '+s+'. Change status">' +
+      STATUSES.map(function(x){ return '<option'+(x === s ? ' selected' : '')+'>'+x+'</option>'; }).join('') + '</select></label>';
+  }
+  function caseTag(a){
+    return a.kind === 'repeat' ? '<span class="pwi-case rp">Repeat</span>' : a.kind === 'new' ? '<span class="pwi-case">New</span>' : '<span class="pwi-case" title="Logged before New / Repeat tracking">—</span>';
   }
   function acts2(a){
     return '<button type="button" class="pwi-ico" data-act="edit" data-id="'+esc(a.id)+'" title="Edit" aria-label="Edit">✎</button>' +
            '<button type="button" class="pwi-ico del" data-act="del" data-id="'+esc(a.id)+'" title="Delete" aria-label="Delete">✕</button>';
   }
-  function liRow(a, left){
-    return '<div class="pwi-li"><span class="pwi-li-time">'+esc(left)+'</span><div class="pwi-li-main"><div class="pwi-li-t"><i class="pwi-dot" style="background:'+srcColor(a.source)+'"></i>'+esc(coName(a))+'</div>' +
-      '<div class="pwi-li-s">'+esc(a.category)+' · '+esc(a.source)+(a.note ? ' · '+esc(a.note) : '')+'</div></div><div class="pwi-li-a">'+stSelect(a)+acts2(a)+'</div></div>';
+  function liRow(a, left, sub){
+    return '<div class="pwi-li"><span class="pwi-li-time">'+esc(left)+(sub ? '<small>'+esc(sub)+'</small>' : '')+'</span><div class="pwi-li-main"><div class="pwi-li-t">'+esc(coName(a))+'</div>' +
+      '<div class="pwi-li-s"><i class="pwi-dot" style="background:'+srcColor(a.source)+'"></i>'+esc(a.source)+' · '+esc(a.category)+(a.kind === 'repeat' ? ' · <span class="pwi-rp">Repeat</span>' : '')+'</div>' +
+      (a.note ? '<div class="pwi-li-n" title="'+esc(a.note)+'">'+esc(a.note)+'</div>' : '')+'</div><div class="pwi-li-a">'+stSelect(a)+acts2(a)+'</div></div>';
   }
   function renderEntryLists(){
     buildCoNames();
@@ -10052,13 +10264,17 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
     var rk = Object.keys(rc).sort(function(a,b){ return rc[b] - rc[a]; });
     if(!rk.length) rk = keys;
     $('pwi-co-recent').innerHTML = rk.slice(0,8).map(function(k){ return '<button type="button" class="pwi-chip" data-act="co" data-v="'+esc(coNames[k])+'">'+esc(coNames[k])+'</button>'; }).join('');
-    // today
-    var t = todayISO(), today = acts.filter(function(a){ return a.date === t; });
-    var c = countBy(today, function(a){ return a.status; });
-    $('pwi-today-mini').innerHTML = '<span><b>'+today.length+'</b> total</span><span><b>'+(c.Resolved||0)+'</b> resolved</span><span><b>'+(c.Pending||0)+'</b> pending</span><span><b>'+(c['Follow-up']||0)+'</b> follow-up</span>';
-    $('pwi-today-list').innerHTML = today.length ? today.map(function(a){ return liRow(a, a.time); }).join('') : '<div class="pwi-empty">Nothing logged yet today.<br>Your first record takes about five seconds.</div>';
-    // open items
-    var open = acts.filter(function(a){ return a.status !== 'Resolved'; }).sort(function(a,b){ return (a.date+a.time).localeCompare(b.date+b.time); });
+    // today: statistics + recent activity
+    var t = todayISO(), today = acts.filter(function(a){ return a.date === t; }), S = stats(today);
+    function tile(l, n, c){ return '<div class="pwi-tstat" style="--c:'+c+'"><span>'+l+'</span><b>'+n+'</b></div>'; }
+    $('pwi-today-date').textContent = DAY[new Date().getDay()] + ', ' + fmtDate(t);
+    $('pwi-today-mini').innerHTML = '<div class="pwi-tstats">' + tile('Total', S.total, '#0B2545') + tile('Solved', S.Solved, STAT_COLOR.Solved) + tile('Resolved', S.Resolved, STAT_COLOR.Resolved) + tile('Pending', S.Pending, STAT_COLOR.Pending) + tile('Follow-up', S.FU, STAT_COLOR['Follow-up']) + '</div>' +
+      '<div class="pwi-trates"><div title="(Solved + Resolved) ÷ Total">Resolution rate<b>'+S.rate+'</b></div><div title="Resolved ÷ Total (records saved before New/Repeat tracking are excluded)">Repeated issues<b>'+S.rep+'</b></div></div>';
+    var recent = acts.slice(0, 10);
+    $('pwi-today-list').innerHTML = recent.length ? recent.map(function(a){ return a.date === t ? liRow(a, fmtTime(a.time)) : liRow(a, fmtShort(parseISO(a.date)), fmtTime(a.time)); }).join('') :
+      '<div class="pwi-empty">Nothing logged yet.<br>Your first record takes about five seconds.</div>';
+    // open items: only Pending and Follow-up are open (Solved and Resolved are both closed)
+    var open = acts.filter(function(a){ return a.status === 'Pending' || a.status === 'Follow-up'; }).sort(function(a,b){ return (a.date+a.time).localeCompare(b.date+b.time); });
     var now = parseISO(t);
     $('pwi-open-sub').textContent = open.length ? open.length + ' open · oldest first' : 'Pending & follow-up, any date';
     $('pwi-open-list').innerHTML = open.length ? open.slice(0,15).map(function(a){
@@ -10073,7 +10289,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
     st.editId = id;
     $('pwi-m-date').value = a.date; $('pwi-m-time').value = a.time; $('pwi-m-source').value = a.source;
     $('pwi-m-company').value = coName(a); $('pwi-m-cat').value = a.category; $('pwi-m-status').value = a.status;
-    $('pwi-m-effort').value = a.effort || ''; $('pwi-m-note').value = a.note;
+    $('pwi-m-effort').value = a.effort || ''; $('pwi-m-kind').value = a.kind || ''; $('pwi-m-note').value = a.note;
     $('pwi-modal').hidden = false; $('pwi-m-company').focus();
   }
   function closeEdit(){ $('pwi-modal').hidden = true; st.editId = null; }
@@ -10082,7 +10298,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
     var co = normCo($('pwi-m-company').value), d = $('pwi-m-date').value;
     if(!co || !/^\d{4}-\d{2}-\d{2}$/.test(d)){ toast('Client and date are required.'); return; }
     a.date = d; a.time = $('pwi-m-time').value || a.time; a.source = $('pwi-m-source').value; a.company = canonCompany(co);
-    a.category = $('pwi-m-cat').value; a.status = $('pwi-m-status').value; a.effort = $('pwi-m-effort').value;
+    a.category = $('pwi-m-cat').value; a.status = $('pwi-m-status').value; a.kind = $('pwi-m-kind').value; a.effort = $('pwi-m-effort').value;
     a.note = $('pwi-m-note').value.trim().slice(0,240); a.updated = nowISO();
     sortActs(); save(); cloudPut(a); closeEdit(); renderAll(); toast('Changes saved.');
   }
@@ -10248,17 +10464,22 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
       '<span class="pwi-bar-v">'+n+'<small>'+pct(n,total)+'</small></span></button>';
   }
   function renderKPIs(){
-    var all = sel(''), sc = countBy(sel('status'), function(a){ return a.status; }), sTot = (sc.Resolved||0)+(sc.Pending||0)+(sc['Follow-up']||0);
+    var all = sel(''), S = stats(sel('status'));
     var days = distinct(all, function(a){ return a.date; }), cos = distinct(all, function(a){ return coKey(a.company); });
     var cards = [
-      ['total','Total Activities',all.length,days+' active day'+(days===1?'':'s'),'#2563C9',false],
-      ['Resolved','Resolved',sc.Resolved||0,pct(sc.Resolved||0,sTot)+' of activities',STAT_COLOR.Resolved,st.filters.status==='Resolved'],
-      ['Pending','Pending',sc.Pending||0,pct(sc.Pending||0,sTot)+' of activities',STAT_COLOR.Pending,st.filters.status==='Pending'],
-      ['Follow-up','Follow-up',sc['Follow-up']||0,pct(sc['Follow-up']||0,sTot)+' of activities',STAT_COLOR['Follow-up'],st.filters.status==='Follow-up'],
-      ['companies','Companies Supported',cos,'distinct clients','#0E9AA7',false]
+      ['total','Total Activities',all.length,days+' active day'+(days===1?'':'s'),'#2563C9',false,1],
+      ['Solved','Solved',S.Solved,pct(S.Solved,S.total)+' · first-time tasks',STAT_COLOR.Solved,st.filters.status==='Solved',1],
+      ['Resolved','Resolved',S.Resolved,pct(S.Resolved,S.total)+' · returning issues'+(S.legacy ? ' · '+S.legacy+' legacy' : ''),STAT_COLOR.Resolved,st.filters.status==='Resolved',1],
+      ['Pending','Pending',S.Pending,pct(S.Pending,S.total)+' of activities',STAT_COLOR.Pending,st.filters.status==='Pending',1],
+      ['Follow-up','Follow-up',S.FU,pct(S.FU,S.total)+' of activities',STAT_COLOR['Follow-up'],st.filters.status==='Follow-up',1],
+      ['rate','Resolution Rate',S.rate,S.res+' of '+S.total+' solved or resolved',STAT_COLOR.Solved,false,0],
+      ['rep','Repeated Issue Rate',S.rep,S.repN+' returning issue'+(S.repN===1?'':'s')+(S.legacy ? ' · '+S.legacy+' legacy excluded' : ''),STAT_COLOR.Resolved,false,0],
+      ['companies','Companies Supported',cos,'distinct clients','#0E9AA7',false,1]
     ];
     $('pwi-kpis').innerHTML = cards.map(function(c){
-      return '<button type="button" class="pwi-kpi'+(c[5]?' sel':'')+'" style="--k:'+c[4]+'" data-act="kpi" data-v="'+c[0]+'"><div class="pwi-kpi-l">'+c[1]+'</div><div class="pwi-kpi-v">'+c[2]+'</div><div class="pwi-kpi-s">'+c[3]+'</div></button>';
+      var inner = '<div class="pwi-kpi-l">'+c[1]+'</div><div class="pwi-kpi-v">'+c[2]+'</div><div class="pwi-kpi-s">'+esc(c[3])+'</div>';
+      return c[6] ? '<button type="button" class="pwi-kpi'+(c[5]?' sel':'')+'" style="--k:'+c[4]+'" data-act="kpi" data-v="'+c[0]+'">'+inner+'</button>'
+                  : '<div class="pwi-kpi static" style="--k:'+c[4]+'">'+inner+'</div>';
     }).join('');
   }
   function renderFilterBar(){
@@ -10333,8 +10554,8 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
     var list = sel(''), total = list.length, shown = list.slice(0, st.recLimit);
     $('pwi-rec-count').textContent = '· ' + total + ' record' + (total === 1 ? '' : 's');
     $('pwi-rec-body').innerHTML = shown.length ? shown.map(function(a){
-      return '<tr><td class="d">'+fmtDate(a.date)+'<small>'+esc(a.time)+'</small></td><td><i class="pwi-dot" style="background:'+srcColor(a.source)+'"></i>'+esc(a.source)+'</td><td>'+esc(coName(a))+'</td><td>'+esc(a.category)+'</td><td>'+stSelect(a)+'</td><td>'+esc(a.effort || '—')+'</td><td class="n" title="'+esc(a.note)+'">'+esc(a.note)+'</td><td style="white-space:nowrap">'+acts2(a)+'</td></tr>';
-    }).join('') : '<tr><td colspan="8"><div class="pwi-empty">No records match the current period and filters.</div></td></tr>';
+      return '<tr><td class="d">'+fmtDate(a.date)+'<small>'+esc(fmtTime(a.time))+'</small></td><td><i class="pwi-dot" style="background:'+srcColor(a.source)+'"></i>'+esc(a.source)+'</td><td>'+esc(coName(a))+'</td><td>'+esc(a.category)+'</td><td>'+caseTag(a)+'</td><td>'+stSelect(a)+'</td><td>'+esc(a.effort || '—')+'</td><td class="n" title="'+esc(a.note)+'">'+esc(a.note)+'</td><td style="white-space:nowrap">'+acts2(a)+'</td></tr>';
+    }).join('') : '<tr><td colspan="9"><div class="pwi-empty">No records match the current period and filters.</div></td></tr>';
     $('pwi-rec-more').innerHTML = total > shown.length ? '<button type="button" class="pwi-more" data-act="more">Show '+Math.min(50, total - shown.length)+' more ('+(total - shown.length)+' remaining)</button>' : '';
   }
   function syncRangeUI(){
@@ -10374,7 +10595,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
     setTimeout(function(){ document.body.removeChild(a); URL.revokeObjectURL(u); }, 0);
   }
   function exportCSV(list, name){
-    var rows = [['Date','Time','Source','Client','Type','Status','Effort','Note']].concat(list.map(function(a){ return [a.date, a.time, a.source, coName(a), a.category, a.status, a.effort, a.note]; }));
+    var rows = [['Date','Time','Source','Client','Type','Status','Effort','Note','Case']].concat(list.map(function(a){ return [a.date, a.time, a.source, coName(a), a.category, a.status, a.effort, a.note, a.kind === 'repeat' ? 'Repeat' : a.kind === 'new' ? 'New' : '']; }));
     download(name, rows.map(function(r){ return r.map(csvCell).join(','); }).join('\r\n'), 'text/csv;charset=utf-8', true);
     toast('Exported ' + list.length + ' record' + (list.length === 1 ? '' : 's') + '.');
   }
@@ -10429,10 +10650,14 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
     if(act === 'tab') return setTab(v);
     if(act === 'pick'){
       var g = t.dataset.g;
-      form[g] = (g === 'effort' && form[g] === v) ? '' : v;
+      if(g === 'kind'){ setKind(v); if(v === 'new') form.dismissed = true; }   // an explicit choice silences the suggestion
+      else if(g === 'status'){ form.status = v; }                               // manual outcome always wins
+      else form[g] = (g === 'effort' && form[g] === v) ? '' : v;
       var fe = pwi.querySelector('.pwi-field[data-g="'+g+'"]'); if(fe) fe.classList.remove('bad');
       syncChips(); updatePreview(); hint('Tip: press Enter in the client or note field to save.'); return;
     }
+    if(act === 'suggest-yes'){ setKind('repeat'); syncChips(); updatePreview(); return; }
+    if(act === 'suggest-no'){ form.dismissed = true; updatePreview(); return; }
     if(act === 'co'){ $('pwi-company').value = v; updatePreview(); $('pwi-company').focus(); return; }
     if(act === 'edit') return openEdit(id);
     if(act === 'del') return deleteAct(id);
@@ -10476,7 +10701,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
     if(t.id === 'pwi-restore-file' && t.files && t.files[0]) return restore(t.files[0]);
     if(t.id === 'pwi-date' || t.id === 'pwi-time'){
       form.date = $('pwi-date').value || ''; form.time = $('pwi-time').value || '';
-      $('pwi-date-toggle').textContent = '📅 ' + (!form.date || form.date === todayISO() ? 'Today' : fmtDate(form.date)); return;
+      $('pwi-date-lbl').textContent = (!form.date || form.date === todayISO() ? 'Today' : fmtDate(form.date)); return;
     }
     if(t.id === 'pwi-company') updatePreview();
   });
@@ -10492,10 +10717,11 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
     else if(e.key === 'Enter' && (e.ctrlKey || e.metaKey) && st.tab === 'entry'){ e.preventDefault(); saveForm(); }
   });
   $('pwi-save').addEventListener('click', saveForm);
+  $('pwi-done').addEventListener('click', function(){ this.classList.remove('show'); });
   $('pwi-date-toggle').addEventListener('click', function(){
     var w = $('pwi-date-wrap');
     if(w.hidden){ w.hidden = false; $('pwi-date').value = form.date || todayISO(); $('pwi-time').value = form.time || nowTime(); form.date = $('pwi-date').value; form.time = $('pwi-time').value; $('pwi-date').focus(); }
-    else { w.hidden = true; form.date = ''; form.time = ''; this.textContent = '📅 Today'; }
+    else { w.hidden = true; form.date = ''; form.time = ''; $('pwi-date-lbl').textContent = 'Today'; }
   });
   $('pwi-m-save').addEventListener('click', saveEdit);
   $('pwi-m-cancel').addEventListener('click', closeEdit);
