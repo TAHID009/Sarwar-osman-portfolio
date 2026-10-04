@@ -4,4 +4,4 @@ Allow: /
 # Keep private/internal pages out of search results
 Disallow: /aeroops.html
 
-Sitemap: https://tahid009.github.io/Sarwar_portfolio/sitemap.xml
+Sitemap: https://sarwar-osman.vercel.app/sitemap.xml

@@ -7,7 +7,7 @@ const profile = {
   email: "mdsarwarosman22@gmail.com",
   phone: "+8801642770839",
   linkedin: "https://linkedin.com/in/md-sarwar-osman-sagar-03738a158",
-  cv: "./assets/docs/Md-Sarwar-Osman-Sagar-CV.pdf",
+  cv: "./Md-Sarwar-Osman-Sagar-CV.pdf",
   yearsExperience: "3+ Years",
   gdsCount: "3 GDS",
   focus: "Travel Operations",

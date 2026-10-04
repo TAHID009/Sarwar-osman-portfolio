@@ -1,37 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://tahid009.github.io/Sarwar_portfolio/index.html</loc>
+    <loc>https://sarwar-osman.vercel.app/index.html</loc>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://tahid009.github.io/Sarwar_portfolio/about.html</loc>
+    <loc>https://sarwar-osman.vercel.app/about.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://tahid009.github.io/Sarwar_portfolio/experience.html</loc>
+    <loc>https://sarwar-osman.vercel.app/experience.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://tahid009.github.io/Sarwar_portfolio/skills.html</loc>
+    <loc>https://sarwar-osman.vercel.app/skills.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://tahid009.github.io/Sarwar_portfolio/education.html</loc>
+    <loc>https://sarwar-osman.vercel.app/education.html</loc>
     <changefreq>yearly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://tahid009.github.io/Sarwar_portfolio/activities.html</loc>
+    <loc>https://sarwar-osman.vercel.app/activities.html</loc>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://tahid009.github.io/Sarwar_portfolio/contact.html</loc>
+    <loc>https://sarwar-osman.vercel.app/contact.html</loc>
     <changefreq>yearly</changefreq>
     <priority>0.7</priority>
   </url>

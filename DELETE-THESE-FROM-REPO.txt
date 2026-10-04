@@ -1,0 +1,27 @@
+Delete these from the GitHub repo root (all unused):
+files.zip
+download
+aeroops1.html
+aeroops_login.html
+insights.html
+insightsData.js
+refund-example.html
+refund-commission-reduction.js
+refund-form-styles.css
+commission-reduction-exact-html.txt
+commission-reduction-html-snippet.html
+commission-reduction-js-code.js
+commission-reduction-js-exact.js
+commission-reduction-styles.css
+style-v2.css
+ui-version.js
+hero-bg.webp
+aeroops-lock-v2.patch
+aeroops-sidebar-single-brand.patch
+CHANGELOG.md
+VERSION.txt
+GIT_QUICK_REFERENCE.md
+IMPLEMENTATION_GUIDE.md
+INTEGRATION_GUIDE_EXISTING_FORM.md
+OTA_INTEGRATION_GUIDE.md
+STEP_BY_STEP_AEROOPS.md
