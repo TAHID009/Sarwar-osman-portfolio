@@ -4248,7 +4248,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
           <p>Every task is recorded. Every outcome is measurable. Repeated issues become visible.</p>
         </div>
         <div class="pwi-head-r">
-          <span class="pwi-sync" id="pwi-sync">● Saved on this device</span>
+          <span class="pwi-sync" id="pwi-sync">● Connecting to Firebase…</span>
           <details class="pwi-data" id="pwi-data">
             <summary>Data ▾</summary>
             <div class="pwi-data-menu">
@@ -9900,7 +9900,9 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
   if(!rootEl || !pwi || !navBtn) return;
 
   /* ---------- constants ---------- */
-  var KEY = 'aeroops_pwi_v1', SKEY = 'aeroops_pwi_settings_v1', SYNCKEY = 'aeroops_pwi_synced_v1', COLL = 'work_record_pwi';
+  var KEY = 'aeroops_pwi_v1', BAK = 'aeroops_pwi_v1_migrated_backup', SKEY = 'aeroops_pwi_settings_v1', COLL = 'work_record_pwi';
+  /* Activities live ONLY in Firestore (COLL). KEY is read once to migrate older on-device records, then archived to BAK.
+     SKEY keeps tiny UI preferences (week start, date range, last source) on this device. */
   var SOURCES = ['WhatsApp','Support','Email','Phone','Internal','Other'];
   var CATS = ['Fare Query','Availability','Booking Support','Ticketing','Reissue','Refund','Cancellation','Hotel','Flight Information','Fare Rule / Policy','Problem Solving','Other'];
   var STATUSES = ['Solved','Resolved','Pending','Follow-up'];
@@ -9952,7 +9954,6 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
   /* ---------- state ---------- */
   var acts = [];
   var settings = {weekStart:1, lastSource:'', range:'today', from:'', to:'', keep:false};
-  var synced = {};
   var st = {tab:'entry', pat:'cc', cycle:'weekly', gran:'auto', coAll:false, recLimit:50, editId:null,
             filters:{source:null, company:null, category:null, status:null, kw:null, bucket:null, q:''}};
   var form = {source:'', category:'', status:'Solved', kind:'new', effort:'', date:'', time:'', dismissed:false, ctxKey:''};
@@ -9960,14 +9961,10 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
   var active = false, dirty = true, charts = {}, lastDeleted = null, toastTimer = null;
 
   function load(){
-    try{ var r = JSON.parse(localStorage.getItem(KEY) || '[]'); acts = (Array.isArray(r) ? r : []).map(clean).filter(Boolean); }catch(e){ acts = []; }
     try{ var s = JSON.parse(localStorage.getItem(SKEY) || '{}'); Object.keys(s).forEach(function(k){ if(k in settings) settings[k] = s[k]; }); }catch(e){}
-    try{ synced = JSON.parse(localStorage.getItem(SYNCKEY) || '{}') || {}; }catch(e){ synced = {}; }
     form.source = SOURCES.indexOf(settings.lastSource) > -1 ? settings.lastSource : '';
   }
-  function save(){ try{ localStorage.setItem(KEY, JSON.stringify(acts)); }catch(e){ toast('Could not save — browser storage may be full or blocked.'); } }
   function saveSettings(){ try{ localStorage.setItem(SKEY, JSON.stringify(settings)); }catch(e){} }
-  function saveSynced(){ try{ localStorage.setItem(SYNCKEY, JSON.stringify(synced)); }catch(e){} }
 
   function clean(v){
     if(!v || typeof v !== 'object') return null;
@@ -9995,46 +9992,55 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
     clearTimeout(toastTimer); toastTimer = setTimeout(function(){ el.hidden = true; }, label ? 6000 : 2200);
   }
 
-  /* ---------- optional cloud sync (own collection; fails safe to local-only) ---------- */
-  var cloud = {db:null, unsub:null, uid:null, failed:false, on:false};
+  /* ---------- Firebase (Firestore): the system of record for activities ---------- */
+  var cloud = {db:null, unsub:null, uid:null, failed:false, on:false, loaded:false};
+  function canWrite(){
+    if(cloud.on && cloud.loaded && cloud.db) return true;
+    toast(cloud.failed ? 'Firebase is blocking the "' + COLL + '" collection — nothing was saved.' : 'Not connected to Firebase yet — nothing was saved. Try again in a moment.');
+    return false;
+  }
   function setSync(kind){
     var el = $('pwi-sync'); if(!el) return;
     var map = {
-      local:['● Saved on this device','',''],
-      connecting:['● Connecting to cloud…','',''],
-      on:['● Cloud sync on','on',''],
-      blocked:['● Saved on this device (cloud blocked)','warn','Your Firestore rules do not allow the "'+COLL+'" collection yet. Add a rule for it to sync PWI across devices. Your data is safe in this browser.'],
-      offline:['● Cloud unreachable','warn','Could not reach the cloud right now. Data is saved on this device and will sync later.']
+      connecting:['● Connecting to Firebase…','',''],
+      signedout:['● Sign in to load your records','warn','Activity records are stored in Firebase and load after you sign in.'],
+      on:['● Live · stored in Firebase','on','Every change is saved to Firebase and syncs across your devices.'],
+      blocked:['● Firebase blocked — saving disabled','warn','Your Firestore rules do not allow the "' + COLL + '" collection. Add: match /' + COLL + '/{id} { allow read, write: if request.auth != null; }'],
+      offline:['● Firebase unreachable — retrying','warn','Could not reach Firebase. Changes made now are not saved until it reconnects.']
     };
-    var m = map[kind] || map.local; el.textContent = m[0]; el.className = 'pwi-sync ' + m[1]; el.title = m[2];
+    var m = map[kind] || map.connecting; el.textContent = m[0]; el.className = 'pwi-sync ' + m[1]; el.title = m[2];
+    var sv = $('pwi-save'); if(sv){ sv.disabled = kind !== 'on'; sv.style.opacity = kind === 'on' ? '' : '.55'; sv.title = kind === 'on' ? '' : 'Saving is available once connected to Firebase.'; }
   }
   function cloudErr(err){
     var c = err && err.code || '';
     if(c === 'permission-denied'){ cloud.failed = true; cloud.on = false; if(cloud.unsub){ try{ cloud.unsub(); }catch(e){} cloud.unsub = null; } setSync('blocked'); }
     else setSync('offline');
   }
-  function cloudPut(a){
-    if(!cloud.on || !cloud.db) return;
-    cloud.db.collection(COLL).doc(a.id).set(a).then(function(){ synced[a.id] = 1; saveSynced(); }).catch(cloudErr);
-  }
-  function cloudDel(id){
-    delete synced[id]; saveSynced();
-    if(!cloud.on || !cloud.db) return;
-    cloud.db.collection(COLL).doc(id).delete().catch(cloudErr);
+  function writeFail(err){ cloudErr(err); toast('Could not save to Firebase — that change was not stored.'); }
+  function cloudPut(a){ if(cloud.db) cloud.db.collection(COLL).doc(a.id).set(a).catch(writeFail); }
+  function cloudDel(id){ if(cloud.db) cloud.db.collection(COLL).doc(id).delete().catch(writeFail); }
+  /* One-time move of records saved on this device by the earlier version. Safe to repeat: writes are keyed by id. */
+  function migrateLocal(remote){
+    var raw; try{ raw = localStorage.getItem(KEY); }catch(e){ return; }
+    if(!raw) return;
+    var loc; try{ loc = JSON.parse(raw); }catch(e){ return; }
+    var list = (Array.isArray(loc) ? loc : []).map(clean).filter(Boolean).filter(function(a){ return !remote[a.id]; });
+    function archive(){ try{ localStorage.setItem(BAK, raw); localStorage.removeItem(KEY); }catch(e){} }
+    if(!list.length){ archive(); return; }
+    var jobs = [];
+    for(var i = 0; i < list.length; i += 400){
+      jobs.push((function(chunk){ var b = cloud.db.batch(); chunk.forEach(function(a){ b.set(cloud.db.collection(COLL).doc(a.id), a); }); return b.commit(); })(list.slice(i, i + 400)));
+    }
+    Promise.all(jobs).then(function(){ archive(); toast('Moved ' + list.length + ' earlier record' + (list.length === 1 ? '' : 's') + ' from this device to Firebase.'); }).catch(writeFail);
   }
   function onSnap(snap){
-    if(snap.metadata && snap.metadata.fromCache && snap.size === 0) return;
-    cloud.on = true; setSync('on');
-    var remote = {};
-    snap.forEach(function(d){ var v = clean(Object.assign({id:d.id}, d.data())); if(v){ v.id = d.id; remote[d.id] = v; } });
-    var out = Object.keys(remote).map(function(k){ return remote[k]; });
-    acts.forEach(function(a){
-      if(remote[a.id]) return;
-      if(synced[a.id]) return;                 // it existed in the cloud before, so it was deleted elsewhere
-      out.push(a); cloudPut(a);                 // local-only record: upload it
-    });
-    Object.keys(remote).forEach(function(id){ synced[id] = 1; });
-    acts = out; sortActs(); save(); saveSynced(); renderAll();
+    if(snap.metadata && snap.metadata.fromCache && !cloud.loaded && snap.size === 0) return;   // wait for the server's answer
+    var first = !cloud.loaded, remote = {}, out = [];
+    cloud.on = true; cloud.loaded = true; setSync('on');
+    snap.forEach(function(d){ var v = clean(Object.assign({id:d.id}, d.data())); if(v){ v.id = d.id; out.push(v); remote[d.id] = 1; } });
+    acts = out; sortActs();
+    if(first) migrateLocal(remote);
+    renderAll();
   }
   function cloudTick(){
     try{
@@ -10042,12 +10048,15 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
       var u = firebase.auth().currentUser;
       if(!u){
         if(cloud.unsub){ try{ cloud.unsub(); }catch(e){} cloud.unsub = null; }
-        cloud.db = null; cloud.uid = null; cloud.on = false; setSync('local'); return;
+        var was = cloud.loaded || cloud.on;
+        cloud.db = null; cloud.uid = null; cloud.on = false; cloud.loaded = false; acts = []; setSync('signedout');
+        if(was) renderAll();
+        return;
       }
       if(cloud.unsub && cloud.uid === u.uid) return;
-      cloud.uid = u.uid; cloud.db = firebase.firestore(); setSync('connecting');
+      cloud.uid = u.uid; cloud.db = firebase.firestore(); cloud.loaded = false; setSync('connecting');
       cloud.unsub = cloud.db.collection(COLL).onSnapshot(onSnap, cloudErr);
-    }catch(e){ /* stay local */ }
+    }catch(e){ /* retry on next tick */ }
   }
 
   /* ---------- date ranges ---------- */
@@ -10211,6 +10220,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
   function nowISO(){ return new Date().toISOString(); }
 
   function saveForm(){
+    if(!canWrite()) return;
     var co = normCo($('pwi-company').value), miss = [];
     if(!form.source) miss.push('source'); if(!co) miss.push('company'); if(!form.category) miss.push('category');
     if(miss.length){
@@ -10222,7 +10232,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
     var a = {id:uid(), date:form.date || todayISO(), time:form.time || nowTime(), source:form.source, company:canonCompany(co),
              category:form.category, status:form.status, kind:form.kind, effort:form.effort, note:$('pwi-note').value.trim().slice(0,240),
              created:nowISO(), updated:nowISO()};
-    acts.push(a); sortActs(); save(); cloudPut(a);
+    acts.push(a); sortActs(); cloudPut(a);
     settings.lastSource = form.source; settings.keep = $('pwi-keep').checked; saveSettings();
     form.category = ''; form.status = 'Solved'; form.kind = 'new'; form.dismissed = false; form.effort = ''; form.date = ''; form.time = '';
     $('pwi-note').value = '';
@@ -10254,6 +10264,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
       (a.note ? '<div class="pwi-li-n" title="'+esc(a.note)+'">'+esc(a.note)+'</div>' : '')+'</div><div class="pwi-li-a">'+stSelect(a)+acts2(a)+'</div></div>';
   }
   function renderEntryLists(){
+    if(!cloud.loaded){ $('pwi-today-mini').innerHTML = ''; $('pwi-open-list').innerHTML = ''; $('pwi-today-list').innerHTML = '<div class="pwi-empty">' + (cloud.failed ? 'Firebase is blocking this collection — see the status badge.' : cloud.uid ? 'Loading from Firebase…' : 'Sign in to load your records from Firebase.') + '</div>'; return; }
     buildCoNames();
     // datalist + recent chips
     var cnt = countBy(acts, function(a){ return coKey(a.company); });
@@ -10294,22 +10305,25 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
   }
   function closeEdit(){ $('pwi-modal').hidden = true; st.editId = null; }
   function saveEdit(){
+    if(!canWrite()) return;
     var a = acts.filter(function(x){ return x.id === st.editId; })[0]; if(!a){ closeEdit(); return; }
     var co = normCo($('pwi-m-company').value), d = $('pwi-m-date').value;
     if(!co || !/^\d{4}-\d{2}-\d{2}$/.test(d)){ toast('Client and date are required.'); return; }
     a.date = d; a.time = $('pwi-m-time').value || a.time; a.source = $('pwi-m-source').value; a.company = canonCompany(co);
     a.category = $('pwi-m-cat').value; a.status = $('pwi-m-status').value; a.kind = $('pwi-m-kind').value; a.effort = $('pwi-m-effort').value;
     a.note = $('pwi-m-note').value.trim().slice(0,240); a.updated = nowISO();
-    sortActs(); save(); cloudPut(a); closeEdit(); renderAll(); toast('Changes saved.');
+    sortActs(); cloudPut(a); closeEdit(); renderAll(); toast('Changes saved.');
   }
   function deleteAct(id){
+    if(!canWrite()) return;
     var i = -1; acts.forEach(function(a,k){ if(a.id === id) i = k; }); if(i < 0) return;
-    var a = acts.splice(i,1)[0]; lastDeleted = a; save(); cloudDel(id); renderAll();
-    toast('Activity deleted.', 'Undo', function(){ if(!lastDeleted) return; acts.push(lastDeleted); sortActs(); save(); cloudPut(lastDeleted); lastDeleted = null; renderAll(); });
+    var a = acts.splice(i,1)[0]; lastDeleted = a; cloudDel(id); renderAll();
+    toast('Activity deleted.', 'Undo', function(){ if(!lastDeleted) return; acts.push(lastDeleted); sortActs(); cloudPut(lastDeleted); lastDeleted = null; renderAll(); });
   }
   function setStatus(id, s){
+    if(!canWrite()){ renderAll(); return; }
     var a = acts.filter(function(x){ return x.id === id; })[0]; if(!a || STATUSES.indexOf(s) < 0) return;
-    a.status = s; a.updated = nowISO(); save(); cloudPut(a); renderAll();
+    a.status = s; a.updated = nowISO(); cloudPut(a); renderAll();
   }
 
   /* ---------- dashboard: charts ---------- */
@@ -10317,7 +10331,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
     id:'pwiVals',
     afterDatasetsDraw:function(ch, args, o){
       if(!o || !o.on) return;
-      var ctx = ch.ctx; ctx.save(); ctx.font = '600 11px '+FONT.family; ctx.fillStyle = '#3C5573'; ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
+      var ctx = ch.ctx; ctx.ctx.font = '600 11px '+FONT.family; ctx.fillStyle = '#3C5573'; ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
       var n = ch.data.labels.length; if(n > 45){ ctx.restore(); return; }
       for(var j = 0; j < n; j++){
         var sum = 0, top = Infinity, x = null;
@@ -10600,6 +10614,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
     toast('Exported ' + list.length + ' record' + (list.length === 1 ? '' : 's') + '.');
   }
   function restore(file){
+    if(!canWrite()) return;
     var rd = new FileReader();
     rd.onload = function(){
       try{
@@ -10611,7 +10626,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
           if(!o){ acts.push(n); byId[n.id] = n; added++; cloudPut(n); }
           else if((n.updated||'') > (o.updated||'')){ Object.assign(o, n); updated++; cloudPut(o); }
         });
-        sortActs(); save(); renderAll(); toast('Restored: ' + added + ' added, ' + updated + ' updated.');
+        sortActs(); renderAll(); toast('Restored: ' + added + ' added, ' + updated + ' updated.');
       }catch(e){ toast('That file is not a valid PWI backup.'); }
     };
     rd.readAsText(file);
@@ -10730,7 +10745,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
   document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && !$('pwi-modal').hidden) closeEdit(); });
 
   /* ---------- boot ---------- */
-  load(); sortActs(); initEntry(); setSync('local');
+  load(); sortActs(); initEntry(); setSync('connecting'); renderAll();
   setInterval(cloudTick, 2500); setTimeout(cloudTick, 800);
 })();
 </script>
