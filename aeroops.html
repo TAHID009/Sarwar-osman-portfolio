@@ -2586,23 +2586,40 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
 @media(max-width:980px){#ptc-root .aero-sb-brand,#ptc-root .aero-sb-card{display:none}#ptc-root #ptc-nav .ptc-nav-btn.aero-sub{width:auto;margin-left:0}}
 #ptc-root.aero-noanim,#ptc-root.aero-noanim *{transition:none!important;animation:none!important}
 #aero-settings{display:none;padding:14px 0}
-#ptc-root.set-active #aero-settings{display:block}
-#ptc-root.set-active #lb,#ptc-root.set-active #ptc-body-grid,#ptc-root.set-active #pwi-root{display:none!important}
-#aero-settings .aset-head h2{margin:2px 0 2px;font-size:22px;color:#0B2545}#aero-settings .aset-head p{margin:0 0 14px;color:#667085;font-size:13px}
-#aero-settings .aset-card{background:#fff;border:1px solid #E3E9F0;border-radius:12px;padding:14px 16px;margin-bottom:12px}
-#aero-settings .aset-card h3{margin:0 0 8px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#475467}
-#aero-settings .aset-row{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:8px 0;border-top:1px solid #EEF2F6}
-#aero-settings .aset-row:first-of-type{border-top:0}
-#aero-settings .aset-row b{display:block;font-size:13.5px;color:#0B2545}#aero-settings .aset-row span{display:block;font-size:12px;color:#667085;margin-top:2px}
-#aero-settings .aset-seg{display:inline-flex;background:#EEF2F6;border-radius:9px;padding:3px;gap:2px}
-#aero-settings .aset-seg button,#aero-settings .aset-btns button,#aero-settings .aset-danger{font:inherit;font-size:12.5px;font-weight:600;border:0;cursor:pointer;border-radius:7px;padding:7px 14px;background:transparent;color:#475467}
-#aero-settings .aset-seg button.on{background:#2563EB;color:#fff}
-#aero-settings .aset-btns{display:flex;gap:8px;flex-wrap:wrap}#aero-settings .aset-btns button{background:#EEF2F6;color:#0B2545}
-#aero-settings .aset-danger{background:#FEF3F2;color:#B42318}
-#aero-settings .aset-note{margin:0 0 10px;font-size:12.5px;color:#475467}
+#aero-master{display:none;padding:14px 0}
+#ptc-root.set-active #aero-settings,#ptc-root.mas-active #aero-master{display:block}
+#ptc-root.set-active #lb,#ptc-root.set-active #ptc-body-grid,#ptc-root.set-active #pwi-root,#ptc-root.mas-active #lb,#ptc-root.mas-active #ptc-body-grid,#ptc-root.mas-active #pwi-root{display:none!important}
+#ptc-root.mas-active #aero-settings,#ptc-root.set-active #aero-master{display:none!important}
+.aero-page .aset-head h2{margin:2px 0 2px;font-size:22px;color:#0B2545}.aero-page .aset-head p{margin:0 0 14px;color:#667085;font-size:13px}
+.aero-page .aset-card{background:#fff;border:1px solid #E3E9F0;border-radius:12px;padding:14px 16px;margin-bottom:12px}
+.aero-page .aset-card h3{margin:0 0 8px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#475467}
+.aero-page .aset-row{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:8px 0;border-top:1px solid #EEF2F6}
+.aero-page .aset-row:first-of-type{border-top:0}
+.aero-page .aset-row b{display:block;font-size:13.5px;color:#0B2545}.aero-page .aset-row span{display:block;font-size:12px;color:#667085;margin-top:2px}
+.aero-page .aset-seg{display:inline-flex;background:#EEF2F6;border-radius:9px;padding:3px;gap:2px}
+.aero-page .aset-seg button,.aero-page .aset-btns button,.aero-page .aset-danger{font:inherit;font-size:12.5px;font-weight:600;border:0;cursor:pointer;border-radius:7px;padding:7px 14px;background:transparent;color:#475467}
+.aero-page .aset-seg button.on{background:#2563EB;color:#fff}
+.aero-page .aset-btns{display:flex;gap:8px;flex-wrap:wrap}.aero-page .aset-btns button{background:#EEF2F6;color:#0B2545}
+.aero-page .aset-danger{background:#FEF3F2;color:#B42318}
+.aero-page .aset-note{margin:0 0 10px;font-size:12.5px;color:#475467}
 #pwi-root .pwi-dnav,.pwi-dnav{display:flex;align-items:center;gap:6px;margin:0 0 10px;flex-wrap:wrap}
 .pwi-dnav button,.pwi-dnav input{font:inherit;font-size:12.5px;height:30px;border:1px solid #D5DDE7;background:#fff;border-radius:7px;padding:0 10px;color:#0B2545}
 .pwi-dnav button{cursor:pointer;font-weight:700}.pwi-dnav button:disabled{opacity:.4;cursor:default}.pwi-dnav #pwi-dtoday{background:#EAF2FF;border-color:#BBD3FA;color:#2563EB}
+.aero-page .aset-dl{font:inherit;font-size:12.5px;font-weight:700;border:0;cursor:pointer;border-radius:8px;padding:8px 14px;background:#2563EB;color:#fff;white-space:nowrap}
+.aero-page .aset-dl:hover{background:#1D4FBF}.aero-page .aset-dl.big{padding:11px 20px;font-size:13.5px;background:#0E9AA7}
+.aero-page .aset-hero{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;background:#F0FAFB;border-color:#BFE6EA}
+.aero-page .aset-hero b{display:block;font-size:15px;color:#0B2545}.aero-page .aset-hero span{display:block;font-size:12.5px;color:#475467;margin-top:2px;max-width:560px}
+.aero-page .am-n{font-style:normal;font-weight:700;color:#0B2545}
+#aero-dash-top{margin:0 0 16px}#aero-dash-top .adash-h{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+#aero-dash-top h2{margin:0;font-size:21px;color:#0B2545}#aero-dash-top p{margin:2px 0 0;font-size:12.5px;color:#667085}
+#aero-dash-top .adash-dl{font:inherit;font-size:12.5px;font-weight:700;border:0;cursor:pointer;border-radius:8px;padding:8px 14px;background:#0E9AA7;color:#fff}
+#aero-dash-top .adash-g{background:#fff;border:1px solid #E3E9F0;border-radius:12px;padding:12px 14px;margin-bottom:10px}
+#aero-dash-top .adash-g h4{margin:0 0 8px;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:#475467}
+#aero-dash-top .adash-t{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
+#aero-dash-top .adash-t div{border:1px solid #E3E9F0;border-top:3px solid var(--c,#2563EB);border-radius:9px;padding:8px 10px;background:#FAFBFD}
+#aero-dash-top .adash-t span{display:block;font-size:11px;color:#667085;font-weight:600}#aero-dash-top .adash-t b{display:block;font-size:19px;color:#0B2545;margin-top:2px}
+#aero-dash-top .adash-n{font-size:12.5px;color:#667085}
+#aero-toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#0B2545;color:#fff;font-size:13px;font-weight:600;padding:10px 16px;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.3);z-index:9999}
 </style>
 <style id="pwi-style">
 /* ===== Professional Work Intelligence (PWI) — additive module. Scoped to #pwi-root; touches nothing else. ===== */
@@ -3263,12 +3280,12 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
     <div class="ptc-body-grid" id="ptc-toprow-grid">
     <div class="aero-sb-brand"><span class="aero-sb-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg></span><div class="aero-sb-t"><b>AeroOps</b><small>Smarter Operations • Higher Efficiency</small></div></div>
     <nav id="ptc-nav" aria-label="AeroOps sections">
-      <button type="button" class="ptc-nav-btn active" data-aero="home" data-nav="entrydesk" data-pane="entrydesk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg><span class="aero-lbl">Home</span></button>
+      <button type="button" class="ptc-nav-btn active" data-aero="home" data-nav="entrydesk" data-pane="entrydesk" title="Add ticketing, reissue, refund and void entries"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2M9 12h6M9 16h4"/></svg><span class="aero-lbl">Work Record</span></button>
       <button type="button" class="ptc-nav-btn" data-aero="pwi" data-nav="pwi" id="pwi-nav-btn" title="Professional Work Intelligence"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><span class="aero-lbl">Activity Tracker</span></button>
       <button type="button" class="ptc-nav-btn" data-aero="sales" data-nav="salesdesk" data-pane="salesdesk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg><span class="aero-lbl">Revenue Desk</span></button>
-      <button type="button" class="ptc-nav-btn" data-aero="logs" data-nav="entrylog" data-pane="entrylog"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg><span class="aero-lbl">Logs</span></button>
-      <button type="button" class="ptc-nav-btn aero-sub" data-aero="pending" data-nav="pending" id="btn-nav-pending" title="Refunds waiting for their adjustment"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg><span class="aero-lbl">Pending Adj. <span class="ptc-nav-badge" id="nav-pending-badge" style="display:none;">0</span></span></button>
-      <button type="button" class="ptc-nav-btn" data-aero="reports" data-nav="reports"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18M18 17V9M13 17V5M8 17v-3"/></svg><span class="aero-lbl">Reports</span></button>
+      <button type="button" class="ptc-nav-btn" data-aero="logs" data-nav="entrylog" data-pane="entrylog" title="Every log in one place, including pending adjustments"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg><span class="aero-lbl">Log Book</span></button>
+      <button type="button" class="ptc-nav-btn aero-sub" data-aero="pending" data-nav="pending" id="btn-nav-pending" title="Refunds waiting for their adjustment" style="display:none !important"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg><span class="aero-lbl">Pending Adj. <span class="ptc-nav-badge" id="nav-pending-badge" style="display:none;">0</span></span></button>
+      <button type="button" class="ptc-nav-btn" data-aero="reports" data-nav="reports" title="Everything at a glance"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18M18 17V9M13 17V5M8 17v-3"/></svg><span class="aero-lbl">Dashboard</span></button>
       <button type="button" class="ptc-nav-btn" data-aero="master" data-nav="master" title="Master Data File and cloud sync"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg><span class="aero-lbl">Master Data</span></button>
       <button type="button" class="ptc-nav-btn" data-aero="settings" data-nav="settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span class="aero-lbl">Settings</span></button>
     </nav>
@@ -3285,7 +3302,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
     <section id="lb" aria-label="Log Board">
       <div class="lb-head">
         <div>
-          <h2 id="lb-title">Logs</h2>
+          <h2 id="lb-title">Log Book</h2>
           <p id="lb-sub">Transaction history &amp; operational records</p>
         </div>
         <div class="lb-meta"><span class="lb-pill" id="lb-date"></span><button type="button" class="lb-pill" id="lb-pend" hidden title="Open refunds waiting for their adjustment"></button></div>
@@ -4293,7 +4310,9 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
     </div><!-- /ptc-body-grid -->
 
     <!-- ===== Professional Work Intelligence (PWI) — additive module ===== -->
-    <section id="aero-settings" aria-label="AeroOps Settings"><div class="aset-head"><div class="pwi-kicker" style="color:#0E9AA7;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase">Control Center</div><h2>AeroOps Settings</h2><p>Changes apply immediately and are remembered on this device.</p></div><div class="aset-card"><h3>Appearance</h3><div class="aset-row"><div><b>Sidebar</b><span>Full labels, or a slim icon-only sidebar.</span></div><div class="aset-seg" data-key="sidebar"><button type="button" data-v="expanded">Expanded</button><button type="button" data-v="compact">Compact</button></div></div><div class="aset-row"><div><b>Animations</b><span>Turn off transitions and motion across the app.</span></div><div class="aset-seg" data-key="anim"><button type="button" data-v="on">On</button><button type="button" data-v="off">Off</button></div></div></div><div class="aset-card"><h3>Activity Tracker</h3><div class="aset-row"><div><b>Open on</b><span>The tab shown when you open Activity Tracker.</span></div><div class="aset-seg" data-key="tab"><button type="button" data-v="entry">Quick Entry</button><button type="button" data-v="dash">Dashboard</button></div></div></div><div class="aset-card"><h3>Data &amp; Storage</h3><p class="aset-note">Activity records are stored in Firebase (collection <code>work_record_pwi</code>) and sync across your signed-in devices. Nothing here deletes records.</p><div class="aset-btns"><button type="button" data-sact="export-all">Export all activities (CSV)</button><button type="button" data-sact="backup">Backup (JSON)</button><button type="button" data-sact="restore">Restore from backup…</button></div></div><div class="aset-card"><h3>Reset</h3><div class="aset-row"><div><b>Reset settings</b><span>Restores the options on this page to their defaults. Your activity records are not touched.</span></div><button type="button" class="aset-danger" id="aset-reset">Reset settings</button></div></div></section>
+    <section id="aero-master" class="aero-page" aria-label="Master Data"><div class="aset-head"><div style="color:#0E9AA7;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase">Download Center</div><h2>Master Data</h2><p>Download any of your data as an Excel file. Pick a report below.</p></div><div class="aset-card aset-hero"><div><b>Complete Data Pack</b><span>Everything in one Excel file: all entries, sales, pending adjustments, dashboard summary and activities.</span></div><button type="button" class="aset-dl big" data-dl="all">Download everything</button></div><div class="aset-card"><h3>Individual reports</h3><div class="aset-row"><div><b>Work Record — All Entries</b><span>Ticketing, Reissue, Refund and Void, with a sheet for each · <em class="am-n" data-n="entries">…</em></span></div><button type="button" class="aset-dl" data-dl="entries">Download Excel</button></div><div class="aset-row"><div><b>Revenue Desk — Sales &amp; Payments</b><span>Every sale with price, profit, paid and due · <em class="am-n" data-n="sales">…</em></span></div><button type="button" class="aset-dl" data-dl="sales">Download Excel</button></div><div class="aset-row"><div><b>Pending Adjustments</b><span>Refunds still waiting for their adjustment · <em class="am-n" data-n="pending">…</em></span></div><button type="button" class="aset-dl" data-dl="pending">Download Excel</button></div><div class="aset-row"><div><b>Dashboard Summary</b><span>Totals by type and by month, revenue and activity numbers · <em class="am-n" data-n="summary">…</em></span></div><button type="button" class="aset-dl" data-dl="summary">Download Excel</button></div><div class="aset-row"><div><b>Activity Tracker — All Activities</b><span>Every logged task with source, client, status and effort · <em class="am-n" data-n="activities">…</em></span></div><button type="button" class="aset-dl" data-dl="activities">Download Excel</button></div></div><div class="aset-card"><h3>Auto-save file</h3><div class="aset-row"><div><b>Master Data File</b><span>Connect an Excel file so every new entry is saved to it automatically.</span></div><button type="button" class="aset-dl" id="am-connect">Set Master Data File</button></div></div></section>
+
+    <section id="aero-settings" class="aero-page" aria-label="AeroOps Settings"><div class="aset-head"><div class="pwi-kicker" style="color:#0E9AA7;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase">Control Center</div><h2>AeroOps Settings</h2><p>Changes apply immediately and are remembered on this device.</p></div><div class="aset-card"><h3>Appearance</h3><div class="aset-row"><div><b>Sidebar</b><span>Full labels, or a slim icon-only sidebar.</span></div><div class="aset-seg" data-key="sidebar"><button type="button" data-v="expanded">Expanded</button><button type="button" data-v="compact">Compact</button></div></div><div class="aset-row"><div><b>Animations</b><span>Turn off transitions and motion across the app.</span></div><div class="aset-seg" data-key="anim"><button type="button" data-v="on">On</button><button type="button" data-v="off">Off</button></div></div></div><div class="aset-card"><h3>Activity Tracker</h3><div class="aset-row"><div><b>Open on</b><span>The tab shown when you open Activity Tracker.</span></div><div class="aset-seg" data-key="tab"><button type="button" data-v="entry">Quick Entry</button><button type="button" data-v="dash">Dashboard</button></div></div></div><div class="aset-card"><h3>Data &amp; Storage</h3><p class="aset-note">Activity records are stored in Firebase (collection <code>work_record_pwi</code>) and sync across your signed-in devices. Nothing here deletes records.</p><div class="aset-btns"><button type="button" data-sact="export-all">Export all activities (CSV)</button><button type="button" data-sact="backup">Backup (JSON)</button><button type="button" data-sact="restore">Restore from backup…</button></div></div><div class="aset-card"><h3>Reset</h3><div class="aset-row"><div><b>Reset settings</b><span>Restores the options on this page to their defaults. Your activity records are not touched.</span></div><button type="button" class="aset-danger" id="aset-reset">Reset settings</button></div></div></section>
 
     <section id="pwi-root" aria-label="Professional Work Intelligence">
       <div class="pwi-head">
@@ -9510,7 +9529,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
   function lbHead(){
     $('lb-date').textContent = new Date().toLocaleDateString(undefined, { weekday:'short', day:'numeric', month:'short', year:'numeric' });
     const p = entries.filter(e => lbStatus(e)[0] === 'Pending Adj.').length, b = $('lb-pend'), pv = root.classList.contains('ptc-pending-view');
-    $('lb-title').textContent = pv ? 'Pending adjustments' : 'Logs';
+    $('lb-title').textContent = pv ? 'Pending adjustments' : 'Log Book';
     $('lb-sub').textContent = pv ? 'Refunds waiting for their adjustment' : 'Transaction history & operational records';
     b.classList.toggle('lb-all', pv);
     b.hidden = !pv && !p; b.textContent = pv ? 'Show all logs' : p + ' pending adj.';
@@ -9932,6 +9951,11 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
   })();
   ptcApplyPane();
 
+  /* read-only hook for the Master Data / Dashboard pages */
+  window.aeroData = { entries:function(){ return entries; }, sales:function(){ return salesEntries; },
+    pending:function(){ return entries.filter(function(e){ return lbStatus(e)[0] === 'Pending Adj.'; }); },
+    build:buildWorkbook, earn:entryEarnings };
+
 })();
 </script>
 <script>
@@ -10050,6 +10074,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
 
   /* ---------- Firebase (Firestore): the system of record for activities ---------- */
   var cloud = {db:null, unsub:null, uid:null, failed:false, on:false, loaded:false};
+  window.aeroPwiData = function(){ return cloud.loaded ? acts.slice() : null; };
   function canWrite(){
     if(cloud.on && cloud.loaded && cloud.db) return true;
     toast(cloud.failed ? 'Firebase is blocking the "' + COLL + '" collection — nothing was saved.' : 'Not connected to Firebase yet — nothing was saved. Try again in a moment.');
@@ -10818,30 +10843,89 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
 <script id="aero-sb-js">(function(){
 var root=document.getElementById('ptc-root'),$=function(i){return document.getElementById(i)};
 if(!root||!$('ptc-nav'))return;
-var KEY='aeroops_ui_prefs_v1',DEF={sidebar:'expanded',anim:'on',tab:'entry'},prefs=Object.assign({},DEF),masterOn=false,tabDone=false;
+var KEY='aeroops_ui_prefs_v1',DEF={sidebar:'expanded',anim:'on',tab:'entry'},prefs=Object.assign({},DEF),tabDone=false,dv=$('view-dashboard');
 try{Object.assign(prefs,JSON.parse(localStorage.getItem(KEY)||'{}'))}catch(e){}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(prefs))}catch(e){}}
+function say(m){var t=$('aero-toast');if(!t){t=document.createElement('div');t.id='aero-toast';document.body.appendChild(t)}t.textContent=m;t.style.display='block';clearTimeout(say.h);say.h=setTimeout(function(){t.style.display='none'},3500)}
 function applyPrefs(){root.classList.toggle('aero-compact',prefs.sidebar==='compact');root.classList.toggle('aero-noanim',prefs.anim==='off');
  document.querySelectorAll('#aero-settings .aset-seg').forEach(function(g){g.querySelectorAll('button').forEach(function(b){b.classList.toggle('on',b.dataset.v===prefs[g.dataset.key])})});
  document.querySelectorAll('#ptc-nav .ptc-nav-btn').forEach(function(b){b.title=b.title||b.textContent.trim()})}
 var btns=[].slice.call(document.querySelectorAll('#ptc-nav .ptc-nav-btn'));
 function cur(){var c=root.classList,p=root.getAttribute('data-pane');
- if(c.contains('set-active'))return'settings'; if(masterOn)return'master'; if(c.contains('pwi-active'))return'pwi'; if(c.contains('ptc-pending-view'))return'pending';
- if(p==='entrylog'||p==='saleslog'||p==='systemlog')return'logs'; if(p==='reports')return'reports'; if(p==='salesdesk')return'sales'; return'home'}
+ if(c.contains('set-active'))return'settings'; if(c.contains('mas-active'))return'master'; if(c.contains('pwi-active'))return'pwi';
+ if(dv&&dv.classList.contains('active'))return'reports';
+ if(p==='entrylog'||p==='saleslog'||p==='systemlog'||p==='reports')return'logs'; if(p==='salesdesk')return'sales'; return'home'}
 function sync(){var k=cur();btns.forEach(function(b){b.classList.toggle('active',b.dataset.aero===k)})}
-if(window.MutationObserver){var mo=new MutationObserver(sync);mo.observe(root,{attributes:true,attributeFilter:['class','data-pane']});
- var dv=$('view-dashboard');if(dv)new MutationObserver(function(){if(dv.classList.contains('active')){root.classList.remove('set-active');masterOn=false}sync()}).observe(dv,{attributes:true,attributeFilter:['class']})}
+function closePages(){root.classList.remove('set-active','mas-active')}
+/* ---- data helpers ---- */
+function D(){return window.aeroData}
+function num(v){return Number(v)||0}
+function fmt(n){return Math.round(n).toLocaleString()}
+function stamp(){return new Date().toISOString().slice(0,10)}
+function acts(){return window.aeroPwiData?window.aeroPwiData():null}
+function actRows(){var a=acts();if(!a)return null;var r=[['DATE','TIME','SOURCE','COMPANY / CLIENT','WORK / QUERY','CASE','STATUS','EFFORT','NOTE']];
+ a.slice().sort(function(x,y){return((x.date||'')+(x.time||'')).localeCompare((y.date||'')+(y.time||''))}).forEach(function(x){r.push([x.date,x.time,x.source,x.company,x.category,x.kind==='repeat'?'Repeat / Existing':(x.kind==='new'?'New Task':''),x.status,x.effort||'',x.note||''])});return r}
+var SC=[['DATE','date'],['CUSTOMER NAME','pname'],['ADULT','paxAdult'],['CHILD','paxChild'],['INFANT','paxInfant'],['CONTACT','phone'],['RESPONSIBLE PERSON','responsible'],['TICKET NUMBER','tkt'],['GDS PNR','pnrGds'],['AIRLINE PNR','pnrAirline'],['SECTOR','sector'],['AIRLINE','airline'],['SELLING PRICE','price'],['NET COST','cost'],['PROFIT','profit'],['PAYMENT METHOD','method'],['AMOUNT PAID','paid'],['AMOUNT DUE','due'],['STATUS','status'],['TICKET STATUS','ticketStatus'],['DUE DATE','dueDate'],['NOTE','note']];
+function salesRows(){var r=[SC.map(function(c){return c[0]})];D().sales().forEach(function(x){r.push(SC.map(function(c){var v=x[c[1]];return v==null?'':v}))});return r}
+function summaryRows(){var E=D().entries(),S=D().sales(),r=[['WORK RECORD — BY TYPE'],['Type','Entries','Value','Agency Earnings']];
+ ['Ticketing','Reissue','Refund','Void'].forEach(function(t){var l=E.filter(function(e){return e.txn===t}),v=0,g=0;l.forEach(function(e){if(t==='Ticketing')v+=num(e.totalFare);if(t==='Reissue')v+=num(e.totalCollection);if(t==='Refund')v+=num(e.refundCharge);g+=num(D().earn(e))});r.push([t,l.length,v,g])});
+ r.push([],['WORK RECORD — BY MONTH'],['Month','Entries','Agency Earnings']);var m={};E.forEach(function(e){var k=(e.date||'').slice(0,7)||'Unknown';m[k]=m[k]||[0,0];m[k][0]++;m[k][1]+=num(D().earn(e))});
+ Object.keys(m).sort().forEach(function(k){r.push([k,m[k][0],m[k][1]])});
+ var t=[0,0,0,0,0];S.forEach(function(x){t[0]+=num(x.price);t[1]+=num(x.cost);t[2]+=num(x.profit);t[3]+=num(x.paid);t[4]+=num(x.due)});
+ r.push([],['REVENUE DESK'],['Sales','Selling Price','Net Cost','Profit','Paid','Due'],[S.length].concat(t));
+ var a=acts();if(a){var c=function(s){return a.filter(function(x){return x.status===s}).length};r.push([],['ACTIVITY TRACKER'],['Total','Solved','Resolved','Pending','Follow-up'],[a.length,c('Solved'),c('Resolved'),c('Pending'),c('Follow-up')])}
+ return r}
+function aoa(rows,name){var ws=XLSX.utils.aoa_to_sheet(rows);ws['!cols']=rows[0]?rows[0].map(function(){return{wch:18}}):[];return ws}
+function download(kind){
+ if(typeof XLSX==='undefined'){say('The Excel tool did not load. Check your internet and try again.');return}
+ if(!D()){say('Still loading — please try again in a moment.');return}
+ var E=D().entries(),wb,name;
+ try{
+ if(kind==='entries'){if(!E.length)return say('No entries to download yet.');wb=D().build(E);name='Work_Record_All_Entries'}
+ else if(kind==='pending'){var P=D().pending();if(!P.length)return say('No pending adjustments right now.');wb=D().build(P);name='Pending_Adjustments'}
+ else if(kind==='sales'){if(!D().sales().length)return say('No sales to download yet.');wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,aoa(salesRows()),'Sales');name='Revenue_Desk_Sales'}
+ else if(kind==='summary'){wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,aoa(summaryRows()),'Dashboard Summary');name='Dashboard_Summary'}
+ else if(kind==='activities'){var ar=actRows();if(!ar)return say('Activities are still loading — sign in and try again.');if(ar.length<2)return say('No activities logged yet.');wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,aoa(ar),'Activities');name='Activity_Tracker_All_Activities'}
+ else if(kind==='all'){wb=E.length?D().build(E):XLSX.utils.book_new();
+  if(D().sales().length)XLSX.utils.book_append_sheet(wb,aoa(salesRows()),'Sales');
+  var PP=D().pending();if(PP.length)XLSX.utils.book_append_sheet(wb,D().build(PP).Sheets['All Entries'],'Pending Adjustments');
+  XLSX.utils.book_append_sheet(wb,aoa(summaryRows()),'Dashboard Summary');
+  var AR=actRows();if(AR&&AR.length>1)XLSX.utils.book_append_sheet(wb,aoa(AR),'Activities');name='Complete_Data_Pack'}
+ else return;
+ XLSX.writeFile(wb,'AeroOps_'+name+'_'+stamp()+'.xlsx');say('Excel file downloaded.');
+ }catch(err){console.error(err);say('Could not create the Excel file. Please try again.')}}
+function renderMaster(){if(!D())return;var a=acts(),m={entries:D().entries().length,sales:D().sales().length,pending:D().pending().length,summary:'ready',activities:a?a.length:'loading…'};
+ document.querySelectorAll('#aero-master .am-n').forEach(function(e){var v=m[e.dataset.n];e.textContent=typeof v==='number'?v+(v===1?' record':' records'):v})}
+/* ---- Master Dashboard (top of the Dashboard page) ---- */
+var top=document.createElement('div');top.id='aero-dash-top';
+if(dv){var kg=$('ptc-kpi-grid');dv.insertBefore(top,kg);var bk=$('btn-dashboard-back');if(bk)bk.style.display='none'}
+function tile(l,v,c){return'<div style="--c:'+c+'"><span>'+l+'</span><b>'+v+'</b></div>'}
+function renderDash(){if(!D()||!dv||!dv.classList.contains('active'))return;
+ var E=D().entries(),S=D().sales(),mk=new Date().toISOString().slice(0,7),by=function(t){return E.filter(function(e){return e.txn===t}).length};
+ var sp=0,sc=0,sd=0;S.forEach(function(x){sp+=num(x.price);sc+=num(x.profit);sd+=num(x.due)});
+ var a=acts(),ah='<div class="adash-n">Sign in to see your activity summary.</div>';
+ if(a){var c=function(s){return a.filter(function(x){return x.status===s}).length};ah='<div class="adash-t">'+tile('Total',a.length,'#0B2545')+tile('Solved',c('Solved'),'#15803D')+tile('Resolved',c('Resolved'),'#0E9AA7')+tile('Pending',c('Pending'),'#B7791F')+tile('Follow-up',c('Follow-up'),'#2563EB')+'</div>'}
+ top.innerHTML='<div class="adash-h"><div><h2>Master Dashboard</h2><p>Everything at a glance — Work Record, Revenue Desk and Activity Tracker.</p></div><button type="button" class="adash-dl" data-dl="summary">Download summary (Excel)</button></div>'
+ +'<div class="adash-g"><h4>Work Record</h4><div class="adash-t">'+tile('All entries',E.length,'#0B2545')+tile('This month',E.filter(function(e){return(e.date||'').slice(0,7)===mk}).length,'#2563EB')+tile('Ticketing',by('Ticketing'),'#15803D')+tile('Reissue',by('Reissue'),'#0E9AA7')+tile('Refund',by('Refund'),'#B7791F')+tile('Void',by('Void'),'#B42318')+tile('Pending adjustments',D().pending().length,'#B42318')+'</div></div>'
+ +'<div class="adash-g"><h4>Revenue Desk</h4><div class="adash-t">'+tile('Sales',S.length,'#0B2545')+tile('Selling total',fmt(sp),'#2563EB')+tile('Profit',fmt(sc),'#15803D')+tile('Amount due',fmt(sd),'#B42318')+'</div></div>'
+ +'<div class="adash-g"><h4>Activity Tracker</h4>'+ah+'</div>'}
+if(window.MutationObserver){new MutationObserver(sync).observe(root,{attributes:true,attributeFilter:['class','data-pane']});
+ if(dv)new MutationObserver(function(){if(dv.classList.contains('active')){closePages();renderDash()}sync()}).observe(dv,{attributes:true,attributeFilter:['class']});
+ ['view-entry','view-sales'].forEach(function(id){var el=$(id);if(el)new MutationObserver(function(){closePages();sync()}).observe(el,{attributes:true,attributeFilter:['class']})})}
+setInterval(function(){if(dv&&dv.classList.contains('active'))renderDash();if(root.classList.contains('mas-active'))renderMaster()},3000);
 btns.forEach(function(b){b.addEventListener('click',function(){var k=b.dataset.aero;
- if(k!=='settings')root.classList.remove('set-active'); masterOn=(k==='master');
- if(k==='settings')root.classList.add('set-active');
- if(k==='reports'&&window.ptcSetPane)window.ptcSetPane('reports');
- if(k==='master'){try{window.scrollTo({top:0})}catch(e){} var s=$('ptc-filebar-summary');if(s&&s.getAttribute('aria-expanded')!=='true')s.click()}
+ if(k==='settings'){closePages();root.classList.add('set-active')}
+ else if(k==='master'){closePages();root.classList.add('mas-active');renderMaster();try{window.scrollTo({top:0})}catch(e){}}
+ else closePages();
+ if(k==='reports'){var o=$('btn-open-dashboard');if(o)o.click();renderDash()}
  if(k==='pwi'&&prefs.tab==='dash'&&!tabDone){tabDone=true;setTimeout(function(){var t=document.querySelector('#pwi-root [data-act="tab"][data-v="dash"]');if(t)t.click()},0)}
  setTimeout(sync,0)},true)});
-var o=window.ptcSetPane;if(typeof o==='function')window.ptcSetPane=function(){root.classList.remove('set-active');masterOn=false;return o.apply(this,arguments)};
+var o=window.ptcSetPane;if(typeof o==='function')window.ptcSetPane=function(){closePages();return o.apply(this,arguments)};
+document.addEventListener('click',function(e){var d=e.target.closest&&e.target.closest('[data-dl]');if(d)download(d.dataset.dl)});
+var cn=$('am-connect');if(cn)cn.addEventListener('click',function(){var c=$('btn-connect-file');if(c)c.click()});
 document.querySelectorAll('#aero-settings .aset-seg button').forEach(function(b){b.addEventListener('click',function(){prefs[b.parentNode.dataset.key]=b.dataset.v;save();applyPrefs()})});
 document.querySelectorAll('#aero-settings [data-sact]').forEach(function(b){b.addEventListener('click',function(){var t=document.querySelector('#pwi-data [data-act="'+b.dataset.sact+'"]');if(t)t.click()})});
-$('aset-reset').addEventListener('click',function(){prefs=Object.assign({},DEF);save();applyPrefs()});
+$('aset-reset').addEventListener('click',function(){prefs=Object.assign({},DEF);save();applyPrefs();say('Settings reset.')});
 applyPrefs();sync();
 })();</script>
 </body></html>
