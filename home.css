@@ -57,12 +57,7 @@
 @media(max-width:600px){.home .logo [data-profile-name]{min-width:0;flex:0 1 auto}.home .nav>*{flex-shrink:0}.home .nav>.logo{flex-shrink:1}}
 @media(max-width:380px){.home .logo-div{display:none}.home .logo [data-profile-name]{font-size:11px}.home .header .btn{padding:8px 9px;font-size:11px}.home .nav{gap:6px}}
 @media(max-width:340px){.home .logo [data-profile-name]{font-size:9.5px}.home .logo-mark{height:32px;width:auto}}
-/* Hero banner: airport photo background + background-free portrait */
-.h-hero{background:linear-gradient(90deg,rgba(255,255,255,.6) 0%,rgba(255,255,255,.2) 48%,rgba(255,255,255,0) 70%),url("./hero-bg.webp") center/cover no-repeat;min-height:500px;display:flex}
-.h-hero .h-grid{width:min(1180px,calc(100% - 36px));margin:auto;padding:56px 0 0;align-items:end}
-.h-hero .h-grid>div:first-child{align-self:center;padding-bottom:56px}
-.h-visual{width:auto;align-self:end;justify-self:end}
-.h-frame{background:none;border:0;box-shadow:none;padding:0;border-radius:0;display:block}
-.h-frame:before{display:none}
-.h-frame img{width:auto;height:min(470px,62vw);aspect-ratio:auto;object-fit:contain;object-position:bottom;border-radius:0;max-width:100%;filter:drop-shadow(0 10px 24px rgba(13,42,79,.18))}
-@media(max-width:900px){.h-hero{min-height:0;background:linear-gradient(180deg,rgba(255,255,255,.62) 0%,rgba(255,255,255,.25) 60%,rgba(255,255,255,0) 100%),url("./hero-bg.webp") 65% center/cover no-repeat}.h-hero .h-grid{padding:36px 0 0}.h-hero .h-grid>div:first-child{padding-bottom:8px}.h-visual{justify-self:center;margin-top:0}.h-frame img{height:min(380px,92vw)}}
+/* Hero banner: airport photo background, framed portrait */
+.h-hero{background:linear-gradient(90deg,rgba(255,255,255,.6) 0%,rgba(255,255,255,.2) 48%,rgba(255,255,255,0) 70%),url("./hero-bg.webp") center/cover no-repeat}
+.h-hero .h-grid{padding:56px 0 64px}
+@media(max-width:900px){.h-hero{background:linear-gradient(180deg,rgba(255,255,255,.62) 0%,rgba(255,255,255,.25) 60%,rgba(255,255,255,0) 100%),url("./hero-bg.webp") 65% center/cover no-repeat}.h-hero .h-grid{padding:40px 0 56px}}
