@@ -48,3 +48,4 @@
 .h-icon.li:hover,.h-icon.li:focus-visible{background:#0a66c2}
 .h-icon.wa:hover,.h-icon.wa:focus-visible{background:#25d366}
 .h-icon.em:hover,.h-icon.em:focus-visible{background:#ea4335}
+@media(max-width:600px){.home .logo{min-width:0;flex:1 1 auto}.home .logo [data-profile-name]{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11.5px}.home .logo-mark{width:30px;height:30px;flex:none;font-size:13px}.home .nav-wrap .container,.home .nav{min-width:0}}
