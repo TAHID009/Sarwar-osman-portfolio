@@ -85,3 +85,29 @@
 .h-focus ul{grid-template-columns:repeat(4,minmax(0,1fr))}
 @media(max-width:1100px){.h-focus ul{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:760px){.h-focus ul{grid-template-columns:repeat(2,minmax(0,1fr))}}
+/* Part 3: Professional Journey */
+.h-journey{background:linear-gradient(180deg,#f6f9fd,#fff);padding:72px 0 76px;border-top:1px solid #e8eef6}
+.h-journey .h-kicker{margin:0 0 8px}
+.h-h2{font-family:"Source Serif 4",Georgia,serif;font-size:clamp(26px,3vw,34px);line-height:1.15;color:var(--navy);margin:0 0 36px;letter-spacing:-.01em}
+.h-journey-grid{display:grid;grid-template-columns:1fr 270px;gap:48px;align-items:start}
+.h-timeline{list-style:none;margin:0;padding:0}
+.h-job{position:relative;display:grid;grid-template-columns:150px 22px minmax(0,1fr) minmax(0,1.25fr);gap:0 22px;padding:0 0 34px}
+.h-job:before{content:"";position:absolute;left:182px;top:16px;bottom:-12px;width:1px;background:#cfdcec}
+.h-job:last-child:before{display:none}
+.h-job time{font-size:12.5px;color:#5b6b82;padding-top:2px}
+.h-dot{position:relative;z-index:1;width:10px;height:10px;margin:5px 0 0 6px;border-radius:50%;background:var(--blue);box-shadow:0 0 0 4px #fff}
+.h-role-box{display:flex;flex-direction:column;gap:3px}
+.h-role-box strong{font-size:14.5px;color:var(--navy)}
+.h-role-box span{font-size:13px;color:#4a5b73}
+.h-role-box em{font-style:normal;font-size:12.5px;color:#7a8aa0}
+.h-job ul{list-style:disc;margin:0;padding:0 0 0 16px;font-size:13px;line-height:1.6;color:#4a5b73}
+.h-job ul li{margin-bottom:6px}
+.h-job ul li::marker{color:var(--blue)}
+.h-years{display:flex;flex-direction:column;gap:6px;padding:30px 26px;background:#f1f6fc;border:1px solid #e1eaf5;border-radius:14px;position:sticky;top:90px}
+.h-years-label{font-size:13px;line-height:1.5;color:#4a5b73}
+.h-years strong{font-family:"Source Serif 4",Georgia,serif;font-size:64px;line-height:1.1;color:var(--navy)}
+.h-years i{display:block;width:40px;height:2px;background:var(--blue);margin:6px 0 14px}
+.h-years a{font-size:12.5px;font-weight:600;color:var(--blue)}
+.h-years a:hover{text-decoration:underline}
+@media(max-width:1000px){.h-journey-grid{grid-template-columns:1fr}.h-years{position:static;order:-1;flex-direction:row;align-items:center;gap:18px;flex-wrap:wrap}.h-years i{display:none}.h-years strong{font-size:48px}}
+@media(max-width:760px){.h-journey{padding:48px 0 52px}.h-job{grid-template-columns:22px minmax(0,1fr);gap:0 14px;padding-bottom:28px}.h-job:before{left:5px}.h-job time{grid-column:2;grid-row:1}.h-dot{grid-column:1;grid-row:1;margin:3px 0 0 0}.h-role-box{grid-column:2;grid-row:2;margin:4px 0 8px}.h-job ul{grid-column:2;grid-row:3}}
