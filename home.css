@@ -61,3 +61,27 @@
 .h-hero{background:linear-gradient(90deg,rgba(255,255,255,.6) 0%,rgba(255,255,255,.2) 48%,rgba(255,255,255,0) 70%),url("./hero-bg.webp") center/cover no-repeat}
 .h-hero .h-grid{padding:56px 0 64px}
 @media(max-width:900px){.h-hero{background:linear-gradient(180deg,rgba(255,255,255,.62) 0%,rgba(255,255,255,.25) 60%,rgba(255,255,255,0) 100%),url("./hero-bg.webp") 65% center/cover no-repeat}.h-hero .h-grid{padding:40px 0 56px}}
+/* Part 2: About + Professional Focus */
+.h-about{background:#fff;padding:76px 0 64px}
+.h-about-grid{display:grid;grid-template-columns:1.05fr 1.5fr .8fr;gap:44px;align-items:start}
+.h-kicker{margin:0 0 10px;font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--blue)}
+.h-about h2{font-family:"Source Serif 4",Georgia,serif;font-size:clamp(26px,3vw,34px);line-height:1.15;color:var(--navy);margin:0 0 16px;letter-spacing:-.01em}
+.h-about-copy p{font-size:14.5px;line-height:1.75;color:#4a5b73;margin:0 0 12px}
+.h-more{margin-top:10px;background:#fff;color:var(--navy);border:1px solid #1d5aa8;border-radius:8px;padding:10px 16px;font-size:12px;box-shadow:none}
+.h-more svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.h-focus{border-left:1px solid #e3ebf4;padding-left:44px}
+.h-focus h3{margin:0 0 16px;font-size:15px;color:var(--navy)}
+.h-focus ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.h-focus li{display:flex;flex-direction:column;gap:12px;min-height:96px;padding:14px;background:#f5f8fc;border:1px solid #e3ebf4;border-radius:10px;font-size:12px;font-weight:600;color:var(--navy);line-height:1.3;transition:transform .2s,box-shadow .2s,border-color .2s}
+.h-focus li:hover{transform:translateY(-2px);border-color:#c5d6ea;box-shadow:0 8px 20px rgba(13,42,79,.08)}
+.h-ico svg{width:22px;height:22px;fill:none;stroke:var(--blue);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.h-quote{margin:0;padding:26px 24px 22px;background:#f5f8fc;border:1px solid #e3ebf4;border-radius:14px}
+.h-qm{display:block;font-family:"Source Serif 4",Georgia,serif;font-size:46px;line-height:.7;color:var(--blue);margin-bottom:10px}
+.h-quote p{margin:0;font-family:"Source Serif 4",Georgia,serif;font-size:17px;line-height:1.55;color:var(--navy)}
+.h-quote i{display:block;width:44px;height:2px;background:var(--blue);margin-top:18px;opacity:.7}
+@media(max-width:1100px){.h-about-grid{grid-template-columns:1fr 1.3fr}.h-quote{grid-column:1/-1}.h-focus ul{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:760px){.h-about{padding:48px 0 40px}.h-about-grid{grid-template-columns:1fr;gap:28px}.h-focus{border-left:0;padding-left:0}.h-focus ul{grid-template-columns:repeat(2,1fr)}}
+.h-about-copy .h-kicker{font-size:11px;line-height:1.2;color:var(--blue);margin:0 0 10px}
+.h-focus ul{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media(max-width:1100px){.h-focus ul{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:760px){.h-focus ul{grid-template-columns:repeat(2,minmax(0,1fr))}}
