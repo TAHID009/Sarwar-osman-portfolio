@@ -194,3 +194,5 @@
 .x-tags li{font-size:12px;font-weight:600;color:var(--navy);background:#fff;border:1px solid #d5e2f0;border-radius:99px;padding:6px 13px}
 @media(max-width:1000px){.x-grid{grid-template-columns:1fr}.x-list{grid-template-columns:1fr}}
 @media(max-width:600px){.x-rolecard{padding:24px 20px}.x-section{padding-top:40px}}
+.x-current{margin:10px 0 0}.x-current span{display:inline-block;margin-left:10px;padding-left:12px;border-left:1px solid #cfdcec;color:#6b7c93;font-weight:600}
+@media(max-width:600px){.x-current span{display:block;margin:4px 0 0;padding-left:0;border-left:0}}
