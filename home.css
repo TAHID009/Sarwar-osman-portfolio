@@ -197,3 +197,10 @@
 .x-current{margin:10px 0 0}.x-current span{display:inline-block;margin-left:10px;padding-left:12px;border-left:1px solid #cfdcec;color:#6b7c93;font-weight:600}
 @media(max-width:600px){.x-current span{display:block;margin:4px 0 0;padding-left:0;border-left:0}}
 .x-rolecard .x-current{margin:10px 0 18px}
+/* Experience: every company in the same detail card */
+.x-role{padding:56px 0 72px}
+.x-rolecard+.x-rolecard{margin-top:26px}
+.x-groups{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 32px;margin-top:4px}
+.x-groups h4{margin:0 0 12px;font-size:13.5px;color:var(--navy)}
+.x-list.x-one{grid-template-columns:1fr;gap:10px}
+@media(max-width:1000px){.x-groups{grid-template-columns:1fr;gap:22px}}
