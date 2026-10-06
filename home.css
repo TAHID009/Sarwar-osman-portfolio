@@ -111,3 +111,19 @@
 .h-years a:hover{text-decoration:underline}
 @media(max-width:1000px){.h-journey-grid{grid-template-columns:1fr}.h-years{position:static;order:-1;flex-direction:row;align-items:center;gap:18px;flex-wrap:wrap}.h-years i{display:none}.h-years strong{font-size:48px}}
 @media(max-width:760px){.h-journey{padding:48px 0 52px}.h-job{grid-template-columns:22px minmax(0,1fr);gap:0 14px;padding-bottom:28px}.h-job:before{left:5px}.h-job time{grid-column:2;grid-row:1}.h-dot{grid-column:1;grid-row:1;margin:3px 0 0 0}.h-role-box{grid-column:2;grid-row:2;margin:4px 0 8px}.h-job ul{grid-column:2;grid-row:3}}
+/* Part 4: Skills & toolkit */
+.h-skills{background:#fff;padding:68px 0 72px}
+.h-skills .h-kicker{margin:0 0 8px}
+.h-skill-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;margin-top:28px}
+.h-skill{background:#fff;border:1px solid #e3ebf4;border-radius:12px;padding:20px 20px 22px;transition:transform .2s,box-shadow .2s,border-color .2s}
+.h-skill:hover{transform:translateY(-3px);border-color:#c5d6ea;box-shadow:0 12px 28px rgba(13,42,79,.09)}
+.h-skill header{display:flex;align-items:center;gap:10px;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid #edf2f8}
+.h-skill .h-ico{display:grid;place-items:center;width:34px;height:34px;border-radius:9px;background:#eaf2fb;flex:none}
+.h-skill .h-ico svg{width:18px;height:18px;fill:none;stroke:var(--blue);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.h-num{font-size:11px;font-weight:700;letter-spacing:.1em;color:#8aa0bc}
+.h-skill h3{margin:0;font-size:14px;line-height:1.25;color:var(--navy)}
+.h-skill ul{list-style:none;margin:0;padding:0;display:grid;gap:9px}
+.h-skill li{position:relative;padding-left:16px;font-size:13px;color:#4a5b73;line-height:1.4}
+.h-skill li:before{content:"";position:absolute;left:2px;top:.55em;width:5px;height:5px;border-radius:50%;background:var(--blue);opacity:.75}
+@media(max-width:1100px){.h-skill-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.h-skills{padding:48px 0 52px}.h-skill-grid{grid-template-columns:1fr;gap:14px}}
