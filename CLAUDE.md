@@ -5,7 +5,7 @@ Static portfolio for Md Sarwar Osman Sagar (Air Ticketing & Reservation Professi
 ## Structure (flat — everything is in the repo root)
 - Pages: `index.html`, `about.html`, `experience.html`, `education.html`, `skills.html`, `activities.html`, `contact.html`
 - `aeroops.html` — AeroOps workspace (separate Firebase app; do not edit as part of portfolio changes)
-- `style.css` (design), `app.js` (rendering/navigation), `profile.js` (editable profile data), `public-stats.js`
+- `home.css` (new homepage design plus the shared header and footer used on every portfolio page; keep the header/footer markup identical across pages), `style.css` (base design), `app.js` (rendering/navigation), `profile.js` (editable profile data), `public-stats.js`
 - Images: `profile-portrait.jpg`, `workspace.jpg`, `aeroops-preview.webp`, `og-image.png`, `favicon-*.png`, `favicon.ico`, `apple-touch-icon.png`
 - `Md-Sarwar-Osman-Sagar-CV.pdf`, `robots.txt`, `sitemap.xml`, `vercel.json`
 
