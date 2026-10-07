@@ -239,3 +239,11 @@
 .h-skill-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
 .h-skill-2col ul{grid-template-columns:1fr;}
 @media(min-width:1101px){.h-skill-grid{grid-template-columns:1fr 1fr 1.25fr 1.25fr}}
+
+/* tighter, connected spacing between home sections (desktop) */
+@media(min-width:801px){
+.h-journey{padding-bottom:44px}
+.h-skills{padding:44px 0 52px;border-top:1px solid #e8eef6}
+.h-snap{padding:48px 0 44px}
+.h-edu{padding:48px 0 56px}
+}
