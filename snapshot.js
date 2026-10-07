@@ -35,21 +35,7 @@ function show(d,cur){
  ul.appendChild(card('Average per active day',num(d.avgPerActiveDay)));
  ul.appendChild(card('Open items',String(d.open)));
  setText('snap-cur',cur&&cur.period!==d.period?'Current month in progress: '+cur.total+' activities so far.':'');
- fillModal(d);
 }
-function fillModal(d){
- var tb=$('snap-cat');tb.textContent='';
- Object.keys(d.categories).sort(function(a,b){return d.categories[b]-d.categories[a]}).forEach(function(k){var tr=document.createElement('tr'),a=document.createElement('th'),b=document.createElement('td');a.scope='row';a.textContent=k;b.textContent=String(d.categories[k]);tr.appendChild(a);tr.appendChild(b);tb.appendChild(tr)});
- function line(id,obj,pre){var e=$(id);if(!e)return;var k=Object.keys(obj||{});e.hidden=!k.length;e.textContent=k.length?pre+k.map(function(x){return x+' '+obj[x]}).join(', '):''}
- line('snap-eff',d.effort,'Effort rating: ');line('snap-tx',d.transactions,'Ticketing records: ');
- setText('snap-mt-sub',monthName(d.period)+(d.inProgress?' (in progress)':'')+' · Self-recorded · Updated '+dateName(d.updated));
-}
-var lastFocus=null,dlg=$('snap-modal');
-function onKey(e){if(e.key==='Escape'){closeM();return}
- if(e.key==='Tab'){var f=dlg.querySelectorAll('button');if(!f.length)return;var a=f[0],z=f[f.length-1];if(e.shiftKey&&document.activeElement===a){e.preventDefault();z.focus()}else if(!e.shiftKey&&document.activeElement===z){e.preventDefault();a.focus()}}}
-function openM(){lastFocus=document.activeElement;dlg.hidden=false;document.body.style.overflow='hidden';document.addEventListener('keydown',onKey);$('snap-close').focus()}
-function closeM(){dlg.hidden=true;document.body.style.overflow='';document.removeEventListener('keydown',onKey);if(lastFocus)lastFocus.focus()}
-$('snap-open').addEventListener('click',openM);$('snap-close').addEventListener('click',closeM);dlg.addEventListener('click',function(e){if(e.target===dlg)closeM()});
 var cur=ymd(new Date()).slice(0,7),last=shift(cur,-1);
 if(DEMO){show(demoDoc(last),null);return}
 Promise.all([fetchDoc(last),fetchDoc(cur)]).then(function(r){var a=ok(r[0],last)?r[0]:null,b=ok(r[1],cur)?r[1]:null;var main=a||b;if(!main)return;show(main,b)});
