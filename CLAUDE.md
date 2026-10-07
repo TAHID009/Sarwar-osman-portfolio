@@ -17,3 +17,9 @@ Static portfolio for Md Sarwar Osman Sagar (Air Ticketing & Reservation Professi
 5. Preserve responsive/mobile behavior.
 6. After every change, verify all HTML pages, CSS, JS, images and CV links resolve.
 7. Report which files were changed.
+
+## Private page and snapshot rules
+- `aeroops.html` is the private work record. Do not change its sign-in logic. Changes there must be additive and tested.
+- Never publish names, phone numbers, PNRs, ticket numbers, company names, notes, amounts, commission or profit. Only allowlisted counters go to `publicSummary/YYYY-MM`.
+- Publishing is manual (preview, then publish). Do not add automatic publishing.
+- Never commit keys, tokens or data exports.

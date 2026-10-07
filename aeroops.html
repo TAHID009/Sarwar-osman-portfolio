@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
+<meta name="robots" content="noindex, nofollow">
 <script>
 /* AeroOps UI: v2 (new professional design) is the only design. The old v1/v2 switch was removed, so a design
    saved in the browser, ?ui=v1 in the address, or Ctrl+Alt+Shift+U can no longer change it.
@@ -28,8 +29,8 @@ document.documentElement.setAttribute("data-ui","v2");window.__aeroUI="v2";
 <link rel="icon" type="image/png" sizes="192x192" href="./favicon-192.png">
 <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32.png">
 <script src="./profile.js"></script><script defer src="./app.js"></script>
-<script defer src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script defer src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<script defer src="./vendor/xlsx.full.min.js"></script>
+<script defer src="./vendor/chart.umd.js"></script>
 <style>
 
   /* This page is large (big tables/dashboard) — the site-wide crossfade
@@ -5629,7 +5630,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
   // sync activity doesn't spam writes.
   const PUBLIC_STATS_COLLECTION = 'public_stats';
   let publicStatsTimer = null;
-  function pushPublicStats(){
+  function pushPublicStats(){ return; /* automatic public publishing removed: use Settings > Public snapshot (manual preview, then publish) */ 
     if(!cloudDb) return;
     clearTimeout(publicStatsTimer);
     publicStatsTimer = setTimeout(() => {
@@ -5837,7 +5838,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
 
   function accessCodeIssues(code){
     const issues = [];
-    if(code.length < 6) issues.push('at least 6 characters');
+    if(code.length < 12) issues.push('at least 12 characters');
     if(!/[a-zA-Z]/.test(code)) issues.push('at least one letter');
     if(!/[0-9]/.test(code)) issues.push('at least one number');
     if(!/[^a-zA-Z0-9]/.test(code)) issues.push('at least one special character');
@@ -5958,7 +5959,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
     $('reg-error').textContent = '';
     if(!email){ $('reg-error').textContent = 'Enter your email.'; return; }
     if(email.toLowerCase() !== ALLOWED_REGISTER_EMAIL.toLowerCase()){
-      $('reg-error').textContent = 'This system is private — registration is restricted to an approved email.';
+      $('reg-error').textContent = 'Registration is not available.';
       return;
     }
     const actionCodeSettings = {
@@ -6061,12 +6062,12 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
 
   function friendlyAuthError(err){
     const code = err && err.code || '';
-    if(code === 'auth/wrong-password' || code === 'auth/invalid-credential') return 'Incorrect Access Code.';
-    if(code === 'auth/user-not-found') return 'No account with that email — register first.';
-    if(code === 'auth/email-already-in-use') return 'That email is already registered — use Sign In instead.';
+    if(code === 'auth/wrong-password' || code === 'auth/invalid-credential') return 'Email or Access Code is incorrect.';
+    if(code === 'auth/user-not-found') return 'Email or Access Code is incorrect.';
+    if(code === 'auth/email-already-in-use') return 'That request could not be completed. Try signing in instead.';
     if(code === 'auth/invalid-email') return 'That email address doesn\'t look valid.';
     if(code === 'auth/too-many-requests') return 'Too many attempts — wait a bit and try again.';
-    if(code === 'auth/weak-password') return 'Access Code must be at least 6 characters.';
+    if(code === 'auth/weak-password') return 'That Access Code is too weak. Use at least 12 characters.';
     if(code === 'auth/expired-action-code') return 'This reset link has expired — request a new one.';
     if(code === 'auth/invalid-action-code') return 'This reset link is invalid or has already been used — request a new one.';
     if(code === 'auth/operation-not-allowed') return 'Email link sign-in isn\'t enabled yet — turn it on in Firebase Console → Authentication → Sign-in method → Email Link.';
@@ -6841,7 +6842,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
         ? `<span class="ptc-tag ${e.refundStatus === 'REFUNDED' ? 'ptc-status-tag-refunded' : 'ptc-status-tag-pending'}">${e.refundStatus}</span>`
         : '';
       tr.innerHTML = `
-        <td>${e.date || ''}</td>
+        <td>${esc(e.date)}</td>
         <td class="mono">${esc(e.pnrGds)}</td>
         <td class="mono">${esc(e.pnrAirline)}</td>
         <td>${formatPassengerNamesHTML(e.pname)}</td>
@@ -7824,7 +7825,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
           <div class="ptc-detail-card-head">
             <div>
               <div class="ptc-detail-name">${formatPassengerNamesHTML(e.pname) || 'Unnamed'} <span class="ptc-tag" style="background:${color}; font-size:10px;">${e.txn}</span>${e.txn === 'Refund' && e.refundStatus ? ` <span class="ptc-tag ${e.refundStatus === 'REFUNDED' ? 'ptc-status-tag-refunded' : 'ptc-status-tag-pending'}" style="font-size:10px;">${esc(e.refundStatus)}</span>` : ''}</div>
-              <div class="ptc-detail-sub">${e.date || ''} · GDS ${esc(e.pnrGds) || '—'} · Airline PNR ${esc(e.pnrAirline) || '—'}</div>
+              <div class="ptc-detail-sub">${esc(e.date)} · GDS ${esc(e.pnrGds) || '—'} · Airline PNR ${esc(e.pnrAirline) || '—'}</div>
               ${e.editedAt ? `<div class="ptc-detail-sub" style="color:var(--reissue);">✏️ Last edited ${esc(new Date(e.editedAt).toLocaleString())}</div>` : ''}
             </div>
           </div>
@@ -8137,7 +8138,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
         <div class="ptc-feed-item">
           <div>
             <div class="ptc-feed-name">${formatPassengerNamesHTML(e.pname) || '—'} <span class="ptc-tag" style="background:${tagColor[e.txn]}; font-size:9.5px; padding:1px 6px;">${e.txn}</span></div>
-            <div class="ptc-feed-meta">${e.date || ''} · ${esc(e.pnrGds)} ${e.sector ? '· ' + esc(e.sector) : ''}</div>
+            <div class="ptc-feed-meta">${esc(e.date)} · ${esc(e.pnrGds)} ${e.sector ? '· ' + esc(e.sector) : ''}</div>
           </div>
           <div class="ptc-feed-amt">${amt ? amt.toFixed(2) : ''}</div>
         </div>
@@ -8526,7 +8527,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
           <div class="ptc-detail-card-head">
             <div>
               <div class="ptc-detail-name">${formatPassengerNamesHTML(s.pname) || 'Unnamed'} <span class="ptc-tag" style="background:#1E7A46; font-size:10px;">SALE</span></div>
-              <div class="ptc-detail-sub">${s.date || ''} · GDS ${esc(s.pnrGds) || '—'} · Airline PNR ${esc(s.pnrAirline) || '—'}</div>
+              <div class="ptc-detail-sub">${esc(s.date)} · GDS ${esc(s.pnrGds) || '—'} · Airline PNR ${esc(s.pnrAirline) || '—'}</div>
             </div>
           </div>
           ${chartHtml}
@@ -8679,7 +8680,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
       if(s.status === 'DUE') tr.classList.add('ptc-row-due');
       else if(s.status === 'PARTIAL') tr.classList.add('ptc-row-partial');
       tr.innerHTML = `
-        <td>${s.date || ''}</td>
+        <td>${esc(s.date)}</td>
         <td>${formatPassengerNamesHTML(s.pname)}</td>
         <td class="mono ptc-col-secondary">${paxSummary(s)}</td>
         <td class="mono ptc-col-secondary">${esc(s.phone)}</td>
@@ -11136,4 +11137,94 @@ document.querySelectorAll('#aero-settings [data-sact]').forEach(function(b){b.ad
 $('aset-reset').addEventListener('click',function(){prefs=Object.assign({},DEF);save();applyPrefs();say('Settings reset.')});
 applyPrefs();sync();
 })();</script>
+<script>
+/* ===== Public snapshot (manual publish): additive module =====
+   Reads the records already loaded in this private page, calculates safe aggregates, shows a preview,
+   and writes ONE allowlisted document, publicSummary/YYYY-MM, only when you press Publish.
+   Never published: names, phone numbers, PNRs, ticket numbers, company names, notes, amounts, commission, profit.
+   Formulas (also shown on the website under "How this is calculated"):
+     completed = Solved + Resolved           completion rate = completed / total x 100 (n/a if total is 0)
+     open items = Pending + Follow-up        average per active day = total / days with at least one activity
+     workload vs last month = (this month - last month) / last month x 100, using the same number of days when the
+       month is still in progress; n/a if last month is 0
+     any category under 5 cases is merged into "Other"; periods use Asia/Dhaka dates */
+(function(){
+'use strict';
+var root=document.getElementById('ptc-root'),sec=document.getElementById('aero-settings');
+if(!root||!sec)return;
+var TZ='Asia/Dhaka',MIN=5;
+var CATS=['Fare Query','Availability','Booking Support','Ticketing','Reissue','Refund','Cancellation','Hotel','Flight Information','Fare Rule / Policy','Problem Solving'];
+var EFF=['Quick','Standard','Deep'],TX=['Ticketing','Reissue','Refund','Void'];
+function $(i){return document.getElementById(i)}
+function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
+function ymd(d){return new Intl.DateTimeFormat('en-CA',{timeZone:TZ,year:'numeric',month:'2-digit',day:'2-digit'}).format(d)}
+function shift(k,n){var p=k.split('-'),d=new Date(Date.UTC(+p[0],+p[1]-1+n,1));return d.getUTCFullYear()+'-'+String(d.getUTCMonth()+1).padStart(2,'0')}
+function label(k){var p=k.split('-');return new Date(Date.UTC(+p[0],+p[1]-1,1)).toLocaleString('en-GB',{month:'long',year:'numeric',timeZone:'UTC'})}
+function inMonth(l,k,maxDay){return l.filter(function(x){var d=x.date||'';return d.slice(0,7)===k&&(!maxDay||+d.slice(8,10)<=maxDay)})}
+function r1(n){return Math.round(n*10)/10}
+function tally(list,key,vals,merge){var o={},other=0;vals.forEach(function(v){o[v]=0});
+ list.forEach(function(x){var v=x[key];if(vals.indexOf(v)>-1)o[v]++;else other++});
+ if(merge)vals.forEach(function(v){if(o[v]>0&&o[v]<MIN){other+=o[v];o[v]=0}});
+ var out={};vals.forEach(function(v){if(o[v]>0)out[v]=o[v]});if(other>0)out.Other=other;return out}
+function compute(k){
+ var A=window.aeroPwiData&&window.aeroPwiData();
+ if(!A)return{error:'Activity records have not loaded yet. Wait until the tracker shows it is connected, then try again.'};
+ var E=window.aeroData&&window.aeroData.entries?window.aeroData.entries():[];
+ var t=ymd(new Date()),cur=t.slice(0,7),inProg=(k===cur),maxDay=inProg?+t.slice(8,10):0;
+ var m=inMonth(A,k,0),prev=inMonth(A,shift(k,-1),maxDay);
+ if(!m.length)return{error:'There are no activity records for '+label(k)+'.'};
+ var n=function(s){return m.filter(function(x){return x.status===s}).length};
+ var solved=n('Solved'),resolved=n('Resolved'),pending=n('Pending'),fu=n('Follow-up'),total=m.length,done=solved+resolved;
+ var days={};m.forEach(function(x){days[x.date]=1});var ad=Object.keys(days).length;
+ var eff={};EFF.forEach(function(v){var c=m.filter(function(x){return x.effort===v}).length;if(c>0)eff[v]=c});
+ return{period:k,inProgress:inProg,selfRecorded:true,updated:t,total:total,completed:done,pending:pending,followUp:fu,open:pending+fu,
+  activeDays:ad,completionRate:total?r1(done/total*100):null,avgPerActiveDay:ad?r1(total/ad):null,prevTotal:prev.length,
+  workloadChange:prev.length?r1((total-prev.length)/prev.length*100):null,
+  categories:tally(m,'category',CATS,true),effort:eff,
+  transactions:tally(inMonth(E,k,0).map(function(e){return{txn:e.txn}}),'txn',TX,true)}}
+function fmtVal(v,s){return v==null?'n/a':v+(s||'')}
+/* ---------- settings card ---------- */
+var card=el('div','aset-card');
+card.appendChild(el('h3','','Public snapshot'));
+card.appendChild(el('p','aset-note','Publishes a small summary of counts to your portfolio home page. Only totals and category counts are shared, never names, phone numbers, PNRs, ticket numbers, company names, notes or amounts. Nothing is published automatically.'));
+var bw=el('div','aset-btns'),open=el('button','','Preview & publish snapshot');open.type='button';open.id='snap-open';bw.appendChild(open);card.appendChild(bw);
+sec.insertBefore(card,sec.lastElementChild);
+/* ---------- modal ---------- */
+var st=document.createElement('style');
+st.textContent='#snap-bd{position:fixed;inset:0;background:rgba(10,20,40,.55);z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px}#snap-bd[hidden]{display:none}#snap-dlg{background:#fff;color:#14243b;max-width:560px;width:100%;max-height:90vh;overflow:auto;border-radius:12px;padding:22px;font:14px/1.5 system-ui,sans-serif}#snap-dlg h2{margin:0 0 4px;font-size:18px}#snap-dlg p{margin:6px 0}#snap-dlg table{border-collapse:collapse;width:100%;margin:8px 0}#snap-dlg td,#snap-dlg th{border-bottom:1px solid #e3ebf4;padding:5px 6px;text-align:left}#snap-dlg label{display:block;margin:6px 0}#snap-dlg .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}#snap-dlg button{padding:9px 14px;border-radius:8px;border:1px solid #12345b;background:#fff;color:#12345b;font-weight:600;cursor:pointer}#snap-dlg button.pri{background:#12345b;color:#fff}#snap-dlg button:disabled{opacity:.5;cursor:not-allowed}#snap-msg{min-height:20px;font-weight:600}';
+document.head.appendChild(st);
+var bd=el('div');bd.id='snap-bd';bd.hidden=true;var dlg=el('div');dlg.id='snap-dlg';dlg.setAttribute('role','dialog');dlg.setAttribute('aria-modal','true');dlg.setAttribute('aria-labelledby','snap-h');dlg.tabIndex=-1;bd.appendChild(dlg);document.body.appendChild(bd);
+var last=null,cur=null;
+function close(){bd.hidden=true;document.removeEventListener('keydown',onKey);if(last)last.focus()}
+function onKey(e){if(e.key==='Escape'){close();return}
+ if(e.key==='Tab'){var f=dlg.querySelectorAll('button,input');if(!f.length)return;var a=f[0],z=f[f.length-1];if(e.shiftKey&&document.activeElement===a){e.preventDefault();z.focus()}else if(!e.shiftKey&&document.activeElement===z){e.preventDefault();a.focus()}}}
+function msg(t,bad){var m=$('snap-msg');if(m){m.textContent=t;m.style.color=bad?'#b3261e':'#0b6b3a'}}
+function render(){
+ var per=ymd(new Date()).slice(0,7),opts=[shift(per,-1),per],sel=(dlg.dataset.sel||opts[0]);
+ dlg.textContent='';dlg.appendChild(el('h2','','Preview public snapshot')).id='snap-h';
+ dlg.appendChild(el('p','','This is exactly what will appear on your portfolio. Nothing else is sent.'));
+ opts.forEach(function(k){var l=el('label'),r=document.createElement('input');r.type='radio';r.name='snap-per';r.value=k;r.checked=(k===sel);
+  r.addEventListener('change',function(){dlg.dataset.sel=k;render()});l.appendChild(r);l.appendChild(document.createTextNode(' '+label(k)+(k===per?' (in progress)':' (last completed month, recommended)')));dlg.appendChild(l)});
+ cur=compute(sel);
+ if(cur.error){dlg.appendChild(el('p','',cur.error));}
+ else{var tb=document.createElement('table'),rows=[['Activities',cur.total],['Completed (Solved + Resolved)',cur.completed],['Completion rate',fmtVal(cur.completionRate,'%')],['Open items (Pending + Follow-up)',cur.open],['Active days',cur.activeDays],['Average per active day',fmtVal(cur.avgPerActiveDay)],['Workload vs last month',fmtVal(cur.workloadChange,'%')]];
+  rows.forEach(function(r){var tr=document.createElement('tr');tr.appendChild(el('th','',r[0]));tr.appendChild(el('td','',String(r[1])));tb.appendChild(tr)});dlg.appendChild(tb);
+  [['Categories',cur.categories],['Effort',cur.effort],['Entry types',cur.transactions]].forEach(function(g){var keys=Object.keys(g[1]);if(!keys.length)return;dlg.appendChild(el('p','',g[0]+': '+keys.map(function(k){return k+' '+g[1][k]}).join(', ')))});
+  dlg.appendChild(el('p','','Labelled as self-recorded. Updated '+cur.updated+'.'));
+  var l=el('label'),c=document.createElement('input');c.type='checkbox';c.id='snap-ok';c.addEventListener('change',function(){$('snap-pub').disabled=!c.checked});l.appendChild(c);l.appendChild(document.createTextNode(' I have checked this preview'));dlg.appendChild(l)}
+ var m=el('p');m.id='snap-msg';m.setAttribute('role','status');dlg.appendChild(m);
+ var row=el('div','row'),pub=el('button','pri','Publish');pub.type='button';pub.id='snap-pub';pub.disabled=true;pub.addEventListener('click',publish);
+ var rm=el('button','','Remove published snapshot');rm.type='button';rm.addEventListener('click',remove);
+ var cl=el('button','','Close');cl.type='button';cl.addEventListener('click',close);
+ if(!cur.error)row.appendChild(pub);row.appendChild(rm);row.appendChild(cl);dlg.appendChild(row)}
+function db(){var u=window.firebase&&firebase.auth&&firebase.auth().currentUser;return u?firebase.firestore():null}
+function fail(e){msg(e&&e.code==='permission-denied'?'The database rules do not allow this yet. Publish the new rules from firestore.rules, then try again.':'Could not complete that. Check your connection and try again.',true)}
+function publish(){var d=db();if(!d){msg('Sign in first.',true);return}if(!cur||cur.error)return;$('snap-pub').disabled=true;
+ d.collection('publicSummary').doc(cur.period).set(cur).then(function(){msg('Published for '+label(cur.period)+'.')}).catch(function(e){fail(e);$('snap-pub').disabled=false})}
+function remove(){var d=db();if(!d){msg('Sign in first.',true);return}var k=dlg.dataset.sel||shift(ymd(new Date()).slice(0,7),-1);
+ d.collection('publicSummary').doc(k).delete().then(function(){msg('Removed the published snapshot for '+label(k)+'.')}).catch(fail)}
+open.addEventListener('click',function(){last=open;dlg.dataset.sel='';render();bd.hidden=false;document.addEventListener('keydown',onKey);dlg.focus()});
+bd.addEventListener('click',function(e){if(e.target===bd)close()});
+})();
+</script>
 </body></html>

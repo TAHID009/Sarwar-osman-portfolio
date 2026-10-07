@@ -1,0 +1,76 @@
+rules_version = '2';
+// Cloud Firestore rules for the work record and the public snapshot.
+// BEFORE PUBLISHING: replace PUT-YOUR-FIREBASE-UID-HERE with your own user ID
+// (Firebase console > Authentication > Users > "User UID").
+// Test every rule in Firestore > Rules > Rules Playground before you publish.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isOwner() {
+      return request.auth != null && request.auth.uid == 'X4ZIe4uFSsbaw9Ee30HDDBXvrsH2';
+    }
+    function isCount(v) { return v is int && v >= 0 && v <= 100000; }
+    function validCategories(m) {
+      return m is map && m.keys().hasOnly(['Fare Query', 'Availability', 'Booking Support', 'Ticketing', 'Reissue', 'Refund', 'Cancellation', 'Hotel', 'Flight Information', 'Fare Rule / Policy', 'Problem Solving', 'Other']) &&
+        isCount(m.get('Fare Query', 0)) &&
+        isCount(m.get('Availability', 0)) &&
+        isCount(m.get('Booking Support', 0)) &&
+        isCount(m.get('Ticketing', 0)) &&
+        isCount(m.get('Reissue', 0)) &&
+        isCount(m.get('Refund', 0)) &&
+        isCount(m.get('Cancellation', 0)) &&
+        isCount(m.get('Hotel', 0)) &&
+        isCount(m.get('Flight Information', 0)) &&
+        isCount(m.get('Fare Rule / Policy', 0)) &&
+        isCount(m.get('Problem Solving', 0)) &&
+        isCount(m.get('Other', 0));
+    }
+    function validEffort(m) {
+      return m is map && m.keys().hasOnly(['Quick', 'Standard', 'Deep']) &&
+        isCount(m.get('Quick', 0)) &&
+        isCount(m.get('Standard', 0)) &&
+        isCount(m.get('Deep', 0));
+    }
+    function validTransactions(m) {
+      return m is map && m.keys().hasOnly(['Ticketing', 'Reissue', 'Refund', 'Void', 'Other']) &&
+        isCount(m.get('Ticketing', 0)) &&
+        isCount(m.get('Reissue', 0)) &&
+        isCount(m.get('Refund', 0)) &&
+        isCount(m.get('Void', 0)) &&
+        isCount(m.get('Other', 0));
+    }
+
+    function validSummary(period) {
+      let d = request.resource.data;
+      return d.keys().hasOnly(['period','inProgress','selfRecorded','updated','total','completed','pending','followUp','open','activeDays','completionRate','avgPerActiveDay','prevTotal','workloadChange','categories','effort','transactions']) &&
+        d.keys().hasAll(['period','inProgress','selfRecorded','updated','total','completed','open','activeDays','categories']) &&
+        d.period is string && d.period == period && d.period.matches('^[0-9]{4}-(0[1-9]|1[0-2])$') &&
+        d.inProgress is bool && d.selfRecorded == true &&
+        d.updated is string && d.updated.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$') &&
+        isCount(d.total) && isCount(d.completed) && d.completed <= d.total &&
+        isCount(d.open) && isCount(d.activeDays) &&
+        isCount(d.get('pending', 0)) && isCount(d.get('followUp', 0)) && isCount(d.get('prevTotal', 0)) &&
+        (d.get('completionRate', null) == null || (d.completionRate is number && d.completionRate >= 0 && d.completionRate <= 100)) &&
+        (d.get('avgPerActiveDay', null) == null || (d.avgPerActiveDay is number && d.avgPerActiveDay >= 0 && d.avgPerActiveDay <= 1000)) &&
+        (d.get('workloadChange', null) == null || (d.workloadChange is number && d.workloadChange >= -100 && d.workloadChange <= 100000)) &&
+        validCategories(d.categories) &&
+        validEffort(d.get('effort', {})) &&
+        validTransactions(d.get('transactions', {}));
+    }
+
+    // Private records: readable and writable only by the owner.
+    match /work_record_entries/{id} { allow read, write: if isOwner(); }
+    match /work_record_sales/{id}   { allow read, write: if isOwner(); }
+    match /work_record_pwi/{id}     { allow read, write: if isOwner(); }
+
+    // Public snapshot: anyone can read ONE document by id (no listing); only the owner can write it, and only the allowlisted fields.
+    match /publicSummary/{period} {
+      allow get: if true;
+      allow list: if false;
+      allow create, update: if isOwner() && validSummary(period);
+      allow delete: if isOwner();
+    }
+
+    // Everything else (including the old public_stats collection) is denied by default.
+  }
+}
