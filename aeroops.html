@@ -2653,6 +2653,74 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
 #aero-dash-top .ad-details td{padding:6px 8px;border-bottom:1px solid #F0F3F8}
 #aero-dash-top .ad-details td:not(:first-child),#aero-dash-top .ad-details th:not(:first-child){text-align:right}
 #aero-dash-top .ad-details h5{margin:10px 0 6px;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#475467}
+
+/* ===== AeroOps Dashboard — STEP 1 UI (scoped to the Dashboard page only) ===== */
+#ptc-root:has(#view-dashboard.active) :is(#aero-greet,#ptc-today){display:none!important}
+#ptc-root:has(#view-dashboard.active) .ptc-dash-hero{height:0!important;min-height:0!important;padding:0!important;margin:0!important;border:0!important;overflow:hidden!important;visibility:hidden!important}
+#ptc-root:has(#view-dashboard.active) .ptc-body-main,#view-dashboard,#aero-dash-top{min-width:0;max-width:100%}
+#aero-dash-top .ad-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#fff;border:1px solid #E3E9F0;border-radius:14px;padding:8px 10px;margin:0 0 14px;box-shadow:0 1px 2px rgba(11,37,69,.04)}
+#aero-dash-top .ad-search{flex:1 1 240px;min-width:190px;display:flex;align-items:center;gap:8px;height:38px;padding:0 12px;background:#F5F7FB;border:1px solid #E3E9F0;border-radius:10px;color:#667085}
+#aero-dash-top .ad-search:focus-within{border-color:#2563EB;background:#fff;box-shadow:0 0 0 3px rgba(37,99,235,.12)}
+#aero-dash-top .ad-search input{flex:1;min-width:0;border:0;background:transparent;font:inherit;font-size:13px;color:#0B2545;outline:0}
+#aero-dash-top .ad-top svg{width:16px;height:16px;flex:none}
+#aero-dash-top .ad-chip{display:flex;align-items:center;gap:9px;height:38px;padding:0 12px;border:1px solid #E3E9F0;border-radius:10px;background:#fff;font:inherit;color:#0B2545;text-align:left;max-width:230px}
+#aero-dash-top button.ad-chip{cursor:pointer}#aero-dash-top button.ad-chip:hover{border-color:#BBD3FA;background:#F8FAFF}
+#aero-dash-top .ad-chip svg{color:#98A2B3}#aero-dash-top .ad-chip.on svg{color:#15803D}
+#aero-dash-top .ad-chip span{display:flex;flex-direction:column;min-width:0;line-height:1.2}
+#aero-dash-top .ad-chip b{font-size:12.5px;white-space:nowrap}
+#aero-dash-top .ad-chip small{font-size:11px;color:#667085;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#aero-dash-top .ad-date{display:flex;align-items:center;gap:7px;height:38px;padding:0 6px 0 11px;border:1px solid #E3E9F0;border-radius:10px;background:#fff;color:#2563EB}
+#aero-dash-top .ad-date select{border:0;background:transparent;font:inherit;font-size:12.5px;font-weight:700;color:#0B2545;outline:0;cursor:pointer;padding:0 4px}
+#aero-dash-top .ad-bell{position:relative;width:38px;height:38px;display:grid;place-items:center;border:1px solid #E3E9F0;border-radius:10px;background:#fff;color:#475467;cursor:pointer}
+#aero-dash-top .ad-bell em[hidden]{display:none}
+#aero-dash-top .ad-bell:hover{border-color:#BBD3FA;color:#2563EB}
+#aero-dash-top .ad-bell em{position:absolute;top:-5px;right:-5px;min-width:17px;height:17px;padding:0 4px;border-radius:9px;background:#B42318;color:#fff;font-style:normal;font-size:10px;font-weight:700;display:grid;place-items:center}
+#aero-dash-top .ad-prof{display:flex;align-items:center;gap:8px;height:38px;padding:0 8px 0 4px;border-radius:10px;text-decoration:none;color:#0B2545;font-size:12.5px;font-weight:700}
+#aero-dash-top .ad-prof:hover{background:#F5F7FB}
+#aero-dash-top .ad-prof i{width:30px;height:30px;border-radius:50%;background:#2563EB;color:#fff;font-style:normal;font-size:11.5px;display:grid;place-items:center}
+#aero-dash-top .ad-title{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:0 0 12px}
+#aero-dash-top .ad-k5{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:12px;margin:0 0 14px}
+#aero-dash-top .ad-k{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #E3E9F0;border-radius:14px;padding:13px 14px;box-shadow:0 1px 2px rgba(11,37,69,.04)}
+#aero-dash-top .ad-k>i{width:40px;height:40px;border-radius:11px;display:grid;place-items:center;background:var(--t);color:var(--c);flex:none}
+#aero-dash-top .ad-k>i svg{width:20px;height:20px}
+#aero-dash-top .ad-k span{display:block;font-size:12px;font-weight:600;color:#667085}
+#aero-dash-top .ad-k b{display:block;font-size:24px;line-height:1.15;font-weight:800}
+#aero-dash-top .ad-k small{font-size:11.5px;color:#98A2B3}
+#aero-dash-top .ad-s2{background:#fff;border:1px solid #E3E9F0;border-radius:14px;padding:14px 16px;margin:0 0 14px;box-shadow:0 1px 2px rgba(11,37,69,.04)}
+#aero-dash-top .ad-sh{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:0 0 12px}
+#aero-dash-top .ad-sh h3{margin:0;font-size:14.5px}#aero-dash-top .ad-sh p{margin:2px 0 0;font-size:12px;color:#667085}
+#aero-dash-top .ad-na{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+#aero-dash-top .ad-na>div{display:flex;align-items:center;gap:10px;border-radius:12px;padding:10px 13px;background:#FEF3F2;border:1px solid #FECDCA;color:#7A271A}
+#aero-dash-top .ad-na>div.w{background:#FFFAEB;border-color:#FEDF89;color:#93370D}
+#aero-dash-top .ad-na>div.ok{background:#ECFDF3;border-color:#ABEFC6;color:#05603A}
+#aero-dash-top .ad-na b{font-size:22px;line-height:1}#aero-dash-top .ad-na span{font-size:12.5px;font-weight:600}
+#aero-dash-top .ad-wr{display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));gap:10px}
+#aero-dash-top .ad-wr>div{background:#F8FAFC;border:1px solid #EAEFF5;border-top:3px solid var(--c);border-radius:10px;padding:9px 12px}
+#aero-dash-top .ad-wr span{display:block;font-size:11.5px;font-weight:600;color:#667085;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#aero-dash-top .ad-wr b{font-size:20px;font-weight:800}
+#aero-dash-top .ad-wi{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);gap:16px}
+#aero-dash-top .ad-wi>div+div{border-left:1px solid #EEF2F6;padding-left:16px}
+#aero-dash-top .ad-wi h4{margin:0 0 2px;font-size:13px}#aero-dash-top .ad-wi p{margin:0 0 8px;font-size:12px;color:#667085}
+#aero-dash-top .ad-tr{width:100%;height:auto;display:block}
+#aero-dash-top .ad-tr .gl{stroke:#EEF2F6;stroke-width:1}#aero-dash-top .ad-tr .ax{font-size:10px;fill:#98A2B3}
+#aero-dash-top .ad-tr .ln{fill:none;stroke:#2563EB;stroke-width:2.2;stroke-linejoin:round}
+#aero-dash-top .ad-tr .ar{fill:rgba(37,99,235,.09)}#aero-dash-top .ad-tr .pt{fill:#fff;stroke:#2563EB;stroke-width:2}
+#aero-dash-top .ad-rv{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+#aero-dash-top .ad-rv>div{border:1px solid #EAEFF5;border-radius:12px;padding:10px 13px}
+#aero-dash-top .ad-rv span{display:block;font-size:11.5px;font-weight:600;color:#667085}
+#aero-dash-top .ad-rv b{display:block;font-size:19px;font-weight:800;margin:2px 0 1px;white-space:nowrap}
+#aero-dash-top .ad-rv small{font-size:11px;color:#98A2B3}
+#aero-dash-top .ad-tw{overflow-x:auto}
+#aero-dash-top .ad-tb{width:100%;border-collapse:collapse;font-size:12.5px;min-width:520px}
+#aero-dash-top .ad-tb th{text-align:left;font-size:11.5px;font-weight:700;color:#667085;padding:8px 10px;border-bottom:1px solid #E3E9F0;background:#F8FAFC}
+#aero-dash-top .ad-tb td{padding:9px 10px;border-bottom:1px solid #F0F3F8;white-space:nowrap}
+#aero-dash-top .ad-tb tr:last-child td{border-bottom:0}
+#aero-dash-top .ad-bd{display:inline-block;padding:2px 9px;border-radius:99px;font-size:11.5px;font-weight:700;background:#F2F4F7;color:#475467}
+#aero-dash-top .ad-bd.Solved{background:#ECFDF3;color:#05603A}#aero-dash-top .ad-bd.Resolved{background:#E6F6F7;color:#0B6B75}
+#aero-dash-top .ad-bd.Pending{background:#FFF4E0;color:#93370D}#aero-dash-top .ad-bd.Follow-up{background:#EAF2FF;color:#1D4FBF}
+@media(min-width:981px){#aero-dash-top{margin-top:-36px}}
+@media(max-width:980px){#aero-dash-top .ad-wi{grid-template-columns:1fr}#aero-dash-top .ad-wi>div+div{border-left:0;padding-left:0;border-top:1px solid #EEF2F6;padding-top:12px}#aero-dash-top .ad-rv{grid-template-columns:repeat(2,minmax(0,1fr))}#aero-dash-top .ad-prof span{display:none}}
+@media(max-width:560px){#aero-dash-top .ad-chip{max-width:none;flex:1 1 140px}#aero-dash-top .ad-date{flex:1 1 auto}}
 #aero-toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#0B2545;color:#fff;font-size:13px;font-weight:600;padding:10px 16px;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.3);z-index:9999}
 </style>
 <style id="pwi-style">
@@ -3636,10 +3704,13 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
         </div>
         <div class="ptc-row">
           <div class="ptc-field">
-            <label for="f-markup-t">Discount % shared with client (max 7%, of Base Fare)</label>
-            <input type="number" step="0.01" min="0" max="7" id="f-markup-t" class="mono ptc-fare-calc" placeholder="0.00 (leave blank if none)" title="Percentage of Base Fare given as discount to the client. Capped automatically at 7%. Leave 0 if the airline gives no discount." />
+            <label for="f-discamt-t">Discount Amount (from company system)</label>
+            <input type="number" step="0.01" min="0" id="f-discamt-t" class="mono ptc-fare-calc" placeholder="0.00 (leave blank if none)" title="Discount amount given to the client by the company system. It is a discount only — never revenue or agency earnings." />
           </div>
-          <div></div>
+          <div class="ptc-field">
+            <label for="f-discpct-t">Discount % (auto, info only)</label>
+            <input type="text" id="f-discpct-t" class="mono" placeholder="0.00" readonly style="background:#F3F5F8; font-weight:700;" title="Discount Amount ÷ Base Fare × 100 — informational only" />
+          </div>
         </div>
         <div class="ptc-row">
           <div class="ptc-field">
@@ -3647,16 +3718,9 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
             <input type="text" id="f-atp-t" class="mono" placeholder="0.00" readonly style="background:#F3F5F8; font-weight:700;" title="Base Fare + Tax" />
           </div>
           <div class="ptc-field">
-            <label for="f-markupamt-t">Discount Amount (auto)</label>
-            <input type="text" id="f-markupamt-t" class="mono" placeholder="0.00" readonly style="background:#F3F5F8; font-weight:700;" title="Base Fare × Discount %" />
-          </div>
-        </div>
-        <div class="ptc-row">
-          <div class="ptc-field">
             <label for="f-totalfare-t">Payable Fare — Client Pays (auto)</label>
             <input type="text" id="f-totalfare-t" class="mono" placeholder="0.00" readonly style="background:#F3F5F8; font-weight:700;" title="Total Fare − Discount Amount" />
           </div>
-          <div></div>
         </div>
       </div>
 
@@ -4791,9 +4855,9 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
     { h:'BASE FARE', f:'baseFare', n:true },
     { h:'TAX FARE', f:'taxFare', n:true },
     { h:'AIRLINE TICKET PRICE', f:'airlineTicketPrice', n:true },
-    { h:'DISCOUNT', f:'discount', n:true },
-    { h:'OTA MARKUP %', f:'markUp', n:true },
-    { h:'OTA MARKUP AMOUNT', f:'markupAmount', n:true },
+    { h:'DISCOUNT (LEGACY)', f:'discount', n:true },
+    { h:'DISCOUNT AMOUNT', f:'discountAmount', n:true },
+    { h:'DISCOUNT %', f:'discountPct', n:true },
     { h:'CUSTOMER SELLING PRICE', f:'totalFare', n:true },
     { h:'FARE DIFFERENCE', f:'fareDiff', n:true },
     { h:'AIRLINE CHARGE', f:'airlineCharge', n:true },
@@ -4827,13 +4891,15 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
 
   const COMMON_FIELDS = ['date','pnrGds','pnrAirline','pname','pnum','ptype','platform','airline'];
   const SHEET_DEFS = [
-    { name:'Ticketing', fields: COMMON_FIELDS.concat(['newTkt','sector','baseFare','taxFare','airlineTicketPrice','discount','markUp','markupAmount','totalFare','note']) },
+    { name:'Ticketing', fields: COMMON_FIELDS.concat(['newTkt','sector','baseFare','taxFare','airlineTicketPrice','discount','discountAmount','discountPct','totalFare','note']) },
     { name:'Reissue', fields: COMMON_FIELDS.concat(['oldTkt','newTkt','sector','code','fareDiff','airlineCharge','svc','totalCollection','note']) },
     { name:'Refund', fields: COMMON_FIELDS.concat(['oldTkt','refundType','refTotalFare','usedSegmentFare','usedSegmentTax','refTotalTax','refNonRefundTax','airlineCharge','commissionAdj','refundableFare','refundableTax','airlineRefund','svcApplied','svc','refundCharge','taxRefund','refundStatus','adjustmentGiven','adjustmentAmount','note']) },
     { name:'Void', fields: COMMON_FIELDS.concat(['oldTkt','airlineCharge','svc','refundCharge','note']) },
   ];
 
   function cellValue(e, col){
+    if(col.f === 'discountAmount' && e.txn === 'Ticketing') return discountAmountOf(e);
+    if(col.f === 'discountPct') { const p = discountPctOf(e); return p === '' ? '' : Number(p.toFixed ? p.toFixed(2) : p); }
     const v = e[col.f];
     if(col.n){
       const n = parseFloat(v);
@@ -5197,12 +5263,12 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
       m = norm.match(/Tax\s*&\s*Fare(?:\s*x\s*\d+)?\s+([\d,]+(?:\.\d+)?)/i);
       if(m) out.taxFare = parseFloat(m[1].replace(/,/g, ''));
 
-      // "Discount" here is a currency amount, not the % the form wants — convert it
-      // (the form already caps the field at 7% on its own, same rule applied here).
+      // "Discount" here is a currency amount — the form takes the amount directly
+      // (its % is worked out read-only from Base Fare).
       m = norm.match(/Discount\s+([\d,]+(?:\.\d+)?)/i);
       if(m){
         const discountAmt = parseFloat(m[1].replace(/,/g, ''));
-        if(discountAmt > 0 && out.baseFare) out.discountPct = Math.min(7, +(discountAmt / out.baseFare * 100).toFixed(2));
+        if(discountAmt > 0) out.discountAmount = discountAmt;
       }
 
       // Total/Paid Amount — what the client was actually charged on this ticket.
@@ -5323,9 +5389,9 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
         pdfHighlight('f-taxfare-t');
         filledAny = true;
       }
-      if(fields.discountPct !== undefined){
-        $('f-markup-t').value = fields.discountPct.toFixed(2);
-        pdfHighlight('f-markup-t');
+      if(fields.discountAmount !== undefined){
+        $('f-discamt-t').value = fields.discountAmount.toFixed(2);
+        pdfHighlight('f-discamt-t');
         filledAny = true;
       }
       if(typeof recalcTicketingFare === 'function') recalcTicketingFare();
@@ -6338,32 +6404,31 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
 
   // ---- Ticketing fare auto-calculation (Client Discount model) ----
   // Total Fare = Base Fare + Tax
-  // Discount Amount = Base Fare x Discount% (Discount% capped 0-7, entered by agent, 0 if none given by airline)
+  // Discount Amount = typed in (given to the client by the company system) — NEVER revenue / earnings
+  // Discount % = Discount Amount / Base Fare x 100 (read-only, informational)
   // Payable Fare (Client Pays) = Total Fare - Discount Amount
   function recalcTicketingFare(){
     const base = parseFloat($('f-basefare-t').value) || 0;
     const tax = parseFloat($('f-taxfare-t').value) || 0;
-    let discountPct = parseFloat($('f-markup-t').value) || 0;
-    if(discountPct > 7){ discountPct = 7; $('f-markup-t').value = 7; }
-    if(discountPct < 0){ discountPct = 0; $('f-markup-t').value = 0; }
+    let discountAmt = parseFloat($('f-discamt-t').value) || 0;
+    if(discountAmt < 0){ discountAmt = 0; $('f-discamt-t').value = 0; }
     const totalFare = base + tax;
-    const discountAmt = base * (discountPct / 100);
     const payableFare = totalFare - discountAmt;
     $('f-atp-t').value = totalFare.toFixed(2);
-    $('f-markupamt-t').value = discountAmt.toFixed(2);
+    $('f-discpct-t').value = base > 0 ? (discountAmt / base * 100).toFixed(2) : '';
     $('f-totalfare-t').value = payableFare.toFixed(2);
   }
-  // Display-only breakdown (does NOT touch the saved Payable Fare).
-  // Used when loading an existing record for edit so historical totals aren't
-  // silently recalculated with the new formula just by opening the record.
-  function showTicketingBreakdown(){
+  // Used when loading an existing record for edit: shows Total Fare and Discount %,
+  // and puts back the record's own saved Payable Fare (falls back to the formula
+  // only if the record has none) so opening a record never silently changes totals.
+  function showTicketingBreakdown(e){
     const base = parseFloat($('f-basefare-t').value) || 0;
     const tax = parseFloat($('f-taxfare-t').value) || 0;
-    const discountPct = parseFloat($('f-markup-t').value) || 0;
-    const totalFare = base + tax;
-    const discountAmt = base * (discountPct / 100);
-    $('f-atp-t').value = totalFare.toFixed(2);
-    $('f-markupamt-t').value = discountAmt.toFixed(2);
+    const discountAmt = parseFloat($('f-discamt-t').value) || 0;
+    $('f-atp-t').value = (base + tax).toFixed(2);
+    $('f-discpct-t').value = base > 0 ? (discountAmt / base * 100).toFixed(2) : '';
+    const saved = e ? parseFloat(e.totalFare) : NaN;
+    $('f-totalfare-t').value = (isNaN(saved) ? (base + tax - discountAmt) : saved).toFixed(2);
   }
   document.querySelectorAll('.ptc-fare-calc').forEach(el => {
     el.addEventListener('input', recalcTicketingFare);
@@ -6513,6 +6578,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
       airlineTicketPrice: '',
       markupAmount: '',
       discount: '',
+      discountAmount: '',
       markUp: '',
       totalFare: '',
       fareDiff: '',
@@ -6546,9 +6612,10 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
       base.baseFare = num('f-basefare-t');
       base.taxFare = num('f-taxfare-t');
       base.discount = 0;
-      base.markUp = num('f-markup-t');
+      base.discountAmount = parseFloat($('f-discamt-t').value) || 0; // given to the client — not revenue
+      base.markUp = '';        // legacy markup fields are no longer written
       base.airlineTicketPrice = parseFloat($('f-atp-t').value) || 0;
-      base.markupAmount = parseFloat($('f-markupamt-t').value) || 0;
+      base.markupAmount = '';
       base.totalFare = parseFloat($('f-totalfare-t').value) || 0;
     } else if(type === 'Reissue'){
       base.oldTkt = val('f-oldtkt-r');
@@ -6647,6 +6714,8 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
       if(!entry.newTkt) return 'Please add at least one 13-digit ticket number.';
       const err = badTktList(entry.newTkt, 'Ticket number');
       if(err) return err;
+      if((entry.discountAmount || 0) < 0) return 'Discount amount cannot be negative.';
+      if((entry.discountAmount || 0) > (parseFloat(entry.airlineTicketPrice) || 0)) return 'Discount amount cannot be more than the Total Fare.';
     }
     if(entry.txn === 'Reissue'){
       if(!entry.oldTkt) return 'Please add at least one old ticket number.';
@@ -6680,6 +6749,25 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
   function fmtPct(v){
     if(v === '' || v === null || v === undefined || isNaN(v)) return '';
     return Number(v).toFixed(2) + '%';
+  }
+
+  // Discount = money the company system gave the CLIENT. It is stored in its own
+  // field (discountAmount) and is never revenue, agency earnings or markup.
+  // Old records saved it under markupAmount (and its % under markUp), so those are
+  // read as a fallback — nothing is lost and nothing is double counted.
+  function discountAmountOf(e){
+    if(!e || e.txn !== 'Ticketing') return 0;
+    const own = parseFloat(e.discountAmount);
+    if(!isNaN(own)) return own;
+    return parseFloat(e.markupAmount) || parseFloat(e.discount) || 0;
+  }
+  // Read-only %: Discount Amount / Base Fare x 100 (blank when there is no Base Fare).
+  function discountPctOf(e){
+    if(!e || e.txn !== 'Ticketing') return '';
+    const base = parseFloat(e.baseFare) || 0;
+    if(base > 0) return discountAmountOf(e) / base * 100;
+    const legacy = parseFloat(e.markUp);
+    return isNaN(legacy) ? '' : legacy;
   }
 
   function render(){
@@ -6768,8 +6856,8 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
         <td class="mono ptc-col-secondary">${fmtMoney(e.taxFare)}</td>
         <td class="mono ptc-col-secondary">${fmtMoney(e.airlineTicketPrice)}</td>
         <td class="mono ptc-col-secondary">${fmtMoney(e.discount)}</td>
-        <td class="mono ptc-col-secondary">${fmtPct(e.markUp)}</td>
-        <td class="mono ptc-col-secondary">${fmtMoney(e.markupAmount)}</td>
+        <td class="mono ptc-col-secondary">${fmtPct(discountPctOf(e))}</td>
+        <td class="mono ptc-col-secondary">${fmtMoney(e.txn === 'Ticketing' ? discountAmountOf(e) : '')}</td>
         <td class="mono">${fmtMoney(e.totalFare)}</td>
         <td class="mono">${fmtMoney(e.fareDiff)}</td>
         <td class="mono ptc-col-secondary">${fmtMoney(e.airlineCharge)}</td>
@@ -6863,7 +6951,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
 
   function clearForm(){
     ['f-pnr-gds','f-pnr-air','f-pname','f-pnum','f-note','f-platform-other','f-airline-other',
-     'f-newtkt-t','f-sector-t','f-basefare-t','f-taxfare-t','f-markup-t','f-atp-t','f-markupamt-t',
+     'f-newtkt-t','f-sector-t','f-basefare-t','f-taxfare-t','f-discamt-t','f-discpct-t','f-atp-t',
      'f-oldtkt-r','f-newtkt-r','f-sector-r','f-code-r','f-faredif-r','f-airline-r','f-svc-r',
      'f-oldtkt-f','f-airline-f','f-svc-f','f-charge-f','f-tax-f','f-adjamt-f',
      'f-refbasefare-f','f-usedseg-f','f-usedsegtax-f','f-reftotaltax-f','f-nonrefundtax-f','f-commission-f',
@@ -6961,9 +7049,8 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
       setVal('f-sector-t', e.sector);
       setVal('f-basefare-t', e.baseFare);
       setVal('f-taxfare-t', e.taxFare);
-      setVal('f-discount-t', e.discount);
-      setVal('f-markup-t', e.markUp);
-      showTicketingBreakdown();
+      setVal('f-discamt-t', discountAmountOf(e) || '');
+      showTicketingBreakdown(e);
     } else if(e.txn === 'Reissue'){
       if(entryOldTktReissueChips) entryOldTktReissueChips.setTickets(e.oldTkt ? e.oldTkt.toString().split(',').filter(Boolean) : []);
       else setVal('f-oldtkt-r', e.oldTkt);
@@ -7171,7 +7258,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
 
   // ---- CSV import ----
   const FIELD_ORDER = ['date','pnrGds','pnrAirline','pname','pnum','ptype','platform','airline','txn','oldTkt','newTkt','sector',
-                       'baseFare','taxFare','airlineTicketPrice','discount','markUp','markupAmount','totalFare',
+                       'baseFare','taxFare','airlineTicketPrice','discount','discountAmount','markUp','markupAmount','totalFare',
                        'fareDiff','airlineCharge','svc','totalCollection','payableFare',
                        'refTotalFare','usedSegmentFare','usedSegmentTax','refTotalTax','refNonRefundTax','commissionAdj','svcApplied',
                        'refundableFare','refundableTax','airlineRefund',
@@ -7182,7 +7269,8 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
     'PASSENGER NAME':'pname','PASSENGER NUMBER':'pnum',
     'PASSENGER TYPE':'ptype','PLATFORM':'platform','AIRLINE':'airline','TRANSACTION TYPE':'txn','OLD TKT NUMBER':'oldTkt',
     'NEW TKT NUMBER':'newTkt','SECTOR':'sector',
-    'BASE FARE':'baseFare','TAX FARE':'taxFare','AIRLINE TICKET PRICE':'airlineTicketPrice','DISCOUNT':'discount',
+    'BASE FARE':'baseFare','TAX FARE':'taxFare','AIRLINE TICKET PRICE':'airlineTicketPrice','DISCOUNT':'discount','DISCOUNT (LEGACY)':'discount',
+    'DISCOUNT AMOUNT':'discountAmount',
     'MARK UP':'markUp','OTA MARKUP %':'markUp','OTA MARKUP AMOUNT':'markupAmount',
     'TOTAL FARE':'totalFare','CUSTOMER SELLING PRICE':'totalFare',
     'FARE DIFFERENCE':'fareDiff','AIRLINE CHARGE':'airlineCharge','SERVICE CHARGE':'svc','TOTAL COLLECTION':'totalCollection',
@@ -7195,7 +7283,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
     'ADJUSTMENT GIVEN':'adjustmentGiven','ADJUSTMENT AMOUNT':'adjustmentAmount',
     'REISSUE CODE':'code','NOTE':'note','CREATED AT':'createdAt','LAST EDITED':'editedAt'
   };
-  const NUMERIC_FIELDS = ['baseFare','taxFare','airlineTicketPrice','discount','markUp','markupAmount','totalFare','fareDiff',
+  const NUMERIC_FIELDS = ['baseFare','taxFare','airlineTicketPrice','discount','discountAmount','markUp','markupAmount','totalFare','fareDiff',
                           'airlineCharge','svc','totalCollection','payableFare',
                           'refTotalFare','usedSegmentFare','usedSegmentTax','refTotalTax','refNonRefundTax','commissionAdj',
                           'refundableFare','refundableTax','airlineRefund',
@@ -7314,7 +7402,9 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
   // Money the agency actually earns, as opposed to fare collected on the airline's
   // behalf: markup on ticketing, plus service charges on reissue/refund/void.
   function entryEarnings(e){
-    if(e.txn === 'Ticketing') return parseFloat(e.markupAmount) || 0;
+    // Ticketing: the discount given to the client is NOT earnings. Only an actual
+    // agency service charge / markup recorded in `svc` counts (none is entered on the Ticketing form).
+    if(e.txn === 'Ticketing') return parseFloat(e.svc) || 0;
     if(e.txn === 'Reissue') return parseFloat(e.svc) || 0;
     if(e.txn === 'Refund' || e.txn === 'Void') return parseFloat(e.svc) || 0;
     return 0;
@@ -7536,8 +7626,8 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
     if(e.txn === 'Ticketing'){
       f.push(
         ['Ticket No.', fmtTicketList(e.newTkt)], ['Sector', e.sector],
-        ['Discount %', fmtPct(e.markUp)],
-        ['Discount Amount', fmtMoney(e.markupAmount)],
+        ['Discount Amount', fmtMoney(discountAmountOf(e))],
+        ['Discount % (info)', fmtPct(discountPctOf(e))],
         ['Payable Fare (Client Pays)', fmtMoney(e.totalFare)]
       );
     } else if(e.txn === 'Reissue'){
@@ -10953,43 +11043,84 @@ function card(t,p,body){return'<div class="ad-card"><h4>'+t+'</h4><p>'+p+'</p>'+
 function kpi(l,v,s,c){return'<div class="ad-kpi" style="--c:'+c+'"><span>'+l+'</span><b>'+v+'</b><small>'+s+'</small></div>'}
 function attn(n,l){return'<div class="'+(n?'':'ok')+'"><b>'+(typeof n==='number'?n:n)+'</b><span>'+l+'</span></div>'}
 function tbl(h,rows){return'<table><thead><tr>'+h.map(function(x){return'<th>'+x+'</th>'}).join('')+'</tr></thead><tbody>'+rows.map(function(r){return'<tr>'+r.map(function(x){return'<td>'+x+'</td>'}).join('')+'</tr>'}).join('')+'</tbody></table>'}
+function ic(p){return'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+p+'</svg>'}
+var IC={search:'<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',file:'<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/>',pc:'<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/>',cal:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9.5h18M8 3v4M16 3v4"/>',bell:'<path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/>',work:'<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M3 13h18"/>',ok:'<circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/>',res:'<path d="M12 3 4 6v6c0 5 3.4 8 8 9 4.6-1 8-4 8-9V6z"/><path d="m9 12 2 2 4-4"/>',clk:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 2"/>',fu:'<path d="M4 4v6a4 4 0 0 0 4 4h12M16 10l4 4-4 4"/>'};
+var GR='daily',GRS=[['daily','Daily'],['weekly','Weekly'],['monthly','Monthly']];
+var bkCap=false;
+function bkts(st){var n=new Date(),end=new Date(n.getFullYear(),n.getMonth(),n.getDate()),r=[],d,e,cap,a,my;bkCap=false;
+ if(!st)return r;a=new Date(+st.slice(0,4),+st.slice(5,7)-1,+st.slice(8,10));if(isNaN(a)||a>end)return r;my=a.getFullYear()!==end.getFullYear();
+ if(GR==='daily'){cap=60;for(d=new Date(a);d<=end;d=new Date(d.getFullYear(),d.getMonth(),d.getDate()+1))r.push({l:d.toLocaleString('en',{month:'short',day:'numeric'}),a:iso(d),b:iso(d)})}
+ else if(GR==='weekly'){cap=52;for(d=new Date(a.getFullYear(),a.getMonth(),a.getDate()-(a.getDay()+6)%7);d<=end;d=new Date(d.getFullYear(),d.getMonth(),d.getDate()+7)){e=new Date(d.getFullYear(),d.getMonth(),d.getDate()+6);r.push({l:d.toLocaleString('en',{month:'short',day:'numeric'}),a:iso(d),b:iso(e)})}}
+ else{cap=36;for(d=new Date(a.getFullYear(),a.getMonth(),1);d<=end;d=new Date(d.getFullYear(),d.getMonth()+1,1)){e=new Date(d.getFullYear(),d.getMonth()+1,0);r.push({l:d.toLocaleString('en',{month:'short'})+(my?" '"+String(d.getFullYear()).slice(2):''),a:iso(d),b:iso(e)})}}
+ if(r.length>cap){bkCap=cap;r=r.slice(-cap)}return r}
+function trend(it){var mx=Math.max.apply(null,it.map(function(i){return i.v}).concat([0]));if(!mx)return EMPTY;
+ var W=640,H=230,L=34,R=24,T=12,B=26,pw=W-L-R,ph=H-T-B,st=Math.max(1,Math.ceil(mx/4)),mt=st*4,n=it.length,
+ X=function(i){return L+(n<2?pw/2:pw*i/(n-1))},Y=function(v){return T+ph-ph*v/mt},g='',lab='',pts=[],dots='',k;
+ for(k=0;k<=4;k++){g+='<line class="gl" x1="'+L+'" x2="'+(W-R)+'" y1="'+Y(st*k)+'" y2="'+Y(st*k)+'"/><text class="ax" x="'+(L-6)+'" y="'+(Y(st*k)+3)+'" text-anchor="end">'+st*k+'</text>'}
+ it.forEach(function(p,i){var x=X(i).toFixed(1),y=Y(p.v).toFixed(1);pts.push(x+','+y);dots+='<circle class="pt" cx="'+x+'" cy="'+y+'" r="'+(n>31?2.2:3.2)+'"><title>'+(GR==='weekly'?'Week of ':'')+esc(p.l)+': '+p.v+(p.v===1?' task':' tasks')+(p.t?'\n'+esc(p.t):'')+'</title></circle>';if(n<=8||(n-1-i)%Math.ceil(n/8)===0)lab+='<text class="ax" x="'+x+'" y="'+(H-8)+'" text-anchor="middle">'+esc(p.l)+'</text>'});
+ return'<svg class="ad-tr" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Work activity trend">'+g+'<path class="ar" d="M'+X(0).toFixed(1)+','+Y(0)+' L'+pts.join(' L')+' L'+X(n-1).toFixed(1)+','+Y(0)+'Z"/><polyline class="ln" points="'+pts.join(' ')+'"/>'+dots+lab+'</svg>'}
+function fm(n){return'BDT '+money(n)}
+function hdSync(P,pr,fu){
+ var ft=($('ptc-filestatus')||{}).textContent||'',cs=($('ptc-cloud-status')||{}).textContent||'',nm=(document.querySelector('[data-profile-name]')||{}).textContent||'',
+ set=ft&&!/^not set/i.test(ft),cloud=/connected|synced|live/i.test(cs)&&!/not |fail|error|offline/i.test(cs),n=P+pr+fu;
+ $('ad-mdf').classList.toggle('on',!!set);$('ad-mdf-s').textContent=set?ft:'Not set';$('ad-mdf-s').title=ft;
+ $('ad-ws').classList.toggle('on',cloud);$('ad-ws-s').textContent=cloud?'Cloud sync on':'Saved on this device';
+ var b=$('ad-bell-n');b.hidden=!n;b.textContent=n>99?'99+':n;
+ nm=nm.trim();$('ad-nm').textContent=nm||'Profile';$('ad-ini').textContent=nm?nm.split(/\s+/).slice(0,2).map(function(w){return w[0]}).join('').toUpperCase():'AO'}
 function renderDash(force){if(!D()||!dv||!dv.classList.contains('active'))return;
  var f0=from(),keep=function(l){return f0?l.filter(function(x){return(x.date||'')>=f0}):l},E0=D().entries(),S0=D().sales(),A0=acts(),E=keep(E0),S=keep(S0),A=A0?keep(A0):null,P=D().pending();
- var earn=function(e){return Math.max(0,num(D().earn(e)))},val=function(e){return e.txn==='Ticketing'?num(e.totalFare):e.txn==='Reissue'?num(e.totalCollection):e.txn==='Refund'?num(e.refundCharge):0};
- var tE=sum(E,earn),sP=sum(S,function(x){return num(x.price)}),sC=sum(S,function(x){return num(x.cost)}),sG=sum(S,function(x){return num(x.profit)}),sPd=sum(S,function(x){return num(x.paid)}),sDu=sum(S0,function(x){return num(x.due)});
- var sig=[PER,E0.length,E.length,S0.length,S.length,A0?A0.length:-1,P.length,Math.round(tE),sP,sPd,sDu,A?A.map(function(x){return x.status}).join(','):''].join('|');
- if(sig===lastSig&&!force)return;lastSig=sig;
- var cA=function(s){return A?A.filter(function(x){return x.status===s}).length:0},open=A0?A0.filter(function(x){return x.status==='Pending'||x.status==='Follow-up'}).length:0;
- var types=['Ticketing','Reissue','Refund','Void'].map(function(t){var l=E.filter(function(e){return e.txn===t});return{l:t,c:TC[t],v:l.length,n:sum(l,earn),m:sum(l,val)}});
- var now=new Date(),mo=[],mk=[];for(var i=5;i>=0;i--){var d=new Date(now.getFullYear(),now.getMonth()-i,1);mk.push(d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'));mo.push(d.toLocaleString('en',{month:'short'}))}
- var perM=mk.map(function(k,i){var l=E0.filter(function(e){return(e.date||'').slice(0,7)===k});return{l:mo[i],v:l.length,e:sum(l,earn)}});
- var perLabel=PERS.filter(function(p){return p[0]===PER})[0][1],res=A&&A.length?pctS(cA('Solved')+cA('Resolved'),A.length):'—',rep=A&&A.length?pctS(cA('Resolved'),A.length):'—';
- var h='<div class="ad-head"><div><h2>Master Dashboard</h2><p class="ad-sub">Showing <b>'+perLabel.toLowerCase()+'</b> · all your work in one view</p></div><div class="ad-tools"><div class="ad-seg">'+PERS.map(function(p){return'<button type="button" data-per="'+p[0]+'"'+(p[0]===PER?' class="on"':'')+'>'+p[1]+'</button>'}).join('')+'</div><button type="button" class="ad-dl" data-dl="summary">Download Excel</button></div></div>';
- h+='<div class="ad-kpis">'+kpi('Work Record entries',E.length,'Ticketing, reissue, refund, void','#2563EB')+kpi('Agency earnings',money(tE),'Markup + service charges','#15803D')+kpi('Sales profit',money(sG),S.length+' sale'+(S.length===1?'':'s')+' · margin '+pctS(sG,sP),'#0E9AA7')+kpi('Tasks handled',A?A.length:'—',A?'Resolution rate '+res:'Sign in to load','#B7791F')+'</div>';
- h+='<div class="ad-attn">'+attn(P.length,P.length?'refund adjustments pending':'No pending refund adjustments')+attn(A0?open:'—',open?'open tasks (pending / follow-up)':'No open tasks')+attn(money(sDu),sDu?'payment due from customers':'No payments due')+'</div>';
- h+='<div class="ad-sec">Work Record</div><div class="ad-grid">'
-  +card('Entries by type','Share of all entries in this period',donut(types,E.length,'entries'))
-  +card('Where earnings come from','Agency earnings by type',hbars(types.map(function(t){return{l:t.l,c:t.c,v:t.n,f:money(t.n)}})))
-  +card('Entries per month','Last 6 months',vbars(perM,'#2563EB'))
-  +card('Top airlines','Most used in this period',hbars(count(E,function(e){return(e.airline||'').trim()}).slice(0,5),'#0E9AA7'))+'</div>';
- h+='<div class="ad-sec">Revenue Desk</div><div class="ad-grid">'
-  +card('Payments','Money collected vs still due',donut([{l:'Collected',c:'#15803D',v:sPd,f:money(sPd)},{l:'Due',c:'#B42318',v:sDu,f:money(sDu)}],pctS(sPd,sPd+sDu),'collected'))
-  +card('Selling price split','What you paid vs what you kept',donut([{l:'Net cost',c:'#94A3B8',v:sC,f:money(sC)},{l:'Profit',c:'#0E9AA7',v:Math.max(0,sG),f:money(sG)}],money(sP),'total sales'))+'</div>';
- h+='<div class="ad-sec">Activity Tracker</div>';
- if(A){h+='<div class="ad-grid">'
-  +card('Task outcomes','Resolution rate '+res+' · repeated issues '+rep,donut(['Solved','Resolved','Pending','Follow-up'].map(function(s){return{l:s,c:SC2[s],v:cA(s)}}),A.length,'tasks'))
-  +card('Work type','What you handled most',hbars(count(A,function(x){return x.category}).slice(0,6),'#2563EB'))
-  +card('Source','Where the work came from',hbars(count(A,function(x){return x.source}),'#B7791F'))+'</div>'}
- else h+='<div class="ad-card"><div class="ad-empty">Sign in to load your activity summary.</div></div>';
- h+='<details class="ad-details"><summary>Show detailed numbers</summary><h5>Work Record by type</h5>'+tbl(['Type','Entries','% of entries','Amount','Earnings','% of earnings'],types.map(function(t){return[t.l,t.v,pctS(t.v,E.length),money(t.m),money(t.n),pctS(t.n,tE)]}).concat([['<b>Total</b>','<b>'+E.length+'</b>','100%','<b>'+money(sum(types,function(t){return t.m}))+'</b>','<b>'+money(tE)+'</b>','100%']]))
-  +'<h5>Revenue Desk</h5>'+tbl(['Sales','Selling price','Net cost','Profit','Margin','Collected','Due'],[[S.length,money(sP),money(sC),money(sG),pctS(sG,sP),money(sPd),money(sDu)]])
-  +(A?'<h5>Activity Tracker</h5>'+tbl(['Status','Tasks','% of tasks'],['Solved','Resolved','Pending','Follow-up'].map(function(s){return[s,cA(s),pctS(cA(s),A.length)]})):'')+'</details>';
- top.innerHTML=h}
-if(top)top.addEventListener('click',function(e){var b=e.target.closest('[data-per]');if(b){PER=b.dataset.per;renderDash(true)}});
+ var earn=function(e){return num(D().earn(e))},val=function(e){return e.txn==='Ticketing'?num(e.totalFare):e.txn==='Reissue'?num(e.totalCollection):e.txn==='Refund'?num(e.refundCharge):0};
+ var pr=E0.filter(function(e){return e.txn==='Refund'&&e.refundStatus==='PENDING'}).length,fuN=A0?A0.filter(function(x){return x.status==='Follow-up'}).length:0,openN=A0?A0.filter(function(x){return x.status==='Pending'||x.status==='Follow-up'}).length:0;
+ hdSync(P.length,pr,fuN);
+ var tE=sum(E,earn),sP=sum(S,function(x){return num(x.price)}),sG=sum(S,function(x){return parseFloat(x.profit)||((parseFloat(x.price)||0)-(parseFloat(x.cost)||0))}),sDu=sum(S,function(x){return num(x.due)}),sDuA=sum(S0,function(x){return num(x.due)}),prP=E.filter(function(e){return e.txn==='Refund'&&e.refundStatus==='PENDING'}).length;
+
+ var cA=function(s){return A?A.filter(function(x){return x.status===s}).length:0},tot=A?A.length:null,perL=PERS.filter(function(p){return p[0]===PER})[0][1],
+ now=new Date(),mS=iso(new Date(now.getFullYear(),now.getMonth(),1)),
+ tN=function(t){return E.filter(function(e){return e.txn===t}).length},tV=function(t){return sum(E.filter(function(e){return e.txn===t}),val)};
+ var kp=function(l,s,c,t,p){var v=cA(s);return'<div class="ad-k" style="--c:'+c+';--t:'+t+'"><i>'+ic(p)+'</i><div><span>'+l+'</span><b>'+v+'</b><small>'+(tot===null?'Sign in to load':pctS(cA(s),tot)+' of total')+'</small></div></div>'};
+ var h='<div class="ad-k5"><div class="ad-k" style="--c:#2563EB;--t:#EAF2FF"><i>'+ic(IC.work)+'</i><div><span>Total Work</span><b>'+(tot||0)+'</b><small>'+perL+'</small></div></div>'
+  +kp('Solved','Solved','#15803D','#ECFDF3',IC.ok)+kp('Resolved','Resolved','#0E9AA7','#E6F6F7',IC.res)+kp('Pending','Pending','#B7791F','#FFF4E0',IC.clk)+kp('Follow-up','Follow-up','#7C3AED','#F2ECFE',IC.fu)+'</div>';
+ var na=function(n,l,w,z){var on=z===undefined?n:z;return'<div class="'+(on?(w||''):'ok')+'"><b>'+n+'</b><span>'+l+'</span></div>'};
+ h+='<section class="ad-s2" id="ad-attn"><div class="ad-sh"><div><h3>Needs Attention</h3></div></div><div class="ad-na">'
+  +na(P.length,'Pending Adjustments')+na(pr,'Pending Refunds')+na(fuN,'Follow-up Tasks','w',fuN)+na(fm(sDuA),'Amount Due','',sDuA)+'</div></section>';
+ var wr=function(l,v,c){return'<div style="--c:'+c+'"><span>'+l+'</span><b>'+v+'</b></div>'};
+ h+='<section class="ad-s2"><div class="ad-sh"><div><h3>Work Record</h3></div></div><div class="ad-wr">'
+  +wr('All Entries',E0.length,'#2563EB')+wr('This Month',E0.filter(function(e){return(e.date||'')>=mS}).length,'#0E9AA7')
+  +wr('Ticketing',tN('Ticketing'),TC.Ticketing)+wr('Reissue',tN('Reissue'),TC.Reissue)+wr('Refund',tN('Refund'),TC.Refund)+wr('Void',tN('Void'),TC.Void)+wr('Pending Adjustments',P.length,'#B42318')+'</div></section>';
+ var f1=f0||(A?A.reduce(function(m,x){return x.date&&(!m||x.date<m)?x.date:m},''):''),brk=function(l,k){var m={};l.forEach(function(x){m[x[k]]=(m[x[k]]||0)+1});return Object.keys(m).map(function(q){return q+' '+m[q]}).join(', ')},
+ items=A?bkts(f1).map(function(b){var l=A.filter(function(x){return(x.date||'')>=b.a&&(x.date||'')<=b.b});return{l:b.l,v:l.length,t:l.length?brk(l,'status')+' · '+brk(l,'category'):''}}):null,iT=items?sum(items,function(i){return i.v}):0,gl={daily:'day',weekly:'week',monthly:'month'}[GR];
+ h+='<section class="ad-s2"><div class="ad-sh"><div><h3>Work Intelligence</h3></div><div class="ad-seg">'+GRS.map(function(g){return'<button type="button" data-gr="'+g[0]+'"'+(g[0]===GR?' class="on"':'')+'>'+g[1]+'</button>'}).join('')+'</div></div><div class="ad-wi"><div><h4>Work Activity Trend</h4><p>'+(items?iT+' tasks logged · per '+gl+(bkCap?' · last '+bkCap+' '+gl+'s':''):'Tasks logged per '+gl)+'</p>'+(items?trend(items):'<div class="ad-empty">Sign in to load your activity.</div>')+'</div>'
+  +'<div><h4>Work Status Distribution</h4><p>'+perL+'</p>'+(A?donut(['Solved','Resolved','Pending','Follow-up'].map(function(s){return{l:s,c:SC2[s]||'#7C3AED',v:cA(s)}}),A.length,'tasks'):'<div class="ad-empty">Sign in to load your activity.</div>')+'</div></div></section>';
+ var rv=function(l,v,s){return'<div><span>'+l+'</span><b>'+v+'</b><small>'+s+'</small></div>'};
+ h+='<section class="ad-s2"><div class="ad-sh"><div><h3>Revenue Overview</h3><p>'+perL+'</p></div></div><div class="ad-rv">'
+  +rv('Sales',S.length,'Revenue Desk')+rv('Selling Value',fm(sP),'Total selling price')+rv('Profit',fm(sG),'Margin '+pctS(sG,sP))+rv('Amount Due',fm(sDu),'From customers')
+  +rv('Ticketing Value',fm(tV('Ticketing')),tN('Ticketing')+' tickets')+rv('Reissue Collection',fm(tV('Reissue')),tN('Reissue')+' reissues')+rv('Agency Earnings',fm(tE),'Markup + service charges')+rv('Pending Refunds',prP,'Awaiting refund')+'</div></section>';
+ var rec=A0?A0.slice().sort(function(x,y){return((y.date||'')+(y.time||'')+(y.created||'')).localeCompare((x.date||'')+(x.time||'')+(x.created||''))}).slice(0,8):null;
+ h+='<section class="ad-s2"><div class="ad-sh"><div><h3>Recent Activity</h3></div></div><div class="ad-tw"><table class="ad-tb"><thead><tr><th>Time</th><th>Source</th><th>Company / Client</th><th>Work Type</th><th>Status</th></tr></thead><tbody>'
+  +(rec&&rec.length?rec.map(function(x){var d=x.date?new Date(x.date+'T00:00:00'):null;return'<tr><td>'+(d&&!isNaN(d)?esc(d.toLocaleString('en',{month:'short',day:'numeric'})):'')+(x.time?' · '+esc(x.time):'')+'</td><td>'+esc(x.source)+'</td><td>'+esc(x.company)+'</td><td>'+esc(x.category)+'</td><td><span class="ad-bd '+esc(x.status)+'">'+esc(x.status)+'</span></td></tr>'}).join(''):'<tr><td colspan="5"><div class="ad-empty">'+(rec?'No activity logged yet':'Sign in to load your activity')+'</div></td></tr>')+'</tbody></table></div></section>';
+ if(h===lastSig&&!force)return;lastSig=h;
+ $('ad-body').innerHTML=h}
+(function(){var hd=document.createElement('div');
+ hd.innerHTML='<div class="ad-top" id="ad-hd"><label class="ad-search">'+ic(IC.search)+'<input id="ad-q" type="text" placeholder="Search PNR, ticket number or passenger — press Enter" autocomplete="off"></label>'
+ +'<button type="button" class="ad-chip" id="ad-mdf" title="Open Master Data">'+ic(IC.file)+'<span><b>Master Data File</b><small id="ad-mdf-s">…</small></span></button>'
+ +'<div class="ad-chip" id="ad-ws">'+ic(IC.pc)+'<span><b>Local Workspace</b><small id="ad-ws-s">…</small></span></div>'
+ +'<label class="ad-date">'+ic(IC.cal)+'<select id="ad-per" aria-label="Date range">'+PERS.map(function(p){return'<option value="'+p[0]+'"'+(p[0]===PER?' selected':'')+'>'+p[1]+'</option>'}).join('')+'</select></label>'
+ +'<button type="button" class="ad-bell" id="ad-bell" title="Items needing attention" aria-label="Items needing attention">'+ic(IC.bell)+'<em id="ad-bell-n" hidden>0</em></button>'
+ +'<a class="ad-prof" href="index.html" title="Back to profile"><i id="ad-ini">AO</i><span id="ad-nm">Profile</span></a></div>'
+ +'<div class="ad-title"><div><h2>Dashboard</h2><p class="ad-sub">Your airline operations at a glance</p></div><button type="button" class="ad-dl" data-dl="summary">Download Excel</button></div><div id="ad-body"></div>';
+ while(hd.firstChild)top.appendChild(hd.firstChild);
+ var q=$('ad-q'),g=function(){return $('ptc-global-search')};
+ q.addEventListener('input',function(){var s=g();if(s){s.value=q.value;s.dispatchEvent(new Event('input',{bubbles:true}))}});
+ q.addEventListener('keydown',function(e){if(e.key==='Enter'){var s=g();if(s){s.value=q.value;s.dispatchEvent(new KeyboardEvent('keydown',{key:'Enter',bubbles:true}))}}});
+ $('ad-mdf').addEventListener('click',function(){var m=document.querySelector('#ptc-nav [data-aero="master"]');if(m)m.click()});
+ $('ad-per').addEventListener('change',function(){PER=this.value;renderDash(true)});
+ $('ad-bell').addEventListener('click',function(){var a=$('ad-attn');if(a)a.scrollIntoView({behavior:'smooth',block:'start'})});
+ top.addEventListener('click',function(e){var b=e.target.closest('[data-gr]');if(b){GR=b.dataset.gr;renderDash(true)}})})();
 if(window.MutationObserver){new MutationObserver(sync).observe(root,{attributes:true,attributeFilter:['class','data-pane']});
  if(dv)new MutationObserver(function(){if(dv.classList.contains('active')){closePages();renderDash()}sync()}).observe(dv,{attributes:true,attributeFilter:['class']});
  ['view-entry','view-sales'].forEach(function(id){var el=$(id);if(el)new MutationObserver(function(){closePages();sync()}).observe(el,{attributes:true,attributeFilter:['class']})})}
 setInterval(function(){if(dv&&dv.classList.contains('active'))renderDash();if(root.classList.contains('mas-active'))renderMaster()},3000);
+setInterval(function(){if(dv&&dv.classList.contains('active'))renderDash()},1000);
 btns.forEach(function(b){b.addEventListener('click',function(){var k=b.dataset.aero;
  if(k==='settings'){closePages();root.classList.add('set-active')}
  else if(k==='master'){closePages();root.classList.add('mas-active');renderMaster();try{window.scrollTo({top:0})}catch(e){}}
