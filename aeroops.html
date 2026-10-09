@@ -3125,6 +3125,47 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
 #ptc-root .sx-cal-f button.on{border-color:#2563C9;color:#2563C9;background:#F2F7FF}
 #ptc-root .ptc-stat-card.sx-date{padding-right:15px}
 </style>
+<style id="aero-ui-v3">
+/* ===== AEROOPS UI v3 — Work Record redesign (presentation only). Additive layer: no IDs, handlers, data or calculations touched. ===== */
+#ptc-root{ --navy:#0A1F3D; --navy-2:#102E57; --cyan:#19B6C9; --teal:#0E8FA0; --teal-d:#0B7686; --surf:#F2F6FB; --card:#fff; --ln3:#E1E8F1; --ink3:#0F2742; --mut3:#62748C; --up:#16875A; --down:#C2410C; }
+/* sidebar */
+#ptc-root .ptc-brandbar, #ptc-root #ptc-toprow-grid{ background:linear-gradient(180deg,#0A1F3D 0%,#0C2748 100%); }
+#ptc-root .ptc-brandbar-name{ letter-spacing:.2px; }
+#ptc-root #ptc-nav .ptc-nav-btn{ border-radius:9px; color:#B7C7DD; position:relative; }
+#ptc-root #ptc-nav .ptc-nav-btn:hover{ background:rgba(25,182,201,.10); color:#fff; }
+#ptc-root #ptc-nav .ptc-nav-btn.active{ background:linear-gradient(90deg,rgba(25,182,201,.28),rgba(25,182,201,.10)); color:#fff; box-shadow:inset 3px 0 0 var(--cyan); }
+#ptc-root #ptc-nav .ptc-nav-btn.active svg{ color:var(--cyan); }
+#ptc-root #ptc-nav .ptc-nav-btn:focus-visible{ outline:2px solid var(--cyan); outline-offset:1px; }
+/* page surface and cards */
+#ptc-root #ptc-card, #ptc-root .ptc-card, #ptc-root .ptc-panel, #ptc-root .lb-wrap, #ptc-root .ad-s2, #ptc-root .ad-card{ border-radius:12px; border:1px solid var(--ln3); box-shadow:0 1px 2px rgba(15,39,66,.04),0 6px 18px rgba(15,39,66,.05); }
+/* KPI strip: taller cards, tinted icon tiles, trend chips shown (values already computed by existing code) */
+#ptc-root #ptc-today{ grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin-bottom:14px; }
+@media (min-width:1180px){ #ptc-root #ptc-today{ grid-template-columns:repeat(8,minmax(0,1fr)); gap:8px; } #ptc-root #ptc-today .ptc-stat-card{ padding:10px !important; gap:8px !important; } #ptc-root #ptc-today .ptc-stat-icon{ width:30px !important; height:30px !important; } #ptc-root #ptc-today .ptc-stat-value{ font-size:19px !important; } #ptc-root #ptc-today .ptc-stat-label{ font-size:11.5px; } }
+#ptc-root #ptc-today .ptc-stat-card{ height:auto; min-height:78px; padding:12px 14px; border-radius:12px; border:1px solid var(--ln3); gap:11px; align-items:center; box-shadow:0 1px 2px rgba(15,39,66,.04),0 6px 18px rgba(15,39,66,.05); }
+#ptc-root #ptc-today .ptc-stat-icon{ width:36px; height:36px; border-radius:10px; align-items:center; justify-content:center; background:#E6F6F8; color:var(--teal); }
+#ptc-root #ptc-today .ptc-stat-icon.ptc-stat-green{ background:#E8F6EF; color:var(--up); }
+#ptc-root #ptc-today .ptc-stat-icon svg{ width:18px; height:18px; }
+#ptc-root #ptc-today .ptc-stat-label{ font-size:12px; font-weight:600; color:var(--mut3); text-transform:none; letter-spacing:0; }
+#ptc-root #ptc-today .ptc-stat-value{ font-size:24px; font-weight:800; color:var(--ink3); letter-spacing:-.3px; }
+#ptc-root #ptc-today .ptc-stat-delta:not(:empty){ display:inline-flex !important; font-size:11px; font-weight:700; white-space:nowrap; }
+#ptc-root #ptc-today .aero-total .ptc-stat-icon{ background:#E7EEFB; color:#2F5FD0; }
+/* buttons and inputs */
+#ptc-root .ptc-btn-primary{ background:linear-gradient(180deg,#12A0B3,var(--teal-d)); border-color:var(--teal-d); border-radius:9px; font-weight:700; }
+#ptc-root .ptc-btn-primary:hover{ filter:none; background:linear-gradient(180deg,#14ABBE,#0A6C7A); box-shadow:0 4px 14px rgba(14,143,160,.35); }
+#ptc-root input:not([type=checkbox]):not([type=radio]):focus, #ptc-root select:focus, #ptc-root textarea:focus{ outline:none; border-color:var(--cyan); box-shadow:0 0 0 3px rgba(25,182,201,.18); }
+#ptc-root :is(input,select,textarea){ border-radius:8px; }
+/* tables (Log Book) */
+#ptc-root .lb-t th{ background:#F6F9FC; color:var(--mut3); font-size:12px; font-weight:600; text-transform:none; letter-spacing:0; padding:11px 14px; }
+#ptc-root .lb-t td{ padding:12px 14px; }
+#ptc-root .lb-t tbody tr:hover{ background:#F3FAFC; }
+#ptc-root .lb-tab.on{ color:var(--teal); box-shadow:inset 0 -2px 0 var(--cyan); }
+#ptc-root .lb-pill{ border-radius:999px; }
+/* dashboard / work intelligence cards */
+#ptc-root .ad-k{ border-radius:12px; border:1px solid var(--ln3); }
+#ptc-root .ad-wr>div{ border-radius:10px; }
+@media (max-width:760px){ #ptc-root #ptc-today{ grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; } #ptc-root #ptc-today .ptc-stat-value{ font-size:20px; } }
+@media (prefers-reduced-motion:reduce){ #ptc-root *{ transition:none !important; } }
+</style>
 </head><body>
     <div class="ptc-modal-backdrop" id="cloud-auth-modal-backdrop" style="display:flex; z-index:5000;">
       <div class="aero-auth-topbar">
@@ -11225,6 +11266,18 @@ function remove(){var d=db();if(!d){msg('Sign in first.',true);return}var k=dlg.
  d.collection('publicSummary').doc(k).delete().then(function(){msg('Removed the published snapshot for '+label(k)+'.')}).catch(fail)}
 open.addEventListener('click',function(){last=open;dlg.dataset.sel='';render();bd.hidden=false;document.addEventListener('keydown',onKey);dlg.focus()});
 bd.addEventListener('click',function(e){if(e.target===bd)close()});
+})();
+</script>
+<script id="aero-total-card">/* Read-only: adds a "Total transactions" card = Tickets + Reissues + Refunds + Void, from the cards the existing code already fills. Writes nothing to data. */
+(function(){
+  var strip=document.getElementById('ptc-today'); if(!strip) return;
+  var ids=['td-tickets','td-reissues','td-refunds','td-voids'];
+  var card=document.createElement('div'); card.className='ptc-stat-card aero-total';
+  card.innerHTML='<span class="ptc-stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></span><div class="ptc-stat-text"><span class="ptc-stat-label">Total records</span><span class="ptc-stat-valrow"><b class="ptc-stat-value" id="aero-td-total">0</b></span></div>';
+  var first=strip.querySelector('.ptc-stat-card'); strip.insertBefore(card, first?first.nextSibling:null);
+  function upd(){ var n=0; ids.forEach(function(i){var e=document.getElementById(i); n+=parseInt((e&&e.textContent||'').replace(/[^\d-]/g,''),10)||0;}); var t=document.getElementById('aero-td-total'); if(t&&t.textContent!==String(n)) t.textContent=n; }
+  if(window.MutationObserver){ var mo=new MutationObserver(upd); ids.forEach(function(i){var e=document.getElementById(i); if(e) mo.observe(e,{childList:true,characterData:true,subtree:true});}); }
+  upd();
 })();
 </script>
 </body></html>
