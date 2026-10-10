@@ -11679,8 +11679,13 @@ intel.addEventListener('click',function(e){var b=e.target.closest('[data-act="op
 /* Intelligence nav button */
 var ib=document.createElement('button');ib.type='button';ib.className='ptc-nav-btn';ib.dataset.aero='intel';ib.title='Reports and analytics';ib.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg><span class="aero-lbl">Intelligence</span>';
 var pw=nav.querySelector('[data-aero="pwi"]');nav.insertBefore(ib,pw?pw.nextSibling:nav.firstChild);
-function enforce(){if(!root.classList.contains('wr-intel-on'))return;[].forEach.call(nav.querySelectorAll('.ptc-nav-btn'),function(b){var on=b===ib;if(b.classList.contains('active')!==on)b.classList.toggle('active',on)})}
-ib.addEventListener('click',function(){var o=$('btn-cancel-edit');root.classList.remove('wr-form-open');root.classList.add('wr-intel-on');renderIntel();enforce();try{window.scrollTo({top:0})}catch(e){}});
+var enfN=0,enfT=0;function enforce(){if(!root.classList.contains('wr-intel-on'))return;var now=Date.now();if(now-enfT>300){enfT=now;enfN=0}if(++enfN>12)return; /* loop guard */[].forEach.call(nav.querySelectorAll('.ptc-nav-btn'),function(b){var on=b===ib;if(b.classList.contains('active')!==on)b.classList.toggle('active',on)})}
+ib.addEventListener('click',function(){
+  root.classList.remove('wr-form-open');
+  /* Route through the Work Record button first: the existing handlers close Activity Tracker, Dashboard, Settings and Master Data cleanly */
+  var home=nav.querySelector('.ptc-nav-btn[data-nav="entrydesk"]');
+  if(home){navFlag=true;try{home.click()}finally{navFlag=false}}
+  root.classList.add('wr-intel-on');renderIntel();enforce();try{window.scrollTo({top:0})}catch(e){}});
 [].forEach.call(nav.querySelectorAll('.ptc-nav-btn'),function(b){if(b!==ib)b.addEventListener('click',function(){root.classList.remove('wr-intel-on');syncVis()},true)});
 new MutationObserver(enforce).observe(nav,{attributes:true,subtree:true,attributeFilter:['class']});
 /* show the dashboard only on the Work Record pane */
