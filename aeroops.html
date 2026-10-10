@@ -3354,6 +3354,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
 @media(max-width:1500px){.wr-two table,.wr-card .wr-two table{min-width:0}}
 @media(max-width:700px){.wr-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.wr-two{grid-template-columns:1fr}.wr-k b{font-size:20px}}
 </style>
+<script>(function(){var t="light";document.documentElement.setAttribute("data-theme",t)})();</script>
 </head><body>
     <div class="ptc-modal-backdrop" id="cloud-auth-modal-backdrop" style="display:flex; z-index:5000;">
       <div class="aero-auth-topbar">
@@ -3364,7 +3365,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
       <div class="ptc-modal">
 
         <div class="aero-auth-brand">
-          <div class="icon">✈</div>
+          <div class="icon"><svg viewBox="0 0 32 32" width="34" height="34" aria-hidden="true"><defs><linearGradient id="aoG2" x1="4" y1="2" x2="28" y2="30" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#60A5FA"/><stop offset="1" stop-color="#1D4ED8"/></linearGradient></defs><rect width="32" height="32" rx="9" fill="url(#aoG2)"/><path d="M24.6 7.4 7.4 14.1l6.3 2.9z" fill="#fff"/><path d="M24.6 7.4 13.7 17l3.1 7.6z" fill="#fff" fill-opacity=".72"/></svg></div>
           <div class="name">AEROOPS</div>
           <div class="tag">Work Record System</div>
         </div>
@@ -3479,7 +3480,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
 <div id="ptc-root" data-pane="entrydesk">
   <div class="ptc-shell">
     <div class="ptc-brandbar">
-      <span class="ptc-brandbar-logo"><span class="aero-v1-only">✈</span><span class="aero-v2-only"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg></span></span>
+      <span class="ptc-brandbar-logo"><svg viewBox="0 0 32 32" width="34" height="34" aria-hidden="true"><defs><linearGradient id="aoG1" x1="4" y1="2" x2="28" y2="30" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#60A5FA"/><stop offset="1" stop-color="#1D4ED8"/></linearGradient></defs><rect width="32" height="32" rx="9" fill="url(#aoG1)"/><path d="M24.6 7.4 7.4 14.1l6.3 2.9z" fill="#fff"/><path d="M24.6 7.4 13.7 17l3.1 7.6z" fill="#fff" fill-opacity=".72"/></svg></span>
       <span class="ptc-brandbar-text"><span class="ptc-brandbar-name">AeroOps</span><span class="ptc-brandbar-sub">Airline Operations Platform</span></span>
       <span class="ptc-brandbar-sep">|</span>
       <span class="ptc-brandbar-page"><span class="aero-v1-only">🏠 </span>Work Record Database</span>
@@ -5395,25 +5396,30 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
     if(e) e.textContent = 'Cannot reach Firebase (offline, or gstatic.com is blocked). Check your connection or disable the blocker, then reload.';
     return false;
   }
+  /* Loads the Firebase SDK, trying each source in order: local ./vendor copy first (works even where
+     gstatic.com is blocked), then jsDelivr, unpkg, and finally gstatic. */
   function loadFirebaseScripts(cb, onerr){
     if(window.firebase && window.firebase.firestore && window.firebase.auth){ cb(); return; }
-    const s1 = document.createElement('script');
-    s1.src = 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js';
-    s1.onload = () => {
-      const s2 = document.createElement('script');
-      s2.src = 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js';
-      s2.onload = () => {
-        const s3 = document.createElement('script');
-        s3.src = 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js';
-        s3.onload = cb;
-        s3.onerror = onerr;
-        document.head.appendChild(s3);
-      };
-      s2.onerror = onerr;
-      document.head.appendChild(s2);
-    };
-    s1.onerror = onerr;
-    document.head.appendChild(s1);
+    var V = '10.12.2';
+    var names = ['firebase-app-compat.js','firebase-firestore-compat.js','firebase-auth-compat.js'];
+    var bases = [
+      './vendor/',
+      'https://cdn.jsdelivr.net/npm/firebase@' + V + '/',
+      'https://unpkg.com/firebase@' + V + '/',
+      'https://www.gstatic.com/firebasejs/' + V + '/'
+    ];
+    function loadOne(name, i, done, fail){
+      if(i >= bases.length){ fail(); return; }
+      var s = document.createElement('script');
+      s.src = bases[i] + name;
+      s.onload = done;
+      s.onerror = function(){ s.remove(); loadOne(name, i + 1, done, fail); };
+      document.head.appendChild(s);
+    }
+    (function next(k){
+      if(k >= names.length){ cb(); return; }
+      loadOne(names[k], 0, function(){ next(k + 1); }, onerr);
+    })(0);
   }
 
   // ==========================================================================
@@ -6183,6 +6189,8 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
       }
     }, () => {
       toast('Could not load the cloud library — check your internet connection.');
+      var ee = document.getElementById('cloud-auth-error');
+      if(ee) ee.textContent = 'Cannot reach Firebase (offline, or gstatic.com is blocked). Check your connection or disable the blocker, then reload.';
       setCloudStatus('error');
     });
   }
@@ -6331,9 +6339,9 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
     $('cloud-auth-error').textContent = '';
     if(!email || !code){ $('cloud-auth-error').textContent = 'Enter your email and Access Code.'; return; }
     const btn = $('btn-cloud-auth-signin');
+    if(!fbOk()) return;
     btn.disabled = true;
     $('signin-btn-label').innerHTML = '<span class="aero-spinner"></span> SIGNING IN...';
-    if(!fbOk()) return;
     firebase.auth().signInWithEmailAndPassword(email, code)
       .then(() => { localStorage.setItem(REMEMBERED_EMAIL_KEY, email); })
       .catch(err => {
@@ -6488,6 +6496,11 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
     if(code === 'auth/invalid-action-code') return 'This reset link is invalid or has already been used — request a new one.';
     if(code === 'auth/operation-not-allowed') return 'Email link sign-in isn\'t enabled yet — turn it on in Firebase Console → Authentication → Sign-in method → Email Link.';
     if(code === 'auth/requires-recent-login') return 'For security, please sign in again before setting a new code.';
+    if(code === 'auth/network-request-failed') return 'Network error — check your internet connection (or disable any ad/content blocker) and try again.';
+    if(code === 'auth/unauthorized-domain') return 'This address (' + location.hostname + ') is not authorized in Firebase. Add it in Firebase Console → Authentication → Settings → Authorized domains.';
+    if(code === 'auth/operation-not-supported-in-this-environment') return 'Sign-in does not work when the page is opened as a local file. Open it from your website (https://) instead.';
+    if(code === 'auth/user-disabled') return 'This account has been disabled.';
+    if(code === 'auth/invalid-api-key' || code === 'auth/api-key-not-valid') return 'The Firebase API key is invalid or restricted for this domain.';
     console.error('Auth error', err);
     return 'Something went wrong — please try again.';
   }
@@ -12160,4 +12173,474 @@ var sig='';setInterval(function(){var s=E().length+':'+JSON.stringify(E().slice(
 syncVis();renderIntel();
 })();
 </script>
+<style id="aeroops-redesign">
+/* ===== AeroOps redesign layer: navy + cyan, theme toggle, simplified navigation. No logic changed. ===== */
+html[data-theme="dark"]{color-scheme:dark}
+html[data-theme="dark"], html[data-theme="dark"] #ptc-root{
+ --ink:#E6EEF8;--ink-soft:#A9BBD3;--paper:#0A1730;--card:#0F2142;--line:#1A315A;--muted:#8FA6C4;--ao-soft:#0C1B38;
+ --brand:#22D3EE;--brand-soft:#0E3A57;--accent:#22D3EE;--accent-soft:#0E3A57;
+ --booking:#67E8F9;--booking-soft:#0E3A57;--reissue:#FBBF24;--reissue-soft:#4A3A0B;--refund:#F87171;--refund-soft:#4A1D1D;--void:#9CA3AF;--void-soft:#1F2A44;
+ --shadow-sm:0 1px 3px rgba(0,0,0,.35);--shadow-md:0 4px 16px rgba(0,0,0,.35);--shadow-lg:0 12px 32px rgba(0,0,0,.5)}
+html:not([data-theme="dark"]){--ao-soft:#F3F5F8}
+html[data-theme="dark"] #ptc-root{color:var(--ink)}
+html[data-theme="dark"] #ptc-root input,html[data-theme="dark"] #ptc-root select,html[data-theme="dark"] #ptc-root textarea,
+html[data-theme="dark"] .ptc-modal input,html[data-theme="dark"] .ptc-modal select,html[data-theme="dark"] .ptc-modal textarea{background:#0B1B38;color:var(--ink);border-color:var(--line)}
+html[data-theme="dark"] #ptc-root input::placeholder,html[data-theme="dark"] #ptc-root textarea::placeholder{color:#6E86A8}
+html[data-theme="dark"] #ptc-root table th{color:var(--muted)}
+html[data-theme="dark"] #ptc-root tbody tr:hover{background:var(--ao-soft)}
+html[data-theme="dark"] .ptc-modal{background:var(--card);color:var(--ink)}
+html[data-theme="dark"] #ptc-root h1,html[data-theme="dark"] #ptc-root h2,html[data-theme="dark"] #ptc-root h3,html[data-theme="dark"] #ptc-root b,html[data-theme="dark"] #ptc-root strong{color:var(--ink)}
+html[data-theme="dark"] #ptc-root .ptc-btn-primary,html[data-theme="dark"] #ptc-root .wr-btn.pri,html[data-theme="dark"] #ptc-root .wr-newbtn{color:#04202B}
+/* navigation: originals stay in the DOM (and clickable by code) but are hidden */
+#ptc-nav .ao-hide{display:none!important}
+#ptc-nav .ao-nav.active{box-shadow:none}
+#aoTheme{margin-right:8px;white-space:nowrap}
+.ao-soonbadge{display:inline-block;font-size:11px;padding:2px 9px;border-radius:12px;background:#4A3A0B;color:#FCD34D;margin-left:8px;vertical-align:middle}
+.ao-card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-top:14px}
+.ao-card h3{margin:0 0 6px;font-size:14px}.ao-card p{margin:0;color:var(--muted);font-size:13px}
+.ao-histbar{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 10px}
+html[data-theme="dark"] #ptc-root .ptc-shell{background:linear-gradient(90deg,#07122A 0 200px,var(--paper) 200px)}
+html[data-theme="dark"] #ptc-root.aero-compact .ptc-shell{background:linear-gradient(90deg,#07122A 0 68px,var(--paper) 68px)!important}
+@media (max-width:980px){html[data-theme="dark"] #ptc-root .ptc-shell{background:var(--paper)}}
+#ptc-nav .ao-nav{white-space:normal;line-height:1.25;width:100%}
+@media(max-width:700px){#aoTheme{margin-right:4px;padding:6px 8px}}
+html[data-theme="dark"] .ptc-connbar-toggle{background:var(--card)}
+html[data-theme="dark"] .ptc-connbar-toggle:hover{background:var(--ao-soft)}
+html[data-theme="dark"] .ptc-seg-remove{background:var(--card)}
+html[data-theme="dark"] .ptc-txn-tab{background:var(--card)}
+html[data-theme="dark"] .ptc-refund-result{background:var(--ao-soft)}
+html[data-theme="dark"] .ptc-btn-ghost:hover{background:var(--ao-soft)}
+html[data-theme="dark"] .ptc-impact-period{background:var(--card)}
+html[data-theme="dark"] .ptc-impact-stat{background:var(--card)}
+html[data-theme="dark"] .ptc-view-toggle{background:var(--card)}
+html[data-theme="dark"] .ptc-import-btn:hover{background:var(--ao-soft)}
+html[data-theme="dark"] .ptc-method-chip{background:var(--card)}
+html[data-theme="dark"] .ptc-tktstatus-select option{background:var(--card)}
+html[data-theme="dark"] .ptc-due-row-goto{background:var(--card)}
+html[data-theme="dark"] .ptc-modal{background:var(--card)}
+html[data-theme="dark"] .ptc-tab.active{background:var(--card)}
+html[data-theme="dark"] .ptc-global-search-results{background:var(--card)}
+html[data-theme="dark"] .ptc-global-hover{background:var(--card)}
+html[data-theme="dark"] .ptc-nav-btn.active{background:var(--card)}
+html[data-theme="dark"] #ptc-clog tr.ptc-cl-main:hover td{background:var(--ao-soft)}
+html[data-theme="dark"] .ptc-mini{background:var(--card)}
+html[data-theme="dark"] .ptc-mini:hover{background:var(--ao-soft)}
+html[data-theme="dark"] .ptc-cl-detail td{background:var(--ao-soft)}
+html[data-theme="dark"] #ptc-card .ptc-header-txntype .ptc-txn-tab{background:var(--card)}
+html[data-theme="dark"] .ptc-nav-menu{background:var(--card)}
+html[data-theme="dark"] .ptc-nav-menu-item:hover{background:var(--ao-soft)}
+html[data-theme="dark"] .ptc-side-btn{background:var(--ao-soft)}
+html[data-theme="dark"] .ptc-side-logs-btn:hover{background:var(--ao-soft)}
+html[data-theme="dark"] .ptc-kpi{background:var(--card)}
+html[data-theme="dark"] .ptc-panel{background:var(--card)}
+html[data-theme="dark"] .ptc-fare-chart-item{background:var(--card)}
+html[data-theme="dark"] #ptc-root #ptc-nav{background:var(--card)}
+html[data-theme="dark"] .lb-tabs{background:var(--card)}
+html[data-theme="dark"] .lb-filters :is(input{background:var(--card)}
+html[data-theme="dark"] select){background:var(--card)}
+html[data-theme="dark"] .lb-wrap{background:var(--card)}
+html[data-theme="dark"] .lb-t th{background:var(--card)}
+html[data-theme="dark"] .lb-ty-Refund svg{color:var(--ink-soft)}
+html[data-theme="dark"] .lb-b-rf{color:var(--ink-soft)}
+html[data-theme="dark"] .lb-go{background:var(--card)}
+html[data-theme="dark"] .lb-more{background:var(--card)}
+html[data-theme="dark"] #lb-sys{background:var(--card)}
+html[data-theme="dark"] #lb-details{background:var(--card)}
+html[data-theme="dark"] #ptc-root .ptc-hero-toolbar #ptc-global-search{background:var(--card)}
+html[data-theme="dark"] #ptc-root .ptc-hero-conn .ptc-connbar{background:var(--card)}
+html[data-theme="dark"] #ptc-root .ptc-hero-conn .ptc-connbar-actions{background:var(--card)}
+html[data-theme="dark"] .aero-page .aset-head h2{color:var(--ink)}
+html[data-theme="dark"] .aero-page .aset-head p{color:var(--muted)}
+html[data-theme="dark"] .aero-page .aset-card{background:var(--card)}
+html[data-theme="dark"] .aero-page .aset-card h3{color:var(--ink-soft)}
+html[data-theme="dark"] .aero-page .aset-row b{color:var(--ink)}
+html[data-theme="dark"] .aero-page .aset-row span{color:var(--muted)}
+html[data-theme="dark"] .aero-page .aset-seg button{color:var(--ink-soft)}
+html[data-theme="dark"] .aero-page .aset-btns button{color:var(--ink);color:var(--ink-soft)}
+html[data-theme="dark"] .aero-page .aset-danger{color:var(--ink-soft)}
+html[data-theme="dark"] .aero-page .aset-note{color:var(--ink-soft)}
+html[data-theme="dark"] .pwi-dnav button{background:var(--card);color:var(--ink)}
+html[data-theme="dark"] .pwi-dnav input{background:var(--card);color:var(--ink)}
+html[data-theme="dark"] .aero-page .aset-hero b{color:var(--ink)}
+html[data-theme="dark"] .aero-page .aset-hero span{color:var(--ink-soft)}
+html[data-theme="dark"] .aero-page .am-n{color:var(--ink)}
+html[data-theme="dark"] #aero-dash-top{color:var(--ink)}
+html[data-theme="dark"] #aero-dash-top .ad-sub{color:var(--muted)}
+html[data-theme="dark"] #aero-dash-top .ad-seg{background:var(--ao-soft)}
+html[data-theme="dark"] #aero-dash-top .ad-seg button{color:var(--ink-soft)}
+html[data-theme="dark"] #aero-dash-top .ad-seg button.on{background:var(--card);color:var(--ink)}
+html[data-theme="dark"] #aero-dash-top .ad-kpi{background:var(--card)}
+html[data-theme="dark"] #aero-dash-top .ad-kpi span{color:var(--muted)}
+html[data-theme="dark"] #aero-dash-top .ad-kpi small{color:var(--muted)}
+html[data-theme="dark"] #aero-dash-top .ad-sec{color:var(--ink-soft)}
+html[data-theme="dark"] #aero-dash-top .ad-card{background:var(--card)}
+html[data-theme="dark"] #aero-dash-top .ad-card p{color:var(--muted)}
+html[data-theme="dark"] #aero-dash-top .ad-donut li em{color:var(--muted)}
+html[data-theme="dark"] #aero-dash-top .ad-hb em{color:var(--muted)}
+html[data-theme="dark"] #aero-dash-top .ad-vb .c span{color:var(--muted)}
+html[data-theme="dark"] #aero-dash-top .ad-empty{color:var(--muted)}
+html[data-theme="dark"] #aero-dash-top .ad-details{background:var(--card)}
+html[data-theme="dark"] #aero-dash-top .ad-details th{color:var(--muted)}
+html[data-theme="dark"] #aero-dash-top .ad-details h5{color:var(--ink-soft)}
+html[data-theme="dark"] #aero-dash-top .ad-top{background:var(--card)}
+html[data-theme="dark"] #aero-dash-top .ad-search{color:var(--muted)}
+html[data-theme="dark"] #aero-dash-top .ad-search:focus-within{background:var(--card)}
+html[data-theme="dark"] #aero-dash-top .ad-search input{color:var(--ink)}
+html[data-theme="dark"] #aero-dash-top .ad-chip{background:var(--card);color:var(--ink)}
+html[data-theme="dark"] #aero-dash-top .ad-chip svg{color:var(--muted)}
+html[data-theme="dark"] #aero-dash-top .ad-chip small{color:var(--muted)}
+html[data-theme="dark"] #aero-dash-top .ad-date{background:var(--card)}
+html[data-theme="dark"] #aero-dash-top .ad-date select{color:var(--ink)}
+html[data-theme="dark"] #aero-dash-top .ad-bell{background:var(--card);color:var(--ink-soft)}
+html[data-theme="dark"] #aero-dash-top .ad-prof{color:var(--ink)}
+html[data-theme="dark"] #aero-dash-top .ad-k{background:var(--card)}
+html[data-theme="dark"] #aero-dash-top .ad-k span{color:var(--muted)}
+html[data-theme="dark"] #aero-dash-top .ad-k small{color:var(--muted)}
+html[data-theme="dark"] #aero-dash-top .ad-s2{background:var(--card)}
+html[data-theme="dark"] #aero-dash-top .ad-sh p{color:var(--muted)}
+html[data-theme="dark"] #aero-dash-top .ad-wr>div{background:var(--ao-soft)}
+html[data-theme="dark"] #aero-dash-top .ad-wr span{color:var(--muted)}
+html[data-theme="dark"] #aero-dash-top .ad-wi p{color:var(--muted)}
+html[data-theme="dark"] #aero-dash-top .ad-rv span{color:var(--muted)}
+html[data-theme="dark"] #aero-dash-top .ad-rv small{color:var(--muted)}
+html[data-theme="dark"] #aero-dash-top .ad-tb th{background:var(--ao-soft);color:var(--muted)}
+html[data-theme="dark"] #aero-dash-top .ad-bd{background:var(--ao-soft);color:var(--ink-soft)}
+html[data-theme="dark"] #pwi-root .pwi-sync{background:var(--card)}
+html[data-theme="dark"] #pwi-root details.pwi-data>summary{background:var(--card)}
+html[data-theme="dark"] #pwi-root .pwi-data-menu{background:var(--card)}
+html[data-theme="dark"] #pwi-root .pwi-data-menu select{background:var(--card)}
+html[data-theme="dark"] #pwi-root .pf-kpis>div{background:var(--ao-soft)}
+html[data-theme="dark"] #pwi-root .pf-t{background:var(--ao-soft)}
+html[data-theme="dark"] #pwi-root .hm-head h2{color:var(--ink)}
+html[data-theme="dark"] #pwi-root .hm-dsel{background:var(--card);border:1px solid var(--line)}
+html[data-theme="dark"] #pwi-root .hm-dsel button{color:var(--ink-soft)}
+html[data-theme="dark"] #pwi-root .hm-dsel input{color:var(--ink)}
+html[data-theme="dark"] #pwi-root #hm-q{background:var(--card);border:1px solid var(--line)}
+html[data-theme="dark"] #pwi-root .hm-k{background:var(--card)}
+html[data-theme="dark"] #pwi-root .hm-kv span{color:var(--ink)}
+html[data-theme="dark"] #pwi-root .hm-kv b{color:var(--ink)}
+html[data-theme="dark"] #pwi-root .hm-rates{background:var(--card)}
+html[data-theme="dark"] #pwi-root .hm-rates em{background:var(--ao-soft)}
+html[data-theme="dark"] #pwi-root .hm-note{color:var(--ink-soft)}
+html[data-theme="dark"] #pwi-root .hm-ch h3{color:var(--ink)}
+html[data-theme="dark"] #pwi-root .hm-h3{color:var(--ink)}
+html[data-theme="dark"] #pwi-root .hm-sel{background:var(--card);border:1px solid var(--line)}
+html[data-theme="dark"] #pwi-root .hm-gw b{color:var(--ink)}
+html[data-theme="dark"] #pwi-root .hm-tl{color:var(--ink-soft)}
+html[data-theme="dark"] #pwi-root .hm-tiles b{color:var(--ink)}
+html[data-theme="dark"] #pwi-root .hm-banner b{color:var(--ink)}
+html[data-theme="dark"] #pwi-root .hm-banner i{color:var(--ink-soft)}
+html[data-theme="dark"] #pwi-root .hm-box h4{color:var(--ink)}
+html[data-theme="dark"] #pwi-root #hm-entry .pwi-entry{background:var(--card)}
+html[data-theme="dark"] #pwi-root #hm-entry .hm-f label{color:var(--ink)}
+html[data-theme="dark"] #pwi-root #hm-entry select{background:var(--card);border:1px solid var(--line);color:var(--ink)}
+html[data-theme="dark"] #pwi-root #hm-entry input[type=text]{background:var(--card);border:1px solid var(--line);color:var(--ink)}
+html[data-theme="dark"] #pwi-root #hm-entry input[type=date]{background:var(--card);border:1px solid var(--line);color:var(--ink)}
+html[data-theme="dark"] #pwi-root #hm-entry input[type=time]{background:var(--card);border:1px solid var(--line);color:var(--ink)}
+html[data-theme="dark"] #pwi-root #hm-entry textarea{background:var(--card);border:1px solid var(--line);color:var(--ink)}
+html[data-theme="dark"] #pwi-root #hm-entry .pwi-kbtn{background:var(--card);border:1px solid var(--line)}
+html[data-theme="dark"] #pwi-root #hm-entry #pwi-save2{background:var(--card)}
+html[data-theme="dark"] #pwi-root .hm-fb{background:var(--card);border:1px solid var(--line)}
+html[data-theme="dark"] #pwi-root .hm-t th{background:var(--ao-soft)}
+html[data-theme="dark"] #pwi-root .hm-menu>div{background:var(--card);border:1px solid var(--line)}
+html[data-theme="dark"] #pwi-root .hm-pg{color:var(--ink-soft)}
+html[data-theme="dark"] #pwi-root .hm-pn button{background:var(--card)}
+html[data-theme="dark"] #pwi-root .hm-sumi p{color:var(--ink-soft)}
+html[data-theme="dark"] #pwi-root .hm-rep{background:var(--card);border:1.5px solid var(--line)}
+html[data-theme="dark"] #pwi-root .pwi-subtabs button.on{background:var(--card)}
+html[data-theme="dark"] #pwi-root .pwi-chip{background:var(--card)}
+html[data-theme="dark"] #pwi-root .pwi-field input[type=text]{background:var(--card)}
+html[data-theme="dark"] #pwi-root .pwi-field input:not([type]){background:var(--card)}
+html[data-theme="dark"] #pwi-root .pwi-in{background:var(--card)}
+html[data-theme="dark"] #pwi-root .pwi-seg button.on{background:var(--card)}
+html[data-theme="dark"] #pwi-root .pwi-custom input{background:var(--card)}
+html[data-theme="dark"] #pwi-root .pwi-fjump{background:var(--card)}
+html[data-theme="dark"] #pwi-root .pwi-kpi{background:var(--card)}
+html[data-theme="dark"] #pwi-root select.pwi-mini-sel{background:var(--card)}
+html[data-theme="dark"] #pwi-root .pwi-tabs-s button.on{background:var(--card)}
+html[data-theme="dark"] #pwi-root .pwi-bar-t{background:var(--ao-soft)}
+html[data-theme="dark"] #pwi-root .pwi-kw button{background:var(--card)}
+html[data-theme="dark"] #pwi-root .pwi-btn{background:var(--card)}
+html[data-theme="dark"] #pwi-root .pwi-modal-box{background:var(--card)}
+html[data-theme="dark"] #pwi-root .pwi-mgrid :is(input{background:var(--card)}
+html[data-theme="dark"] select{background:var(--card)}
+html[data-theme="dark"] textarea){background:var(--card)}
+html[data-theme="dark"] #pwi-root .pwi-kbtn{background:var(--card)}
+html[data-theme="dark"] #pwi-root .pwi-sbtn{background:var(--card)}
+html[data-theme="dark"] #ptc-root .sx-cal-h select{background:var(--card)}
+html[data-theme="dark"] #ptc-root .sx-nav{background:var(--card)}
+html[data-theme="dark"] #ptc-root .sx-day.sel.has::after{background:var(--card)}
+html[data-theme="dark"] #ptc-root .sx-cal-f button{background:var(--card)}
+html[data-theme="dark"] #ptc-root .sx-panel{background:var(--card)}
+html[data-theme="dark"] #ptc-root .sx-step button{background:var(--card)}
+html[data-theme="dark"] #ptc-root .sx-x:hover{background:var(--ao-soft)}
+html[data-theme="dark"] #ptc-root .sx-t th{background:var(--card)}
+html[data-theme="dark"] #ptc-root .sx-go{background:var(--card)}
+html[data-theme="dark"] .apv{background:var(--card)}
+html[data-theme="dark"] .apv button{background:var(--card)}
+html[data-theme="dark"] .wr select{background:var(--card)}
+html[data-theme="dark"] .wr input{background:var(--card)}
+html[data-theme="dark"] .wr-btn.ghost{background:var(--card)}
+html[data-theme="dark"] .wr-btn.danger{background:var(--card)}
+html[data-theme="dark"] .wr-k{background:var(--card)}
+html[data-theme="dark"] .wr-card{background:var(--card)}
+html[data-theme="dark"] .wr-dh .del{background:var(--card)}
+html[data-theme="dark"] .wr-seg{background:var(--ao-soft)}
+html[data-theme="dark"] .wr-seg button.on{background:var(--card)}
+html[data-theme="dark"] .wr-tag{background:var(--ao-soft)}
+html[data-theme="dark"] #snap-dlg{background:var(--card)}
+html[data-theme="dark"] #snap-dlg button{background:var(--card)}
+</style>
+<script id="aeroops-redesign-js">
+/* AeroOps redesign layer. Only restructures navigation, moves Master Data into Settings, adds the theme toggle.
+   It never edits calculations, Firebase, storage or form code; every original button stays in the page and is triggered with .click(). */
+(function(){
+var KEY="aeroops-theme";
+function q(s,r){return(r||document).querySelector(s)}function qa(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))}
+function setTheme(t){document.documentElement.setAttribute("data-theme",t);try{localStorage.setItem(KEY,t)}catch(e){}var b=q("#aoTheme");if(b)b.textContent=t==="dark"?"Light mode":"Dark mode";if(t==="dark"){setTimeout(fixDark,50)}else{if(fxObs)fxObs.disconnect();undoFx();watchFx()}}
+
+/* dark-mode contrast helper: lightens dark text on dark panels and darkens leftover white panels; fully undone in light mode */
+var fxObs=null,fxT=0;
+function rgb(c){var m=c&&c.match(/[\d.]+/g);return m?{r:+m[0],g:+m[1],b:+m[2],a:m.length>3?+m[3]:1}:null}
+function Lm(o){function f(v){v/=255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4)}return .2126*f(o.r)+.7152*f(o.g)+.0722*f(o.b)}
+function Sat(o){var mx=Math.max(o.r,o.g,o.b),mn=Math.min(o.r,o.g,o.b);return mx?(mx-mn)/mx:0}
+function effBg(e){while(e&&e.nodeType===1){var c=rgb(getComputedStyle(e).backgroundColor);if(c&&c.a>.5)return Lm(c);e=e.parentElement}return .01}
+function setFx(e,prop,val){if(!e.hasAttribute("data-aofx")){e.setAttribute("data-aofx","1");e.setAttribute("data-aoc",e.style.getPropertyValue("color"));e.setAttribute("data-aob",e.style.getPropertyValue("background-color"))}e.style.setProperty(prop,val,"important")}
+function undoFx(){qa("[data-aofx]").forEach(function(e){var c=e.getAttribute("data-aoc"),b=e.getAttribute("data-aob");e.style.removeProperty("color");e.style.removeProperty("background-color");if(c)e.style.setProperty("color",c);if(b)e.style.setProperty("background-color",b);e.removeAttribute("data-aofx");e.removeAttribute("data-aoc");e.removeAttribute("data-aob")})}
+function fixDark(){if(document.documentElement.getAttribute("data-theme")!=="dark")return;if(fxObs)fxObs.disconnect();
+ var els=qa("#ptc-root *, .ptc-modal *").filter(function(e){return!e.closest("#ptc-nav,.ptc-sidebar,aside")&&!/^(svg|path|circle|rect|line|polyline|g|img|canvas|input|select|textarea|option|script|style)$/i.test(e.tagName)&&!e.closest("svg")&&e.offsetParent!==null});
+ els.forEach(function(e){if(e.hasAttribute("data-aofx"))return;var cs=getComputedStyle(e),b=rgb(cs.backgroundColor);
+  if(b&&b.a>.5&&Lm(b)>.55&&e.offsetHeight>0){var nb=Sat(b)<.18?(Lm(b)>.9?"var(--card)":"var(--ao-soft)"):"rgba("+b.r+","+b.g+","+b.b+",.22)";setFx(e,"background-color",nb)}});
+ els.forEach(function(e){var has=false;for(var n=e.firstChild;n;n=n.nextSibling){if(n.nodeType===3&&n.textContent.trim()){has=true;break}}if(!has)return;
+  var c=rgb(getComputedStyle(e).color);if(!c||Lm(c)>=.28)return;if(effBg(e)>=.22)return;
+  var nc=Sat(c)<.25?"var(--ink)":"rgb("+Math.round(c.r+(255-c.r)*.72)+","+Math.round(c.g+(255-c.g)*.72)+","+Math.round(c.b+(255-c.b)*.72)+")";setFx(e,"color",nc)});
+ watchFx()}
+function watchFx(){if(!fxObs)fxObs=new MutationObserver(function(){clearTimeout(fxT);fxT=setTimeout(fixDark,160)});
+ fxObs.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:["class","hidden","style"]})}
+function orig(k){return q('#ptc-nav .ptc-nav-btn[data-aero="'+k+'"]')}
+var ITEMS=[["ov","Overview","intel","overview"],["wr","Work Records","home"],["ap","Activity & Performance","pwi"],["at","Arrow Travels","sales"],["ir","Intelligence & Reports","intel","reports"],["se","Settings & Access","settings"]];
+var HIDE=["home","pwi","intel","sales","logs","pending","reports","master","settings"];
+function pickTab(v){var n=0;(function t(){var b=q('[data-act="itab"][data-v="'+v+'"]');if(b)b.click();else if(n++<12)setTimeout(t,120)})()}
+function buildNav(){var nav=q("#ptc-nav");if(!nav||nav.getAttribute("data-ao"))return;
+ if(!ITEMS.every(function(i){return orig(i[2])}))return;
+ nav.setAttribute("data-ao","1");
+ var first=nav.firstChild;
+ ITEMS.forEach(function(it){var src=orig(it[2]);var b=src.cloneNode(true);
+  ["data-aero","data-nav","data-pane","id","data-view"].forEach(function(a){b.removeAttribute(a)});
+  b.removeAttribute("style");b.className="ptc-nav-btn ao-nav";b.setAttribute("data-ao",it[0]);b.title=it[1];
+  var badge=b.querySelector(".ptc-nav-badge");if(badge)badge.remove();
+  var tn=[];(function w(n){for(var c=n.firstChild;c;c=c.nextSibling){if(c.nodeType===3&&c.textContent.trim())tn.push(c);else if(c.nodeType===1&&c.tagName!=="svg")w(c)}})(b);
+  if(tn.length){tn[0].textContent=it[1];for(var i=1;i<tn.length;i++)tn[i].textContent=""}else{var sp=document.createElement("span");sp.textContent=it[1];b.appendChild(sp)}
+  b.addEventListener("click",function(e){e.preventDefault();var o=orig(it[2]);if(o)o.click();if(it[3])pickTab(it[3]);setTimeout(sync,120)});
+  nav.insertBefore(b,first)});
+ HIDE.forEach(function(k){var o=orig(k);if(o)o.classList.add("ao-hide")});
+ var mo=new MutationObserver(function(){sync()});mo.observe(nav,{attributes:true,subtree:true,attributeFilter:["class"]});var rt=q("#ptc-root");if(rt)mo.observe(rt,{attributes:true,attributeFilter:["class","data-pane"]});
+ document.addEventListener("click",function(){setTimeout(sync,150)},true);sync()}
+function sync(){var r=q("#ptc-root");if(!r)return;var c=r.classList,pane=r.getAttribute("data-pane")||"",cur="wr";
+ if(c.contains("wr-intel-on")){var on=q('[data-act="itab"].on');cur=(on&&on.getAttribute("data-v")==="overview")?"ov":"ir"}
+ else if(c.contains("pwi-active"))cur="ap";else if(c.contains("set-active")||/master|settings/.test(pane))cur="se";
+ else if(pane==="salesdesk")cur="at";
+ qa("#ptc-nav .ao-nav").forEach(function(b){var on=b.getAttribute("data-ao")===cur;if(b.classList.contains("active")!==on)b.classList.toggle("active",on)})}
+function themeBtn(){if(q("#aoTheme"))return;var back=q(".ptc-back-profile");if(!back||!back.parentNode)return;
+ var b=document.createElement("button");b.type="button";b.id="aoTheme";b.className="ptc-btn ptc-btn-ghost";
+ b.addEventListener("click",function(){setTheme(document.documentElement.getAttribute("data-theme")==="dark"?"light":"dark")});
+ back.parentNode.insertBefore(b,back);setTheme(document.documentElement.getAttribute("data-theme")||"dark")}
+function moveMaster(){var m=q("#aero-master"),s=q("#aero-settings");if(!m||!s||m.getAttribute("data-moved"))return;
+ var kids=qa(":scope > *",m).filter(function(c){return!c.classList.contains("aset-head")});
+ if(!kids.length)return;m.setAttribute("data-moved","1");
+ var w=document.createElement("div");w.id="ao-master-block";w.className="ao-card";
+ var h=document.createElement("h3");h.textContent="Master data and downloads";w.appendChild(h);
+ kids.forEach(function(c){w.appendChild(c)});s.appendChild(w);
+ var note=document.createElement("div");note.className="ao-card";note.innerHTML="<h3>Master Data has moved</h3><p>Exports, backups and the Master Data File are now in Settings &amp; Access.</p><p style='margin-top:10px'><button type='button' class='ptc-btn ptc-btn-primary' id='aoGoSet'>Open Settings &amp; Access</button></p>";
+ m.appendChild(note);q("#aoGoSet").addEventListener("click",function(){var o=orig("settings");if(o)o.click()})}
+function accessCard(){var s=q("#aero-settings");if(!s||q("#ao-access"))return;var c=document.createElement("div");c.id="ao-access";c.className="ao-card";
+ c.innerHTML="<h3>Access control <span class='ao-soonbadge'>Coming later</span></h3><p>Owner and user permissions are planned. Nothing is enforced yet, and your sign-in works as before.</p>";s.appendChild(c)}
+function recordsBar(){var top=q("#ptc-root .wr-top .wr-ctl");if(!top||q("#ao-hist")||!/Work Record/i.test((q("#ptc-root .wr-top h2")||{}).textContent||""))return;
+ var wrap=document.createElement("span");wrap.id="ao-hist";wrap.style.display="inline-flex";wrap.style.gap="8px";
+ [["History","logs"],["Pending adjustments","pending"]].forEach(function(p){var b=document.createElement("button");b.type="button";b.className="wr-btn";b.textContent=p[0];
+  b.addEventListener("click",function(){var o=orig(p[1]);if(o)o.click();setTimeout(sync,150)});wrap.appendChild(b)});
+ top.insertBefore(wrap,top.firstChild)}
+function tick(){if(document.documentElement.getAttribute("data-theme")==="dark")fixDark();buildNav();themeBtn();moveMaster();accessCard();recordsBar()}
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",tick);else tick();
+setTimeout(tick,600);setTimeout(tick,1800);
+new MutationObserver(function(){recordsBar()}).observe(document.body,{childList:true,subtree:true});
+})();
+</script>
+<style id="aeroops-white">
+/* ===== AeroOps clean white theme — presentation only, no logic changed ===== */
+html,html[data-theme],body{color-scheme:light}
+html,body{background:#F6F8FB !important}
+.site-shell{background:transparent !important}
+#ptc-root,html[data-theme] #ptc-root{
+ --ink:#0F172A;--ink-soft:#475569;--muted:#64748B;--line:#E5E9F0;--paper:#fff;--card:#fff;--ao-soft:#F4F6FA;
+ --brand:#2563EB;--accent:#2563EB;--blue:#2563EB;--navy:#fff;--side-ink:#475569;--ok:#15803D;
+ font-family:'Inter','IBM Plex Sans',system-ui,-apple-system,'Segoe UI',sans-serif}
+/* shell */
+#ptc-root .ptc-shell,html[data-theme] #ptc-root .ptc-shell,html[data-theme] #ptc-root.aero-compact .ptc-shell{
+ background:linear-gradient(90deg,#fff 0 200px,#F8FAFC 200px) !important;border:1px solid #E5E9F0 !important;border-radius:16px;
+ box-shadow:0 1px 2px rgba(15,23,42,.05),0 12px 32px rgba(15,23,42,.06) !important}
+#ptc-root.aero-compact .ptc-shell{background:linear-gradient(90deg,#fff 0 68px,#F8FAFC 68px) !important}
+@media (max-width:980px){#ptc-root .ptc-shell,html[data-theme] #ptc-root .ptc-shell{background:#F8FAFC !important}}
+/* brand */
+#ptc-root .ptc-brandbar{background:#fff !important;color:#0F172A;border-bottom:1px solid #E5E9F0;border-right:1px solid #EEF1F6;border-radius:16px 0 0 0;gap:10px}
+#ptc-root .ptc-brandbar-logo{width:34px;height:34px;display:flex;align-items:center;justify-content:center;color:inherit}
+#ptc-root .ptc-brandbar-logo svg{width:34px;height:34px}
+#ptc-root .ptc-brandbar-name{color:#0F172A !important;font-size:16px;font-weight:800;letter-spacing:-.2px}
+#ptc-root .ptc-brandbar-name::after{content:"";}
+/* sidebar */
+#ptc-root #ptc-toprow-grid,html[data-theme] #ptc-root #ptc-toprow-grid{background:#fff !important;border-right:1px solid #EEF1F6;border-radius:0 0 0 16px;padding:10px 10px 14px}
+#ptc-root #ptc-toprow-grid::after{color:#94A3B8 !important;font-weight:500}
+#ptc-root .ptc-nav-btn,#ptc-root .ptc-side-logs-btn{color:#475569 !important;border-radius:10px;font-weight:600}
+#ptc-root .ptc-nav-btn:hover,#ptc-root .ptc-side-logs-btn:hover{background:#F1F5F9 !important;color:#0F172A !important}
+#ptc-root .ptc-nav-btn.active,html[data-theme] #ptc-root .ptc-nav-btn.active{background:#EFF6FF !important;color:#1D4ED8 !important;box-shadow:inset 3px 0 0 #2563EB}
+#ptc-root .ptc-nav-menu{background:#fff;border:1px solid #E5E9F0;box-shadow:0 10px 30px rgba(15,23,42,.10)}
+/* header */
+#ptc-root .ptc-dash-hero{background:#fff !important;border-bottom:1px solid #E5E9F0;border-radius:0 16px 0 0}
+#ptc-root .ptc-hero-toolbar #ptc-global-search{background:#F4F6FA;border:1px solid #E5E9F0;border-radius:10px;color:#0F172A}
+#ptc-root .ptc-hero-toolbar #ptc-global-search:focus{background:#fff;border-color:#93C5FD;box-shadow:0 0 0 3px rgba(37,99,235,.12);outline:0}
+/* greeting banner: plain, no photo */
+#ptc-root[data-pane="entrydesk"] .aero-greet{background:#F1F6FF !important;color:#0F172A;border:1px solid #DBE7FB;border-radius:12px}
+.aero-greet-s{color:#64748B !important}
+/* cards, stats, buttons */
+#ptc-root .ptc-card,#ptc-root .ptc-stat-card,.ptc-modal{background:#fff;border-color:#E5E9F0;box-shadow:0 1px 2px rgba(15,23,42,.04)}
+#ptc-root .ptc-card{border-radius:12px}
+#ptc-root .ptc-stat-card{border-radius:10px}
+#ptc-root .ptc-btn-primary,#ptc-root .wr-btn.pri,#ptc-root .wr-newbtn{background:#2563EB;border-color:#2563EB;color:#fff !important}
+#ptc-root .ptc-btn-primary:hover,#ptc-root .wr-btn.pri:hover,#ptc-root .wr-newbtn:hover{background:#1D4ED8}
+#ptc-root :is(input,select,textarea):not([type=checkbox]):not([type=radio]){background:#fff;border:1px solid #D9E0EA;border-radius:8px;color:#0F172A}
+#ptc-root :is(input,select,textarea):focus{border-color:#60A5FA;box-shadow:0 0 0 3px rgba(37,99,235,.12);outline:0}
+#ptc-root table th{color:#64748B;background:#F8FAFC}
+#ptc-root tbody tr:hover{background:#F8FAFC}
+/* sign-in screen */
+#cloud-auth-modal-backdrop,html[data-theme] #cloud-auth-modal-backdrop{background:linear-gradient(180deg,#FFFFFF,#EEF3FB) !important}
+#cloud-auth-modal-backdrop::before,#cloud-auth-modal-backdrop::after{display:none !important}
+.aero-auth-topbar .brandmark{color:#0F172A !important}
+.aero-auth-topbar .brandmark small,.aero-auth-status,.aero-auth-footer{color:#64748B !important}
+#cloud-auth-modal-backdrop .ptc-modal{background:#fff !important;border:1px solid #E5E9F0 !important;box-shadow:0 20px 50px rgba(15,23,42,.10) !important}
+.aero-auth-brand .icon{background:none !important;box-shadow:none !important;width:auto !important;height:auto !important;font-size:0 !important}
+.aero-auth-brand .icon svg{width:52px;height:52px}
+.aero-auth-brand .name{color:#0F172A !important}
+#cloud-auth-modal-backdrop #btn-cloud-auth-signin,#cloud-auth-modal-backdrop #btn-send-verify-link,#cloud-auth-modal-backdrop #btn-set-password{background:#2563EB !important;color:#fff !important}
+/* polish: single blue accent, no theme toggle, left-aligned nav */
+#aoTheme{display:none !important}
+.wr-btn:not(.ghost):not(.danger){background:#2563EB !important;border-color:#2563EB !important;color:#fff}
+.wr-btn:not(.ghost):not(.danger):hover{background:#1D4ED8 !important;filter:none}
+.wr-tabs button.on{color:#1D4ED8 !important;border-bottom-color:#2563EB !important}
+#ptc-root .ptc-nav-btn{text-align:left;justify-content:flex-start}
+#ptc-root .ptc-brandbar-sub{color:#94A3B8}
+/* Quick Entry: roomier layout (3 even columns, bigger fields, full-width notes) */
+#pwi-root #hm-entry .pwi-entry{padding:26px 28px 22px;gap:20px 22px;border-radius:16px}
+#pwi-root #hm-entry .hm-ch{margin-bottom:4px}
+#pwi-root #hm-entry .hm-f.s3,#pwi-root #hm-entry .hm-f.s4{grid-column:span 4}
+#pwi-root #hm-entry .hm-f.s6{grid-column:1/-1}
+#pwi-root #hm-entry .hm-f.r2{grid-row:auto}
+#pwi-root #hm-entry .hm-f label,#pwi-root #hm-entry .hm-f label{font-size:12px;margin:0 0 8px;color:#334155}
+#pwi-root #hm-entry select,#pwi-root #hm-entry input[type=text],#pwi-root #hm-entry input[type=date],#pwi-root #hm-entry input[type=time],#pwi-root #hm-entry textarea{padding:12px 14px;font-size:13.5px;border-radius:10px;min-height:46px}
+#pwi-root #hm-entry .hm-dt{gap:10px}
+#pwi-root #hm-entry .hm-dt input{padding:12px 10px;font-size:13px}
+#pwi-root #hm-entry .hm-dt input[type=date]{flex:3 1 0}
+#pwi-root #hm-entry .hm-dt input[type=time]{flex:2 1 0}
+#pwi-root #hm-entry input[type=date]::-webkit-calendar-picker-indicator,#pwi-root #hm-entry input[type=time]::-webkit-calendar-picker-indicator{width:16px;opacity:.7}
+#pwi-root #hm-entry .pwi-kbtn{padding:12px 8px;min-height:46px;font-size:13px}
+#pwi-root #hm-entry .pwi-kbtn:first-child{border-radius:10px 0 0 10px}
+#pwi-root #hm-entry .pwi-kbtn:last-child{border-radius:0 10px 10px 0}
+#pwi-root #hm-entry textarea{height:auto;min-height:130px;line-height:1.5}
+#pwi-root #hm-cnt{margin-top:6px}
+#pwi-root #hm-entry .hm-btns{justify-content:flex-start;gap:14px;margin-top:4px}
+#pwi-root #hm-entry .hm-btns button{flex:0 0 auto;min-width:180px;padding:14px 26px;border-radius:10px;font-size:13.5px}
+#pwi-root #hm-entry .pwi-keep{display:flex;align-items:center;gap:10px;font-size:12.5px;margin-top:-4px}
+@media(max-width:820px){#pwi-root #hm-entry .hm-f.s3,#pwi-root #hm-entry .hm-f.s4{grid-column:span 6}}
+@media(max-width:520px){#pwi-root #hm-entry .pwi-entry{padding:18px 16px}#pwi-root #hm-entry .hm-f.s3,#pwi-root #hm-entry .hm-f.s4{grid-column:1/-1}#pwi-root #hm-entry .hm-btns button{flex:1 1 100%}}
+/* Quick Entry fit fixes: fluid columns, readable date/time, button alignment, active toggle text */
+#pwi-root #hm-entry .pwi-entry{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+#pwi-root #hm-entry .hm-f.s3,#pwi-root #hm-entry .hm-f.s4{grid-column:auto}
+#pwi-root #hm-entry .hm-ch,#pwi-root #hm-entry .hm-f.s6,#pwi-root #hm-entry .hm-f.s12{grid-column:1/-1}
+#pwi-root #hm-entry .hm-dt input{padding:12px 8px}
+#pwi-root #hm-entry .hm-btns{justify-content:flex-start !important}
+#pwi-root #hm-entry .hm-btns button{margin:0 !important}
+#pwi-root #hm-entry .pwi-kbtn{white-space:nowrap}
+#pwi-root #hm-entry .pwi-kbtn[aria-pressed=true],#pwi-root #hm-entry .pwi-kbtn[aria-pressed=true] *{color:#fff !important}
+#pwi-root #hm-entry .hm-dt input[type=date]{flex:5 1 0}
+#pwi-root #hm-entry .hm-dt input[type=time]{flex:4 1 0;min-width:104px}
+/* ===== Buttons: colour-coded by role + more concise spacing ===== */
+:root{--b-pri1:#3B82F6;--b-pri2:#2563EB;--b-ok1:#22C55E;--b-ok2:#16A34A}
+/* base shape */
+#ptc-root :is(.ptc-btn,.wr-btn,.wr-newbtn,.pwi-btn,.pwi-save,.aset-dl,.ptc-mini,.ptc-edit,.ptc-del,.sx-go,.apv-go,.apv-rm,.lb-go){
+ font-weight:700;border-radius:10px;cursor:pointer;transition:background .15s,box-shadow .15s,transform .1s,border-color .15s;letter-spacing:.1px}
+#ptc-root :is(.ptc-btn,.wr-btn,.wr-newbtn,.pwi-btn,.pwi-save,.aset-dl,.ptc-mini):hover:not(:disabled){transform:translateY(-1px)}
+#ptc-root :is(.ptc-btn,.wr-btn,.wr-newbtn,.pwi-btn,.pwi-save,.aset-dl):active:not(:disabled){transform:none}
+/* PRIMARY — blue */
+#ptc-root :is(.ptc-btn-primary:not([style*="background"]),.wr-btn:not(.ghost):not(.danger),.wr-newbtn,.pwi-btn.pri,.pwi-save){
+ background:linear-gradient(180deg,var(--b-pri1),var(--b-pri2)) !important;border:1px solid #1D4ED8 !important;color:#fff !important;box-shadow:0 2px 6px rgba(37,99,235,.28)}
+#ptc-root :is(.ptc-btn-primary:not([style*="background"]),.wr-btn:not(.ghost):not(.danger),.wr-newbtn,.pwi-btn.pri,.pwi-save):hover:not(:disabled){
+ background:linear-gradient(180deg,#2F78F0,#1D4ED8) !important;box-shadow:0 4px 12px rgba(37,99,235,.38)}
+#ptc-root :is(.ptc-btn-primary,.pwi-save):disabled{opacity:.55;box-shadow:none}
+/* SECONDARY — soft blue */
+#ptc-root :is(.ptc-btn-ghost,.wr-btn.ghost,.pwi-btn:not(.pri):not(.danger),#pwi-save2,.ptc-mini,.pwi-more,.pwi-link,.ptc-link-toggle):not(.ptc-mini-danger):not(.ptc-cl-edit):not(.ptc-cl-view):not(.ptc-search-del):not(.ptc-search-edit){
+ background:#EFF6FF !important;color:#1D4ED8 !important;border:1px solid #BFDBFE !important}
+#ptc-root :is(.ptc-btn-ghost,.wr-btn.ghost,.pwi-btn:not(.pri):not(.danger),#pwi-save2,.ptc-mini):not(.ptc-mini-danger):not(.ptc-cl-edit):not(.ptc-cl-view):not(.ptc-search-del):not(.ptc-search-edit):hover:not(:disabled){
+ background:#DBEAFE !important;border-color:#93C5FD !important}
+#ptc-root #pwi-save2{border-width:1.5px !important}
+/* SUCCESS — green: downloads, exports, confirm */
+#ptc-root :is(.aset-dl,.wr-btn[data-act="export"],.wr-btn[data-dl],.pwi-btn[data-act="export-view"],.ptc-adj-done-btn,#btn-sales-add,#btn-cloud-connect-confirm){
+ background:linear-gradient(180deg,var(--b-ok1),var(--b-ok2)) !important;border:1px solid #15803D !important;color:#fff !important;box-shadow:0 2px 6px rgba(22,163,74,.26)}
+#ptc-root :is(.aset-dl,.wr-btn[data-act="export"],.wr-btn[data-dl],.pwi-btn[data-act="export-view"],.ptc-adj-done-btn,#btn-sales-add):hover:not(:disabled){
+ background:linear-gradient(180deg,#1FB458,#15803D) !important;box-shadow:0 4px 12px rgba(22,163,74,.36)}
+/* backups (were near-black) — slate */
+#ptc-root :is(#btn-export,#btn-sales-export){background:linear-gradient(180deg,#64748B,#475569) !important;border:1px solid #334155 !important;color:#fff !important}
+/* DANGER — red */
+#ptc-root :is(.wr-btn.danger,.pwi-btn.danger,.del,.ptc-del,.ptc-sales-del,.ptc-search-del,.ptc-mini-danger,.aset-danger,.apv-rm,.ptc-seg-remove){
+ background:#FEF2F2 !important;color:#B91C1C !important;border:1px solid #FECACA !important}
+#ptc-root :is(.wr-btn.danger,.pwi-btn.danger,.del,.ptc-del,.ptc-sales-del,.ptc-search-del,.ptc-mini-danger,.aset-danger,.apv-rm,.ptc-seg-remove):hover:not(:disabled){
+ background:#DC2626 !important;color:#fff !important;border-color:#DC2626 !important}
+/* EDIT — amber, VIEW — violet */
+#ptc-root :is(.ptc-edit,.ptc-sales-edit,.ptc-search-edit,.ptc-cl-edit){background:#FFFBEB !important;color:#B45309 !important;border:1px solid #FDE68A !important}
+#ptc-root :is(.ptc-edit,.ptc-sales-edit,.ptc-search-edit,.ptc-cl-edit):hover{background:#F59E0B !important;color:#fff !important;border-color:#F59E0B !important}
+#ptc-root .ptc-cl-view{background:#F5F3FF !important;color:#6D28D9 !important;border:1px solid #DDD6FE !important}
+#ptc-root .ptc-cl-view:hover{background:#7C3AED !important;color:#fff !important;border-color:#7C3AED !important}
+/* Pending-adjustment actions — amber */
+#ptc-root .ptc-adj-btn{background:#FFFBEB !important;color:#B45309 !important;border:1px solid #FDE68A !important}
+#ptc-root .ptc-adj-btn.ptc-adj-active{background:#F59E0B !important;color:#fff !important}
+/* Transaction-type chips: each takes its own colour */
+#ptc-root .ptc-txn-tab{color:var(--txn-color) !important;background:color-mix(in srgb,var(--txn-color) 9%,#fff) !important;border:1.5px solid color-mix(in srgb,var(--txn-color) 40%,#fff) !important;border-radius:999px;font-weight:700}
+#ptc-root .ptc-txn-tab.ptc-txn-tab-active,#ptc-root .ptc-txn-tab:hover{background:var(--txn-color) !important;color:#fff !important;border-color:var(--txn-color) !important}
+/* Case type toggle + method chips + period pills */
+#ptc-root #hm-entry .pwi-kbtn{background:#EFF6FF;color:#1D4ED8;border-color:#BFDBFE}
+#ptc-root #hm-entry .pwi-kbtn[aria-pressed=true]{background:linear-gradient(180deg,#3B82F6,#2563EB);border-color:#1D4ED8}
+#ptc-root :is(.ptc-method-chip,.ptc-impact-period,.lb-tab){border-radius:999px;font-weight:600;color:#1D4ED8;background:#EFF6FF;border:1px solid #BFDBFE}
+#ptc-root :is(.ptc-method-chip,.ptc-impact-period,.lb-tab):is(.on,.active,[aria-pressed=true],[aria-selected=true]){background:#2563EB;color:#fff;border-color:#2563EB}
+/* New Work Record popup header: light instead of navy */
+.wr-form-bar,#ptc-root .ptc-modal-head{background:#EFF6FF !important;color:#0F172A !important;border:1px solid #DBEAFE}
+.wr-form-bar span{color:#64748B !important}
+.wr-form-bar button{background:#fff !important;color:#475569 !important;border:1px solid #DBEAFE !important}
+.wr-form-bar button:hover{background:#FEE2E2 !important;color:#B91C1C !important}
+
+/* ===== Concise spacing ===== */
+#ptc-root .ptc-shell>*:not(.ptc-brandbar):not(#ptc-toprow-grid):not(.ptc-dash-hero){margin-left:12px !important;margin-right:12px !important}
+#ptc-root .ptc-dash-hero{padding:6px 12px;margin-bottom:8px !important}
+#ptc-root .ptc-card,.wr-card{padding:12px 14px !important;margin-bottom:10px !important}
+#ptc-root .ptc-btn{padding:8px 14px}
+.wr{padding:2px 0 12px}
+.wr h2{font-size:20px}
+.wr .wr-sub{font-size:12.5px}
+.wr-top{margin-bottom:10px;gap:8px}
+.wr-kpis{gap:10px;margin-bottom:10px}
+.wr-k{padding:10px 12px;gap:10px}
+.wr-k i{width:34px;height:34px}
+.wr-grid{gap:10px}
+.wr-card h3{margin:0 0 8px;font-size:14px}
+.wr-tabs button{padding:7px 12px}
+.wr-filters{margin-bottom:8px}
+.wr th{padding:7px 7px}.wr td{padding:7px 7px}
+.wr-btn{padding:7px 14px}
+#ptc-root .ptc-stat-card{height:48px}
+/* Quick Entry: tighter than before, still comfortable */
+#pwi-root #hm-entry .pwi-entry{padding:20px 22px 16px !important;gap:14px 16px !important}
+#pwi-root #hm-entry .hm-f label{margin:0 0 5px}
+#pwi-root #hm-entry select,#pwi-root #hm-entry input[type=text],#pwi-root #hm-entry input[type=date],#pwi-root #hm-entry input[type=time],#pwi-root #hm-entry textarea{padding:9px 12px;min-height:40px;font-size:13px}
+#pwi-root #hm-entry .pwi-kbtn{min-height:40px;padding:9px 8px}
+#pwi-root #hm-entry textarea{min-height:96px}
+#pwi-root #hm-entry .hm-btns button{padding:11px 22px;min-width:160px}
+#pwi-root .hm-k{padding:10px}
+</style>
 </body></html>
