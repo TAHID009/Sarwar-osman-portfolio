@@ -3166,6 +3166,74 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
 @media (max-width:760px){ #ptc-root #ptc-today{ grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; } #ptc-root #ptc-today .ptc-stat-value{ font-size:20px; } }
 @media (prefers-reduced-motion:reduce){ #ptc-root *{ transition:none !important; } }
 </style>
+<style id="aero-pdf-style">
+#apv-back{position:fixed;inset:0;z-index:6000;background:rgba(6,18,38,.62);display:flex;align-items:center;justify-content:center;padding:16px}
+.apv{background:#fff;color:#0F2742;width:min(920px,100%);max-height:92vh;display:flex;flex-direction:column;border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,.4);font:14px/1.4 Inter,system-ui,sans-serif}
+.apv-h{display:flex;justify-content:space-between;align-items:flex-start;padding:16px 20px;background:#0A1F3D;color:#fff;border-radius:14px 14px 0 0}.apv-h h3{margin:0;font-size:17px}.apv-h p{margin:2px 0 0;color:#9FB3CF;font-size:12.5px;word-break:break-all}
+.apv-x{background:none;border:0;color:#fff;font-size:24px;cursor:pointer;line-height:1}
+.apv-b{padding:16px 20px;overflow:auto}.apv-f{display:flex;gap:8px;flex-wrap:wrap;padding:12px 20px;border-top:1px solid #E1E8F1}
+.apv button{font:inherit;font-weight:600;padding:8px 14px;border:1px solid #CBD6E4;background:#fff;border-radius:8px;cursor:pointer;color:#0F2742}.apv button:hover{background:#F3F7FB}
+.apv .apv-go{background:#0E8FA0;border-color:#0B7686;color:#fff}.apv .apv-go:hover{background:#0B7686}
+.apv-w{padding:8px 12px;border-radius:8px;margin-bottom:6px;font-size:13px;border:1px solid}.apv-w.ok{background:#E8F6EF;border-color:#A8DCC1;color:#14653F}.apv-w.warn{background:#FFF6E3;border-color:#F0D08A;color:#7A4E0A}.apv-w.bad{background:#FDECEA;border-color:#F2B4AD;color:#9A2B20}
+.apv-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:10px 0}.apv-grid label{display:flex;flex-direction:column;gap:3px;font-size:12px;font-weight:600;color:#62748C}
+.apv input,.apv select{font:inherit;padding:7px 9px;border:1px solid #CBD6E4;border-radius:8px;color:#0F2742;width:100%;box-sizing:border-box}.apv input:focus,.apv select:focus{outline:none;border-color:#19B6C9;box-shadow:0 0 0 3px rgba(25,182,201,.18)}
+.apv-info{font-size:12.5px;color:#62748C;margin-bottom:8px}.apv-ph{display:flex;justify-content:space-between;align-items:center;margin:8px 0}
+.apv-tw{overflow-x:auto;border:1px solid #E1E8F1;border-radius:10px}.apv table{width:100%;border-collapse:collapse;min-width:620px}.apv th{background:#F6F9FC;text-align:left;font-size:12px;color:#62748C;padding:8px 10px}.apv td{padding:6px 10px;border-top:1px solid #EEF2F7}
+.apv td input[type=checkbox]{width:auto}.apv-c{font-size:12.5px;font-weight:600;white-space:nowrap}.apv-c.ok{color:#14653F}.apv-c.warn{color:#7A4E0A}.apv-c.bad{color:#9A2B20}.apv-empty{text-align:center;color:#62748C;padding:18px}
+.apv details{margin-top:12px;font-size:12.5px}.apv pre{white-space:pre-wrap;background:#F6F9FC;padding:10px;border-radius:8px;max-height:160px;overflow:auto}
+@media(max-width:700px){.apv-grid{grid-template-columns:1fr 1fr}}
+</style>
+<style id="aero-wr-style">
+#ptc-root .wr-hide{display:none!important}
+#ptc-root.wr-mode .ptc-dash-hero-top, #ptc-root.wr-mode #ptc-today, #ptc-root.wr-mode #aero-greet{display:none!important}
+#ptc-root.wr-mode:not(.wr-form-open) #ptc-card{display:none!important}
+#ptc-root.wr-form-open #ptc-card{position:fixed!important;z-index:5500;top:3vh;left:50%;transform:translateX(-50%);width:min(1060px,96vw);max-height:94vh;overflow:auto;margin:0!important;box-shadow:0 24px 70px rgba(0,0,0,.45)!important}
+#wr-backdrop{display:none;position:fixed;inset:0;z-index:5400;background:rgba(6,18,38,.62)}
+#ptc-root.wr-form-open #wr-backdrop{display:block}
+.wr-form-bar{display:flex;align-items:center;justify-content:space-between;margin:-2px -2px 10px;padding:12px 16px;background:#0A1F3D;color:#fff;border-radius:10px;position:sticky;top:0;z-index:5}
+.wr-form-bar b{font-size:16px}.wr-form-bar span{font-size:12px;color:#9FB3CF;margin-left:10px}
+.wr-form-bar button{background:rgba(255,255,255,.12);border:0;color:#fff;width:32px;height:32px;border-radius:8px;font-size:20px;cursor:pointer}
+#ptc-root.wr-intel-on .ptc-shell>*:not(.ptc-brandbar):not(.ptc-dash-hero):not(#ptc-toprow-grid):not(#wr-intel):not(#ptc-footerbar){display:none!important}
+#ptc-root:not(.wr-intel-on) #wr-intel{display:none}
+.wr{--n:#0A1F3D;--cy:#19B6C9;--te:#0E8FA0;--ln:#E1E8F1;--ink:#0F2742;--mu:#62748C;color:var(--ink);font:14px/1.45 Inter,system-ui,sans-serif;padding:4px 0 20px}
+.wr h2{margin:0;font-size:22px}.wr .wr-sub{margin:2px 0 0;color:var(--mu);font-size:13px}
+.wr-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.wr-ctl{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.wr select,.wr input{font:inherit;padding:8px 10px;border:1px solid var(--ln);border-radius:9px;background:#fff;color:var(--ink)}
+.wr select:focus,.wr input:focus{outline:none;border-color:var(--cy);box-shadow:0 0 0 3px rgba(25,182,201,.18)}
+.wr-btn{font:inherit;font-weight:700;padding:9px 16px;border-radius:9px;border:1px solid #0B7686;background:linear-gradient(180deg,#12A0B3,#0B7686);color:#fff;cursor:pointer}
+.wr-btn:hover{filter:brightness(1.07)}.wr-btn.ghost{background:#fff;color:var(--ink);border-color:#CBD6E4}.wr-btn.danger{background:#fff;color:#B42318;border-color:#F2B4AD}
+.wr-kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-bottom:14px}
+.wr-k{background:#fff;border:1px solid var(--ln);border-radius:12px;padding:14px;box-shadow:0 1px 2px rgba(15,39,66,.04),0 6px 18px rgba(15,39,66,.05);display:flex;gap:12px;align-items:flex-start;min-width:0}
+.wr-k i{flex:none;width:38px;height:38px;border-radius:10px;display:grid;place-items:center;font-style:normal;font-weight:800;color:var(--c);background:color-mix(in srgb,var(--c) 13%,#fff)}
+.wr-k span{display:block;font-size:12px;font-weight:600;color:var(--mu)}.wr-k b{display:block;font-size:clamp(17px,1.7vw,24px);letter-spacing:-.3px;line-height:1.2;white-space:nowrap}
+.wr-k small{font-size:11.5px;font-weight:700}.up{color:#16875A}.dn{color:#C2410C}.nu{color:var(--mu)}
+.wr-grid{display:grid;grid-template-columns:minmax(0,2.6fr) minmax(240px,1fr);gap:14px;align-items:start}
+.wr-card{background:#fff;border:1px solid var(--ln);border-radius:12px;box-shadow:0 1px 2px rgba(15,39,66,.04),0 6px 18px rgba(15,39,66,.05);padding:14px;margin-bottom:14px;min-width:0}
+.wr-card h3{margin:0 0 10px;font-size:15px}
+.wr-tabs{display:flex;gap:4px;border-bottom:1px solid var(--ln);margin:-4px 0 12px;overflow-x:auto}
+.wr-tabs button{font:inherit;font-weight:600;background:none;border:0;padding:9px 14px;color:var(--mu);cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;margin-bottom:-1px}
+.wr-tabs button.on{color:var(--te);border-bottom-color:var(--cy)}
+.wr-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}.wr-filters input{flex:1 1 200px;min-width:150px}
+.wr-tw{overflow-x:auto}.wr table{width:100%;border-collapse:collapse;min-width:600px}
+.wr th{background:#F6F9FC;color:var(--mu);font-size:12px;font-weight:600;text-align:left;padding:9px 7px;white-space:nowrap}.wr td{font-size:12.5px;padding:9px 7px;white-space:nowrap;border-top:1px solid #EEF2F7;vertical-align:top;font-size:13px}
+.wr tbody tr:hover{background:#F3FAFC}.wr td.r,.wr th.r{text-align:right}.wr .mono{font-family:ui-monospace,Menlo,monospace;font-size:11.5px}
+.wr-pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11.5px;font-weight:700;background:color-mix(in srgb,var(--c) 14%,#fff);color:var(--c)}
+.wr-link{background:none;border:1px solid #CBD6E4;border-radius:8px;padding:3px 9px;font:inherit;font-weight:600;color:var(--ink);cursor:pointer}.wr-link:hover{background:#F3F7FB}
+.wr-empty{padding:26px;text-align:center;color:var(--mu)}
+.wr-legend{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--mu);margin-top:6px}.wr-legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px}
+.wr-ps{display:grid;gap:8px}.wr-ps div{display:flex;justify-content:space-between;gap:10px;font-size:13px;padding:6px 0;border-bottom:1px solid #EEF2F7}.wr-ps div:last-child{border:0}
+.wr-two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}.wr-two table{min-width:0}
+.wr svg{max-width:100%;height:auto;display:block}.wr svg text{font:11px Inter,system-ui,sans-serif;fill:#62748C}
+.wr-back{position:fixed;inset:0;z-index:5600;background:rgba(6,18,38,.62);display:flex;align-items:flex-start;justify-content:center;padding:3vh 12px;overflow:auto}
+.wr-detail{background:#F2F6FB;width:min(980px,100%);border-radius:14px;box-shadow:0 24px 70px rgba(0,0,0,.45);overflow:hidden}
+.wr-dh{background:#0A1F3D;color:#fff;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.wr-dh h3{margin:0;font-size:17px}
+.wr-dh button{font:inherit;font-weight:600;border-radius:8px;padding:7px 14px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;cursor:pointer}.wr-dh .del{background:#fff;color:#B42318;border-color:#fff}
+.wr-db{padding:16px 18px;display:grid;gap:14px}.wr-ids{display:flex;gap:22px;flex-wrap:wrap;align-items:center}.wr-ids div span{display:block;font-size:12px;color:var(--mu)}.wr-ids div b{font-size:15px}
+@media(max-width:1100px){.wr-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}.wr-grid{grid-template-columns:1fr}}
+@media(max-width:1500px){.wr-two table,.wr-card .wr-two table{min-width:0}}
+@media(max-width:700px){.wr-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.wr-two{grid-template-columns:1fr}.wr-k b{font-size:20px}}
+</style>
 </head><body>
     <div class="ptc-modal-backdrop" id="cloud-auth-modal-backdrop" style="display:flex; z-index:5000;">
       <div class="aero-auth-topbar">
@@ -3604,10 +3672,10 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
           </div>
         </div>
       <div class="ptc-header-tktautofill" id="ptc-header-tktautofill">
-          <div class="ptc-header-control-label">TKT AutoFill</div>
+          <div class="ptc-header-control-label">Import Ticket PDF</div>
           <div class="ptc-pdf-import" id="ptc-pdf-import">
             <label for="pdf-ticket-input" class="ptc-pdf-import-btn" id="pdf-ticket-btn">
-              🎫 TKT AutoFill
+              🎫 Import Ticket PDF
             </label>
             <input type="file" id="pdf-ticket-input" accept="application/pdf" style="display:none;" />
             <span class="ptc-pdf-import-status" id="pdf-import-status">Reads a ticket PDF and fills in the fields below — always double-check before saving.</span>
@@ -5366,6 +5434,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
       }
     }
 
+    try{ extractPassengers(norm, out); }catch(err){ console.error('Passenger extraction failed', err); }
     return out;
   }
 
@@ -5573,7 +5642,173 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
       });
     });
   }
-  wirePdfImport('pdf-ticket-input', 'pdf-ticket-btn', 'pdf-import-status', 'pdf-import-banner', applyExtractedTicketFields);
+  // ===== PDF import v2: every passenger, editable preview, duplicate guard (added; existing parsing kept) =====
+  function extractPassengers(norm, out){
+    const list = [], warn = [];
+    const pnr = String(out.reservationPnr || out.airlinePnr || out.pnr || '').toUpperCase();
+    const okName = n => /^[A-Za-z][A-Za-z .'\/\-]{1,59}$/.test(n);
+    const clean = n => n.replace(/\s+/g, ' ').replace(/^[\s:,\-]+|[\s:,\-]+$/g, '');
+    let sec = null, done = false;
+    const ps = norm.search(/Passenger\s*Details\s*:?/i);
+    if(ps >= 0){
+      sec = norm.slice(ps).replace(/^Passenger\s*Details\s*:?/i, '');
+      const end = sec.search(/Your\s*Travel\s*Information|Travel\s*Information|Flight\s*Details|Price\s*Summary/i);
+      if(end >= 0) sec = sec.slice(0, end);
+      const re = /E\s*-?\s*Ticket/gi, marks = []; let m;
+      while((m = re.exec(sec))) marks.push([m.index, m.index + m[0].length]);
+      if(marks.length){
+        done = true; let cur = 0;
+        marks.forEach(([s, e]) => {
+          const name = clean(sec.slice(cur, s)); const after = sec.slice(e); let ticket = '', used = 0;
+          const tm = after.match(/^\s*(\d{3})[- ]?(\d{10})(?!\d)/);
+          if(tm){ ticket = tm[1] + tm[2]; used = tm[0].length; }
+          else { const rm = after.match(/^\s*([A-Z0-9]{5,8})(?=\s|$)/i); if(rm && pnr && rm[1].toUpperCase() === pnr) used = rm[0].length; }
+          cur = e + used;
+          if(name && okName(name)) list.push({ name, ticket });
+          else if(name) warn.push('Unreadable passenger text near "' + name.slice(0, 30) + '" — add this passenger manually.');
+          else warn.push('A passenger block had no readable name.');
+        });
+        const tail = clean(sec.slice(cur));
+        if(tail){
+          if(okName(tail)){ list.push({ name: tail, ticket: '' }); warn.push('"' + tail + '" appears after the last E-Ticket line — please verify.'); }
+          else warn.push('Unrecognised text after the passenger list: "' + tail.slice(0, 40) + '".');
+        }
+      }
+    }
+    if(!done){
+      const scope = sec || norm, names = [], tickets = [];
+      for(const m of scope.matchAll(/Passenger(?:'s)?\s*Names?\s*[:\-]\s*([A-Za-z][A-Za-z .\/'\-]{2,50}?)(?=\s+(?:Ticket|E-?Ticket|PNR|Booking|Seat|Gender|DOB|Date|Flight|Class|Base|Fare)\b|\s{2,}|$)/gi)){ const n = clean(m[1]); if(okName(n)) names.push(n); }
+      for(const m of scope.matchAll(/\b([A-Z][A-Z'\-]{1,}\/[A-Z][A-Z'\-]{1,}(?:\s(?:MR|MRS|MS|MSTR|MISS|CHD|INF))?)\b/g)){ const n = clean(m[1]); if(!names.includes(n)) names.push(n); }
+      for(const m of norm.matchAll(/(?<![+\d])(\d{3})[- ]?(\d{10})(?!\d)/g)){ const t = m[1] + m[2]; if(!tickets.includes(t)) tickets.push(t); }
+      if(names.length && names.length === tickets.length) names.forEach((n, i) => list.push({ name: n, ticket: tickets[i] }));
+      else {
+        names.forEach(n => list.push({ name: n, ticket: '' }));
+        tickets.forEach(t => list.push({ name: '', ticket: t }));
+        if(names.length && tickets.length) warn.push(names.length + ' names but ' + tickets.length + ' ticket numbers were found — names and tickets could not be matched safely. Match them below.');
+      }
+    }
+    const seen = new Set(), uniq = [];
+    list.forEach(p => { const k = p.name.toUpperCase() + '|' + p.ticket; if(seen.has(k)){ warn.push('Removed a duplicate row: ' + (p.name || p.ticket) + '.'); } else { seen.add(k); uniq.push(p); } });
+    const xm = norm.match(/Base\s*Fare\s*x\s*(\d+)/i) || norm.match(/Tax\s*&\s*Fare\s*x\s*(\d+)/i);
+    if(xm) out.expectedPax = parseInt(xm[1], 10);
+    out.passengers = uniq; out.paxWarnings = warn;
+    if(!out.passengerName && uniq[0] && uniq[0].name) out.passengerName = uniq[0].name;
+    const dm = norm.match(/Departure\s+[A-Za-z]{3},\s*(\d{1,2}\s+[A-Za-z]{3}\s+\d{2,4})/i); if(dm) out.travelDate = dm[1];
+    const codes = [...norm.matchAll(/\b([A-Z]{3}),\s+[A-Z][A-Za-z .'\-]*?Airport/g)].map(x => x[1]).filter((c, i, a) => i === 0 || c !== a[i - 1]);
+    if(codes.length > 1) out.itinerary = codes.join('-');
+  }
+
+  const PDF_IMPORT_KEY = 'aeroops_pdf_imports_v1';
+  function pdfImportsLoad(){ try{ return JSON.parse(localStorage.getItem(PDF_IMPORT_KEY) || '[]'); }catch(e){ return []; } }
+  async function pdfFileHash(file){
+    try{ const h = await crypto.subtle.digest('SHA-256', await file.arrayBuffer()); return [...new Uint8Array(h)].map(x => x.toString(16).padStart(2, '0')).join(''); }
+    catch(e){ return 'size-' + file.size + '-' + file.name; }
+  }
+  function existingTicketMap(){
+    const m = {};
+    entries.forEach((e, i) => { if(editingIndex === i) return; [e.newTkt, e.oldTkt].forEach(v => String(v || '').split(',').forEach(t => { t = t.trim(); if(t) m[t] = e.pnrGds || '?'; })); });
+    return m;
+  }
+
+  function openPdfPreview(ctx){
+    const old = document.getElementById('apv-back'); if(old) old.remove();
+    const f = ctx.fields || {}, exist = existingTicketMap();
+    const st = { rows: (f.passengers || []).map(p => ({ inc: true, name: p.name, ticket: p.ticket })) };
+    st.rows.forEach(r => { if(r.ticket && exist[r.ticket]) r.inc = false; });
+    const back = document.createElement('div'); back.id = 'apv-back';
+    const airOpts = [...$('f-airline').options].map(o => '<option value="' + esc(o.value) + '"' + (o.value === (f.airlineCode || '') ? ' selected' : '') + '>' + esc(o.textContent.trim()) + '</option>').join('');
+    const nv = v => v === undefined ? '' : v;
+    back.innerHTML = '<div class="apv" role="dialog" aria-modal="true" aria-label="Review PDF import"><div class="apv-h"><div><h3>Review PDF import</h3><p>' + esc(ctx.file.name) + '</p></div><button type="button" class="apv-x" data-a="cancel" aria-label="Close">×</button></div>'
+      + '<div class="apv-b"><div id="apv-warn"></div>'
+      + '<div class="apv-grid"><label>GDS / Reservation PNR<input id="apv-pg" value="' + esc(f.reservationPnr || f.pnr || '') + '"></label><label>Airline PNR<input id="apv-pa" value="' + esc(f.airlinePnr || f.pnr || '') + '"></label><label>Airline<select id="apv-air">' + airOpts + '</select></label><label>Sector<input id="apv-sec" value="' + esc(f.sector || f.itinerary || '') + '"></label><label>Base fare (all passengers)<input id="apv-bf" type="number" step="0.01" value="' + nv(f.baseFare) + '"></label><label>Tax (all passengers)<input id="apv-tx" type="number" step="0.01" value="' + nv(f.taxFare) + '"></label></div>'
+      + '<div class="apv-info">' + (f.travelDate ? 'Travel date in PDF: <b>' + esc(f.travelDate) + '</b>. ' : '') + (f.itinerary ? 'Itinerary in PDF: <b>' + esc(f.itinerary) + '</b>. ' : '') + (f.totalFare !== undefined ? 'PDF total: <b>' + f.totalFare + '</b>.' : '') + '</div>'
+      + '<div class="apv-ph"><b>Passenger &amp; Ticket Details</b><button type="button" data-a="add">+ Add passenger</button></div><div class="apv-tw"><table><thead><tr><th>Use</th><th>#</th><th>Passenger name</th><th>Ticket number (13 digits)</th><th>Check</th><th></th></tr></thead><tbody id="apv-rows"></tbody></table></div>'
+      + '<details><summary>Extracted text from the PDF</summary><pre>' + esc(ctx.text.trim().slice(0, 6000)) + '</pre></details></div>'
+      + '<div class="apv-f"><button type="button" data-a="retry">Re-read this PDF</button><button type="button" data-a="other">Choose another PDF</button><span style="flex:1"></span><button type="button" data-a="cancel">Cancel</button><button type="button" class="apv-go" data-a="apply">Apply to form</button></div></div>';
+    document.body.appendChild(back);
+    const q = id => back.querySelector('#' + id);
+    function sync(){ back.querySelectorAll('#apv-rows tr').forEach((tr, i) => { const r = st.rows[i]; if(!r) return; r.inc = tr.querySelector('.apv-i').checked; r.name = tr.querySelector('.apv-n').value.trim(); r.ticket = tr.querySelector('.apv-t').value.replace(/[\s-]/g, ''); }); }
+    function rowCheck(r, i){
+      if(r.ticket && !/^\d{13}$/.test(r.ticket)) return ['bad', 'Needs 13 digits'];
+      if(r.ticket && st.rows.some((o, j) => j !== i && o.inc && o.ticket === r.ticket)) return ['bad', 'Duplicate in this list'];
+      if(r.ticket && exist[r.ticket]) return ['bad', 'Already saved (PNR ' + exist[r.ticket] + ')'];
+      if(!r.name) return ['bad', 'Name missing'];
+      if(!r.ticket) return ['warn', 'No ticket number'];
+      return ['ok', 'OK'];
+    }
+    function status(){
+      sync(); const inc = st.rows.filter(r => r.inc), w = [];
+      (f.paxWarnings || []).forEach(x => w.push(['warn', x]));
+      if(ctx.scanned) w.push(['bad', 'This PDF has no readable text (scanned image). OCR is not built into AeroOps, so nothing could be read automatically. Enter passengers below, or use a text-based PDF.']);
+      if(ctx.dupFile) w.push(['warn', 'This exact PDF was already imported on ' + ctx.dupFile + '. Check that you are not entering the same booking twice.']);
+      if(!ctx.scanned && !st.rows.length) w.push(['bad', 'No passengers could be detected in this PDF. Nothing was guessed. Add passengers manually, or try a different PDF.']);
+      if(f.expectedPax && !ctx.scanned) w.push(f.expectedPax === inc.length ? ['ok', 'Passenger count matches the PDF (' + f.expectedPax + ').'] : ['bad', 'The PDF fare line says ' + f.expectedPax + ' passenger(s) but ' + inc.length + ' are included here. Fix the list before applying.']);
+      else if(!ctx.scanned && !f.expectedPax && st.rows.length) w.push(['warn', 'The PDF does not state a passenger count, so the number detected (' + st.rows.length + ') could not be cross-checked.']);
+      const noT = inc.filter(r => !r.ticket).length;
+      if(noT) w.push(['warn', noT + ' passenger(s) have no ticket number' + (f.passengers && !f.passengers.some(p => p.ticket) ? ' — this PDF does not contain ticket numbers, so none were invented. Enter them here or in the form.' : '.') + (noT < inc.length ? ' Fill in all or none so names and tickets stay in the same order.' : '')]);
+      if(inc.length > 9) w.push(['bad', 'A PNR can hold at most 9 tickets (' + inc.length + ' included). Split the booking.']);
+      q('apv-warn').innerHTML = w.map(x => '<div class="apv-w ' + x[0] + '">' + esc(x[1]) + '</div>').join('');
+      back.querySelectorAll('#apv-rows tr').forEach((tr, i) => { const c = rowCheck(st.rows[i], i); const td = tr.querySelector('.apv-c'); td.textContent = st.rows[i].inc ? c[1] : 'Not used'; td.className = 'apv-c ' + (st.rows[i].inc ? c[0] : ''); });
+    }
+    function draw(){
+      q('apv-rows').innerHTML = st.rows.map((r, i) => '<tr><td><input type="checkbox" class="apv-i" aria-label="Use row ' + (i + 1) + '"' + (r.inc ? ' checked' : '') + '></td><td>' + (i + 1) + '</td><td><input class="apv-n" value="' + esc(r.name) + '" aria-label="Passenger name"></td><td><input class="apv-t" inputmode="numeric" value="' + esc(r.ticket) + '" aria-label="Ticket number"></td><td class="apv-c"></td><td><button type="button" class="apv-rm" data-i="' + i + '" aria-label="Remove row">Remove</button></td></tr>').join('') || '<tr><td colspan="6" class="apv-empty">No passengers detected. Use “+ Add passenger”.</td></tr>';
+      status();
+    }
+    back.addEventListener('input', status); back.addEventListener('change', status);
+    back.addEventListener('click', ev => {
+      const rm = ev.target.closest('.apv-rm'); if(rm){ sync(); st.rows.splice(+rm.dataset.i, 1); draw(); return; }
+      const b = ev.target.closest('[data-a]'); if(!b) return; const a = b.dataset.a;
+      if(a === 'cancel'){ back.remove(); }
+      else if(a === 'add'){ sync(); st.rows.push({ inc: true, name: '', ticket: '' }); draw(); const ns = back.querySelectorAll('.apv-n'); ns[ns.length - 1].focus(); }
+      else if(a === 'retry'){ back.remove(); ctx.rerun(); }
+      else if(a === 'other'){ back.remove(); $('pdf-ticket-input').click(); }
+      else if(a === 'apply'){
+        sync(); const rows = st.rows.filter(r => r.inc && (r.name || r.ticket)); const err = [];
+        if(!rows.length) err.push('Add at least one passenger.');
+        if(rows.some(r => !r.name)) err.push('Every used row needs a passenger name.');
+        if(rows.some(r => r.ticket && !/^\d{13}$/.test(r.ticket))) err.push('Ticket numbers must be exactly 13 digits.');
+        const ts = rows.map(r => r.ticket).filter(Boolean); if(new Set(ts).size !== ts.length) err.push('The same ticket number is listed twice.');
+        if(rows.length > 9) err.push('A PNR can hold at most 9 tickets.');
+        if(f.expectedPax && f.expectedPax !== rows.length && !confirm('The PDF says ' + f.expectedPax + ' passenger(s) but you are applying ' + rows.length + '. Apply anyway?')) return;
+        if(err.length){ alert(err.join('\n')); return; }
+        const dups = ts.filter(t => exist[t]); if(dups.length && !confirm('Ticket number(s) already saved in another record: ' + dups.join(', ') + '. Apply anyway?')) return;
+        const curTk = (($('f-newtkt-t') || {}).value || ''); if(($('f-pname').value.trim() || curTk) && !confirm('The form already has passenger or ticket data. Replace the passenger names (and ticket numbers found here) with the imported ones?')) return;
+        const num = id => { const v = q(id).value; return v === '' ? undefined : parseFloat(v); };
+        const fields = Object.assign({}, f, { passengerName: rows.map(r => r.name).join(', '), ticketNumbers: ts, reservationPnr: q('apv-pg').value.trim().toUpperCase(), airlinePnr: q('apv-pa').value.trim().toUpperCase(), airlineCode: q('apv-air').value, sector: q('apv-sec').value.trim().toUpperCase().replace(/\s+/g, ''), baseFare: num('apv-bf'), taxFare: num('apv-tx') });
+        if(!fields.reservationPnr && !fields.airlinePnr){ delete fields.reservationPnr; delete fields.airlinePnr; delete fields.pnr; }
+        if(!fields.airlineCode) delete fields.airlineCode; if(!fields.sector) delete fields.sector;
+        delete fields.discountAmount; if(f.discountAmount !== undefined) fields.discountAmount = f.discountAmount;
+        const done = applyExtractedTicketFields(fields);
+        try{ const l = pdfImportsLoad(); l.push({ hash: ctx.hash, file: ctx.file.name, at: new Date().toISOString().slice(0, 10), pnr: fields.reservationPnr || '', passengers: rows.map(r => ({ name: r.name, ticket: r.ticket })) }); localStorage.setItem(PDF_IMPORT_KEY, JSON.stringify(l.slice(-200))); }catch(e){}
+        const bn = $('pdf-import-banner'); if(bn) bn.style.display = 'block';
+        back.remove(); toast(done ? ('Applied ' + rows.length + ' passenger(s) to the form — ' + (ts.length < rows.length ? (rows.length - ts.length) + ' still need a ticket number. ' : '') + 'Review, then click Add Entry.') : 'Nothing could be applied.');
+      }
+    });
+    draw(); const first = back.querySelector('.apv-n, [data-a="add"]'); if(first) first.focus();
+  }
+
+  function wirePdfPreview(){
+    const fi = $('pdf-ticket-input'), btn = $('pdf-ticket-btn'), status = $('pdf-import-status'); if(!fi) return;
+    const dflt = status.textContent;
+    function run(file){
+      btn.classList.add('ptc-pdf-busy'); status.textContent = 'Reading ' + file.name + '…';
+      const end = () => { btn.classList.remove('ptc-pdf-busy'); status.textContent = dflt; };
+      loadPdfJs(() => {
+        Promise.all([extractPdfText(file), pdfFileHash(file)]).then(([text, hash]) => {
+          const scanned = text.replace(/\s/g, '').length < 40;
+          const fields = scanned ? { passengers: [], paxWarnings: [] } : parseTicketText(text);
+          const prev = pdfImportsLoad().filter(x => x.hash === hash).pop();
+          end(); openPdfPreview({ file, text, hash, fields, scanned, dupFile: prev ? prev.at : '', rerun: () => run(file) });
+        }).catch(err => { console.error('PDF extraction failed', err); end(); toast('Could not read that PDF. It may be damaged, password-protected or a scanned image.'); });
+      }, () => { end(); toast('Could not load the PDF reader — check your internet connection.'); });
+    }
+    fi.addEventListener('change', () => {
+      const file = fi.files && fi.files[0]; fi.value = ''; if(!file) return;
+      if(file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')){ toast('Please choose a PDF file.'); return; }
+      run(file);
+    });
+  }
+  wirePdfPreview();
   wirePdfImport('pdf-ticket-input-sales', 'pdf-ticket-btn-sales', 'pdf-import-status-sales', 'pdf-import-banner-sales', applyExtractedSaleFields);
 
   function setCloudStatus(state){
@@ -11278,6 +11513,182 @@ bd.addEventListener('click',function(e){if(e.target===bd)close()});
   function upd(){ var n=0; ids.forEach(function(i){var e=document.getElementById(i); n+=parseInt((e&&e.textContent||'').replace(/[^\d-]/g,''),10)||0;}); var t=document.getElementById('aero-td-total'); if(t&&t.textContent!==String(n)) t.textContent=n; }
   if(window.MutationObserver){ var mo=new MutationObserver(upd); ids.forEach(function(i){var e=document.getElementById(i); if(e) mo.observe(e,{childList:true,characterData:true,subtree:true});}); }
   upd();
+})();
+</script>
+<script id="aero-wr-js">
+/* Work Record dashboard, New Record modal, Record Details and Intelligence.
+   Reads data only via window.aeroData; edit/delete reuse the existing hidden .ptc-edit / .ptc-del buttons. No data structure is changed. */
+(function(){
+var root=document.getElementById('ptc-root'),body=document.querySelector('.ptc-body-main'),card=document.getElementById('ptc-card'),nav=document.getElementById('ptc-nav'),shell=root&&root.querySelector('.ptc-shell');
+if(!root||!body||!card||!nav||!shell||!window.aeroData)return;
+var $=function(i){return document.getElementById(i)};
+var D=function(){return window.aeroData},E=function(){return D().entries()||[]};
+var num=function(v){return parseFloat(v)||0};
+var esc=function(t){return String(t==null?'':t).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
+var TY=['Ticketing','Reissue','Refund','Void'],TC={Ticketing:'#2563EB',Reissue:'#F59E0B',Refund:'#EF4444',Void:'#475569'};
+var fm=function(n){return Math.round(n).toLocaleString('en-US')},bdt=function(n){return 'BDT '+fm(n)};
+function iso(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function addD(d,n){var x=new Date(d);x.setDate(x.getDate()+n);return x}
+function pd(s){return new Date(+s.slice(0,4),+s.slice(5,7)-1,+s.slice(8,10))}
+function fmtD(s){if(!s)return '';var d=pd(s);return isNaN(d)?s:d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})}
+function val(e){return e.txn==='Ticketing'?num(e.totalFare):e.txn==='Reissue'?num(e.totalCollection):e.txn==='Refund'?num(e.refundCharge):0}
+function status(e){if(e.txn==='Ticketing')return'Ticketed';if(e.txn==='Reissue')return'Reissued';if(e.txn==='Void')return'Voided';if(e.txn==='Refund'){if(e.refundStatus==='PENDING')return'Refund Pending';return e.adjustmentGiven==='YES'?'Refunded':'Pending Adj.'}return'—'}
+var SC={'Ticketed':'#2563EB','Reissued':'#B7791F','Refunded':'#16875A','Pending Adj.':'#C2410C','Refund Pending':'#C2410C','Voided':'#475569'};
+function list(v){return String(v||'').split(',').map(function(x){return x.trim()}).filter(Boolean)}
+function names(e){return String(e.pname||'').split(/[,;\n]+/).map(function(x){return x.trim()}).filter(Boolean)}
+function tkts(e){return list(e.txn==='Ticketing'||e.txn==='Reissue'?e.newTkt:e.oldTkt)}
+function pill(t,c){return'<span class="wr-pill" style="--c:'+c+'">'+esc(t)+'</span>'}
+/* ---- range ---- */
+var R={key:'month',from:'',to:''};
+function span(){var t=new Date(),k=R.key,a,b;
+ if(k==='month'){a=new Date(t.getFullYear(),t.getMonth(),1);b=t}else if(k==='30'){a=addD(t,-29);b=t}else if(k==='year'){a=new Date(t.getFullYear(),0,1);b=t}
+ else if(k==='custom'){return{from:R.from,to:R.to}}else return{from:'',to:''};
+ return{from:iso(a),to:iso(b)}}
+function prevSpan(){var t=new Date(),k=R.key,s=span();
+ if(k==='month')return{from:iso(new Date(t.getFullYear(),t.getMonth()-1,1)),to:iso(new Date(t.getFullYear(),t.getMonth(),0))};
+ if(k==='30')return{from:iso(addD(t,-59)),to:iso(addD(t,-30))};
+ if(k==='year')return{from:(t.getFullYear()-1)+'-01-01',to:iso(new Date(t.getFullYear()-1,t.getMonth(),t.getDate()))};
+ if(k==='custom'&&s.from&&s.to){var n=Math.round((pd(s.to)-pd(s.from))/864e5)+1;return{from:iso(addD(pd(s.from),-n)),to:iso(addD(pd(s.from),-1))}}
+ return null}
+function within(e,s){var d=e.date||'';return(!s.from||d>=s.from)&&(!s.to||d<=s.to)}
+function rows(s){return E().map(function(e,i){return{e:e,i:i}}).filter(function(r){return within(r.e,s)})}
+function sorted(l){return l.slice().sort(function(a,b){return((b.e.date||'')+(b.e.createdAt||'')).localeCompare((a.e.date||'')+(a.e.createdAt||''))})}
+function stats(l){var s={n:l.length,rev:0,com:0,ref:0,by:{Ticketing:0,Reissue:0,Refund:0,Void:0},pend:0,done:0};
+ l.forEach(function(r){var e=r.e;s.by[e.txn]=(s.by[e.txn]||0)+1;if(e.txn==='Ticketing'||e.txn==='Reissue')s.rev+=val(e);if(e.txn==='Refund')s.ref+=Math.abs(val(e));s.com+=num(D().earn(e));
+  var st=status(e);if(st==='Pending Adj.'||st==='Refund Pending')s.pend++;else if(st!=='Voided'&&st!=='—')s.done++});
+ s.net=s.rev-s.ref;return s}
+function delta(c,p,inv){if(p===null||p===undefined)return'<small class="nu">&nbsp;</small>';if(!p&&!c)return'<small class="nu">— no change</small>';if(!p)return'<small class="up">New this period</small>';var d=(c-p)/p*100,up=d>=0,good=inv?!up:up;return'<small class="'+(good?'up':'dn')+'">'+(up?'▲ ':'▼ ')+Math.abs(Math.round(d))+'% vs previous</small>'}
+function kpis(l,pl,sets){var s=stats(l),p=pl?stats(pl):null;
+ var K=sets==='intel'?[['Total Transactions',s.n,'#2563EB','∑',p&&p.n,0,String],['Revenue Generated',s.rev,'#0E8FA0','৳',p&&p.rev,0,bdt],['Commission Earned',s.com,'#F59E0B','%',p&&p.com,0,bdt],['Refund Amount',s.ref,'#EF4444','↺',p&&p.ref,1,bdt],['Net Contribution',s.net,'#16875A','＋',p&&p.net,0,bdt]]
+ :[['Total Transactions',s.n,'#2563EB','∑',p&&p.n,0,String],['Ticketing',s.by.Ticketing,TC.Ticketing,'✈',p&&p.by.Ticketing,0,String],['Reissue',s.by.Reissue,TC.Reissue,'⟳',p&&p.by.Reissue,0,String],['Refund',s.by.Refund,TC.Refund,'↺',p&&p.by.Refund,0,String],['Void',s.by.Void,TC.Void,'⊘',p&&p.by.Void,0,String]];
+ return'<div class="wr-kpis">'+K.map(function(k){return'<div class="wr-k" style="--c:'+k[2]+'"><i>'+k[3]+'</i><div><span>'+k[0]+'</span><b>'+(k[6]===String?k[1]:k[6](k[1]))+'</b>'+delta(k[1],k[4],k[5])+'</div></div>'}).join('')+'</div>'}
+/* ---- buckets & charts ---- */
+function buckets(l){var s=span(),a=s.from,b=s.to||iso(new Date());if(!a){a=l.reduce(function(m,r){return r.e.date&&(!m||r.e.date<m)?r.e.date:m},'')||b}
+ var A=pd(a),B=pd(b),days=Math.round((B-A)/864e5)+1,out=[],d;if(days<1)return out;
+ if(days<=45){for(d=new Date(A);d<=B;d=addD(d,1))out.push({l:d.getDate()+' '+d.toLocaleString('en',{month:'short'}),a:iso(d),b:iso(d)})}
+ else if(days<=200){for(d=addD(A,-((A.getDay()+6)%7));d<=B;d=addD(d,7))out.push({l:d.getDate()+' '+d.toLocaleString('en',{month:'short'}),a:iso(d),b:iso(addD(d,6))})}
+ else{for(d=new Date(A.getFullYear(),A.getMonth(),1);d<=B;d=new Date(d.getFullYear(),d.getMonth()+1,1))out.push({l:d.toLocaleString('en',{month:'short'})+" '"+String(d.getFullYear()).slice(2),a:iso(d),b:iso(new Date(d.getFullYear(),d.getMonth()+1,0))})}
+ return out.slice(-60)}
+function bucketCounts(l){return buckets(l).map(function(b){var o={l:b.l,t:{Ticketing:0,Reissue:0,Refund:0,Void:0}};l.forEach(function(r){var d=r.e.date||'';if(d>=b.a&&d<=b.b)o.t[r.e.txn]=(o.t[r.e.txn]||0)+1});o.v=TY.reduce(function(a,t){return a+o.t[t]},0);return o})}
+var EMPTY='<div class="wr-empty">No records in this period</div>';
+function legend(){return'<div class="wr-legend">'+TY.map(function(t){return'<span><i style="background:'+TC[t]+'"></i>'+t+'</span>'}).join('')+'</div>'}
+function tick(m){var st=Math.max(1,Math.ceil(m/4));return[st,st*4]}
+function stacked(bs){var m=Math.max.apply(null,bs.map(function(b){return b.v}).concat([0]));if(!m)return EMPTY;var W=520,H=190,L=28,T=8,B=24,pw=W-L-6,ph=H-T-B,tt=tick(m),mx=tt[1],bw=Math.max(3,Math.min(26,pw/bs.length*.62)),g='',x,i,k,s='';
+ for(k=0;k<=4;k++){var y=T+ph-ph*tt[0]*k/mx;g+='<line x1="'+L+'" x2="'+(W-6)+'" y1="'+y+'" y2="'+y+'" stroke="#EEF2F7"/><text x="'+(L-5)+'" y="'+(y+3)+'" text-anchor="end">'+tt[0]*k+'</text>'}
+ bs.forEach(function(b,i){var cx=L+pw*(i+.5)/bs.length,yy=T+ph;TY.forEach(function(t){var h=ph*b.t[t]/mx;if(h>0){yy-=h;s+='<rect x="'+(cx-bw/2).toFixed(1)+'" y="'+yy.toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+h.toFixed(1)+'" fill="'+TC[t]+'" rx="1.5"><title>'+esc(b.l)+' · '+t+': '+b.t[t]+'</title></rect>'}});
+  if(bs.length<=12||i%Math.ceil(bs.length/10)===0)s+='<text x="'+cx.toFixed(1)+'" y="'+(H-7)+'" text-anchor="middle">'+esc(b.l)+'</text>'});
+ return'<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Activity by period">'+g+s+'</svg>'}
+function grouped(bs){var m=Math.max.apply(null,bs.map(function(b){return Math.max.apply(null,TY.map(function(t){return b.t[t]}))}).concat([0]));if(!m)return EMPTY;var W=900,H=230,L=30,T=8,B=26,pw=W-L-8,ph=H-T-B,tt=tick(m),mx=tt[1],gw=pw/bs.length,bw=Math.max(2,Math.min(16,gw/5)),g='',s='',k;
+ for(k=0;k<=4;k++){var y=T+ph-ph*tt[0]*k/mx;g+='<line x1="'+L+'" x2="'+(W-8)+'" y1="'+y+'" y2="'+y+'" stroke="#EEF2F7"/><text x="'+(L-5)+'" y="'+(y+3)+'" text-anchor="end">'+tt[0]*k+'</text>'}
+ bs.forEach(function(b,i){var x0=L+gw*i+(gw-bw*4)/2;TY.forEach(function(t,j){var h=ph*b.t[t]/mx;s+='<rect x="'+(x0+j*bw).toFixed(1)+'" y="'+(T+ph-h).toFixed(1)+'" width="'+(bw-1).toFixed(1)+'" height="'+h.toFixed(1)+'" fill="'+TC[t]+'" rx="1.5"><title>'+esc(b.l)+' · '+t+': '+b.t[t]+'</title></rect>'});
+  if(bs.length<=14||i%Math.ceil(bs.length/12)===0)s+='<text x="'+(L+gw*(i+.5)).toFixed(1)+'" y="'+(H-8)+'" text-anchor="middle">'+esc(b.l)+'</text>'});
+ return'<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Transactions by type">'+g+s+'</svg>'}
+function lines(bs){var m=Math.max.apply(null,bs.map(function(b){return Math.max.apply(null,TY.map(function(t){return b.t[t]}))}).concat([0]));if(!m)return EMPTY;var W=640,H=220,L=30,T=10,B=26,pw=W-L-12,ph=H-T-B,tt=tick(m),mx=tt[1],n=bs.length,X=function(i){return L+(n<2?pw/2:pw*i/(n-1))},Y=function(v){return T+ph-ph*v/mx},g='',s='',k;
+ for(k=0;k<=4;k++){g+='<line x1="'+L+'" x2="'+(W-12)+'" y1="'+Y(tt[0]*k)+'" y2="'+Y(tt[0]*k)+'" stroke="#EEF2F7"/><text x="'+(L-5)+'" y="'+(Y(tt[0]*k)+3)+'" text-anchor="end">'+tt[0]*k+'</text>'}
+ TY.forEach(function(t){s+='<polyline fill="none" stroke="'+TC[t]+'" stroke-width="2" points="'+bs.map(function(b,i){return X(i).toFixed(1)+','+Y(b.t[t]).toFixed(1)}).join(' ')+'"/>'+bs.map(function(b,i){return'<circle cx="'+X(i).toFixed(1)+'" cy="'+Y(b.t[t]).toFixed(1)+'" r="2.6" fill="'+TC[t]+'"><title>'+esc(b.l)+' · '+t+': '+b.t[t]+'</title></circle>'}).join('')});
+ bs.forEach(function(b,i){if(n<=12||i%Math.ceil(n/10)===0)s+='<text x="'+X(i).toFixed(1)+'" y="'+(H-8)+'" text-anchor="middle">'+esc(b.l)+'</text>'});
+ return'<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Transaction trend">'+g+s+'</svg>'}
+function donut(s){var tot=s.n;if(!tot)return EMPTY;var Rr=46,C=2*Math.PI*Rr,off=0,a='';TY.forEach(function(t){var v=s.by[t];if(!v)return;var len=C*v/tot;a+='<circle r="'+Rr+'" cx="70" cy="70" fill="none" stroke="'+TC[t]+'" stroke-width="20" stroke-dasharray="'+len+' '+(C-len)+'" stroke-dashoffset="'+(-off)+'" transform="rotate(-90 70 70)"><title>'+t+': '+v+'</title></circle>';off+=len});
+ return'<div style="display:flex;gap:18px;align-items:center;flex-wrap:wrap"><svg viewBox="0 0 140 140" style="width:150px"><circle r="46" cx="70" cy="70" fill="none" stroke="#EEF2F7" stroke-width="20"/>'+a+'<text x="70" y="68" text-anchor="middle" style="font-size:22px;font-weight:800;fill:#0F2742">'+tot+'</text><text x="70" y="84" text-anchor="middle">Total</text></svg><div class="wr-ps" style="flex:1;min-width:150px">'+TY.map(function(t){return'<div><span><i style="display:inline-block;width:9px;height:9px;border-radius:50%;background:'+TC[t]+';margin-right:6px"></i>'+t+'</span><b>'+s.by[t]+' ('+Math.round(s.by[t]*100/tot)+'%)</b></div>'}).join('')+'</div></div>'}
+/* ---- tables ---- */
+var DS={tab:'recent',q:'',type:'',st:'',limit:10};
+function amt(e){if(e.txn==='Void')return'—';var v=val(e);return e.txn==='Refund'?'-'+fm(Math.abs(v)):fm(v)}
+function tkCell(e){var t=tkts(e);return t.length?esc(t[0])+(t.length>1?' <small>+'+(t.length-1)+'</small>':''):'—'}
+function pxCell(e){var n=names(e);return n.length?esc(n[0])+(n.length>1?' <small>+'+(n.length-1)+'</small>':''):'—'}
+function recTable(l,opt){opt=opt||{};if(!l.length)return EMPTY;var lim=opt.limit?l.slice(0,opt.limit):l;
+ return'<div class="wr-tw"><table><thead><tr><th>Date</th><th>Type</th><th>PNR</th><th>TKT No.</th><th>Passenger(s)</th><th>Route</th><th>Status</th><th class="r">Amount</th><th></th></tr></thead><tbody>'+lim.map(function(r){var e=r.e,st=status(e);return'<tr><td title="'+fmtD(e.date)+'">'+fmtD(e.date).replace(/ (\d{2})(\d{2})$/," '$2")+'</td><td>'+pill(e.txn,TC[e.txn]||'#475569')+'</td><td class="mono">'+esc(e.pnrGds)+'</td><td class="mono">'+tkCell(e)+'</td><td>'+pxCell(e)+'</td><td>'+esc(e.sector||'—')+'</td><td>'+pill(st,SC[st]||'#475569')+'</td><td class="r">'+amt(e)+'</td><td><button type="button" class="wr-link" data-act="open" data-i="'+r.i+'">View</button></td></tr>'}).join('')+'</tbody></table></div>'+(opt.limit&&l.length>opt.limit?'<div style="text-align:center;margin-top:10px"><button type="button" class="wr-link" data-act="more">Show more ('+(l.length-opt.limit)+' left)</button></div>':'')}
+function filt(l,f){var q=(f.q||'').trim().toUpperCase();return l.filter(function(r){var e=r.e;if(f.type&&e.txn!==f.type)return false;if(f.st&&status(e)!==f.st)return false;if(q){var h=[e.pnrGds,e.pnrAirline,e.pname,e.newTkt,e.oldTkt,e.sector,e.airline].join(' ').toUpperCase();if(h.indexOf(q)<0)return false}return true})}
+function topBy(l,keyf,n){var m={};l.forEach(function(r){keyf(r.e).forEach(function(k){m[k]=m[k]||{k:k,n:0,v:0};m[k].n++;m[k].v+=(r.e.txn==='Ticketing'||r.e.txn==='Reissue')?val(r.e):0})});return Object.keys(m).map(function(k){return m[k]}).sort(function(a,b){return b.n-a.n||b.v-a.v}).slice(0,n)}
+function topTable(items,h1){if(!items.length)return EMPTY;return'<div class="wr-tw"><table><thead><tr><th>'+h1+'</th><th class="r">Transactions</th><th class="r">Revenue</th></tr></thead><tbody>'+items.map(function(x){return'<tr><td>'+esc(x.k)+'</td><td class="r">'+x.n+'</td><td class="r">'+fm(x.v)+'</td></tr>'}).join('')+'</tbody></table></div>'}
+function perfList(s){return'<div class="wr-ps"><div><span>Total records</span><b>'+s.n+'</b></div><div><span>Completed</span><b>'+s.done+'</b></div><div><span>Pending adjustments / refunds</span><b>'+s.pend+'</b></div><div><span>Voided</span><b>'+s.by.Void+'</b></div></div>'}
+function rangeCtl(pfx){var s=span();return'<div class="wr-ctl"><select data-act="range" aria-label="Date range"><option value="month"'+(R.key==='month'?' selected':'')+'>This month</option><option value="30"'+(R.key==='30'?' selected':'')+'>Last 30 days</option><option value="year"'+(R.key==='year'?' selected':'')+'>This year</option><option value="all"'+(R.key==='all'?' selected':'')+'>All time</option><option value="custom"'+(R.key==='custom'?' selected':'')+'>Custom range</option></select>'+(R.key==='custom'?'<input type="date" data-act="from" value="'+esc(R.from)+'" aria-label="From"><input type="date" data-act="to" value="'+esc(R.to)+'" aria-label="To">':'')+'</div>'}
+function periodLabel(){var s=span();return s.from||s.to?fmtD(s.from||'')+(s.to?' – '+fmtD(s.to):''):'All time'}
+/* ---- Work Record dashboard ---- */
+var dash=document.createElement('div');dash.id='wr-dash';dash.className='wr';body.insertBefore(dash,body.firstChild);
+function recentBlock(l){var f=filt(sorted(l),DS);return recTable(f,{limit:DS.limit})}
+function renderDash(partial){var s=span(),l=rows(s),ps=prevSpan(),pl=ps?rows(ps):null;
+ if(partial==='table'){var tb=dash.querySelector('#wr-rec');if(tb){tb.innerHTML=recentBlock(l);return}}
+ var st=stats(l),panel;
+ if(DS.tab==='recent')panel='<div class="wr-filters"><input id="wr-q" type="search" placeholder="Search PNR, ticket number or passenger" value="'+esc(DS.q)+'" aria-label="Search records"><select data-act="type" aria-label="Type"><option value="">All types</option>'+TY.map(function(t){return'<option'+(DS.type===t?' selected':'')+'>'+t+'</option>'}).join('')+'</select><select data-act="st" aria-label="Status"><option value="">All status</option>'+Object.keys(SC).map(function(t){return'<option'+(DS.st===t?' selected':'')+'>'+t+'</option>'}).join('')+'</select></div><div id="wr-rec">'+recentBlock(l)+'</div>';
+ else if(DS.tab==='activity'){var bs=bucketCounts(l).filter(function(b){return b.v}).reverse();panel=bs.length?'<div class="wr-tw"><table><thead><tr><th>Period</th>'+TY.map(function(t){return'<th class="r">'+t+'</th>'}).join('')+'<th class="r">Total</th></tr></thead><tbody>'+bs.map(function(b){return'<tr><td>'+esc(b.l)+'</td>'+TY.map(function(t){return'<td class="r">'+b.t[t]+'</td>'}).join('')+'<td class="r"><b>'+b.v+'</b></td></tr>'}).join('')+'</tbody></table></div>':EMPTY}
+ else{var bt=TY.map(function(t){var x=l.filter(function(r){return r.e.txn===t}),v=x.reduce(function(a,r){return a+Math.abs(val(r.e))},0);return'<tr><td>'+pill(t,TC[t])+'</td><td class="r">'+x.length+'</td><td class="r">'+fm(v)+'</td></tr>'}).join('');
+  panel='<div class="wr-kpis" style="grid-template-columns:repeat(4,minmax(0,1fr))">'+[['Revenue Generated',st.rev,'#0E8FA0','৳'],['Commission Earned',st.com,'#F59E0B','%'],['Refund Amount',st.ref,'#EF4444','↺'],['Net Contribution',st.net,'#16875A','＋']].map(function(k){return'<div class="wr-k" style="--c:'+k[2]+'"><i>'+k[3]+'</i><div><span>'+k[0]+'</span><b style="font-size:19px">'+bdt(k[1])+'</b></div></div>'}).join('')+'</div><div class="wr-tw"><table><thead><tr><th>Type</th><th class="r">Records</th><th class="r">Amount</th></tr></thead><tbody>'+bt+'</tbody></table></div><p class="wr-sub">Net contribution = revenue (ticketing + reissue) − refunds returned to clients. Commission = recorded service charges.</p>'}
+ dash.innerHTML='<div class="wr-top"><div><h2>Work Record</h2><p class="wr-sub">Manage your ticketing activities, track performance and view business impact. <b>'+esc(periodLabel())+'</b></p></div><div class="wr-ctl">'+rangeCtl()+'<button type="button" class="wr-btn" data-act="new">+ New Record</button></div></div>'
+  +kpis(l,pl,'wr')+'<div class="wr-grid"><div class="wr-card"><div class="wr-tabs" role="tablist">'+[['recent','Recent Records'],['activity','Activity Track'],['impact','Business Impact']].map(function(t){return'<button type="button" role="tab" data-act="tab" data-v="'+t[0]+'" class="'+(DS.tab===t[0]?'on':'')+'">'+t[1]+'</button>'}).join('')+'</div>'+panel+'</div>'
+  +'<div><div class="wr-card"><h3>Activity Track</h3>'+stacked(bucketCounts(l))+legend()+'</div><div class="wr-card"><h3>Performance Summary</h3>'+perfList(st)+'</div></div></div>'}
+/* ---- New Record modal ---- */
+var bd=document.createElement('div');bd.id='wr-backdrop';root.appendChild(bd);
+var bar=document.createElement('div');bar.className='wr-form-bar';bar.innerHTML='<div><b id="wr-form-title">New Work Record</b><span>Existing fields, calculations and validations</span></div><button type="button" id="wr-form-x" aria-label="Close form">×</button>';card.insertBefore(bar,card.firstChild);
+function formTitle(){var ed=card.classList.contains('ptc-editing');$('wr-form-title').textContent=ed?'Edit Work Record':'New Work Record'}
+function openForm(){root.classList.add('wr-form-open');formTitle();try{card.scrollTop=0}catch(e){}}
+function closeForm(){if(card.classList.contains('ptc-editing')){var c=$('btn-cancel-edit');if(c)c.click()}root.classList.remove('wr-form-open');renderAll()}
+root.classList.add('wr-mode');
+new MutationObserver(function(){if(card.classList.contains('ptc-editing'))openForm();else formTitle()}).observe(card,{attributes:true,attributeFilter:['class']});
+$('wr-form-x').addEventListener('click',closeForm);bd.addEventListener('click',closeForm);
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){if($('wr-detail-back'))closeDetail();else if(root.classList.contains('wr-form-open')&&!$('apv-back'))closeForm()}});
+var addBtn=$('btn-add');if(addBtn)addBtn.addEventListener('click',function(){var n=E().length,was=card.classList.contains('ptc-editing');setTimeout(function(){if(E().length>n||(was&&!card.classList.contains('ptc-editing'))){root.classList.remove('wr-form-open');renderAll()}},400)},true);
+var navFlag=false;nav.addEventListener('click',function(){navFlag=true;setTimeout(function(){navFlag=false},0)},true);
+var ready=false;setTimeout(function(){ready=true},800);
+var ospp=window.ptcSetPane;if(typeof ospp==='function')window.ptcSetPane=function(p){var r=ospp.apply(this,arguments);root.classList.remove('wr-intel-on');if(p==='entrydesk'&&ready&&!navFlag)openForm();syncVis();return r};
+/* ---- Record Details ---- */
+function closeDetail(){var d=$('wr-detail-back');if(d)d.remove()}
+function frow(l,v){return v===''||v===undefined||v===null?'':'<div><span>'+l+'</span><b>'+(typeof v==='number'?fm(v):esc(v))+'</b></div>'}
+function openDetail(i){var e=E()[i];if(!e)return;closeDetail();var st=status(e),n=names(e),t=tkts(e),m=Math.max(n.length,t.length),pr='';
+ for(var k=0;k<m;k++)pr+='<tr><td>'+(k+1)+'</td><td>'+esc(n[k]||'—')+'</td><td class="mono">'+esc(t[k]||'—')+'</td></tr>';
+ var fin='';if(e.txn==='Ticketing')fin=frow('Base fare',num(e.baseFare))+frow('Tax',num(e.taxFare))+frow('Total fare',num(e.airlineTicketPrice))+frow('Discount',num(e.discountAmount))+frow('Payable (client pays)',num(e.totalFare));
+ else if(e.txn==='Reissue')fin=frow('Fare difference',num(e.fareDiff))+frow('Airline charge',num(e.airlineCharge))+frow('Service charge',num(e.svc))+frow('Total collection',num(e.totalCollection));
+ else if(e.txn==='Refund')fin=frow('Refund type',e.refundType)+frow('Refundable fare',num(e.refundableFare))+frow('Refundable tax',num(e.refundableTax))+frow('Airline fee',num(e.airlineCharge))+frow('Commission adj.',num(e.commissionAdj))+frow('Airline refund',num(e.airlineRefund))+frow('Service charge',num(e.svc))+frow('Client refund',num(e.refundCharge))+frow('Adjustment given',e.adjustmentGiven)+(e.adjustmentGiven==='YES'?frow('Adjustment amount',num(e.adjustmentAmount)):'');
+ else fin=frow('Airline charge',num(e.airlineCharge))+frow('Service charge',num(e.svc))+frow('Charge',num(e.refundCharge));
+ var old=e.txn==='Reissue'?list(e.oldTkt):[];
+ var b=document.createElement('div');b.id='wr-detail-back';b.className='wr-back wr';b.innerHTML='<div class="wr-detail" role="dialog" aria-modal="true" aria-label="Record details"><div class="wr-dh"><div><button type="button" data-act="dclose">← Back to list</button> <h3 style="display:inline;margin-left:10px">Record Details</h3></div><div style="display:flex;gap:8px"><button type="button" data-act="dedit" data-i="'+i+'">Edit</button><button type="button" class="del" data-act="ddel" data-i="'+i+'">Delete</button></div></div><div class="wr-db"><div class="wr-card" style="margin:0"><div class="wr-ids"><div><span>PNR</span><b class="mono" style="font-size:16px">'+esc(e.pnrGds)+'</b></div><div><span>Airline PNR</span><b class="mono">'+esc(e.pnrAirline||'—')+'</b></div><div><span>Type</span>'+pill(e.txn,TC[e.txn]||'#475569')+'</div><div><span>Status</span>'+pill(st,SC[st]||'#475569')+'</div><div><span>Date</span><b>'+fmtD(e.date)+'</b></div><div><span>Airline</span><b>'+esc(e.airline||'—')+'</b></div><div><span>Route</span><b>'+esc(e.sector||'—')+'</b></div></div></div>'
+  +'<div class="wr-two"><div class="wr-card" style="margin:0"><h3>Passengers ('+m+')</h3><div class="wr-tw"><table style="min-width:0"><thead><tr><th>#</th><th>Name</th><th>'+(e.txn==='Ticketing'||e.txn==='Reissue'?'New ticket':'Ticket')+'</th></tr></thead><tbody>'+(pr||'<tr><td colspan="3">—</td></tr>')+'</tbody></table></div>'+(old.length?'<p class="wr-sub">Old ticket(s): <span class="mono">'+esc(old.join(', '))+'</span></p>':'')+'</div>'
+  +'<div class="wr-card" style="margin:0"><h3>Financial Summary</h3><div class="wr-ps">'+(fin||'<div><span>No financial fields</span></div>')+'</div></div></div>'
+  +'<div class="wr-card" style="margin:0"><h3>Other details</h3><div class="wr-ps">'+frow('Platform',e.platform)+frow('Passenger number',e.pnum)+frow('Recorded on',e.createdAt?fmtD(String(e.createdAt).slice(0,10)):'')+frow('Remarks',e.note)+'</div></div></div></div>';
+ document.body.appendChild(b)}
+document.addEventListener('click',function(ev){var t=ev.target;if(t.id==='wr-detail-back'){closeDetail();return}var a=t.closest&&t.closest('#wr-detail-back [data-act]');if(!a)return;var i=+a.dataset.i;
+ if(a.dataset.act==='dclose')closeDetail();
+ else if(a.dataset.act==='dedit'){closeDetail();var b=document.querySelector('.ptc-edit[data-idx="'+i+'"]');if(b)b.click()}
+ else if(a.dataset.act==='ddel'){var d=document.querySelector('.ptc-del[data-idx="'+i+'"]'),n=E().length;if(d)d.click();setTimeout(function(){if(E().length<n){closeDetail();renderAll()}},500)}});
+/* ---- Intelligence ---- */
+var intel=document.createElement('div');intel.id='wr-intel';intel.className='wr';shell.appendChild(intel);
+var IS={tab:'overview',q:'',type:'',st:''};
+function csv(l){var H=['Date','Type','GDS PNR','Airline PNR','Passengers','Ticket numbers','Airline','Route','Status','Amount'],q=function(v){v=String(v==null?'':v);return/[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};
+ return'\ufeff'+[H.join(',')].concat(l.map(function(r){var e=r.e;return[e.date,e.txn,e.pnrGds,e.pnrAirline,names(e).join('; '),tkts(e).join('; '),e.airline,e.sector,status(e),e.txn==='Void'?'':val(e)].map(q).join(',')})).join('\r\n')}
+function exportCsv(l){var b=new Blob([csv(l)],{type:'text/csv;charset=utf-8'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='AeroOps_Work_Record_Report_'+iso(new Date())+'.csv';document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},500)}
+function renderIntel(){if(!root.classList.contains('wr-intel-on'))return;var s=span(),l=rows(s),ps=prevSpan(),pl=ps?rows(ps):null,st=stats(l),bs=bucketCounts(l),c;
+ if(IS.tab==='overview')c=kpis(l,pl,'intel')+'<div class="wr-grid"><div class="wr-card"><h3>Transaction Trend</h3>'+lines(bs)+legend()+'</div><div class="wr-card"><h3>Transaction Type</h3>'+donut(st)+'</div></div><div class="wr-two"><div class="wr-card"><h3>Top Routes</h3>'+topTable(topBy(l,function(e){return e.sector?[e.sector]:[]},6),'Route')+'</div><div class="wr-card"><h3>Top Passengers</h3>'+topTable(topBy(l,function(e){return names(e).map(function(x){return x.toUpperCase()})},6),'Passenger')+'</div></div><div class="wr-card"><h3>Performance Summary</h3>'+perfList(st)+'</div>';
+ else if(IS.tab==='performance'){var wd=[0,0,0,0,0,0,0],days={};l.forEach(function(r){if(r.e.date){wd[(pd(r.e.date).getDay()+6)%7]++;days[r.e.date]=(days[r.e.date]||0)+1}});var dk=Object.keys(days),busy=dk.sort(function(a,b){return days[b]-days[a]})[0],mx=Math.max.apply(null,wd.concat([1]));
+  c='<div class="wr-kpis"><div class="wr-k" style="--c:#2563EB"><i>∑</i><div><span>Records in period</span><b>'+st.n+'</b></div></div><div class="wr-k" style="--c:#0E8FA0"><i>▦</i><div><span>Active days</span><b>'+dk.length+'</b></div></div><div class="wr-k" style="--c:#F59E0B"><i>Ø</i><div><span>Avg per active day</span><b>'+(dk.length?(st.n/dk.length).toFixed(1):'0')+'</b></div></div><div class="wr-k" style="--c:#16875A"><i>★</i><div><span>Busiest day</span><b style="font-size:17px">'+(busy?fmtD(busy)+' ('+days[busy]+')':'—')+'</b></div></div><div class="wr-k" style="--c:#C2410C"><i>!</i><div><span>Open adjustments</span><b>'+st.pend+'</b></div></div></div><div class="wr-two"><div class="wr-card"><h3>Workload by weekday</h3>'+(st.n?'<div class="wr-ps">'+['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(function(d,i){return'<div><span style="width:40px">'+d+'</span><span style="flex:1;background:#EEF2F7;border-radius:6px;height:10px;align-self:center"><i style="display:block;height:10px;border-radius:6px;background:#19B6C9;width:'+Math.round(wd[i]*100/mx)+'%"></i></span><b>'+wd[i]+'</b></div>'}).join('')+'</div>':EMPTY)+'</div><div class="wr-card"><h3>Activity over time</h3>'+stacked(bs)+legend()+'</div></div><div class="wr-two"><div class="wr-card"><h3>By airline</h3>'+topTable(topBy(l,function(e){return e.airline?[e.airline]:[]},8),'Airline')+'</div><div class="wr-card"><h3>By platform</h3>'+topTable(topBy(l,function(e){return e.platform?[e.platform]:[]},8),'Platform')+'</div></div>'}
+ else if(IS.tab==='transactions'){var f=filt(sorted(l),IS);c='<div class="wr-card"><div class="wr-filters"><input id="wr-iq" type="search" placeholder="Search PNR, ticket number or passenger" value="'+esc(IS.q)+'" aria-label="Search"><select data-act="itype"><option value="">All types</option>'+TY.map(function(t){return'<option'+(IS.type===t?' selected':'')+'>'+t+'</option>'}).join('')+'</select><select data-act="ist"><option value="">All status</option>'+Object.keys(SC).map(function(t){return'<option'+(IS.st===t?' selected':'')+'>'+t+'</option>'}).join('')+'</select></div><p class="wr-sub">'+f.length+' record(s)</p><div id="wr-irec">'+recTable(f)+'</div></div>'}
+ else c='<div class="wr-card"><h3>Transactions by Type</h3>'+grouped(bs)+legend()+'</div>'+kpis(l,pl,'intel')+'<div class="wr-card"><h3>Transaction Details</h3>'+recTable(sorted(l),{limit:25})+'<p class="wr-sub">The export contains all '+l.length+' record(s) in this period.</p></div>';
+ intel.innerHTML='<div class="wr-top"><div><h2>Intelligence</h2><p class="wr-sub">Reports and analytics from your Work Record data. <b>'+esc(periodLabel())+'</b></p></div><div class="wr-ctl">'+rangeCtl()+'<button type="button" class="wr-btn" data-act="export">Export CSV</button></div></div><div class="wr-card" style="padding:0 14px 0"><div class="wr-tabs" style="margin:0" role="tablist">'+[['overview','Overview'],['performance','Performance'],['transactions','Transactions'],['reports','Reports']].map(function(t){return'<button type="button" role="tab" data-act="itab" data-v="'+t[0]+'" class="'+(IS.tab===t[0]?'on':'')+'">'+t[1]+'</button>'}).join('')+'</div></div>'+c}
+/* ---- wiring ---- */
+function renderAll(){renderDash();renderIntel()}
+function onAct(ev){var a=ev.target.closest&&ev.target.closest('[data-act]');if(!a||a.closest('#wr-detail-back'))return;var k=a.dataset.act,v=a.value;
+ if(k==='range'){R.key=v;if(v==='custom'&&!R.from){var t=new Date();R.from=iso(new Date(t.getFullYear(),t.getMonth(),1));R.to=iso(t)}DS.limit=10;renderAll()}
+ else if(k==='from'){R.from=v;renderAll()}else if(k==='to'){R.to=v;renderAll()}
+ else if(k==='new'){if(card.classList.contains('ptc-editing')){var c=$('btn-cancel-edit');if(c)c.click()}openForm()}
+ else if(k==='tab'){DS.tab=a.dataset.v;renderDash()}else if(k==='type'){DS.type=v;DS.limit=10;renderDash('table')}else if(k==='st'){DS.st=v;DS.limit=10;renderDash('table')}
+ else if(k==='more'){DS.limit+=20;renderDash('table')}else if(k==='open')openDetail(+a.dataset.i)
+ else if(k==='itab'){IS.tab=a.dataset.v;renderIntel()}else if(k==='itype'){IS.type=v;renderIntel()}else if(k==='ist'){IS.st=v;renderIntel()}
+ else if(k==='export'){exportCsv(rows(span()).sort(function(a,b){return(a.e.date||'').localeCompare(b.e.date||'')}))}}
+[dash,intel].forEach(function(n){n.addEventListener('click',function(e){var t=e.target.closest('[data-act]');if(t&&t.tagName==='SELECT'||t&&t.tagName==='INPUT')return;onAct(e)});n.addEventListener('change',function(e){var t=e.target;if(t.tagName==='SELECT'||t.type==='date')onAct(e)})});
+dash.addEventListener('input',function(e){if(e.target.id==='wr-q'){DS.q=e.target.value;DS.limit=10;renderDash('table')}});
+intel.addEventListener('input',function(e){if(e.target.id==='wr-iq'){IS.q=e.target.value;var s=span(),f=filt(sorted(rows(s)),IS);$('wr-irec').innerHTML=recTable(f)}});
+intel.addEventListener('click',function(e){var b=e.target.closest('[data-act="open"]');if(b)openDetail(+b.dataset.i)});
+/* Intelligence nav button */
+var ib=document.createElement('button');ib.type='button';ib.className='ptc-nav-btn';ib.dataset.aero='intel';ib.title='Reports and analytics';ib.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg><span class="aero-lbl">Intelligence</span>';
+var pw=nav.querySelector('[data-aero="pwi"]');nav.insertBefore(ib,pw?pw.nextSibling:nav.firstChild);
+function enforce(){if(!root.classList.contains('wr-intel-on'))return;[].forEach.call(nav.querySelectorAll('.ptc-nav-btn'),function(b){var on=b===ib;if(b.classList.contains('active')!==on)b.classList.toggle('active',on)})}
+ib.addEventListener('click',function(){var o=$('btn-cancel-edit');root.classList.remove('wr-form-open');root.classList.add('wr-intel-on');renderIntel();enforce();try{window.scrollTo({top:0})}catch(e){}});
+[].forEach.call(nav.querySelectorAll('.ptc-nav-btn'),function(b){if(b!==ib)b.addEventListener('click',function(){root.classList.remove('wr-intel-on');syncVis()},true)});
+new MutationObserver(enforce).observe(nav,{attributes:true,subtree:true,attributeFilter:['class']});
+/* show the dashboard only on the Work Record pane */
+var dv=$('view-dashboard');
+function syncVis(){var on=root.getAttribute('data-pane')==='entrydesk'&&!root.classList.contains('set-active')&&!root.classList.contains('mas-active')&&!root.classList.contains('pwi-active')&&!root.classList.contains('wr-intel-on')&&!(dv&&dv.classList.contains('active'));dash.classList.toggle('wr-hide',!on);if(on)renderDash()}
+new MutationObserver(syncVis).observe(root,{attributes:true,attributeFilter:['class','data-pane']});if(dv)new MutationObserver(syncVis).observe(dv,{attributes:true,attributeFilter:['class']});
+var sig='';setInterval(function(){var s=E().length+':'+JSON.stringify(E().slice(-3)).length;if(s!==sig){sig=s;renderAll();syncVis()}},1000);
+syncVis();renderIntel();
 })();
 </script>
 </body></html>
