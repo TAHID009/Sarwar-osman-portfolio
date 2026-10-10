@@ -2787,6 +2787,37 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
 #pwi-root .pf-cfgg{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:12px 0}
 #pwi-root .pf-cfgg label{font-size:12px;display:flex;flex-direction:column;gap:3px}
 #pwi-root .pf-cfgb{display:flex;gap:8px}
+#pwi-root .pwi-head>div:first-child{display:none}#pwi-root .pwi-head{justify-content:flex-end}
+#pwi-root .hm-head{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+#pwi-root .hm-head h2{margin:0;font-size:24px}#pwi-root .hm-head p{margin:2px 0 0;color:var(--pwi-soft);font-size:13px}
+#pwi-root .hm-tools{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+#pwi-root .hm-dsel{display:flex;align-items:center;gap:4px;background:#fff;border:1px solid #D8E1EC;border-radius:10px;padding:3px 6px}
+#pwi-root .hm-dsel button{border:0;background:transparent;font-size:18px;cursor:pointer;padding:0 6px}#pwi-root .hm-dsel input{border:0;background:transparent;font-weight:600}
+#pwi-root #hm-q{min-width:240px;padding:9px 12px;border:1px solid #D8E1EC;border-radius:10px}
+#pwi-root .hm-kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:10px}
+#pwi-root .hm-k{background:#fff;border:1px solid #E1E8F1;border-radius:12px;padding:12px 14px;border-top:3px solid var(--c)}
+#pwi-root .hm-k i{display:none}#pwi-root .hm-k span{display:block;font-size:12px;font-weight:600;color:var(--pwi-soft)}#pwi-root .hm-k b{font-size:30px;line-height:1.1;color:var(--c)}
+#pwi-root .hm-rates{display:flex;gap:20px;flex-wrap:wrap;align-items:center;background:#fff;border:1px solid #E1E8F1;border-radius:12px;padding:10px 16px;margin-bottom:12px}
+#pwi-root .hm-rates>div{display:flex;align-items:center;gap:10px;flex:1;min-width:220px}#pwi-root .hm-rates b{font-size:18px}
+#pwi-root .hm-rates em{flex:1;height:10px;background:#EEF2F7;border-radius:6px;overflow:hidden}#pwi-root .hm-rates u{display:block;height:10px}
+#pwi-root .hm-note{flex:0 1 auto!important;font-size:12px;color:var(--pwi-soft);justify-content:flex-end}
+#pwi-root .hm-grid{display:grid;grid-template-columns:1fr 1.15fr;gap:12px;margin-bottom:12px;align-items:start}
+#pwi-root .hm-imp{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+#pwi-root .hm-gauge{position:relative;width:150px;text-align:center}#pwi-root .hm-gauge svg{width:130px;height:130px}
+#pwi-root .hm-gauge b{position:absolute;left:0;right:0;top:46px;font-size:26px}#pwi-root .hm-gauge span{display:block;font-size:12px;font-weight:600}
+#pwi-root .hm-tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;flex:1;min-width:220px}
+#pwi-root .hm-tiles>div{background:#F7F9FC;border-radius:10px;padding:8px 10px}#pwi-root .hm-tiles span{display:block;font-size:11px;color:var(--pwi-soft)}#pwi-root .hm-tiles b{font-size:22px}
+#pwi-root .hm-msg{margin-top:12px;background:#EEF4FF;border-radius:10px;padding:10px 12px;font-size:13px}
+#pwi-root #hm-entry .pwi-entry{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;margin:0}
+#pwi-root #hm-entry .pwi-entry>*{grid-column:1/-1}#pwi-root #hm-entry .pwi-flow{display:none}
+#pwi-root #hm-entry .pwi-field[data-g="company"],#pwi-root #hm-entry .pwi-field:has(#pwi-ref){grid-column:auto}
+#pwi-root .hm-ov{display:grid;grid-template-columns:1.3fr 1fr;gap:16px;margin-bottom:10px}#pwi-root .hm-ov h4{margin:0 0 6px;font-size:13px}
+#pwi-root .hm-fl{display:flex;gap:6px;flex-wrap:wrap}
+#pwi-root .hm-pg{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px;font-size:12.5px}
+#pwi-root .hm-sum{display:flex;gap:18px;flex-wrap:wrap;align-items:center}#pwi-root .hm-sum>div:first-child{flex:2;min-width:240px}#pwi-root .hm-sum h3{margin:0 0 4px}#pwi-root .hm-sum p{margin:0}
+#pwi-root .hm-st span{display:block;font-size:11px;color:var(--pwi-soft)}#pwi-root .hm-st b{display:block}#pwi-root .hm-st small{color:var(--pwi-soft)}
+@media(max-width:1000px){#pwi-root .hm-grid,#pwi-root .hm-ov{grid-template-columns:1fr}#pwi-root .hm-kpis{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){#pwi-root #hm-entry .pwi-entry{grid-template-columns:1fr}#pwi-root #hm-q{min-width:0;flex:1}}
 #pwi-root .pwi-subtabs{display:inline-flex;gap:2px;background:#E6ECF4;border-radius:10px;padding:3px;margin-bottom:12px}
 #pwi-root .pwi-subtabs button{border:0;background:transparent;padding:7px 16px;border-radius:8px;font-weight:600;color:var(--pwi-soft);cursor:pointer}
 #pwi-root .pwi-subtabs button.on{background:#fff;color:var(--pwi-ink);box-shadow:0 1px 3px rgba(11,37,69,.12)}
@@ -4587,16 +4618,23 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
       </div>
 
       <div class="pwi-subtabs" role="tablist" aria-label="PWI sections">
-        <button type="button" role="tab" data-act="tab" data-v="entry" class="on">Quick Entry</button>
+        <button type="button" role="tab" data-act="tab" data-v="home" class="on">Activity Tracker</button>
         <button type="button" role="tab" data-act="tab" data-v="dash">Dashboard</button>
         <button type="button" role="tab" data-act="tab" data-v="perf">Performance</button>
       </div>
 
-      <!-- Quick Entry -->
-      <div id="pwi-pane-entry">
+      <div id="pwi-pane-home">
+        <div class="hm-head"><div><h2>Activity Tracker</h2><p>Track your daily tasks, performance and create meaningful impact.</p></div>
+          <div class="hm-tools"><div class="hm-dsel"><button type="button" data-act="hm-prev" aria-label="Previous day">‹</button><input type="date" id="hm-date" aria-label="Selected date"><button type="button" id="hm-next" data-act="hm-next" aria-label="Next day">›</button></div><input type="search" id="hm-q" placeholder="Search client, PNR, task, or keyword…" aria-label="Search"><button type="button" class="pwi-btn pri" data-act="hm-new">+ New Record</button></div></div>
+        <div class="hm-kpis" id="hm-kpis"></div><div class="hm-rates" id="hm-rates"></div>
+        <div class="hm-grid"><div class="pwi-card" id="hm-impact"></div><div id="hm-entry"></div></div>
+        <div class="pwi-card" id="hm-over"></div><div class="pwi-card" id="hm-recent"></div><div class="pwi-card hm-sum" id="hm-sum"></div>
+      </div>
+      <!-- Quick Entry (form card is moved into the home layout at boot) -->
+      <div id="pwi-pane-entry" hidden>
         <div class="pwi-entry-grid">
           <div class="pwi-card pwi-entry">
-            <div class="pwi-card-h"><div><h3 class="pwi-ttl">Log New Work</h3><p class="pwi-lede">Capture the task, record the outcome, and build your work intelligence.</p></div></div>
+            <div class="pwi-card-h"><div><h3 class="pwi-ttl">Quick Entry</h3><p class="pwi-lede">Log a new ticketing task, record the outcome and add notes.</p></div></div>
             <ol class="pwi-flow" id="pwi-flow" aria-label="Workflow: capture, process, outcome, insight"><li><i>1</i>Capture</li><li><i>2</i>Process</li><li><i>3</i>Outcome</li><li><i>4</i>Insight</li></ol>
             <div class="pwi-field" data-g="source"><label>Source</label><div class="pwi-chips" id="pwi-src" role="group" aria-label="Source"></div></div>
             <div class="pwi-field" data-g="company">
@@ -10498,7 +10536,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
   /* ---------- state ---------- */
   var acts = [];
   var settings = {weekStart:1, lastSource:'', range:'today', from:'', to:'', keep:false};
-  var st = {tab:'entry', pat:'cc', cycle:'weekly', gran:'auto', coAll:false, recLimit:50, editId:null,
+  var st = {tab:'home', pat:'cc', cycle:'weekly', gran:'auto', coAll:false, recLimit:50, editId:null,
             filters:{source:null, company:null, category:null, status:null, kw:null, bucket:null, q:''}};
   var form = {source:'', category:'', taskType:'', status:'Solved', kind:'new', effort:'', date:'', time:'', dismissed:false, ctxKey:''};
   var coNames = {};
@@ -10695,7 +10733,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
   function renderTypes(){ var l = TYPES[form.category]; $('pwi-type').innerHTML = l ? l.map(function(v){ return chip('taskType', v); }).join('') : '<span class="pwi-sub">Choose a category first</span>'; syncChips(); }
   function fillMType(cat, val){ var l = (TYPES[cat] || []).slice(); if(val && l.indexOf(val) < 0) l.push(val); $('pwi-m-type').innerHTML = '<option value="">Not set</option>' + l.map(function(v){ return '<option>'+esc(v)+'</option>'; }).join(''); $('pwi-m-type').value = val || ''; }
   function syncChips(){
-    pwi.querySelectorAll('#pwi-pane-entry [data-act="pick"]').forEach(function(b){
+    pwi.querySelectorAll('[data-act="pick"]').forEach(function(b){
       b.setAttribute('aria-pressed', form[b.dataset.g] === b.dataset.v ? 'true' : 'false');
     });
   }
@@ -11152,13 +11190,15 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
     dirty = false; renderEntryLists();
     if(st.tab === 'dash') renderDash();
     if(st.tab === 'perf') renderPerf();
+    if(st.tab === 'home') renderHome();
   }
 
   /* ---------- filter actions ---------- */
   function toggleFilter(dim, v){ st.filters[dim] = st.filters[dim] === v ? null : v; st.recLimit = 50; renderDash(); }
   function setTab(t){
+    if(t === 'entry') t = 'home';
     st.tab = t;
-    $('pwi-pane-entry').hidden = t !== 'entry'; $('pwi-pane-dash').hidden = t !== 'dash'; $('pwi-pane-perf').hidden = t !== 'perf';
+    $('pwi-pane-home').hidden = t !== 'home'; $('pwi-pane-entry').hidden = true; $('pwi-pane-dash').hidden = t !== 'dash'; $('pwi-pane-perf').hidden = t !== 'perf';
     pwi.querySelectorAll('.pwi-subtabs button').forEach(function(b){ b.classList.toggle('on', b.dataset.v === t); });
     renderAll();
   }
@@ -11234,6 +11274,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
     var act = t.dataset.act, v = t.dataset.v, id = t.dataset.id;
     if(act === 'tab') return setTab(v);
     if(act.indexOf('perf-') === 0) return perfAct(act, v);
+    if(act.indexOf('hm-') === 0) return homeAct(act, v);
     if(act === 'pick'){
       var g = t.dataset.g;
       if(g === 'kind'){ setKind(v); if(v === 'new') form.dismissed = true; }   // an explicit choice silences the suggestion
@@ -11301,7 +11342,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
   pwi.addEventListener('keydown', function(e){
     var t = e.target;
     if(e.key === 'Enter' && (t.id === 'pwi-company' || t.id === 'pwi-note')){ e.preventDefault(); saveForm(); }
-    else if(e.key === 'Enter' && (e.ctrlKey || e.metaKey) && st.tab === 'entry'){ e.preventDefault(); saveForm(); }
+    else if(e.key === 'Enter' && (e.ctrlKey || e.metaKey) && st.tab === 'home'){ e.preventDefault(); saveForm(); }
   });
   $('pwi-save').addEventListener('click', function(){ saveForm(); });
   $('pwi-save2').addEventListener('click', function(){ saveForm(true); });
@@ -11439,6 +11480,49 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
     return true;
   }
   pwi.addEventListener('change', function(e){ var t = e.target; if(t.id === 'pf-from' || t.id === 'pf-to'){ PS.from = $('pf-from').value || PS.from; PS.to = $('pf-to').value || PS.to; renderPerf(); } });
+
+  /* ---------- Activity Tracker home (approved layout) ---------- */
+  var HM = {d:'', pg:1, q:'', src:'', typ:'', sts:''};
+  function hmDate(){ return HM.d || todayISO(); }
+  function dlt(a, b){ var d = a - b; return '<small class="pf-d '+(d > 0 ? 'up' : d < 0 ? 'dn' : '')+'">'+(d > 0 ? '▲ +' : d < 0 ? '▼ ' : '= ')+d+' vs previous day</small>'; }
+  function cnt(l, f){ return l.filter(f).length; }
+  function renderHome(){
+    var d = hmDate(), pd = iso(addDays(parseISO(d), -1)), T = todayISO();
+    var cur = acts.filter(function(a){ return a.date === d; }), prv = acts.filter(function(a){ return a.date === pd; });
+    buildCoNames();
+    var E = evalSet(cur), P = evalSet(prv);
+    $('hm-date').value = d; $('hm-date').max = T; $('hm-next').disabled = d >= T;
+    $('hm-kpis').innerHTML = [['Total Tasks', E.n, P.n, '#2563C9'], ['Solved', E.S.Solved, P.S.Solved, '#1E7A46'], ['Resolved', E.S.Resolved, P.S.Resolved, '#0B7285'], ['Pending', E.S.Pending, P.S.Pending, '#D9A441'], ['Follow-up', E.S.FU, P.S.FU, '#7C3AED']].map(function(k){
+      return '<div class="hm-k" style="--c:'+k[3]+'"><i></i><div><span>'+k[0]+'</span><b>'+k[1]+'</b></div>'+dlt(k[1], k[2])+(k[0] !== 'Total Tasks' && E.n ? '<small class="pf-d">'+Math.round(k[1] * 100 / E.n)+'% of tasks</small>' : '')+'</div>'; }).join('');
+    $('hm-rates').innerHTML = '<div><span>Resolution Rate</span><b>'+E.S.rate+'</b><em><u style="width:'+(parseInt(E.S.rate, 10) || 0)+'%;background:#1E9E5A"></u></em></div><div><span>Repeated Issues</span><b>'+E.S.rep+'</b><em><u style="width:'+(parseInt(E.S.rep, 10) || 0)+'%;background:#C97F1E"></u></em></div><div class="hm-note">All tasks are air-ticketing activities</div>';
+    var sc = E.score, circ = 251.3, ti = function(l){ return cnt(l, function(a){ return a.taskType === 'Ticket Issuance'; }); }, cat = function(c){ return function(l){ return cnt(l, function(a){ return c.indexOf(a.category) > -1; }); }; };
+    var tiles = [['Tickets Issued', ti], ['Refunds Processed', cat(['Refund'])], ['Reissues Handled', cat(['Reissue'])], ['Cancellations / Voids', cat(['Cancellation & Void', 'Cancellation'])]];
+    $('hm-impact').innerHTML = '<div class="pwi-card-h"><div><h3>Your Performance &amp; Impact</h3><p class="pwi-lede">How your work creates value for the company</p></div><span class="pwi-sub">'+(d === T ? 'Today' : esc(fmtDate(d)))+'</span></div><div class="hm-imp"><div class="hm-gauge"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke="#E6ECF4" stroke-width="9"/><circle cx="50" cy="50" r="40" fill="none" stroke="#1E9E5A" stroke-width="9" stroke-linecap="round" stroke-dasharray="'+((sc || 0) / 100 * circ).toFixed(1)+' '+circ+'" transform="rotate(-90 50 50)"/></svg><b>'+(sc == null ? '—' : sc + '%')+'</b><span>Performance Score</span>'+(sc != null && P.score != null ? dlt(sc, P.score).replace('previous day', 'yesterday') : '')+'</div><div class="hm-tiles">'+tiles.map(function(t){ return '<div><span>'+t[0]+'</span><b>'+t[1](cur)+'</b>'+dlt(t[1](cur), t[1](prv))+'</div>'; }).join('')+'</div></div><div class="hm-msg">'+(E.n ? (E.S.rate === '100%' ? 'Great work! Every task today is closed (100% resolution rate).' : 'Resolution rate is '+E.S.rate+' — '+E.closed.length+' of '+E.n+' tasks closed.')+(sc == null ? ' Score needs at least '+SC.min+' records.' : '') : 'No records for this day yet — log your first task.')+'</div>';
+    var R7 = {f:iso(addDays(parseISO(d), -6)), t:d, days:7}, l7 = acts.filter(function(a){ return inR(a, R7.f, R7.t); }), E7 = evalSet(l7);
+    var effs = l7.filter(function(a){ return a.effort; }), av = effs.length ? effs.reduce(function(s, a){ return s + ePts(a); }, 0) / effs.length : null;
+    $('hm-over').innerHTML = '<div class="pwi-card-h"><h3>Performance Overview</h3><span class="pwi-sub">Last 7 days to '+esc(fmtShort(parseISO(d)))+'</span></div><div class="hm-ov"><div><h4>Tasks &amp; closures</h4>'+trendHtml(l7, R7)+'</div><div><h4>Task Distribution <small>('+l7.length+' tasks)</small></h4>'+barBlock(tally(l7, function(a){ return a.category; }).slice(0, 6), l7.length)+'</div></div><div class="pf-kpis"><div><span>Clients served</span><b>'+E7.clients+'</b></div><div><span>Avg. effort</span><b>'+(av == null ? '—' : av < 1.5 ? 'Quick' : av < 2.5 ? 'Standard' : 'Deep')+'</b></div><div><span>Repeat issues</span><b>'+E7.repeat+'</b></div><div><span>Closed work</span><b>'+E7.closed.length+' / '+E7.n+'</b></div></div>';
+    var q = HM.q, list = cur.filter(function(a){ return (!q || (hay(a) + ' ' + (a.ref || '') + ' ' + (a.taskType || '')).toLowerCase().indexOf(q) > -1) && (!HM.src || a.source === HM.src) && (!HM.typ || a.category === HM.typ) && (!HM.sts || a.status === HM.sts); });
+    var pages = Math.max(1, Math.ceil(list.length / 5)); HM.pg = Math.min(HM.pg, pages);
+    var rows = list.slice((HM.pg - 1) * 5, HM.pg * 5);
+    function sel(id, arr, v, all){ return '<select id="'+id+'" class="pwi-mini-sel"><option value="">'+all+'</option>'+arr.map(function(x){ return '<option'+(x === v ? ' selected' : '')+'>'+esc(x)+'</option>'; }).join('')+'</select>'; }
+    $('hm-recent').innerHTML = '<div class="pwi-card-h"><h3>Recent Activity</h3><div class="hm-fl">'+sel('hm-fs', SOURCES, HM.src, 'All Sources')+sel('hm-ft', ALLCATS, HM.typ, 'All Task Types')+sel('hm-fst', STATUSES, HM.sts, 'All Status')+'</div></div><div class="pwi-twrap"><table class="pwi-t"><thead><tr><th>Time</th><th>Client / Company</th><th>Task</th><th>Source</th><th>Outcome</th><th>Effort</th><th>Action</th></tr></thead><tbody>'+(rows.length ? rows.map(function(a){ return '<tr><td>'+esc(fmtTime(a.time))+'<small class="pf-d">'+esc(fmtDate(a.date))+'</small></td><td>'+esc(coName(a))+'</td><td>'+esc(a.taskType || a.category)+(a.ref ? '<small class="pf-d">'+esc(a.ref)+'</small>' : '')+'</td><td><i class="pwi-dot" style="background:'+srcColor(a.source)+'"></i>'+esc(a.source)+'</td><td>'+stSelect(a)+'</td><td>'+esc(a.effort || '—')+'</td><td>'+acts2(a)+'</td></tr>'; }).join('') : '<tr><td colspan="7"><div class="pwi-empty">'+(cloud.loaded ? 'No records for this day.' : 'Sign in to load your records.')+'</div></td></tr>')+'</tbody></table></div><div class="hm-pg"><span>Showing '+rows.length+' of '+list.length+' records</span><span><button type="button" class="pwi-btn" data-act="hm-page" data-v="'+(HM.pg - 1)+'"'+(HM.pg <= 1 ? ' disabled' : '')+'>‹</button> '+HM.pg+' / '+pages+' <button type="button" class="pwi-btn" data-act="hm-page" data-v="'+(HM.pg + 1)+'"'+(HM.pg >= pages ? ' disabled' : '')+'>›</button></span><button type="button" class="pwi-link" data-act="hm-all">View all activity →</button></div>';
+    var tt = tally(cur, function(a){ return a.taskType || a.category; })[0], ts = tally(cur, function(a){ return a.source; })[0], ce = cur.filter(function(a){ return a.effort; }), ae = ce.length ? ce.reduce(function(s, a){ return s + ePts(a); }, 0) / ce.length : null;
+    $('hm-sum').innerHTML = '<div><h3>'+(d === T ? "Today's" : esc(fmtDate(d))+'') +' Performance Summary</h3><p>'+(E.n ? 'You completed '+E.closed.length+' out of '+E.n+' tasks with a '+E.S.rate+' resolution rate.' : 'No tasks recorded for this day.')+'</p></div><div class="hm-st"><span>Top Task Type</span><b>'+(tt ? esc(tt[0]) : '—')+'</b>'+(tt ? '<small>'+tt[1]+' tasks</small>' : '')+'</div><div class="hm-st"><span>Top Source</span><b>'+(ts ? esc(ts[0]) : '—')+'</b>'+(ts ? '<small>'+ts[1]+' tasks</small>' : '')+'</div><div class="hm-st"><span>Avg. Effort</span><b>'+(ae == null ? '—' : ae < 1.5 ? 'Quick' : ae < 2.5 ? 'Standard' : 'Deep')+'</b></div><button type="button" class="pwi-btn pri" data-act="hm-report">View Detailed Report →</button>';
+  }
+  function homeAct(act, v){
+    var d = parseISO(hmDate()), T = todayISO();
+    if(act === 'hm-new'){ var c = $('pwi-company'); c.scrollIntoView({behavior:'smooth', block:'center'}); c.focus(); return true; }
+    if(act === 'hm-all'){ setTab('dash'); return true; }
+    if(act === 'hm-report'){ if(hmDate() === T) PS.p = 'today'; else { PS.p = 'custom'; PS.from = PS.to = hmDate(); } setTab('perf'); return true; }
+    if(act === 'hm-page') HM.pg = Math.max(1, +v || 1);
+    else { HM.pg = 1; if(act === 'hm-prev') HM.d = iso(addDays(d, -1)); else { var n = iso(addDays(d, 1)); HM.d = n > T ? T : n; } }
+    renderHome(); return true;
+  }
+  pwi.addEventListener('change', function(e){ var t = e.target, m = {'hm-fs':'src', 'hm-ft':'typ', 'hm-fst':'sts'};
+    if(t.id === 'hm-date'){ HM.d = t.value && t.value <= todayISO() ? t.value : ''; HM.pg = 1; renderHome(); }
+    else if(m[t.id]){ HM[m[t.id]] = t.value; HM.pg = 1; renderHome(); } });
+  pwi.addEventListener('input', function(e){ if(e.target.id === 'hm-q'){ HM.q = e.target.value.trim().toLowerCase(); HM.pg = 1; clearTimeout(HM.tm); HM.tm = setTimeout(renderHome, 150); } });
+  (function(){ var f = pwi.querySelector('.pwi-entry'), h = $('hm-entry'); if(f && h) h.appendChild(f); })();
 
   /* ---------- boot ---------- */
   load(); sortActs(); initEntry(); setSync('connecting'); renderAll();
