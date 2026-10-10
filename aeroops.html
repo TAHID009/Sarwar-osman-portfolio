@@ -5309,6 +5309,13 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
   let cloudAuthUser = null;
   let cloudPendingConfig = null;
 
+  /* Guard: the Firebase SDK is loaded from gstatic.com; if it is blocked/offline, show a message instead of a ReferenceError. */
+  function fbOk(){
+    if(window.firebase && window.firebase.auth) return true;
+    var e = document.getElementById('cloud-auth-error');
+    if(e) e.textContent = 'Cannot reach Firebase (offline, or gstatic.com is blocked). Check your connection or disable the blocker, then reload.';
+    return false;
+  }
   function loadFirebaseScripts(cb, onerr){
     if(window.firebase && window.firebase.firestore && window.firebase.auth){ cb(); return; }
     const s1 = document.createElement('script');
@@ -6247,6 +6254,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
     const btn = $('btn-cloud-auth-signin');
     btn.disabled = true;
     $('signin-btn-label').innerHTML = '<span class="aero-spinner"></span> SIGNING IN...';
+    if(!fbOk()) return;
     firebase.auth().signInWithEmailAndPassword(email, code)
       .then(() => { localStorage.setItem(REMEMBERED_EMAIL_KEY, email); })
       .catch(err => {
@@ -6269,6 +6277,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
       url: window.location.origin + window.location.pathname,
       handleCodeInApp: true
     };
+    if(!fbOk()) return;
     firebase.auth().sendPasswordResetEmail(email, actionCodeSettings)
       .then(() => {
         $('cloud-auth-reset-msg').textContent = 'Reset link sent to ' + email + ' — open it, then set a new Access Code.';
@@ -6290,6 +6299,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
       url: window.location.origin + window.location.pathname,
       handleCodeInApp: true
     };
+    if(!fbOk()) return;
     firebase.auth().sendSignInLinkToEmail(email, actionCodeSettings)
       .then(() => {
         window.localStorage.setItem('aeroops_pending_verify_email', email);
@@ -6301,7 +6311,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
 
   // ---- On page load: were we just brought back here by clicking the email link? ----
   function checkForEmailLinkSignIn(){
-    if(!firebase.auth().isSignInWithEmailLink(window.location.href)) return;
+    if(!fbOk() || !firebase.auth().isSignInWithEmailLink(window.location.href)) return;
     let email = window.localStorage.getItem('aeroops_pending_verify_email');
     if(!email){ email = window.prompt('Confirm your email to finish verifying:'); }
     if(!email) return;
@@ -6326,6 +6336,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
     if(params.get('mode') !== 'resetPassword') return;
     const oobCode = params.get('oobCode');
     if(!oobCode) return;
+    if(!fbOk()) return;
     firebase.auth().verifyPasswordResetCode(oobCode)
       .then((email) => {
         passwordResetOobCode = oobCode;
@@ -6354,6 +6365,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
     if(passwordResetOobCode){
       // Came from "Forgot Access Code?" — not signed in yet, just verified the reset link.
       const oobCode = passwordResetOobCode, resetEmail = passwordResetEmail;
+      if(!fbOk()) return;
       firebase.auth().confirmPasswordReset(oobCode, pw)
         .then(() => {
           passwordResetOobCode = null;
@@ -6369,6 +6381,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
       return;
     }
 
+    if(!fbOk()) return;
     const user = firebase.auth().currentUser;
     if(!user){ $('setpw-error').textContent = 'Session expired — please register again.'; showAuthView('register'); return; }
     user.updatePassword(pw)
