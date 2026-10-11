@@ -3786,10 +3786,10 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
             <option value="Void">Void</option>
           </select>
           <div class="ptc-txn-tabs" id="f-type-tabs" role="group" aria-label="Transaction type">
-            <button type="button" class="ptc-txn-tab" data-type="Ticketing" style="--txn-color:#2E6F95;">✈️ Ticketing</button>
-            <button type="button" class="ptc-txn-tab" data-type="Reissue" style="--txn-color:#C97F1E;">🔄 Reissue</button>
-            <button type="button" class="ptc-txn-tab" data-type="Refund" style="--txn-color:#B4453B;">💸 Refund</button>
-            <button type="button" class="ptc-txn-tab" data-type="Void" style="--txn-color:#6B7280;">🚫 Void</button>
+            <button type="button" class="ptc-txn-tab" data-type="Ticketing" style="--txn-color:#2E6F95;">Ticketing</button>
+            <button type="button" class="ptc-txn-tab" data-type="Reissue" style="--txn-color:#C97F1E;">Reissue</button>
+            <button type="button" class="ptc-txn-tab" data-type="Refund" style="--txn-color:#B4453B;">Refund</button>
+            <button type="button" class="ptc-txn-tab" data-type="Void" style="--txn-color:#6B7280;">Void</button>
           </div>
         </div>
       <div class="ptc-header-tktautofill" id="ptc-header-tktautofill">
@@ -3814,7 +3814,10 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
           <label for="f-date">Date</label>
           <input type="date" id="f-date" />
         </div>
-        <div></div>
+        <div class="ptc-field">
+          <label for="f-company">Company</label>
+          <select id="f-company"></select>
+        </div>
       </div>
       <div class="ptc-row">
         <div class="ptc-field">
@@ -4825,6 +4828,74 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
 </div><div class="copy">© 2026 <span data-profile-name></span>. All rights reserved.</div></div></footer>
 </div>
 
+<script id="aero-ws-core">
+/* AeroOps workspaces. One stable companyId per genuinely separate workspace. Legacy records (no companyId) resolve to a
+   workspace by name/alias, else to the default workspace, WITHOUT being rewritten. Nothing here deletes or moves records. */
+(function(){
+var RK='aeroops_workspaces_v2',OLD='aeroops_companies_v1',DEF='ws_jf_finlay',CW='work_record_workspaces';
+var DEFNAME='JF (Bangladesh) Limited \u2014 Finlay Travels';
+var UNI=['jf (bangladesh) limited','finlay travels','jf (bangladesh) limited \u2014 finlay travels','jf (bangladesh) limited - finlay travels','jf bangladesh limited'];
+function norm(s){return String(s==null?'':s).replace(/\s+/g,' ').trim().toLowerCase()}
+function slug(s){return norm(s).replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'').slice(0,40)||'co'}
+function now(){return new Date().toISOString()}
+function mk(id,name,kind,al){return{id:id,name:name,kind:kind||'employer',archived:false,placeholder:false,createdAt:now(),updatedAt:now(),aliases:al||[norm(name)]}}
+function fresh(){var s={v:2,active:DEF,list:[mk(DEF,DEFNAME,'employer',UNI.slice())]};
+ try{var o=JSON.parse(localStorage.getItem(OLD)||'null');if(o&&Array.isArray(o.list))o.list.forEach(function(n){n=String(n||'').trim();if(!n||UNI.indexOf(norm(n))>-1)return;var id='ws_'+slug(n);if(!s.list.some(function(w){return w.id===id}))s.list.push(mk(id,n,/arrow/i.test(n)?'personal':'employer'))})}catch(e){}
+ return s}
+function load(){var s=null;try{s=JSON.parse(localStorage.getItem(RK)||'null')}catch(e){}
+ if(s&&s.v===2&&Array.isArray(s.list)&&s.list.some(function(w){return w.id===DEF}))return s;return fresh()}
+var S=load(),L=[],RL=[],cdb=null,cun=null,remote={};
+function byId(id){for(var i=0;i<S.list.length;i++)if(S.list[i].id===id)return S.list[i];return null}
+function save(push){try{localStorage.setItem(RK,JSON.stringify(S))}catch(e){}if(push)cloudPush(push)}
+function ensure(id){var nm=/^ws_[a-z0-9_]+$/.test(id)?id.slice(3).replace(/_[a-z0-9]{4}$/,function(m){return /\d/.test(m)?'':m}).split('_').filter(Boolean).map(function(x){return x.charAt(0).toUpperCase()+x.slice(1)}).join(' '):'Workspace '+String(id).slice(-6);var w=mk(id,nm||'Workspace','employer',[]);w.placeholder=true;S.list.push(w);save();return w}
+function resolve(r){if(r&&r.companyId){return byId(r.companyId)||ensure(String(r.companyId))}
+ var n=r&&r.company?norm(r.company):'';if(n)for(var i=0;i<S.list.length;i++){var w=S.list[i];if(norm(w.name)===n||(w.aliases||[]).indexOf(n)>-1)return w}
+ return byId(DEF)}
+function active(){var w=byId(S.active);if(!w||w.archived){S.active=DEF;w=byId(DEF)}return w}
+function fire(a){(a?RL:L).forEach(function(f){try{f()}catch(e){console.error(e)}})}
+function cleanW(v){return{id:String(v.id),name:String(v.name||'').slice(0,80),kind:v.kind==='personal'?'personal':'employer',archived:!!v.archived,placeholder:false,createdAt:String(v.createdAt||now()),updatedAt:String(v.updatedAt||''),aliases:Array.isArray(v.aliases)?v.aliases.map(String).slice(0,20):[]}}
+function cloudPush(id){if(!cdb)return;var w=byId(id);if(!w||w.placeholder)return;try{cdb.collection(CW).doc(w.id).set(cleanW(w)).catch(function(e){console.warn('workspace sync',e)})}catch(e){}}
+var A={
+ DEFAULT_ID:DEF,
+ list:function(arch){return S.list.filter(function(w){return arch?w.archived:!w.archived})},
+ active:active,get:byId,resolve:resolve,
+ isActive:function(r){return resolve(r).id===active().id},
+ rs:function(r){return r&&r.companyId?resolve(r):byId(DEF)},
+ isActiveStrict:function(r){return A.rs(r).id===active().id},
+ stamp:function(){var w=active();return{companyId:w.id,company:w.name}},
+ switchTo:function(id){var w=byId(id);if(!w||w.archived)return false;if(active().id===id)return true;S.active=id;save();fire();return true},
+ add:function(name,kind){name=String(name||'').replace(/\s+/g,' ').trim();
+  if(name.length<2||name.length>80)return{err:'Enter a name of 2\u201380 characters.'};
+  if(S.list.some(function(w){return norm(w.name)===norm(name)||(w.aliases||[]).indexOf(norm(name))>-1}))return{err:'A workspace with that name already exists.'};
+  var id='ws_'+slug(name);while(byId(id))id='ws_'+slug(name)+'_'+Math.random().toString(36).slice(2,6);
+  var w=mk(id,name,kind);S.list.push(w);save(id);fire(1);return{ws:w}},
+ rename:function(id,name){var w=byId(id);name=String(name||'').replace(/\s+/g,' ').trim();if(!w)return{err:'Not found.'};
+  if(name.length<2||name.length>80)return{err:'Enter a name of 2\u201380 characters.'};
+  if(S.list.some(function(x){return x.id!==id&&norm(x.name)===norm(name)}))return{err:'A workspace with that name already exists.'};
+  var o=norm(w.name);if(w.aliases.indexOf(o)<0)w.aliases.push(o);w.name=name;w.placeholder=false;w.updatedAt=now();save(id);fire(1);return{ws:w}},
+ archive:function(id){var w=byId(id);if(!w||id===DEF||id===active().id)return{err:'The active or default workspace cannot be archived.'};w.archived=true;w.updatedAt=now();save(id);fire(1);return{ws:w}},
+ restore:function(id){var w=byId(id);if(!w)return{err:'Not found.'};w.archived=false;w.updatedAt=now();save(id);fire(1);return{ws:w}},
+ onChange:function(f){L.push(f)},onRegistry:function(f){RL.push(f)},src:{},
+ counts:function(){var o={};S.list.forEach(function(w){o[w.id]={tickets:0,sales:0,work:0}});
+  [['tickets','tickets'],['sales','sales'],['work','work']].forEach(function(p){var f=A.src[p[0]];(f?f():[]).forEach(function(r){var w=p[0]==='tickets'?resolve(r):A.rs(r);o[w.id][p[1]]++})});return o},
+ cloudOn:function(db){cdb=db;if(cun)try{cun()}catch(e){}
+  cun=db.collection(CW).onSnapshot(function(snap){var ch=false;remote={};
+   snap.forEach(function(d){var v=d.data()||{};v.id=d.id;remote[d.id]=v;var w=byId(d.id);
+    if(!w){S.list.push(cleanW(v));ch=true}else if(w.placeholder||String(v.updatedAt||'')>String(w.updatedAt||'')){Object.assign(w,cleanW(v));ch=true}});
+   S.list.forEach(function(w){if(!w.placeholder&&(!remote[w.id]||String(w.updatedAt||'')>String(remote[w.id].updatedAt||'')))cloudPush(w.id)});
+   if(ch){var wasActive=active().id;save();fire(1);if(active().id!==wasActive)fire()}},
+   function(e){console.warn('workspace registry sync unavailable',e&&e.code)})},
+ cloudOff:function(){if(cun)try{cun()}catch(e){}cun=null;cdb=null}
+};
+window.aeroWs=A;
+/* compatibility for older modules that read window.aeroCo (name-based) */
+window.aeroCo={current:function(){return active().name},legacy:function(){return byId(DEF).name},all:function(){return A.list().map(function(w){return w.name})},
+ of:function(r){return resolve(r).name},resetForm:function(){A.fillForm&&A.fillForm()},setForm:function(){A.fillForm&&A.fillForm()}};
+A.fillForm=function(){var f=document.getElementById('f-company');if(!f)return;var w=active();f.innerHTML='<option></option>';f.options[0].value=w.name;f.options[0].textContent=w.name;f.value=w.name;f.disabled=true;f.title='Active company. Change it in Settings \u2192 Company & Workspace.'};
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',A.fillForm);else A.fillForm();
+A.onChange(A.fillForm);
+})();
+</script>
 <script>
 (function(){
   const root = document.getElementById('ptc-root');
@@ -5122,6 +5193,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
     { h:'NOTE', f:'note' },
     { h:'CREATED AT', f:'createdAt' },
     { h:'LAST EDITED', f:'editedAt' },
+    { h:'WORKSPACE ID', f:'companyId' },
   ];
   const COL_BY_FIELD = {};
   ALL_COLUMNS.forEach(c => { COL_BY_FIELD[c.f] = c; });
@@ -5242,7 +5314,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
   async function writeToConnectedFile(){
     if(!fileHandle) return;
     try{
-      const wb = buildWorkbook(entries);
+      const wb = buildWorkbook(entries.concat(otherEntries));
       const wbout = XLSX.write(wb, { bookType:'xlsx', type:'array' });
       const writable = await fileHandle.createWritable();
       await writable.write(wbout);
@@ -5311,7 +5383,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
           if(buf.byteLength > 0) imported = parseWorkbook(buf);
         }
         if(imported.length > 0 && confirm('This file already has ' + imported.length + ' row(s). Load them into the table?')){
-          entries = imported;
+          wsApplyEntries(wsPrepImport(imported).concat(otherEntries));
         }
       }catch(readErr){ /* new/empty file, ignore */ }
     }
@@ -5999,7 +6071,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
   }
 
   // ---- Revenue Desk (sales) cloud sync — same pattern as the entries log above ----
-  const SALES_FIELD_ORDER = ['date','pname','paxAdult','paxChild','paxInfant','phone','responsible','tkt','pnrGds','pnrAirline','sector','airline','price','cost','profit','method','paid','due','status','ticketStatus','dueDate','note'];
+  const SALES_FIELD_ORDER = ['date','pname','paxAdult','paxChild','paxInfant','phone','responsible','tkt','pnrGds','pnrAirline','sector','airline','price','cost','profit','method','paid','due','status','ticketStatus','dueDate','note','companyId'];
   function expandSalesCloudDoc(id, data){
     const full = {};
     SALES_FIELD_ORDER.forEach(f => { full[f] = (data[f] !== undefined ? data[f] : ''); });
@@ -6014,11 +6086,11 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
       const list = [];
       snap.forEach(doc => list.push(expandCloudDoc(doc.id, doc.data())));
 
-      if(snap.empty && entries.length > 0 && !cloudDb.__migrated){
+      if(snap.empty && (entries.length + otherEntries.length) > 0 && !cloudDb.__migrated){
         cloudDb.__migrated = true;
-        if(confirm('Your cloud database is empty but this browser has ' + entries.length + ' saved entr' + (entries.length===1?'y':'ies') + '. Upload them to the cloud now?')){
+        if(confirm('Your cloud database is empty but this browser has ' + (entries.length + otherEntries.length) + ' saved entr' + ((entries.length + otherEntries.length)===1?'y':'ies') + '. Upload them to the cloud now?')){
           const batch = cloudDb.batch();
-          entries.forEach(e => {
+          entries.concat(otherEntries).forEach(e => {
             const id = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(16).slice(2));
             batch.set(cloudDb.collection(CLOUD_COLLECTION).doc(id), trimForCloud(e));
           });
@@ -6028,7 +6100,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
       }
 
       list.sort((a,b) => (b.date||'').localeCompare(a.date||''));
-      entries = list;
+      wsApplyEntries(list);
       persist();
       writeToConnectedFile();
       render();
@@ -6072,11 +6144,11 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
       const list = [];
       snap.forEach(doc => list.push(expandSalesCloudDoc(doc.id, doc.data())));
 
-      if(snap.empty && salesEntries.length > 0 && !cloudDb.__salesMigrated){
+      if(snap.empty && (salesEntries.length + otherSales.length) > 0 && !cloudDb.__salesMigrated){
         cloudDb.__salesMigrated = true;
         if(confirm('Your cloud database has no Revenue Desk sales yet, but this browser has ' + salesEntries.length + ' saved sale(s). Upload them to the cloud now?')){
           const batch = cloudDb.batch();
-          salesEntries.forEach(s => {
+          salesEntries.concat(otherSales).forEach(s => {
             const id = s._id || (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(16).slice(2));
             batch.set(cloudDb.collection(SALES_COLLECTION).doc(id), trimForCloud(Object.assign({}, s, { _id: id })));
           });
@@ -6086,7 +6158,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
       }
 
       list.sort((a,b) => (b.date||'').localeCompare(a.date||''));
-      salesEntries = list;
+      wsApplySales(list);
       persistSales();
       renderSales();
     }, (err) => {
@@ -6167,12 +6239,14 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
             if(awaitingNewPassword){ return; } // keep the Set Access Code view open — don't jump to the dashboard yet
             $('cloud-auth-modal-backdrop').style.display = 'none';
             cloudDb = firebase.firestore();
+            try{ if(window.aeroWs) aeroWs.cloudOn(cloudDb); }catch(e){}
             localStorage.setItem(CLOUD_CONFIG_KEY, JSON.stringify(config));
             setCloudStatus('connected');
             subscribeCloud();
             subscribeSalesCloud();
             armInactivityWatch();
           } else {
+            try{ if(window.aeroWs) aeroWs.cloudOff(); }catch(e){}
             cloudDb = null;
             if(cloudUnsub){ cloudUnsub(); cloudUnsub = null; }
             if(salesCloudUnsub){ salesCloudUnsub(); salesCloudUnsub = null; }
@@ -6535,6 +6609,10 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
   };
 
   let entries = [];
+  let otherEntries = [];   /* records of OTHER workspaces: never shown, always persisted, never deleted */
+  function wsStamp(){ return window.aeroWs ? aeroWs.stamp() : {}; }
+  function wsApplyEntries(all){ const a = []; const o = []; (Array.isArray(all) ? all : []).forEach(e => { ((!window.aeroWs || aeroWs.isActive(e)) ? a : o).push(e); }); entries = a; otherEntries = o; }
+  function wsPrepImport(rows){ const id = wsStamp(); return rows.filter(r => !r.companyId || r.companyId === id.companyId).map(r => { if(!r.companyId){ r.companyId = id.companyId; r.company = id.company; } return r; }); }
   let editingIndex = null;
   let logFilterFrom = '';
   let logFilterTo = '';
@@ -7033,6 +7111,8 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
       refundableTax: '',
       airlineRefund: '',
       code: '',
+      company: (window.aeroWs ? aeroWs.active().name : (($('f-company') || {}).value || '')),
+      companyId: (window.aeroWs ? aeroWs.active().id : ''),
       note: val('f-note'),
     };
 
@@ -7362,7 +7442,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
 
   function persist(){
     try{
-      localStorage.setItem(STORE_KEY, JSON.stringify(entries));
+      localStorage.setItem(STORE_KEY, JSON.stringify(entries.concat(otherEntries)));
     }catch(err){
       console.error('Local save failed', err);
       toast('Could not save — your browser storage may be full or blocked.');
@@ -7372,7 +7452,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
   function load(){
     try{
       const raw = localStorage.getItem(STORE_KEY);
-      if(raw){ entries = JSON.parse(raw); }
+      if(raw){ wsApplyEntries(JSON.parse(raw)); }
     }catch(err){
       entries = [];
     }
@@ -7380,6 +7460,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
   }
 
   function clearForm(){
+    try{ if(window.aeroCo) window.aeroCo.resetForm(); }catch(err){}
     ['f-pnr-gds','f-pnr-air','f-pname','f-pnum','f-note','f-platform-other','f-airline-other',
      'f-newtkt-t','f-sector-t','f-basefare-t','f-taxfare-t','f-discamt-t','f-discpct-t','f-atp-t',
      'f-oldtkt-r','f-newtkt-r','f-sector-r','f-code-r','f-faredif-r','f-airline-r','f-svc-r',
@@ -7465,6 +7546,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
     showSection(e.txn);
 
     setVal('f-date', e.date || todayISO());
+    try{ if(window.aeroCo) window.aeroCo.setForm(e.company); }catch(err){}
     setVal('f-pnr-gds', e.pnrGds);
     setVal('f-pnr-air', e.pnrAirline);
     setVal('f-pname', e.pname);
@@ -7693,9 +7775,9 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
                        'refTotalFare','usedSegmentFare','usedSegmentTax','refTotalTax','refNonRefundTax','commissionAdj','svcApplied',
                        'refundableFare','refundableTax','airlineRefund',
                        'refundCharge','taxRefund','refundType','refundStatus','adjustmentGiven','adjustmentAmount',
-                       'code','note','createdAt','editedAt'];
+                       'code','note','createdAt','editedAt','company','companyId'];
   const HEADER_TO_FIELD = {
-    'DATE':'date','GDS PNR':'pnrGds','AIRLINE PNR':'pnrAirline','PNR':'pnrGds',
+    'WORKSPACE ID':'companyId','DATE':'date','GDS PNR':'pnrGds','AIRLINE PNR':'pnrAirline','PNR':'pnrGds',
     'PASSENGER NAME':'pname','PASSENGER NUMBER':'pnum',
     'PASSENGER TYPE':'ptype','PLATFORM':'platform','AIRLINE':'airline','TRANSACTION TYPE':'txn','OLD TKT NUMBER':'oldTkt',
     'NEW TKT NUMBER':'newTkt','SECTOR':'sector',
@@ -7771,7 +7853,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
     const reader = new FileReader();
     reader.onload = (ev) => {
       try{
-        const imported = isCsv ? parseCsv(ev.target.result) : parseWorkbook(ev.target.result);
+        const imported = wsPrepImport(isCsv ? parseCsv(ev.target.result) : parseWorkbook(ev.target.result));
         if(imported.length === 0){
           toast('No rows found in that file.');
           return;
@@ -7791,7 +7873,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
           return;
         }
 
-        entries = imported.concat(entries);
+        wsApplyEntries(imported.concat(entries, otherEntries));
         persist();
         writeToConnectedFile();
         render();
@@ -8602,6 +8684,8 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
   // This log is separate from the GDS/airline transaction records above — it's a simple
   // day-to-day ledger of what you sold, to whom, and whether they've paid in full.
   let salesEntries = [];
+  let otherSales = [];
+  function wsApplySales(all){ const a = []; const o = []; (Array.isArray(all) ? all : []).forEach(e => { ((!window.aeroWs || aeroWs.isActiveStrict(e)) ? a : o).push(e); }); salesEntries = a; otherSales = o; }
   let salesEditingIndex = null;
   const SALES_STORE_KEY = 'pnr_sales_v1';
 
@@ -8674,14 +8758,14 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
     'One ticket per passenger — add each 13-digit ticket number, then press Enter.');
 
   function persistSales(){
-    try{ localStorage.setItem(SALES_STORE_KEY, JSON.stringify(salesEntries)); }
+    try{ localStorage.setItem(SALES_STORE_KEY, JSON.stringify(salesEntries.concat(otherSales))); }
     catch(err){ console.error('Sales save failed', err); toast('Could not save sale — your browser storage may be full or blocked.'); }
   }
 
   function loadSales(){
     try{
       const raw = localStorage.getItem(SALES_STORE_KEY);
-      if(raw){ salesEntries = JSON.parse(raw); }
+      if(raw){ wsApplySales(JSON.parse(raw)); }
     }catch(err){ salesEntries = []; }
   }
 
@@ -9210,7 +9294,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
   }
 
   $('btn-sales-add').addEventListener('click', () => {
-    const sale = collectSale();
+    const sale = collectSale(); sale.companyId = wsStamp().companyId || '';
     const err = validateSale(sale);
     if(err){ toast(err); return; }
 
@@ -10504,6 +10588,16 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
   })();
   ptcApplyPane();
 
+  if(window.aeroWs){
+    aeroWs.src.tickets = () => entries.concat(otherEntries); aeroWs.src.sales = () => salesEntries.concat(otherSales);
+    aeroWs.onChange(() => {
+      try{ if(editingIndex !== null) stopEdit(); }catch(err){}
+      try{ if(salesEditingIndex !== null) stopSaleEdit(); }catch(err){}
+      wsApplyEntries(entries.concat(otherEntries)); wsApplySales(salesEntries.concat(otherSales));
+      try{ clearForm(); }catch(err){} try{ clearSaleForm(); }catch(err){}
+      render(); renderSales();
+    });
+  }
   /* read-only hook for the Master Data / Dashboard pages */
   window.aeroData = { entries:function(){ return entries; }, sales:function(){ return salesEntries; },
     pending:function(){ return entries.filter(function(e){ return lbStatus(e)[0] === 'Pending Adj.'; }); },
@@ -10589,6 +10683,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
 
   /* ---------- state ---------- */
   var acts = [];
+  var otherActs = [];
   var settings = {weekStart:1, lastSource:'', range:'today', from:'', to:'', keep:false};
   var st = {tab:'home', pat:'cc', cycle:'weekly', gran:'auto', coAll:false, recLimit:50, editId:null,
             filters:{source:null, company:null, category:null, status:null, kw:null, bucket:null, q:''}};
@@ -10608,7 +10703,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
     if(!/^\d{4}-\d{2}-\d{2}$/.test(d)) return null;
     var t = String(v.time||''); t = /^\d{2}:\d{2}/.test(t) ? t.slice(0,5) : '00:00';
     return {
-      id: String(v.id || uid()), date: d, time: t,
+      id: String(v.id || uid()), companyId: String(v.companyId || '').slice(0,64), date: d, time: t,
       source: SOURCES.indexOf(v.source) > -1 ? v.source : 'Other',
       company: normCo(v.company) || 'Unknown',
       category: ALLCATS.indexOf(v.category) > -1 ? v.category : 'Other',
@@ -10622,6 +10717,11 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
     };
   }
   function sortActs(){ acts.sort(function(a,b){ return (b.date+b.time+b.created).localeCompare(a.date+a.time+a.created); }); }
+  function wsSplitActs(all){ var a = [], o = []; all.forEach(function(x){ (window.aeroWs && !aeroWs.isActiveStrict(x) ? o : a).push(x); }); acts = a; otherActs = o; sortActs(); }
+  if(window.aeroWs){
+    aeroWs.src.work = function(){ return acts.concat(otherActs); };
+    aeroWs.onChange(function(){ wsSplitActs(acts.concat(otherActs)); ['source','company','category','status','kw','bucket'].forEach(function(k){ st.filters[k] = null; }); st.editId = null; try{ closeEdit(); }catch(e){} renderAll(); });
+  }
 
   /* ---------- toast ---------- */
   function toast(msg, label, fn){
@@ -10677,7 +10777,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
     var first = !cloud.loaded, remote = {}, out = [];
     cloud.on = true; cloud.loaded = true; setSync('on');
     snap.forEach(function(d){ var v = clean(Object.assign({id:d.id}, d.data())); if(v){ v.id = d.id; out.push(v); remote[d.id] = 1; } });
-    acts = out; sortActs();
+    wsSplitActs(out);
     if(first) migrateLocal(remote);
     renderAll();
   }
@@ -10872,7 +10972,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
       if(miss.indexOf('company') > -1 && miss.length === 1) $('pwi-company').focus();
       return;
     }
-    var a = {id:uid(), date:form.date || todayISO(), time:form.time || nowTime(), source:form.source, company:canonCompany(co),
+    var a = {id:uid(), date:form.date || todayISO(), time:form.time || nowTime(), source:form.source, company:canonCompany(co), companyId:(window.aeroWs ? aeroWs.active().id : ''),
              category:form.category, status:form.status, kind:form.kind, effort:form.effort, note:$('pwi-note').value.trim().slice(0,500),
              created:nowISO(), updated:nowISO(), taskType:form.taskType, ref:$('pwi-ref').value.trim().toUpperCase().slice(0,30), reopened:0, hist:[]};
     a.hist.push({s:a.status, at:a.created});
@@ -11208,7 +11308,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
     var order = []; for(var i = 0; i < 7; i++) order.push((settings.weekStart + i) % 7);
     var wmax = Math.max.apply(null, wd.concat([1]));
     function inR(x){ var d = String(x && x.date || '').slice(0,10); return d >= r.f && d <= r.t; }
-    var eN = readLS('pnr_entries_v1').filter(inR).length, sN = readLS('pnr_sales_v1').filter(inR).length;
+    var eN = readLS('pnr_entries_v1').filter(window.aeroWs ? aeroWs.isActive : Boolean).filter(inR).length, sN = readLS('pnr_sales_v1').filter(window.aeroWs ? aeroWs.isActiveStrict : Boolean).filter(inR).length;
     $('pwi-summary').innerHTML =
       '<div class="pwi-sum"><div><span>Activities</span><b>'+list.length+'</b></div><div><span>Active days</span><b>'+days.length+'</b></div>' +
       '<div><span>Avg / active day</span><b>'+(days.length ? (list.length/days.length).toFixed(1) : '0')+'</b></div>' +
@@ -11975,7 +12075,7 @@ function prevSpan(){var t=new Date(),k=R.key,s=span();
  if(k==='custom'&&s.from&&s.to){var n=Math.round((pd(s.to)-pd(s.from))/864e5)+1;return{from:iso(addD(pd(s.from),-n)),to:iso(addD(pd(s.from),-1))}}
  return null}
 function within(e,s){var d=e.date||'';return(!s.from||d>=s.from)&&(!s.to||d<=s.to)}
-function rows(s){return E().map(function(e,i){return{e:e,i:i}}).filter(function(r){return within(r.e,s)})}
+function rows(s){return E().map(function(e,i){return{e:e,i:i}}).filter(function(r){return within(r.e,s)&&coOk(r.e)})}
 function sorted(l){return l.slice().sort(function(a,b){return((b.e.date||'')+(b.e.createdAt||'')).localeCompare((a.e.date||'')+(a.e.createdAt||''))})}
 function stats(l){var s={n:l.length,rev:0,com:0,ref:0,by:{Ticketing:0,Reissue:0,Refund:0,Void:0},pend:0,done:0};
  l.forEach(function(r){var e=r.e;s.by[e.txn]=(s.by[e.txn]||0)+1;if(e.txn==='Ticketing'||e.txn==='Reissue')s.rev+=val(e);if(e.txn==='Refund')s.ref+=Math.abs(val(e));s.com+=num(D().earn(e));
@@ -12025,24 +12125,19 @@ function filt(l,f){var q=(f.q||'').trim().toUpperCase();return l.filter(function
 function topBy(l,keyf,n){var m={};l.forEach(function(r){keyf(r.e).forEach(function(k){m[k]=m[k]||{k:k,n:0,v:0};m[k].n++;m[k].v+=(r.e.txn==='Ticketing'||r.e.txn==='Reissue')?val(r.e):0})});return Object.keys(m).map(function(k){return m[k]}).sort(function(a,b){return b.n-a.n||b.v-a.v}).slice(0,n)}
 function topTable(items,h1){if(!items.length)return EMPTY;return'<div class="wr-tw"><table><thead><tr><th>'+h1+'</th><th class="r">Transactions</th><th class="r">Revenue</th></tr></thead><tbody>'+items.map(function(x){return'<tr><td>'+esc(x.k)+'</td><td class="r">'+x.n+'</td><td class="r">'+fm(x.v)+'</td></tr>'}).join('')+'</tbody></table></div>'}
 function perfList(s){return'<div class="wr-ps"><div><span>Total records</span><b>'+s.n+'</b></div><div><span>Completed</span><b>'+s.done+'</b></div><div><span>Pending adjustments / refunds</span><b>'+s.pend+'</b></div><div><span>Voided</span><b>'+s.by.Void+'</b></div></div>'}
-function rangeCtl(pfx){var s=span();return'<div class="wr-ctl"><select data-act="range" aria-label="Date range"><option value="month"'+(R.key==='month'?' selected':'')+'>This month</option><option value="30"'+(R.key==='30'?' selected':'')+'>Last 30 days</option><option value="year"'+(R.key==='year'?' selected':'')+'>This year</option><option value="all"'+(R.key==='all'?' selected':'')+'>All time</option><option value="custom"'+(R.key==='custom'?' selected':'')+'>Custom range</option></select>'+(R.key==='custom'?'<input type="date" data-act="from" value="'+esc(R.from)+'" aria-label="From"><input type="date" data-act="to" value="'+esc(R.to)+'" aria-label="To">':'')+'</div>'}
+function rangeCtl(pfx){return'<div class="wr-ctl"><select data-act="range" aria-label="Date range"><option value="month"'+(R.key==='month'?' selected':'')+'>This month</option><option value="30"'+(R.key==='30'?' selected':'')+'>Last 30 days</option><option value="year"'+(R.key==='year'?' selected':'')+'>This year</option><option value="all"'+(R.key==='all'?' selected':'')+'>All time</option><option value="custom"'+(R.key==='custom'?' selected':'')+'>Custom range</option></select>'+(R.key==='custom'?'<input type="date" data-act="from" value="'+esc(R.from)+'" aria-label="From"><input type="date" data-act="to" value="'+esc(R.to)+'" aria-label="To">':'')+'</div>'}
 function periodLabel(){var s=span();return s.from||s.to?fmtD(s.from||'')+(s.to?' – '+fmtD(s.to):''):'All time'}
 /* ---- Work Record dashboard ---- */
 var dash=document.createElement('div');dash.id='wr-dash';dash.className='wr';body.insertBefore(dash,body.firstChild);
 function recentBlock(l){var f=filt(sorted(l),DS);return recTable(f,{limit:DS.limit})}
 function renderDash(partial){var s=span(),l=rows(s),ps=prevSpan(),pl=ps?rows(ps):null;
  if(partial==='table'){var tb=dash.querySelector('#wr-rec');if(tb){tb.innerHTML=recentBlock(l);return}}
- var st=stats(l),panel;
- if(DS.tab==='recent')panel='<div class="wr-filters"><input id="wr-q" type="search" placeholder="Search PNR, ticket number or passenger" value="'+esc(DS.q)+'" aria-label="Search records"><select data-act="type" aria-label="Type"><option value="">All types</option>'+TY.map(function(t){return'<option'+(DS.type===t?' selected':'')+'>'+t+'</option>'}).join('')+'</select><select data-act="st" aria-label="Status"><option value="">All status</option>'+Object.keys(SC).map(function(t){return'<option'+(DS.st===t?' selected':'')+'>'+t+'</option>'}).join('')+'</select></div><div id="wr-rec">'+recentBlock(l)+'</div>';
- else if(DS.tab==='activity'){var bs=bucketCounts(l).filter(function(b){return b.v}).reverse();panel=bs.length?'<div class="wr-tw"><table><thead><tr><th>Period</th>'+TY.map(function(t){return'<th class="r">'+t+'</th>'}).join('')+'<th class="r">Total</th></tr></thead><tbody>'+bs.map(function(b){return'<tr><td>'+esc(b.l)+'</td>'+TY.map(function(t){return'<td class="r">'+b.t[t]+'</td>'}).join('')+'<td class="r"><b>'+b.v+'</b></td></tr>'}).join('')+'</tbody></table></div>':EMPTY}
- else{var bt=TY.map(function(t){var x=l.filter(function(r){return r.e.txn===t}),v=x.reduce(function(a,r){return a+Math.abs(val(r.e))},0);return'<tr><td>'+pill(t,TC[t])+'</td><td class="r">'+x.length+'</td><td class="r">'+fm(v)+'</td></tr>'}).join('');
-  panel='<div class="wr-kpis" style="grid-template-columns:repeat(4,minmax(0,1fr))">'+[['Revenue Generated',st.rev,'#0E8FA0','৳'],['Commission Earned',st.com,'#F59E0B','%'],['Refund Amount',st.ref,'#EF4444','↺'],['Net Contribution',st.net,'#16875A','＋']].map(function(k){return'<div class="wr-k" style="--c:'+k[2]+'"><i>'+k[3]+'</i><div><span>'+k[0]+'</span><b style="font-size:19px">'+bdt(k[1])+'</b></div></div>'}).join('')+'</div><div class="wr-tw"><table><thead><tr><th>Type</th><th class="r">Records</th><th class="r">Amount</th></tr></thead><tbody>'+bt+'</tbody></table></div><p class="wr-sub">Net contribution = revenue (ticketing + reissue) − refunds returned to clients. Commission = recorded service charges.</p>'}
- dash.innerHTML='<div class="wr-top"><div><h2>Work Record</h2><p class="wr-sub">Manage your ticketing activities, track performance and view business impact. <b>'+esc(periodLabel())+'</b></p></div><div class="wr-ctl">'+rangeCtl()+'<button type="button" class="wr-btn" data-act="new">+ New Record</button></div></div>'
-  +kpis(l,pl,'wr')+'<div class="wr-grid"><div class="wr-card"><div class="wr-tabs" role="tablist">'+[['recent','Recent Records'],['activity','Activity Track'],['impact','Business Impact']].map(function(t){return'<button type="button" role="tab" data-act="tab" data-v="'+t[0]+'" class="'+(DS.tab===t[0]?'on':'')+'">'+t[1]+'</button>'}).join('')+'</div>'+panel+'</div>'
-  +'<div><div class="wr-card"><h3>Activity Track</h3>'+stacked(bucketCounts(l))+legend()+'</div><div class="wr-card"><h3>Performance Summary</h3>'+perfList(st)+'</div></div></div>'}
+ var filters='<div class="wr-filters"><input id="wr-q" type="search" placeholder="Search PNR, ticket number or passenger" value="'+esc(DS.q)+'" aria-label="Search records"><select data-act="type" aria-label="Type"><option value="">All types</option>'+TY.map(function(t){return'<option'+(DS.type===t?' selected':'')+'>'+t+'</option>'}).join('')+'</select><select data-act="st" aria-label="Status"><option value="">All status</option>'+Object.keys(SC).map(function(t){return'<option'+(DS.st===t?' selected':'')+'>'+t+'</option>'}).join('')+'</select></div><div id="wr-rec">'+recentBlock(l)+'</div>';
+ dash.innerHTML='<div class="wr-top"><div><h2>Work Record</h2><p class="wr-sub">'+esc(coLabel())+' · <b>'+esc(periodLabel())+'</b></p></div><div class="wr-ctl">'+coSelect()+rangeCtl()+'<button type="button" class="wr-btn" data-act="new">+ New Record</button></div></div>'
+  +kpis(l,pl,'wr')+'<div class="wr-grid"><div class="wr-card"><h3>Recent records</h3>'+filters+'</div><div class="wr-card wr-stick"><h3>Activity track</h3>'+stacked(bucketCounts(l))+legend()+'</div></div>'}
 /* ---- New Record modal ---- */
 var bd=document.createElement('div');bd.id='wr-backdrop';root.appendChild(bd);
-var bar=document.createElement('div');bar.className='wr-form-bar';bar.innerHTML='<div><b id="wr-form-title">New Work Record</b><span>Existing fields, calculations and validations</span></div><button type="button" id="wr-form-x" aria-label="Close form">×</button>';card.insertBefore(bar,card.firstChild);
+var bar=document.createElement('div');bar.className='wr-form-bar';bar.innerHTML='<div><b id="wr-form-title">New Work Record</b><span>Pick a type, then fill in the details</span></div><button type="button" id="wr-form-x" aria-label="Close form">×</button>';card.insertBefore(bar,card.firstChild);
 function formTitle(){var ed=card.classList.contains('ptc-editing');$('wr-form-title').textContent=ed?'Edit Work Record':'New Work Record'}
 function openForm(){root.classList.add('wr-form-open');formTitle();try{card.scrollTop=0}catch(e){}}
 function closeForm(){if(card.classList.contains('ptc-editing')){var c=$('btn-cancel-edit');if(c)c.click()}root.classList.remove('wr-form-open');renderAll()}
@@ -12067,7 +12162,7 @@ function openDetail(i){var e=E()[i];if(!e)return;closeDetail();var st=status(e),
  var b=document.createElement('div');b.id='wr-detail-back';b.className='wr-back wr';b.innerHTML='<div class="wr-detail" role="dialog" aria-modal="true" aria-label="Record details"><div class="wr-dh"><div><button type="button" data-act="dclose">← Back to list</button> <h3 style="display:inline;margin-left:10px">Record Details</h3></div><div style="display:flex;gap:8px"><button type="button" data-act="dedit" data-i="'+i+'">Edit</button><button type="button" class="del" data-act="ddel" data-i="'+i+'">Delete</button></div></div><div class="wr-db"><div class="wr-card" style="margin:0"><div class="wr-ids"><div><span>PNR</span><b class="mono" style="font-size:16px">'+esc(e.pnrGds)+'</b></div><div><span>Airline PNR</span><b class="mono">'+esc(e.pnrAirline||'—')+'</b></div><div><span>Type</span>'+pill(e.txn,TC[e.txn]||'#475569')+'</div><div><span>Status</span>'+pill(st,SC[st]||'#475569')+'</div><div><span>Date</span><b>'+fmtD(e.date)+'</b></div><div><span>Airline</span><b>'+esc(e.airline||'—')+'</b></div><div><span>Route</span><b>'+esc(e.sector||'—')+'</b></div></div></div>'
   +'<div class="wr-two"><div class="wr-card" style="margin:0"><h3>Passengers ('+m+')</h3><div class="wr-tw"><table style="min-width:0"><thead><tr><th>#</th><th>Name</th><th>'+(e.txn==='Ticketing'||e.txn==='Reissue'?'New ticket':'Ticket')+'</th></tr></thead><tbody>'+(pr||'<tr><td colspan="3">—</td></tr>')+'</tbody></table></div>'+(old.length?'<p class="wr-sub">Old ticket(s): <span class="mono">'+esc(old.join(', '))+'</span></p>':'')+'</div>'
   +'<div class="wr-card" style="margin:0"><h3>Financial Summary</h3><div class="wr-ps">'+(fin||'<div><span>No financial fields</span></div>')+'</div></div></div>'
-  +'<div class="wr-card" style="margin:0"><h3>Other details</h3><div class="wr-ps">'+frow('Platform',e.platform)+frow('Passenger number',e.pnum)+frow('Recorded on',e.createdAt?fmtD(String(e.createdAt).slice(0,10)):'')+frow('Remarks',e.note)+'</div></div></div></div>';
+  +'<div class="wr-card" style="margin:0"><h3>Other details</h3><div class="wr-ps">'+frow('Company',coOf(e))+frow('Platform',e.platform)+frow('Passenger number',e.pnum)+frow('Recorded on',e.createdAt?fmtD(String(e.createdAt).slice(0,10)):'')+frow('Remarks',e.note)+'</div></div></div></div>';
  document.body.appendChild(b)}
 document.addEventListener('click',function(ev){var t=ev.target;if(t.id==='wr-detail-back'){closeDetail();return}var a=t.closest&&t.closest('#wr-detail-back [data-act]');if(!a)return;var i=+a.dataset.i;
  if(a.dataset.act==='dclose')closeDetail();
@@ -12076,63 +12171,87 @@ document.addEventListener('click',function(ev){var t=ev.target;if(t.id==='wr-det
 /* ---- Intelligence ---- */
 var intel=document.createElement('div');intel.id='wr-intel';intel.className='wr';shell.appendChild(intel);
 var IS={tab:'overview',q:'',type:'',st:'',gr:'daily'};
-function csv(l){var H=['Date','Type','GDS PNR','Airline PNR','Passengers','Ticket numbers','Airline','Route','Status','Amount'],q=function(v){v=String(v==null?'':v);return/[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};
- return'\ufeff'+[H.join(',')].concat(l.map(function(r){var e=r.e;return[e.date,e.txn,e.pnrGds,e.pnrAirline,names(e).join('; '),tkts(e).join('; '),e.airline,e.sector,status(e),e.txn==='Void'?'':val(e)].map(q).join(',')})).join('\r\n')}
+function csv(l){var H=['Date','Company','Type','GDS PNR','Airline PNR','Passengers','Ticket numbers','Airline','Route','Status','Amount'],q=function(v){v=String(v==null?'':v);return/[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};
+ return'\ufeff'+[H.join(',')].concat(l.map(function(r){var e=r.e;return[e.date,coOf(e),e.txn,e.pnrGds,e.pnrAirline,names(e).join('; '),tkts(e).join('; '),e.airline,e.sector,status(e),e.txn==='Void'?'':val(e)].map(q).join(',')})).join('\r\n')}
 function exportCsv(l){var b=new Blob([csv(l)],{type:'text/csv;charset=utf-8'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='AeroOps_Work_Record_Report_'+iso(new Date())+'.csv';document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},500)}
+/* ---- company filter (reads the company list kept by the Companies setting) ---- */
+var FK='aeroops_cofilter_v1',CO=function(){return window.aeroCo||null};
+function coOf(e){var c=CO();return c?c.of(e):(e.company||'')}
+function cf(){return ''}
+function coOk(e){var f=cf();return!f||coOf(e)===f}
+function coLabel(){var c=CO();return c?c.current():''}
+function coSelect(){return ''}
+/* ---- small graphic helpers (all SVG / CSS, no libraries) ---- */
+var PAL=['#1D4ED8','#3B82F6','#0E8FA0','#60A5FA','#93C5FD','#94A3B8'];
+function short(v){v=Math.abs(v);return v>=1e6?(v/1e6).toFixed(1)+'M':v>=1e3?Math.round(v/1e3)+'K':String(Math.round(v))}
+function revOf(e){return(e.txn==='Ticketing'||e.txn==='Reissue')?val(e):0}
+function series(l){return buckets(l).map(function(b){var o={l:b.l,n:0,rev:0,com:0,ref:0};l.forEach(function(r){var e=r.e,d=e.date||'';if(d<b.a||d>b.b)return;o.n++;o.rev+=revOf(e);if(e.txn==='Refund')o.ref+=Math.abs(val(e));o.com+=num(D().earn(e))});o.net=o.rev-o.ref;return o})}
+function spark(v,c){var n=v.length;if(n<2)return'';var m=Math.max.apply(null,v.concat([1])),W=120,H=34,p=v.map(function(y,i){return(W*i/(n-1)).toFixed(1)+','+(H-3-(H-6)*y/m).toFixed(1)}).join(' ');return'<svg class="sp" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none" aria-hidden="true"><polygon points="0,'+H+' '+p+' '+W+','+H+'" fill="'+c+'" opacity=".12"/><polyline points="'+p+'" fill="none" stroke="'+c+'" stroke-width="2" vector-effect="non-scaling-stroke"/></svg>'}
+function hbars(it,col,f){if(!it.length)return EMPTY;var m=Math.max.apply(null,it.map(function(x){return x.v}).concat([1]));return'<div class="hb">'+it.map(function(x){var t=f?f(x.v):fm(x.v);return'<div class="hb-r" title="'+esc(x.k)+': '+t+(x.n?' · '+x.n+' record'+(x.n===1?'':'s'):'')+'"><span class="hb-k">'+esc(x.k)+'</span><span class="hb-t"><i style="width:'+Math.max(2,x.v*100/m).toFixed(1)+'%;background:'+(x.c||col)+'"></i></span><b>'+t+'</b></div>'}).join('')+'</div>'}
+function ring(p,label,col,tip){p=Math.max(0,Math.min(100,p||0));var C=213.63;return'<div class="rg" title="'+esc(tip||label)+'"><svg viewBox="0 0 80 80"><circle cx="40" cy="40" r="34" fill="none" stroke="#EEF2F7" stroke-width="9"/><circle class="rg-a" cx="40" cy="40" r="34" fill="none" stroke="'+col+'" stroke-width="9" stroke-linecap="round" stroke-dasharray="'+C+'" stroke-dashoffset="'+(C*(1-p/100)).toFixed(1)+'" transform="rotate(-90 40 40)"/><text x="40" y="45" text-anchor="middle">'+Math.round(p)+'%</text></svg><span>'+label+'</span></div>'}
+function agg(l,kf,vf){var m={};l.forEach(function(r){var k=kf(r.e);if(!k)return;m[k]=m[k]||{k:k,v:0,n:0};m[k].v+=vf(r.e);m[k].n++});return Object.keys(m).map(function(k){return m[k]}).sort(function(a,b){return b.v-a.v||b.n-a.n})}
+function moneyChart(sr){var m=Math.max.apply(null,sr.map(function(b){return Math.max(b.rev,b.ref)}).concat([0]));if(!m)return EMPTY;var W=760,H=230,L=46,T=10,B=26,pw=W-L-8,ph=H-T-B,n=sr.length,gw=pw/n,bw=Math.max(2,Math.min(18,gw/3)),g='',s='',pts=[],k,Y=function(v){return T+ph-ph*Math.max(0,v)/m};
+ function bar(x,v,c,t){var h=ph*v/m;return h>0?'<rect x="'+x.toFixed(1)+'" y="'+Y(v).toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+h.toFixed(1)+'" rx="2" fill="'+c+'"><title>'+esc(t)+'</title></rect>':''}
+ for(k=0;k<=4;k++){var v=m*k/4;g+='<line x1="'+L+'" x2="'+(W-8)+'" y1="'+Y(v).toFixed(1)+'" y2="'+Y(v).toFixed(1)+'" stroke="#EEF2F7"/><text x="'+(L-6)+'" y="'+(Y(v)+3).toFixed(1)+'" text-anchor="end">'+short(v)+'</text>'}
+ sr.forEach(function(b,i){var cx=L+gw*(i+.5);s+=bar(cx-bw-.5,b.rev,'#2563EB',b.l+' · Revenue '+bdt(b.rev))+bar(cx+.5,b.ref,'#EF4444',b.l+' · Refunds '+bdt(b.ref));pts.push([cx,Y(b.net),b]);if(n<=12||i%Math.ceil(n/10)===0)s+='<text x="'+cx.toFixed(1)+'" y="'+(H-8)+'" text-anchor="middle">'+esc(b.l)+'</text>'});
+ s+='<polyline fill="none" stroke="#16875A" stroke-width="2" points="'+pts.map(function(p){return p[0].toFixed(1)+','+p[1].toFixed(1)}).join(' ')+'"/>'+pts.map(function(p){return'<circle cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="2.8" fill="#16875A"><title>'+esc(p[2].l)+' · Net '+bdt(p[2].net)+'</title></circle>'}).join('');
+ return'<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Revenue, refunds and net by period">'+g+s+'</svg><div class="wr-legend"><span><i style="background:#2563EB"></i>Revenue</span><span><i style="background:#EF4444"></i>Refunds</span><span><i style="background:#16875A"></i>Net</span></div>'}
+function cd(t,b,x){return'<div class="wr-card'+(x?' '+x:'')+'">'+(t?'<h3>'+t+'</h3>':'')+b+'</div>'}
+function grid2(a,b,q){return'<div class="wr-grid'+(q?' eq':'')+'">'+a+b+'</div>'}
+function stile(label,v,tip){return'<div class="ov-k" title="'+esc(tip||'')+'"><span>'+label+'</span><b>'+v+'</b></div>'}
+function shareDonut(it,small){var i=0;return donutG(it.map(function(x){return{l:x.k,c:PAL[i++%PAL.length],v:x.v}}),small)}
+/* ---- Overview + Intelligence & Reports ---- */
 function renderIntel(){if(!root.classList.contains('wr-intel-on'))return;
- var s=span(),l=rows(s),ps=prevSpan(),pl=ps?rows(ps):null,st=stats(l),bs=bucketCounts(l),c='',E0=E(),P=D().pending(),S0=D().sales()||[],A0=window.aeroPwiData?window.aeroPwiData():null;
- var pr=E0.filter(function(e){return e.txn==='Refund'&&e.refundStatus==='PENDING'}).length;
- var A=A0?A0.filter(function(x){return within({date:x.date},s)}):null;
- var lead=function(q,t){return'<div class="wr-lead"><b>'+q+'</b><span>'+t+'</span></div>'};
- var ik=function(label,v,col,ic,help,dl){return'<div class="wr-k" style="--c:'+col+'" title="'+esc(help)+'"><i>'+ic+'</i><div><span>'+label+'</span><b>'+v+'</b>'+(dl||'')+'<em class="wr-help">'+help+'</em></div></div>'};
- var cmp=ps&&(ps.from||ps.to)?' · compared with '+esc(fmtD(ps.from)+' – '+fmtD(ps.to)):'';
- if(IS.tab==='overview'){
-  var plural=function(n,w){return n+' '+w+(n===1?'':'s')},kinds=[];
-  if(st.by.Ticketing)kinds.push(plural(st.by.Ticketing,'ticket'));if(st.by.Reissue)kinds.push(plural(st.by.Reissue,'reissue'));if(st.by.Refund)kinds.push(plural(st.by.Refund,'refund'));if(st.by.Void)kinds.push(plural(st.by.Void,'void'));
-  var days={};l.forEach(function(r){if(r.e.date)days[r.e.date]=(days[r.e.date]||0)+1});var dk=Object.keys(days).sort(function(a,b){return days[b]-days[a]}),sm='';
-  if(!st.n)sm='<p>No work was recorded in this period. Add a record from <b>Work Record → New Record</b> and it will appear here, or choose a longer date range above.</p>';
-  else{sm='<p>You recorded <b>'+plural(st.n,'transaction')+'</b> ('+kinds.join(', ')+').</p><p>Tickets and reissues brought in <b>'+bdt(st.rev)+'</b>. After <b>'+bdt(st.ref)+'</b> returned to customers as refunds, the net is <b>'+bdt(st.net)+'</b>.</p>';
-   if(st.com>0)sm+='<p>Your service charges and commission came to <b>'+bdt(st.com)+'</b>.</p>';
-   if(pl&&pl.length)sm+='<p>That is '+(st.n>=pl.length?'<b class="up">'+Math.round((st.n-pl.length)/pl.length*100)+'% more</b>':'<b class="dn">'+Math.round((pl.length-st.n)/pl.length*100)+'% fewer</b>')+' transactions than the period before ('+pl.length+').</p>';
-   if(dk.length)sm+='<p>Busiest day: <b>'+fmtD(dk[0])+'</b> with '+plural(days[dk[0]],'transaction')+'.</p>'}
-  sm+=P.length?'<p class="dn"><b>'+plural(P.length,'refund adjustment')+'</b> still need action. See “Needs attention” below.</p>':'<p class="up">Nothing is waiting for your action.</p>';
-  var K=[['Total transactions',st.n,'#2563EB','∑','Every ticketing, reissue, refund and void recorded',pl&&pl.length,0,String],['Revenue',st.rev,'#0E8FA0','৳','Money from tickets and reissues',p0(pl,'rev'),0,bdt],['Commission',st.com,'#F59E0B','%','Your service charges and markup',p0(pl,'com'),0,bdt],['Refunds paid out',st.ref,'#EF4444','↺','Money returned to customers',p0(pl,'ref'),1,bdt],['Net result',st.net,'#16875A','＋','Revenue minus refunds',p0(pl,'net'),0,bdt]];
-  var attn=function(n,t,h,go){return'<div class="wr-at '+(n&&typeof n==='number'?'warn':'ok')+'"><b>'+n+'</b><div><span>'+t+'</span><small>'+h+'</small></div>'+(go&&n?'<button type="button" class="wr-link" data-act="igo" data-v="'+go+'">Review</button>':'')+'</div>'};
-  var fu=A0?A0.filter(function(x){return x.status==='Follow-up'}).length:'—',due=S0.reduce(function(a,x){return a+num(x.due)},0);
-  c=lead('How is my work going?','A quick summary of this period, in plain words.')+'<div class="wr-card wr-sum"><h3>Summary</h3>'+sm+'</div>'
-   +'<div class="wr-kpis">'+K.map(function(k){return ik(k[0],k[7]===String?k[1]:k[7](k[1]),k[2],k[3],k[4],delta(k[1],k[5],k[6]))}).join('')+'</div>'
-   +'<div class="wr-card"><h3>Needs attention</h3><p class="wr-sub" style="margin:-6px 0 10px">These show everything open right now, whatever date range is chosen.</p><div class="wr-atg">'+attn(P.length,'Refund adjustments','Refund paid out, adjustment not given yet','Pending Adj.')+attn(pr,'Refunds awaiting airline','Refund requested, airline has not paid yet','Refund Pending')+attn(fu,'Follow-up tasks',A0?'Activity Tracker items to revisit':'Sign in to load Activity Tracker','')+attn(bdt(due),'Amount due (Revenue Desk)','Customers still owe you','')+'</div></div>'
-   +'<div class="wr-grid"><div class="wr-card"><h3>Transactions over time</h3>'+lines(bs)+legend()+'</div><div class="wr-card"><h3>What kind of work</h3>'+donut(st)+'</div></div>'
-   +'<details class="wr-card wr-how"><summary>How are these numbers calculated?</summary><ul><li><b>Revenue</b> = what customers paid for tickets, plus reissue collections.</li><li><b>Refunds paid out</b> = the refund amount returned to customers.</li><li><b>Net result</b> = Revenue − Refunds paid out.</li><li><b>Commission</b> = service charges and markup you recorded.</li><li><b>Comparison</b> uses the period just before the one you picked, with the same length.</li><li><b>Void</b> records count as work but carry no revenue.</li></ul></details>'}
- else if(IS.tab==='money'){
-  var by=TY.map(function(t){var x=l.filter(function(r){return r.e.txn===t}),v=x.reduce(function(a,r){return a+Math.abs(val(r.e))},0),h={Ticketing:'What customers paid for tickets',Reissue:'Total collected for changes',Refund:'Money returned to customers',Void:'Cancelled — no money recorded'}[t];return'<tr><td>'+pill(t,TC[t])+'</td><td class="r">'+x.length+'</td><td class="r">'+(t==='Void'?'—':fm(v))+'</td><td style="white-space:normal;color:#62748C">'+h+'</td></tr>'}).join('');
-  var sl=S0.filter(function(x){return within({date:x.date},s)}),sP=sl.reduce(function(a,x){return a+num(x.price)},0),sG=sl.reduce(function(a,x){return a+(parseFloat(x.profit)||((parseFloat(x.price)||0)-(parseFloat(x.cost)||0)))},0),sD=sl.reduce(function(a,x){return a+num(x.due)},0);
-  c=lead('Where is the money?','Revenue, commission and refunds from your Work Record.')+'<div class="wr-kpis">'+ik('Revenue',bdt(st.rev),'#0E8FA0','৳','Tickets plus reissues',delta(st.rev,p0(pl,'rev'),0))+ik('Commission',bdt(st.com),'#F59E0B','%','Service charges and markup',delta(st.com,p0(pl,'com'),0))+ik('Refunds paid out',bdt(st.ref),'#EF4444','↺','Returned to customers',delta(st.ref,p0(pl,'ref'),1))+ik('Net result',bdt(st.net),'#16875A','＋','Revenue − refunds',delta(st.net,p0(pl,'net'),0))+'</div>'
-   +'<div class="wr-card"><h3>Money by type of work</h3><div class="wr-tw"><table><thead><tr><th>Type</th><th class="r">Records</th><th class="r">Amount (BDT)</th><th>What it means</th></tr></thead><tbody>'+by+'</tbody></table></div></div>'
-   +'<div class="wr-two"><div class="wr-card"><h3>Best routes</h3>'+topTable(topBy(l,function(e){return e.sector?[e.sector]:[]},6),'Route')+'</div><div class="wr-card"><h3>Best airlines</h3>'+topTable(topBy(l,function(e){return e.airline?[e.airline]:[]},6),'Airline')+'</div></div>'
-   +'<div class="wr-card"><h3>Revenue Desk (Aero Travels) <small class="wr-tag">separate from the figures above</small></h3>'+(sl.length?'<div class="wr-ps"><div><span>Sales</span><b>'+sl.length+'</b></div><div><span>Selling value</span><b>'+bdt(sP)+'</b></div><div><span>Profit</span><b>'+bdt(sG)+(sP?' ('+Math.round(sG*1000/sP)/10+'%)':'')+'</b></div><div><span>Amount due from customers</span><b>'+bdt(sD)+'</b></div></div>':'<div class="wr-empty">No Revenue Desk sales in this period</div>')+'</div>'}
+ var s=span(),l=rows(s),ps=prevSpan(),pl=ps?rows(ps):null,st=stats(l),bs=bucketCounts(l),c='',P=D().pending().filter(coOk),S0=D().sales()||[],A0=window.aeroPwiData?window.aeroPwiData():null;
+ var pr=E().filter(function(e){return coOk(e)&&e.txn==='Refund'&&e.refundStatus==='PENDING'}).length;
+ var A=A0?A0.filter(function(x){return within({date:x.date},s)}):null,ov=IS.tab==='overview';
+ var cmp=ps&&(ps.from||ps.to)?' · vs '+esc(fmtD(ps.from)+' – '+fmtD(ps.to)):'';
+ if(ov){
+  var sr=series(l),fu=A0?A0.filter(function(x){return x.status==='Follow-up'}).length:'—',due=S0.reduce(function(a,x){return a+num(x.due)},0);
+  var K=[['Transactions',st.n,'#2563EB','n',p0(pl,'n'),0,String,'Every ticketing, reissue, refund and void recorded'],['Revenue',st.rev,'#0E8FA0','rev',p0(pl,'rev'),0,fm,'Money from tickets and reissues (BDT)'],['Commission',st.com,'#F59E0B','com',p0(pl,'com'),0,fm,'Service charges and markup (BDT)'],['Refunds',st.ref,'#EF4444','ref',p0(pl,'ref'),1,fm,'Money returned to customers (BDT)'],['Net result',st.net,'#16875A','net',p0(pl,'net'),0,fm,'Revenue minus refunds (BDT)']];
+  var at=function(n,t,go){var k=typeof n==='number';return'<div class="ov-at'+(k&&n?' warn':'')+'"><b>'+n+'</b><span>'+t+'</span>'+(go&&k&&n?'<button type="button" class="wr-link" data-act="igo" data-v="'+go+'">Review</button>':'')+'</div>'};
+  c='<div class="ov-kg">'+K.map(function(k){return'<div class="ov-k" style="--c:'+k[2]+'" title="'+esc(k[7])+'"><span>'+k[0]+'</span><b>'+(k[0]==='Transactions'?k[1]:'<small>BDT</small>'+k[6](k[1]))+'</b>'+delta(k[1],k[4],k[5])+spark(sr.map(function(b){return Math.max(0,b[k[3]])}),k[2])+'</div>'}).join('')+'</div>'
+   +'<div class="ov-ats">'+at(P.length,'Refund adjustments due','Pending Adj.')+at(pr,'Refunds awaiting airline','Refund Pending')+at(fu,'Follow-up tasks','')+at('BDT '+fm(due),'Revenue Desk dues','')+'</div>'
+   +grid2(cd('Transactions over time',lines(bs)+legend()),cd('Work mix',donut(st)));
+ }
+ else if(IS.tab==='business'){
+  var sr2=series(l),air=agg(l,function(e){return e.airline},revOf).filter(function(x){return x.v>0}).slice(0,6),rt=agg(l,function(e){return e.sector},revOf).filter(function(x){return x.v>0}).slice(0,6),pf=agg(l,function(e){return e.platform},function(){return 1}).slice(0,6);
+  var byT=[{k:'Ticketing',v:l.filter(function(r){return r.e.txn==='Ticketing'}).reduce(function(a,r){return a+val(r.e)},0),c:TC.Ticketing},{k:'Reissue',v:l.filter(function(r){return r.e.txn==='Reissue'}).reduce(function(a,r){return a+val(r.e)},0),c:TC.Reissue},{k:'Refunds',v:st.ref,c:TC.Refund}];
+  c=grid2(cd('Revenue, refunds and net by period',moneyChart(sr2)),cd('Where the money comes from',hbars(byT,'#2563EB',function(v){return'BDT '+short(v)})+'<h3 style="margin-top:18px">Commission by period</h3>'+barsOne(sr2.map(function(b){return{l:b.l,v:Math.round(b.com)}}),'#F59E0B',function(v){return bdt(v)})))
+   +'<div class="wr-three">'+cd('Top airlines by revenue',hbars(air,'#2563EB',function(v){return short(v)}))+cd('Top routes by revenue',hbars(rt,'#0E8FA0',function(v){return short(v)}))+cd('Booking platform share',shareDonut(pf,'records'))+'</div>';
+ }
+ else if(IS.tab==='operations'){
+  var tk=st.by.Ticketing,rf=l.filter(function(r){return r.e.txn==='Refund'}),paid=rf.filter(function(r){return r.e.refundStatus!=='PENDING'}),adj=paid.filter(function(r){return r.e.adjustmentGiven==='YES'}).length,pend=paid.length-adj;
+  var wd=[0,0,0,0,0,0,0];l.forEach(function(r){if(r.e.date)wd[(pd(r.e.date).getDay()+6)%7]++});
+  var tkV=l.filter(function(r){return r.e.txn==='Ticketing'}),rsV=l.filter(function(r){return r.e.txn==='Reissue'});
+  var avg=function(a,t){return a.length?bdt(a.reduce(function(x,r){return x+Math.abs(val(r.e))},0)/a.length):'—'};
+  c='<div class="rgs">'+ring(tk?st.by.Refund*100/tk:0,'Refund rate','#EF4444','Refund records ÷ tickets issued')+ring(tk?st.by.Reissue*100/tk:0,'Reissue rate','#F59E0B','Reissue records ÷ tickets issued')+ring(tk?st.by.Void*100/tk:0,'Void rate','#475569','Void records ÷ tickets issued')+ring(paid.length?adj*100/paid.length:0,'Adjustments given','#16875A','Airline-paid refunds with the client adjustment given')+'</div>'
+   +grid2(cd('Refund pipeline',hbars([{k:'Refund requests',v:rf.length,c:'#3B82F6'},{k:'Airline paid',v:paid.length,c:'#0E8FA0'},{k:'Adjustment given',v:adj,c:'#16875A'},{k:'Adjustment pending',v:pend,c:'#F59E0B'},{k:'Awaiting airline',v:rf.length-paid.length,c:'#C2410C'}],'#2563EB',String)),cd('Records by weekday',barsOne(['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(function(d,i){return{l:d,v:wd[i]}}),'#2563EB',function(v){return v+' record'+(v===1?'':'s')})),1)
+   +'<div class="ov-kg three">'+stile('Avg ticket value',avg(tkV),'Payable fare per ticketing record')+stile('Avg reissue collection',avg(rsV),'Total collection per reissue')+stile('Avg refund',avg(rf),'Client refund per refund record')+'</div>';
+ }
  else if(IS.tab==='activity'){
-  var cA=function(x){return A?A.filter(function(a){return a.status===x}).length:0},tot=A?A.length:0,pc=function(v){return tot?Math.round(v*100/tot)+'% of total':''};
-  var sd=s.from||(A&&A.reduce(function(m,x){return x.date&&(!m||x.date<m)?x.date:m},''))||iso(new Date()),it=A?mk(sd,s.to||iso(new Date()),IS.gr).map(function(b){return{l:b.l,v:A.filter(function(x){return(x.date||'')>=b.a&&(x.date||'')<=b.b}).length}}):[];
-  var rec=A0?A0.slice().sort(function(x,y){return((y.date||'')+(y.time||'')).localeCompare((x.date||'')+(x.time||''))}).slice(0,8):null;
-  var wd=[0,0,0,0,0,0,0];l.forEach(function(r){if(r.e.date)wd[(pd(r.e.date).getDay()+6)%7]++});var mxw=Math.max.apply(null,wd.concat([1]));
-  c=lead('How busy was I?','Your daily work from the Activity Tracker, plus how Work Record entries are spread across the week.')
-   +(A?'<div class="wr-kpis">'+ik('Total work',tot,'#2563EB','∑','All tasks logged in this period')+ik('Solved',cA('Solved'),'#15803D','✓','Tasks you finished '+pc(cA('Solved')))+ik('Resolved',cA('Resolved'),'#0E8FA0','✔','Problems closed out '+pc(cA('Resolved')))+ik('Pending',cA('Pending'),'#B7791F','…','Waiting on something '+pc(cA('Pending')))+ik('Follow-up',cA('Follow-up'),'#7C3AED','↻','Need action later '+pc(cA('Follow-up')))+'</div>'
-   +'<div class="wr-grid"><div class="wr-card"><div class="wr-ctl" style="justify-content:space-between;margin-bottom:8px"><h3 style="margin:0">Tasks logged per '+({daily:'day',weekly:'week',monthly:'month'}[IS.gr])+'</h3><span class="wr-seg">'+[['daily','Daily'],['weekly','Weekly'],['monthly','Monthly']].map(function(g){return'<button type="button" data-act="igr" data-v="'+g[0]+'" class="'+(IS.gr===g[0]?'on':'')+'">'+g[1]+'</button>'}).join('')+'</span></div>'+barsOne(it,'#19B6C9')+'</div><div class="wr-card"><h3>Task status</h3>'+donutG([{l:'Solved',c:'#15803D',v:cA('Solved')},{l:'Resolved',c:'#0E8FA0',v:cA('Resolved')},{l:'Pending',c:'#B7791F',v:cA('Pending')},{l:'Follow-up',c:'#7C3AED',v:cA('Follow-up')}],'tasks')+'</div></div>'
-   :'<div class="wr-card"><div class="wr-empty">Activity Tracker data appears here after you sign in and it finishes loading.</div></div>')
-   +'<div class="wr-two"><div class="wr-card"><h3>Work Record entries by weekday</h3>'+(st.n?'<div class="wr-ps">'+['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(function(d,i){return'<div><span style="width:40px">'+d+'</span><span style="flex:1;background:#EEF2F7;border-radius:6px;height:10px;align-self:center"><i style="display:block;height:10px;border-radius:6px;background:#19B6C9;width:'+Math.round(wd[i]*100/mxw)+'%"></i></span><b>'+wd[i]+'</b></div>'}).join('')+'</div>':EMPTY)+'</div><div class="wr-card"><h3>Recent activity</h3>'+(rec&&rec.length?'<div class="wr-tw"><table style="min-width:0"><thead><tr><th>When</th><th>Company / client</th><th>Work</th><th>Status</th></tr></thead><tbody>'+rec.map(function(x){return'<tr><td>'+esc(fmtD(x.date))+(x.time?' · '+esc(x.time):'')+'</td><td>'+esc(x.company||'—')+'</td><td>'+esc(x.category||'—')+'</td><td>'+esc(x.status||'—')+'</td></tr>'}).join('')+'</tbody></table></div>':'<div class="wr-empty">No activity to show yet</div>')+'</div></div>'}
- else if(IS.tab==='records'){var f=filt(sorted(l),IS);c=lead('Show me the actual records','Search, filter and open any record. Choose “View” for full details.')+'<div class="wr-card"><div class="wr-filters"><input id="wr-iq" type="search" placeholder="Search PNR, ticket number or passenger" value="'+esc(IS.q)+'" aria-label="Search"><select data-act="itype" aria-label="Type"><option value="">All types</option>'+TY.map(function(t){return'<option'+(IS.type===t?' selected':'')+'>'+t+'</option>'}).join('')+'</select><select data-act="ist" aria-label="Status"><option value="">All status</option>'+Object.keys(SC).map(function(t){return'<option'+(IS.st===t?' selected':'')+'>'+t+'</option>'}).join('')+'</select></div><p class="wr-sub">'+f.length+' record'+(f.length===1?'':'s')+'</p><div id="wr-irec">'+recTable(f)+'</div></div>'}
- else c=lead('I need a report','Charts and downloads you can share or keep.')+'<div class="wr-card"><h3>Transactions by type</h3>'+grouped(bs)+legend()+'</div><div class="wr-card"><h3>Download</h3><div class="wr-dls"><button type="button" class="wr-btn" data-act="export">This period (CSV)</button><button type="button" class="wr-btn ghost" data-dl="entries">All records (Excel)</button><button type="button" class="wr-btn ghost" data-dl="pending">Pending adjustments (Excel)</button><button type="button" class="wr-btn ghost" data-dl="summary">Summary (Excel)</button><button type="button" class="wr-btn ghost" data-dl="all">Complete data pack (Excel)</button></div><p class="wr-sub">The CSV covers the dates chosen above. The Excel files include all saved data.</p></div><div class="wr-card"><h3>Latest records in this period</h3>'+recTable(sorted(l),{limit:25})+'</div>';
- intel.innerHTML='<div class="wr-top"><div><h2>Intelligence</h2><p class="wr-sub">Everything about your work in one place. Showing <b>'+esc(periodLabel())+'</b>'+cmp+'</p></div><div class="wr-ctl">'+rangeCtl()+'<button type="button" class="wr-btn" data-act="export">Export CSV</button></div></div><div class="wr-card" style="padding:0 14px"><div class="wr-tabs" style="margin:0" role="tablist">'+[['overview','Overview'],['money','Money'],['activity','Work &amp; Activity'],['records','Records'],['reports','Reports']].map(function(t){return'<button type="button" role="tab" data-act="itab" data-v="'+t[0]+'" class="'+(IS.tab===t[0]?'on':'')+'">'+t[1]+'</button>'}).join('')+'</div></div>'+c}
+  if(!A)c=cd('','<div class="wr-empty">Activity Tracker data appears here after you sign in and it finishes loading.</div>');
+  else{var tot=A.length,cA=function(x){return A.filter(function(a){return a.status===x}).length},sd=s.from||A.reduce(function(m,x){return x.date&&(!m||x.date<m)?x.date:m},'')||iso(new Date()),it=mk(sd,s.to||iso(new Date()),IS.gr).map(function(b){return{l:b.l,v:A.filter(function(x){return(x.date||'')>=b.a&&(x.date||'')<=b.b}).length}});
+   var cat=agg(A.map(function(x){return{e:x}}),function(x){return x.category},function(){return 1}).slice(0,7),src=agg(A.map(function(x){return{e:x}}),function(x){return x.source},function(){return 1});
+   c='<div class="rgs">'+ring(tot?(cA('Solved')+cA('Resolved'))*100/tot:0,'Resolution rate','#16875A','Solved + Resolved ÷ all tasks')+ring(tot?cA('Pending')*100/tot:0,'Pending','#F59E0B','Pending ÷ all tasks')+ring(tot?cA('Follow-up')*100/tot:0,'Follow-up','#7C3AED','Follow-up ÷ all tasks')+ring(tot?A.filter(function(x){return x.kind==='repeat'}).length*100/tot:0,'Repeat issues','#475569','Tasks marked as a repeat issue ÷ all tasks')+'</div>'
+    +grid2(cd('<span>Tasks logged per '+({daily:'day',weekly:'week',monthly:'month'}[IS.gr])+'</span><span class="wr-seg">'+[['daily','Daily'],['weekly','Weekly'],['monthly','Monthly']].map(function(g){return'<button type="button" data-act="igr" data-v="'+g[0]+'" class="'+(IS.gr===g[0]?'on':'')+'">'+g[1]+'</button>'}).join('')+'</span>',barsOne(it,'#19B6C9'),'wr-hd'),cd('Task status',donutG([{l:'Solved',c:'#16875A',v:cA('Solved')},{l:'Resolved',c:'#0E8FA0',v:cA('Resolved')},{l:'Pending',c:'#F59E0B',v:cA('Pending')},{l:'Follow-up',c:'#7C3AED',v:cA('Follow-up')}],'tasks')))
+    +'<div class="wr-grid eq">'+cd('Work by category',hbars(cat,'#2563EB',String))+cd('Work by source',shareDonut(src,'tasks'))+'</div>'}
+ }
+ else c=cd('Download','<div class="wr-dls"><button type="button" class="wr-btn" data-act="export">This period (CSV)</button><button type="button" class="wr-btn ghost" data-dl="entries">All records (Excel)</button><button type="button" class="wr-btn ghost" data-dl="pending">Pending adjustments (Excel)</button><button type="button" class="wr-btn ghost" data-dl="summary">Summary (Excel)</button><button type="button" class="wr-btn ghost" data-dl="all">Complete data pack (Excel)</button></div><p class="wr-sub">The CSV covers the dates and company chosen above. The Excel files include all saved data.</p>');
+ var info='<details class="ov-info"><summary aria-label="How these numbers are calculated">i</summary><div class="ov-pop"><b>How numbers are calculated</b><ul><li><b>Revenue</b> = ticket sales + reissue collections.</li><li><b>Refunds</b> = amounts returned to customers.</li><li><b>Net result</b> = Revenue − Refunds.</li><li><b>Commission</b> = service charges and markup recorded.</li><li><b>Compared with</b> the previous period of the same length'+cmp+'.</li><li><b>Void</b> records count as work but carry no revenue.</li><li>Open items (refund adjustments, awaiting airline) show everything pending now, whatever date range is chosen.</li></ul></div></details>';
+ var tabs=[['overview','Overview'],['business','Business'],['operations','Operations'],['activity','Activity'],['reports','Reports']];
+ intel.innerHTML='<div class="wr-top"><div><h2>'+(ov?'Overview':'Intelligence &amp; Reports')+(ov?info:'')+'</h2><p class="wr-sub">'+esc(coLabel())+' · <b>'+esc(periodLabel())+'</b></p></div><div class="wr-ctl">'+coSelect()+rangeCtl()+'<button type="button" class="wr-btn" data-act="export">Export CSV</button></div></div>'
+  +'<div class="wr-card" style="padding:0 14px;'+(ov?'display:none':'')+'"><div class="wr-tabs" style="margin:0" role="tablist">'+tabs.map(function(t){return'<button type="button" role="tab" data-act="itab" data-v="'+t[0]+'" class="'+(IS.tab===t[0]?'on':'')+'"'+(t[0]==='overview'?' style="display:none"':'')+'>'+t[1]+'</button>'}).join('')+'</div></div>'+c}
+
 function p0(pl,k){return pl?stats(pl)[k]:null}
 function mk(from,to,g){var A=pd(from),B=pd(to),out=[],d;if(isNaN(A)||isNaN(B)||A>B)return out;
  if(g==='weekly'){for(d=addD(A,-((A.getDay()+6)%7));d<=B;d=addD(d,7))out.push({l:d.getDate()+' '+d.toLocaleString('en',{month:'short'}),a:iso(d),b:iso(addD(d,6))})}
  else if(g==='monthly'){for(d=new Date(A.getFullYear(),A.getMonth(),1);d<=B;d=new Date(d.getFullYear(),d.getMonth()+1,1))out.push({l:d.toLocaleString('en',{month:'short'})+" '"+String(d.getFullYear()).slice(2),a:iso(d),b:iso(new Date(d.getFullYear(),d.getMonth()+1,0))})}
  else{for(d=new Date(A);d<=B;d=addD(d,1))out.push({l:d.getDate()+' '+d.toLocaleString('en',{month:'short'}),a:iso(d),b:iso(d)})}
  return out.slice(-60)}
-function barsOne(it,col){var m=Math.max.apply(null,it.map(function(i){return i.v}).concat([0]));if(!m)return EMPTY;var W=560,H=190,L=28,T=8,B=24,pw=W-L-6,ph=H-T-B,tt=tick(m),mx=tt[1],bw=Math.max(3,Math.min(24,pw/it.length*.62)),g='',s='',k;
- for(k=0;k<=4;k++){var y=T+ph-ph*tt[0]*k/mx;g+='<line x1="'+L+'" x2="'+(W-6)+'" y1="'+y+'" y2="'+y+'" stroke="#EEF2F7"/><text x="'+(L-5)+'" y="'+(y+3)+'" text-anchor="end">'+tt[0]*k+'</text>'}
- it.forEach(function(b,i){var cx=L+pw*(i+.5)/it.length,h=ph*b.v/mx;s+='<rect x="'+(cx-bw/2).toFixed(1)+'" y="'+(T+ph-h).toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+h.toFixed(1)+'" fill="'+col+'" rx="1.5"><title>'+esc(b.l)+': '+b.v+' task'+(b.v===1?'':'s')+'</title></rect>';if(it.length<=12||i%Math.ceil(it.length/10)===0)s+='<text x="'+cx.toFixed(1)+'" y="'+(H-7)+'" text-anchor="middle">'+esc(b.l)+'</text>'});
+function barsOne(it,col,fu){var m=Math.max.apply(null,it.map(function(i){return i.v}).concat([0]));if(!m)return EMPTY;var W=560,H=190,L=28,T=8,B=24,pw=W-L-6,ph=H-T-B,tt=tick(m),mx=tt[1],bw=Math.max(3,Math.min(24,pw/it.length*.62)),g='',s='',k;
+ for(k=0;k<=4;k++){var y=T+ph-ph*tt[0]*k/mx;g+='<line x1="'+L+'" x2="'+(W-6)+'" y1="'+y+'" y2="'+y+'" stroke="#EEF2F7"/><text x="'+(L-5)+'" y="'+(y+3)+'" text-anchor="end">'+(fu?short(tt[0]*k):tt[0]*k)+'</text>'}
+ it.forEach(function(b,i){var cx=L+pw*(i+.5)/it.length,h=ph*b.v/mx;s+='<rect x="'+(cx-bw/2).toFixed(1)+'" y="'+(T+ph-h).toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+h.toFixed(1)+'" fill="'+col+'" rx="1.5"><title>'+esc(b.l)+': '+(fu?fu(b.v):b.v+' task'+(b.v===1?'':'s'))+'</title></rect>';if(it.length<=12||i%Math.ceil(it.length/10)===0)s+='<text x="'+cx.toFixed(1)+'" y="'+(H-7)+'" text-anchor="middle">'+esc(b.l)+'</text>'});
  return'<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Tasks logged">'+g+s+'</svg>'}
 function donutG(items,small){var tot=items.reduce(function(a,i){return a+i.v},0);if(!tot)return EMPTY;var Rr=46,C=2*Math.PI*Rr,off=0,a='';items.forEach(function(t){if(!t.v)return;var len=C*t.v/tot;a+='<circle r="'+Rr+'" cx="70" cy="70" fill="none" stroke="'+t.c+'" stroke-width="20" stroke-dasharray="'+len+' '+(C-len)+'" stroke-dashoffset="'+(-off)+'" transform="rotate(-90 70 70)"><title>'+t.l+': '+t.v+'</title></circle>';off+=len});
  return'<div style="display:flex;gap:18px;align-items:center;flex-wrap:wrap"><svg viewBox="0 0 140 140" style="width:150px"><circle r="46" cx="70" cy="70" fill="none" stroke="#EEF2F7" stroke-width="20"/>'+a+'<text x="70" y="68" text-anchor="middle" style="font-size:22px;font-weight:800;fill:#0F2742">'+tot+'</text><text x="70" y="84" text-anchor="middle">'+small+'</text></svg><div class="wr-ps" style="flex:1;min-width:150px">'+items.map(function(t){return'<div><span><i style="display:inline-block;width:9px;height:9px;border-radius:50%;background:'+t.c+';margin-right:6px"></i>'+t.l+'</span><b>'+t.v+' ('+Math.round(t.v*100/tot)+'%)</b></div>'}).join('')+'</div></div>'}
@@ -12144,7 +12263,7 @@ function onAct(ev){var a=ev.target.closest&&ev.target.closest('[data-act]');if(!
  else if(k==='new'){if(card.classList.contains('ptc-editing')){var c=$('btn-cancel-edit');if(c)c.click()}openForm()}
  else if(k==='tab'){DS.tab=a.dataset.v;renderDash()}else if(k==='type'){DS.type=v;DS.limit=10;renderDash('table')}else if(k==='st'){DS.st=v;DS.limit=10;renderDash('table')}
  else if(k==='more'){DS.limit+=20;renderDash('table')}else if(k==='open')openDetail(+a.dataset.i)
- else if(k==='itab'){IS.tab=a.dataset.v;renderIntel()}else if(k==='igr'){IS.gr=a.dataset.v;renderIntel()}else if(k==='igo'){R.key='all';IS.tab='records';IS.st=a.dataset.v;IS.type='';IS.q='';renderIntel()}else if(k==='itype'){IS.type=v;renderIntel()}else if(k==='ist'){IS.st=v;renderIntel()}
+ else if(k==='itab'){IS.tab=a.dataset.v;renderIntel()}else if(k==='igr'){IS.gr=a.dataset.v;renderIntel()}else if(k==='igo'){R.key='all';DS.tab='recent';DS.st=a.dataset.v;DS.type='';DS.q='';DS.limit=10;var wb=document.querySelector('#ptc-nav .ao-nav[data-ao="wr"]');if(wb)wb.click();renderAll()}else if(k==='co'){try{localStorage.setItem(FK,v)}catch(x){}renderAll()}
  else if(k==='export'){exportCsv(rows(span()).sort(function(a,b){return(a.e.date||'').localeCompare(b.e.date||'')}))}}
 [dash,intel].forEach(function(n){n.addEventListener('click',function(e){var t=e.target.closest('[data-act]');if(t&&t.tagName==='SELECT'||t&&t.tagName==='INPUT')return;onAct(e)});n.addEventListener('change',function(e){var t=e.target;if(t.tagName==='SELECT'||t.type==='date')onAct(e)})});
 dash.addEventListener('input',function(e){if(e.target.id==='wr-q'){DS.q=e.target.value;DS.limit=10;renderDash('table')}});
@@ -12170,6 +12289,7 @@ var dv=$('view-dashboard');
 function syncVis(){var on=root.getAttribute('data-pane')==='entrydesk'&&!root.classList.contains('set-active')&&!root.classList.contains('mas-active')&&!root.classList.contains('pwi-active')&&!root.classList.contains('wr-intel-on')&&!(dv&&dv.classList.contains('active'));dash.classList.toggle('wr-hide',!on);if(on)renderDash()}
 new MutationObserver(syncVis).observe(root,{attributes:true,attributeFilter:['class','data-pane']});if(dv)new MutationObserver(syncVis).observe(dv,{attributes:true,attributeFilter:['class']});
 var sig='';setInterval(function(){var s=E().length+':'+JSON.stringify(E().slice(-3)).length;if(s!==sig){sig=s;renderAll();syncVis()}},1000);
+window.aeroRerender=function(){renderAll();syncVis()};
 syncVis();renderIntel();
 })();
 </script>
@@ -12418,7 +12538,7 @@ function fixDark(){if(document.documentElement.getAttribute("data-theme")!=="dar
 function watchFx(){if(!fxObs)fxObs=new MutationObserver(function(){clearTimeout(fxT);fxT=setTimeout(fixDark,160)});
  fxObs.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:["class","hidden","style"]})}
 function orig(k){return q('#ptc-nav .ptc-nav-btn[data-aero="'+k+'"]')}
-var ITEMS=[["ov","Overview","intel","overview"],["wr","Work Records","home"],["ap","Activity & Performance","pwi"],["at","Arrow Travels","sales"],["ir","Intelligence & Reports","intel","reports"],["se","Settings & Access","settings"]];
+var ITEMS=[["ov","Overview","intel","overview"],["wr","Work Records","home"],["ap","Activity & Performance","pwi"],["at","Aero Travels","sales"],["ir","Intelligence & Reports","intel","business"],["se","Settings & Access","settings"]];
 var HIDE=["home","pwi","intel","sales","logs","pending","reports","master","settings"];
 function pickTab(v){var n=0;(function t(){var b=q('[data-act="itab"][data-v="'+v+'"]');if(b)b.click();else if(n++<12)setTimeout(t,120)})()}
 function buildNav(){var nav=q("#ptc-nav");if(!nav||nav.getAttribute("data-ao"))return;
@@ -12643,4 +12763,145 @@ html,body{background:#F6F8FB !important}
 #pwi-root #hm-entry .hm-btns button{padding:11px 22px;min-width:160px}
 #pwi-root .hm-k{padding:10px}
 </style>
+<style id="aeroops-v3">
+/* ===== AeroOps v3 — readable sidebar card, neutral type tabs, graphical Overview/Intelligence, Activity layout, companies ===== */
+#ptc-root .aero-sb-card{background:#F1F6FF;border:1px solid #DCE7F8}
+#ptc-root .aero-sb-card-h,#ptc-root .aero-sb-card-h b{color:#0B2545;font-weight:700}
+#ptc-root .aero-sb-card-h i{color:#1D4ED8}
+#ptc-root .aero-sb-card p{color:#475569}
+#ptc-card .ptc-header-txntype .ptc-txn-tab{--txn-color:#1D4ED8!important;background:#fff;border:1px solid #D5DEEA;color:#334155;transition:transform .15s,box-shadow .15s,background .15s,color .15s,border-color .15s}
+#ptc-card .ptc-header-txntype .ptc-txn-tab:hover{transform:translateY(-1px);border-color:#1D4ED8;color:#1D4ED8;background:#EFF4FF;box-shadow:0 4px 10px rgba(29,78,216,.16)}
+#ptc-card .ptc-header-txntype .ptc-txn-tab.ptc-txn-tab-active{background:#1D4ED8;border-color:#1D4ED8;color:#fff;box-shadow:none;animation:aoPop .28s ease}
+@keyframes aoPop{0%{transform:scale(.94)}60%{transform:scale(1.06)}100%{transform:scale(1)}}
+#ptc-card .ptc-field select#f-company{width:100%}
+/* Activity & Performance: Recent activity spans the full width, so no empty space is left under the left column */
+#pwi-root .hm-cols{align-items:stretch}
+#pwi-root .hm-cols>.hm-col:first-child{grid-template-rows:auto 1fr}
+#pwi-root .hm-cols>.hm-col:nth-child(2){display:contents}
+#pwi-root .hm-cols>.hm-col:nth-child(2) #hm-recent{grid-column:1/-1}
+#pwi-root #hm-sum .hm-st:nth-child(4){display:none}
+/* Overview / Intelligence */
+.wr-top h2 .ov-info{margin-left:10px;vertical-align:middle}
+.ov-info{position:relative;display:inline-block}.ov-info summary{list-style:none;width:22px;height:22px;border-radius:50%;border:1.5px solid #94A3B8;color:#64748B;font:italic 700 13px/19px Georgia,serif;text-align:center;cursor:pointer;transition:all .15s}
+.ov-info summary::-webkit-details-marker{display:none}.ov-info summary:hover,.ov-info[open] summary{background:#1D4ED8;border-color:#1D4ED8;color:#fff}
+.ov-pop{position:absolute;left:0;top:30px;z-index:30;width:340px;background:#fff;border:1px solid #D5DEEA;border-radius:12px;box-shadow:0 14px 34px rgba(15,39,66,.18);padding:14px 16px;font-size:12.5px;font-weight:400;color:#334155;animation:aoPop .2s ease}
+.ov-pop ul{margin:8px 0 0;padding-left:18px;line-height:1.55}
+.ov-kg{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-bottom:14px}.ov-kg.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.ov-k{position:relative;overflow:hidden;background:#fff;border:1px solid #E1E8F1;border-radius:12px;padding:12px 14px 10px 16px;display:flex;flex-direction:column;gap:2px;transition:transform .15s,box-shadow .15s}
+.ov-k:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(15,39,66,.09)}.ov-k:before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--c,#2563EB)}
+.ov-k>span{font-size:11px;font-weight:700;color:#62748C;text-transform:uppercase;letter-spacing:.05em}
+.ov-k>b{font-size:21px;color:#0F2742;white-space:nowrap;line-height:1.25}.ov-k>b small{font-size:11px;color:#62748C;font-weight:700;margin-right:4px}
+.ov-k>small{font-size:11.5px;font-weight:600}.ov-k .sp{width:100%;height:34px;margin-top:6px}
+.ov-ats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:14px}
+.ov-at{display:flex;align-items:center;gap:10px;background:#F4F7FB;border:1px solid #E1E8F1;border-radius:12px;padding:10px 14px;font-size:12.5px;color:#475569;transition:transform .15s}
+.ov-at:hover{transform:translateY(-1px)}.ov-at b{font-size:19px;color:#0F2742;white-space:nowrap}.ov-at span{flex:1;min-width:0}.ov-at.warn{background:#FFF6EA;border-color:#F6D9A8}.ov-at.warn b{color:#B45309}
+.wr-three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.wr-grid.eq{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.wr-hd h3{display:flex;justify-content:space-between;align-items:center;gap:10px}.wr-stick{position:sticky;top:12px}
+.hb-r{display:grid;grid-template-columns:minmax(70px,32%) 1fr auto;gap:10px;align-items:center;font-size:12.5px;padding:6px 0}.hb-k{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#334155}
+.hb-t{height:10px;background:#EEF2F7;border-radius:6px;overflow:hidden}.hb-t i{display:block;height:100%;border-radius:6px;animation:aoGrow .6s ease both;transition:filter .15s}.hb-r:hover .hb-t i{filter:brightness(1.12)}.hb-r b{color:#0F2742;font-variant-numeric:tabular-nums}
+@keyframes aoGrow{from{width:0!important}}
+.rgs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:14px}
+.rg{background:#fff;border:1px solid #E1E8F1;border-radius:12px;padding:12px;display:flex;flex-direction:column;align-items:center;gap:4px;transition:transform .15s,box-shadow .15s}.rg:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(15,39,66,.09)}
+.rg svg{width:92px;height:92px}.rg text{font-size:17px;font-weight:800;fill:#0F2742}.rg span{font-size:12px;font-weight:700;color:#475569}.rg-a{animation:aoRing .9s ease both}
+@keyframes aoRing{from{stroke-dashoffset:213.63}}
+#ao-companies .aoc-act{display:flex;gap:8px;align-items:center}.aoc-badge{font-size:11.5px;font-weight:700;color:#166534;background:#DCFCE7;border-radius:999px;padding:4px 10px}
+.aoc-btn{font:inherit;font-weight:700;font-size:12px;padding:6px 12px;border-radius:8px;border:1px solid #1D4ED8;background:#1D4ED8;color:#fff;cursor:pointer;transition:transform .15s}.aoc-btn.ghost{background:#fff;color:#475569;border-color:#CBD5E1}.aoc-btn:hover{transform:translateY(-1px)}
+#ao-companies input{flex:1;min-width:0;padding:8px 10px;border:1px solid #CBD5E1;border-radius:8px;font:inherit}
+@media(max-width:1100px){.ov-kg,.ov-ats,.rgs{grid-template-columns:repeat(2,minmax(0,1fr))}.wr-three{grid-template-columns:1fr}.wr-grid.eq{grid-template-columns:1fr}.wr-stick{position:static}}
+@media(prefers-reduced-motion:reduce){.hb-t i,.rg-a,.ov-pop,.ptc-txn-tab-active{animation:none!important}}
+#ptc-root .rg svg text{font-size:17px;font-weight:800;fill:#0F2742}
+#ptc-card .ptc-grp-body.ptc-g3:has(#f-company){grid-template-columns:repeat(4,minmax(0,1fr))}
+@media(max-width:800px){#ptc-card .ptc-grp-body.ptc-g3:has(#f-company){grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style>
+<style id="aero-btn-system">
+/* AeroOps buttons: dark navy + cyan/teal. Variants: primary, secondary, success, warning, danger. */
+:root{--ab-navy:#0B2545;--ab-navy2:#13315C;--ab-cyan:#22D3EE;--ab-teal:#0E9AA7;--ab-line:#CBD5E1;--ab-ink:#0B2545;--ab-bg:#fff;
+ --ab-ok:#0F8F63;--ab-warn:#E0950B;--ab-bad:#C93A3A;--ab-glow:0 0 0 3px rgba(34,211,238,.20),0 6px 18px rgba(6,182,212,.30);--ab-t:200ms cubic-bezier(.2,.7,.3,1)}
+html[data-theme="dark"]{--ab-line:#2C4466;--ab-ink:#E6F1FB;--ab-bg:#12253F}
+.ao-btn,html #ptc-root .ptc-btn,html #ptc-root .wr-btn,html #pwi-root .pwi-btn,.aoc-btn{font:inherit;font-weight:700;font-size:12.5px;line-height:1.2;display:inline-flex;align-items:center;justify-content:center;gap:6px;
+ padding:9px 16px;border-radius:10px;border:1px solid var(--ab-line);cursor:pointer;text-decoration:none;
+ transition:background-color var(--ab-t),border-color var(--ab-t),box-shadow var(--ab-t),transform var(--ab-t),filter var(--ab-t),color var(--ab-t)}
+.ao-btn--sm{padding:6px 12px;font-size:12px;border-radius:8px}
+/* primary */
+.ao-btn--primary,html #ptc-root .ptc-btn-primary,html #ptc-root .wr-btn:not(.ghost):not(.danger),html #pwi-root .pwi-btn.pri,html .aoc-btn:not(.ghost){
+ background:linear-gradient(180deg,var(--ab-navy2),var(--ab-navy));border-color:#1E4A7A;color:#fff}
+/* secondary */
+.ao-btn--secondary,html #ptc-root .ptc-btn-ghost:not(.ptc-btn-active):not(.ptc-adj-active),html #ptc-root .wr-btn.ghost,html #pwi-root .pwi-btn:not(.pri):not(.danger),html .aoc-btn.ghost{
+ background:var(--ab-bg);border-color:var(--ab-line);color:var(--ab-ink)}
+/* success / warning / danger */
+.ao-btn--success{background:linear-gradient(180deg,#14A877,var(--ab-ok));border-color:#0B7350;color:#fff}
+.ao-btn--warning{background:linear-gradient(180deg,#F2A91F,var(--ab-warn));border-color:#B97806;color:#2B1B00}
+.ao-btn--danger,html #ptc-root .wr-btn.danger,html #pwi-root .pwi-btn.danger{background:linear-gradient(180deg,#DB4B4B,var(--ab-bad));border-color:#A62D2D;color:#fff}
+/* hover: brightness + 1-2px lift; cyan glow on primary only */
+.ao-btn:hover,html #ptc-root .ptc-btn:hover,html #ptc-root .wr-btn:hover,html #pwi-root .pwi-btn:hover,.aoc-btn:hover{filter:brightness(1.08);transform:translateY(-1px)}
+.ao-btn--primary:hover,html #ptc-root .ptc-btn-primary:hover,html #ptc-root .wr-btn:not(.ghost):not(.danger):hover,html #pwi-root .pwi-btn.pri:hover{box-shadow:var(--ab-glow);border-color:var(--ab-cyan)}
+.ao-btn--secondary:hover,html #ptc-root .ptc-btn-ghost:not(.ptc-btn-active):not(.ptc-adj-active):hover,html #ptc-root .wr-btn.ghost:hover,html #pwi-root .pwi-btn:not(.pri):not(.danger):hover{border-color:var(--ab-teal);background:var(--ab-bg);filter:brightness(1.03)}
+/* pressed */
+.ao-btn:active,html #ptc-root .ptc-btn:active,html #ptc-root .wr-btn:active,html #pwi-root .pwi-btn:active,.aoc-btn:active{transform:translateY(0);filter:brightness(.94);box-shadow:none;transition-duration:90ms}
+/* focus */
+.ao-btn:focus-visible,html #ptc-root .ptc-btn:focus-visible,html #ptc-root .wr-btn:focus-visible,html #pwi-root .pwi-btn:focus-visible,.aoc-btn:focus-visible{outline:2px solid var(--ab-cyan);outline-offset:2px}
+/* disabled */
+.ao-btn:disabled,.ao-btn[aria-disabled="true"],html #ptc-root .ptc-btn:disabled,html #ptc-root .wr-btn:disabled,html #pwi-root .pwi-btn:disabled{opacity:.5;cursor:not-allowed;transform:none;filter:none;box-shadow:none}
+/* dark mode: bright cyan primary on navy surfaces */
+html[data-theme="dark"] .ao-btn--primary,html[data-theme="dark"] #ptc-root .ptc-btn-primary,html[data-theme="dark"] #ptc-root .wr-btn:not(.ghost):not(.danger),html[data-theme="dark"] #pwi-root .pwi-btn.pri,html[data-theme="dark"] .aoc-btn:not(.ghost){background:linear-gradient(180deg,#38DDF2,#0FB5CB);border-color:#0FB5CB;color:#04202B}
+html[data-theme="dark"] .ao-btn--secondary,html[data-theme="dark"] #ptc-root .ptc-btn-ghost:not(.ptc-btn-active):not(.ptc-adj-active),html[data-theme="dark"] #ptc-root .wr-btn.ghost,html[data-theme="dark"] #pwi-root .pwi-btn:not(.pri):not(.danger){background:var(--ab-bg);color:var(--ab-ink)}
+@media (prefers-reduced-motion:reduce){.ao-btn,html #ptc-root .ptc-btn,html #ptc-root .wr-btn,html #pwi-root .pwi-btn,.aoc-btn{transition:none}.ao-btn:hover,html #ptc-root .ptc-btn:hover,html #ptc-root .wr-btn:hover,html #pwi-root .pwi-btn:hover,.aoc-btn:hover{transform:none}}
+/* Settings: Company & Workspace */
+#ao-ws .aow-cur{display:flex;flex-direction:column;gap:2px;padding:10px 14px;border-radius:12px;background:linear-gradient(135deg,#0B2545,#13466B);color:#E6F1FB;margin-bottom:10px}
+#ao-ws .aow-cur span{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#7FDDEB;font-weight:700}#ao-ws .aow-cur b{font-size:16px;color:#fff}
+#ao-ws h4{margin:12px 0 4px;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#62748C}
+#ao-ws .aow-row{align-items:center}#ao-ws .aow-row.is-active{background:rgba(14,154,167,.07);border-radius:10px;padding-left:10px;padding-right:10px}
+#ao-ws .aow-name{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1}#ao-ws .aow-name span{font-size:12px;color:#62748C}#ao-ws .aow-name i{font-size:11px;color:#B45309}
+#ao-ws .aow-act{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+#ao-ws .aow-badge{font-size:11.5px;font-weight:700;color:#0B5F69;background:#D6F5F9;border-radius:999px;padding:4px 10px}
+#ao-ws .aow-in{padding:8px 10px;border:1px solid var(--ab-line);border-radius:8px;font:inherit;background:var(--ab-bg);color:var(--ab-ink);min-width:0}
+#ao-ws .aow-add{gap:8px;flex-wrap:wrap}#ao-ws .aow-add input{flex:1;min-width:180px}
+#ao-ws .aow-in:focus-visible{outline:2px solid var(--ab-cyan);outline-offset:1px}
+#ao-ws .aow-msg{min-height:18px;font-size:12.5px;color:#B42318;margin-top:6px}#ao-ws .aow-msg.ok{color:#0F7A55}
+html[data-theme="dark"] #ao-ws .aow-badge{background:#0F3B47;color:#7FDDEB}
+</style>
+<script id="aero-ws-ui">
+/* Settings -> Company & Workspace. The only place where the company can be switched. */
+(function(){
+var W=window.aeroWs;if(!W)return;var editing=null,msg='';
+function esc(t){return String(t==null?'':t).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function row(w,c,a){var n=c[w.id]||{tickets:0,sales:0,work:0},isA=w.id===a.id;
+ var nm=editing===w.id?'<input class="aow-in" id="aow-edit" maxlength="80" value="'+esc(w.name)+'" aria-label="Company name">':'<b>'+esc(w.name)+'</b>'+(w.placeholder?' <i>(name not yet synced)</i>':'');
+ var meta='<span>'+(w.kind==='personal'?'Personal business':'Employer')+' \u00b7 '+n.tickets+' tickets \u00b7 '+n.sales+' sales \u00b7 '+n.work+' work records</span>';
+ var act;if(editing===w.id)act='<button type="button" class="ao-btn ao-btn--primary ao-btn--sm" data-a="save" data-id="'+w.id+'">Save</button><button type="button" class="ao-btn ao-btn--secondary ao-btn--sm" data-a="cancel">Cancel</button>';
+ else if(w.archived)act='<button type="button" class="ao-btn ao-btn--success ao-btn--sm" data-a="restore" data-id="'+w.id+'">Restore</button>';
+ else act=(isA?'<span class="aow-badge">Active</span>':'<button type="button" class="ao-btn ao-btn--primary ao-btn--sm" data-a="switch" data-id="'+w.id+'">Switch</button>')
+  +'<button type="button" class="ao-btn ao-btn--secondary ao-btn--sm" data-a="edit" data-id="'+w.id+'">Edit</button>'
+  +((isA||w.id===W.DEFAULT_ID)?'':'<button type="button" class="ao-btn ao-btn--warning ao-btn--sm" data-a="archive" data-id="'+w.id+'">Archive</button>');
+ return'<div class="aset-row aow-row'+(isA?' is-active':'')+'"><div class="aow-name">'+nm+meta+'</div><div class="aow-act">'+act+'</div></div>'}
+function draw(){var box=document.getElementById('ao-ws');if(!box)return;var a=W.active(),c=W.counts(),ar=W.list(true);
+ box.querySelector('#aow-active').textContent=a.name;
+ box.querySelector('#aow-list').innerHTML=W.list().map(function(w){return row(w,c,a)}).join('');
+ box.querySelector('#aow-arch').innerHTML=ar.length?'<h4>Archived</h4>'+ar.map(function(w){return row(w,c,a)}).join(''):'';
+ var m=box.querySelector('#aow-msg');m.textContent=msg;m.className='aow-msg'+(msg&&/^\u2713/.test(msg)?' ok':'');
+ var e=document.getElementById('aow-edit');if(e){e.focus();e.select()}}
+function build(){var s=document.getElementById('aero-settings');if(!s||document.getElementById('ao-ws'))return;
+ var d=document.createElement('div');d.id='ao-ws';d.className='aset-card';
+ d.innerHTML='<h3>Company &amp; Workspace</h3><div class="aow-cur"><span>Active company</span><b id="aow-active"></b></div>'
+ +'<p class="aset-note">Switching only changes which records you see and where new records are saved. Nothing is deleted, moved or overwritten. JF (Bangladesh) Limited and Finlay Travels are one workspace; add a company here only if it is genuinely separate.</p>'
+ +'<h4>Switch Company</h4><div id="aow-list"></div><div id="aow-arch"></div>'
+ +'<div class="aset-row aow-add"><input class="aow-in" id="aow-new" maxlength="80" placeholder="Add a company workspace" aria-label="New company name"><select class="aow-in" id="aow-kind" aria-label="Type"><option value="employer">Employer</option><option value="personal">Personal business</option></select><button type="button" class="ao-btn ao-btn--primary" data-a="add">Add company</button></div><div id="aow-msg" class="aow-msg" role="status" aria-live="polite"></div>';
+ var h=s.querySelector('.aset-head');s.insertBefore(d,h?h.nextSibling:s.firstChild);draw();
+ d.addEventListener('click',function(ev){var b=ev.target.closest('[data-a]');if(!b)return;var k=b.dataset.a,id=b.dataset.id,r;msg='';
+  if(k==='switch'){if(W.switchTo(id))msg='\u2713 Switched to '+W.active().name+'.'}
+  else if(k==='edit')editing=id;else if(k==='cancel')editing=null;
+  else if(k==='save'){r=W.rename(id,document.getElementById('aow-edit').value);if(r.err)msg=r.err;else{editing=null;msg='\u2713 Name updated.'}}
+  else if(k==='archive'){r=W.archive(id);msg=r.err||'\u2713 Archived. Its records are kept and can be restored.'}
+  else if(k==='restore'){r=W.restore(id);msg=r.err||'\u2713 Restored.'}
+  else if(k==='add'){var i=document.getElementById('aow-new');r=W.add(i.value,document.getElementById('aow-kind').value);if(r.err)msg=r.err;else{i.value='';msg='\u2713 Added '+r.ws.name+'. Use Switch to open it.'}}
+  draw()});
+ d.addEventListener('keydown',function(ev){if(ev.key==='Enter'&&ev.target.id==='aow-new'){ev.preventDefault();d.querySelector('[data-a=add]').click()}
+  else if(ev.key==='Enter'&&ev.target.id==='aow-edit'){ev.preventDefault();d.querySelector('[data-a=save]').click()}
+  else if(ev.key==='Escape'&&editing){editing=null;draw()}})}
+function init(){build();draw()}
+W.onChange(draw);W.onRegistry(draw);
+var root=document.getElementById('ptc-root');if(root&&window.MutationObserver)new MutationObserver(draw).observe(root,{attributes:true,attributeFilter:['class']});
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
+</script>
 </body></html>
