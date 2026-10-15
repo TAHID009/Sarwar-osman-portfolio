@@ -12274,7 +12274,7 @@ function lines(bs){var m=Math.max.apply(null,bs.map(function(b){return Math.max.
 function donut(s){var tot=s.n;if(!tot)return EMPTY;var Rr=46,C=2*Math.PI*Rr,off=0,a='';TY.forEach(function(t){var v=s.by[t];if(!v)return;var len=C*v/tot;a+='<circle r="'+Rr+'" cx="70" cy="70" fill="none" stroke="'+TC[t]+'" stroke-width="20" stroke-dasharray="'+len+' '+(C-len)+'" stroke-dashoffset="'+(-off)+'" transform="rotate(-90 70 70)"><title>'+t+': '+v+'</title></circle>';off+=len});
  return'<div style="display:flex;gap:18px;align-items:center;flex-wrap:wrap"><svg viewBox="0 0 140 140" style="width:150px"><circle r="46" cx="70" cy="70" fill="none" stroke="#EEF2F7" stroke-width="20"/>'+a+'<text x="70" y="68" text-anchor="middle" style="font-size:22px;font-weight:800;fill:#0F2742">'+tot+'</text><text x="70" y="84" text-anchor="middle">Total</text></svg><div class="wr-ps" style="flex:1;min-width:150px">'+TY.map(function(t){return'<div><span><i style="display:inline-block;width:9px;height:9px;border-radius:50%;background:'+TC[t]+';margin-right:6px"></i>'+t+'</span><b>'+s.by[t]+' ('+Math.round(s.by[t]*100/tot)+'%)</b></div>'}).join('')+'</div></div>'}
 /* ---- tables ---- */
-var DS={tab:'recent',q:'',type:'',st:'',limit:10};
+var DS={tab:'recent',q:'',type:'',st:'',limit:10,view:'timeline'};try{var _lv=localStorage.getItem('aeroops.lbview');if(_lv==='table'||_lv==='timeline')DS.view=_lv}catch(x){}
 function amt(e){if(e.txn==='Void')return'—';var v=val(e);return e.txn==='Refund'?'-'+fm(Math.abs(v)):fm(v)}
 function tkCell(e){var t=tkts(e);return t.length?esc(t[0])+(t.length>1?' <small>+'+(t.length-1)+'</small>':''):'—'}
 function pxCell(e){var n=names(e);return n.length?esc(n[0])+(n.length>1?' <small>+'+(n.length-1)+'</small>':''):'—'}
@@ -12288,36 +12288,24 @@ function rangeCtl(pfx){return'<div class="wr-ctl"><select data-act="range" aria-
 function periodLabel(){var s=span();return s.from||s.to?fmtD(s.from||'')+(s.to?' – '+fmtD(s.to):''):'All time'}
 /* ---- Work Record dashboard ---- */
 var dash=document.createElement('div');dash.id='wr-dash';dash.className='wr';body.insertBefore(dash,body.firstChild);
-function recentBlock(l){var f=filt(sorted(l),DS);return recTable(f,{limit:DS.limit})}
-/* Log Book card: a day-grouped timeline of the latest records with type chips, search, a needs-action filter,
-   copy-PNR and show-more. Rows open the existing Record Details; "Open full log" goes to the full Log Book. */
-var LBK_IC={Ticketing:'\u2708',Reissue:'\u27F3',Refund:'\u21BA',Void:'\u2298'},LBK={type:'',q:'',pend:false,limit:6};
+function recentBlock(l){var f=filt(sorted(l),DS);return DS.view==='table'?recTable(f,{limit:DS.limit}):lbkTimeline(f,DS.limit)}
+/* Log Book: one list for Work Record, shown as a day-grouped Timeline or as the dense Table (switch in the card header).
+   Both views use the same period + search/type/status filters. Rows open the existing Record Details. */
+var LBK_IC={Ticketing:'\u2708',Reissue:'\u27F3',Refund:'\u21BA',Void:'\u2298'};
 var LBK_CP='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg>';
-function lbkAll(){return sorted(rows({from:'',to:''}))}
 function lbkPend(e){var t=status(e);return t==='Pending Adj.'||t==='Refund Pending'}
-function lbkFilter(all){var q=LBK.q.trim().toUpperCase();return all.filter(function(r){var e=r.e;if(LBK.type&&e.txn!==LBK.type)return false;if(LBK.pend&&!lbkPend(e))return false;
- if(q){var h=[e.pnrGds,e.pnrAirline,e.pname,e.newTkt,e.oldTkt,e.sector].join(' ').toUpperCase();if(h.indexOf(q)<0)return false}return true})}
 function lbkDay(ds){var t=new Date();if(ds===iso(t))return'Today';if(ds===iso(addD(t,-1)))return'Yesterday';var d=pd(ds);return isNaN(d)?(ds||'No date'):d.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'})}
-function lbkChips(all){var c={Ticketing:0,Reissue:0,Refund:0,Void:0},n=0;all.forEach(function(r){if(c[r.e.txn]!==undefined)c[r.e.txn]++;if(lbkPend(r.e))n++});
- return'<button type="button" class="lbk-chip'+(!LBK.type?' on':'')+'" data-act="lbtype" data-v="">All <b>'+all.length+'</b></button>'
-  +TY.map(function(t){return'<button type="button" class="lbk-chip'+(LBK.type===t?' on':'')+'" data-act="lbtype" data-v="'+t+'" style="--c:'+TC[t]+'" title="'+t+'"><i>'+LBK_IC[t]+'</i> <b>'+c[t]+'</b></button>'}).join('')
-  +(n?'<button type="button" class="lbk-chip lbk-warn'+(LBK.pend?' on':'')+'" data-act="lbpend" title="Refunds waiting for an adjustment or the airline">\u26A0 Needs action <b>'+n+'</b></button>':'')}
 function lbkRow(r){var e=r.e,n=names(e),st=status(e),w=lbkPend(e),tm=e.createdAt?new Date(e.createdAt):null,t=tm&&!isNaN(tm)?tm.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}):'';
  return'<div class="lbk-row'+(w?' warn':'')+'" role="button" tabindex="0" data-act="open" data-i="'+r.i+'" title="'+esc(e.txn+' \u00b7 '+st)+'"><span class="lbk-ic" style="--c:'+(TC[e.txn]||'#475569')+'">'+(LBK_IC[e.txn]||'\u2022')+'</span>'
   +'<span class="lbk-m"><b>'+(n.length?esc(n[0])+(n.length>1?' <u>+'+(n.length-1)+'</u>':''):'\u2014')+'</b><small><span class="mono">'+esc(e.pnrGds||'\u2014')+'</span>'+(e.sector?' \u00b7 '+esc(e.sector):'')+(t?' \u00b7 '+t:'')+'</small></span>'
+  +'<span class="lbk-tk mono">'+tkCell(e)+'</span>'
   +(e.pnrGds?'<button type="button" class="lbk-cp" data-act="lbcopy" data-pnr="'+esc(e.pnrGds)+'" aria-label="Copy PNR" title="Copy PNR">'+LBK_CP+'</button>':'')
   +'<span class="lbk-r"><b>'+amt(e)+'</b><small style="color:'+(SC[st]||'#64748B')+'">'+(w?'\u26A0 ':'')+esc(st)+'</small></span></div>'}
-function lbkBody(all){var f=lbkFilter(all);
- if(!f.length)return'<div class="lbk-none">'+(all.length?'No records match. <button type="button" class="lbk-all" data-act="lbclear">Clear filters</button>':'No records yet')+'</div>';
+function lbkTimeline(f,limit){if(!f.length)return EMPTY;
  var st={};f.forEach(function(r){var k=r.e.date||'',x=st[k]||(st[k]={n:0,net:0}),v=val(r.e);x.n++;x.net+=r.e.txn==='Refund'?-Math.abs(v):v});
- var shown=f.slice(0,LBK.limit),last=null,h='<div class="lbk-tl">';
+ var shown=f.slice(0,limit),last=null,h='<div class="lbk-list"><div class="lbk-tl">';
  shown.forEach(function(r){var k=r.e.date||'';if(k!==last){last=k;h+='<div class="lbk-day"><span>'+esc(lbkDay(k))+'</span><em>'+st[k].n+(st[k].n===1?' record':' records')+' \u00b7 '+fm(st[k].net)+'</em></div>'}h+=lbkRow(r)});
- h+='</div>';if(f.length>shown.length)h+='<button type="button" class="lbk-more" data-act="lbmore">Show '+Math.min(8,f.length-shown.length)+' more <span>('+(f.length-shown.length)+' left)</span></button>';return h}
-function logBookCard(){var all=lbkAll();
- return'<div class="wr-card lbk" id="wr-lbk"><div class="lbk-head"><h3>Log Book <span class="lbk-n">'+all.length+'</span></h3><button type="button" class="lbk-all" data-act="lbfull">Open full log \u2192</button></div>'
-  +'<input class="lbk-q" id="lbk-q" type="search" placeholder="Find PNR, ticket or name" value="'+esc(LBK.q)+'" aria-label="Search Log Book">'
-  +'<div class="lbk-chips" id="lbk-chips">'+lbkChips(all)+'</div><div class="lbk-list" id="lbk-body">'+lbkBody(all)+'</div></div>'}
-function lbkRefresh(){var a=lbkAll(),c=dash.querySelector('#lbk-chips'),b=dash.querySelector('#lbk-body');if(c)c.innerHTML=lbkChips(a);if(b)b.innerHTML=lbkBody(a)}
+ h+='</div></div>';if(f.length>shown.length)h+='<div style="text-align:center;margin-top:10px"><button type="button" class="lbk-more" data-act="more">Show more <span>('+(f.length-shown.length)+' left)</span></button></div>';return h}
 function lbkCopy(b){var t=b.dataset.pnr||'',ok=function(){b.innerHTML='\u2713';b.classList.add('ok');setTimeout(function(){b.innerHTML=LBK_CP;b.classList.remove('ok')},1200)};
  var fb=function(){var a=document.createElement('textarea');a.value=t;a.style.cssText='position:fixed;opacity:0';document.body.appendChild(a);a.select();try{document.execCommand('copy')}catch(x){}a.remove();ok()};
  try{navigator.clipboard.writeText(t).then(ok,fb)}catch(x){fb()}}
@@ -12325,7 +12313,7 @@ function renderDash(partial){var s=span(),l=rows(s),ps=prevSpan(),pl=ps?rows(ps)
  if(partial==='table'){var tb=dash.querySelector('#wr-rec');if(tb){tb.innerHTML=recentBlock(l);return}}
  var filters='<div class="wr-filters"><input id="wr-q" type="search" placeholder="Search PNR, ticket number or passenger" value="'+esc(DS.q)+'" aria-label="Search records"><select data-act="type" aria-label="Type"><option value="">All types</option>'+TY.map(function(t){return'<option'+(DS.type===t?' selected':'')+'>'+t+'</option>'}).join('')+'</select><select data-act="st" aria-label="Status"><option value="">All status</option>'+Object.keys(SC).map(function(t){return'<option'+(DS.st===t?' selected':'')+'>'+t+'</option>'}).join('')+'</select></div><div id="wr-rec">'+recentBlock(l)+'</div>';
  dash.innerHTML='<div class="wr-top"><div><h2>Work Record</h2><p class="wr-sub">'+esc(coLabel())+' · <b>'+esc(periodLabel())+'</b></p></div><div class="wr-ctl">'+coSelect()+rangeCtl()+'<button type="button" class="wr-btn" data-act="new">+ New Record</button></div></div>'
-  +kpis(l,pl,'wr')+'<div class="wr-grid dg"><div class="wr-card"><h3>Recent records</h3>'+filters+'</div><div class="wr-side">'+logBookCard()+'<div class="wr-card"><h3>Activity track</h3>'+stacked(bucketCounts(l))+legend()+'</div>'+wrSide(l)+'</div></div>'}
+  +kpis(l,pl,'wr')+'<div class="wr-grid dg"><div class="wr-card"><div class="lbk-head"><h3>Log Book</h3><div class="lbk-tools"><div class="lbk-seg" role="group" aria-label="Log Book view"><button type="button" data-act="lbview" data-v="timeline" class="'+(DS.view==='table'?'':'on')+'">Timeline</button><button type="button" data-act="lbview" data-v="table" class="'+(DS.view==='table'?'on':'')+'">Table</button></div><button type="button" class="lbk-all" data-act="lbfull">Open full log \u2192</button></div></div>'+filters+'</div><div class="wr-side"><div class="wr-card"><h3>Activity track</h3>'+stacked(bucketCounts(l))+legend()+'</div>'+wrSide(l)+'</div></div>'}
 /* ---- New Record modal ---- */
 var bd=document.createElement('div');bd.id='wr-backdrop';root.appendChild(bd);
 var bar=document.createElement('div');bar.className='wr-form-bar';bar.innerHTML='<div><b id="wr-form-title">New Work Record</b><span>Pick a type, then fill in the details</span></div><button type="button" id="wr-form-x" aria-label="Close form">×</button>';card.insertBefore(bar,card.firstChild);
@@ -12509,12 +12497,11 @@ function onAct(ev){var a=ev.target.closest&&ev.target.closest('[data-act]');if(!
  else if(k==='new'){if(card.classList.contains('ptc-editing')){var c=$('btn-cancel-edit');if(c)c.click()}openForm()}
  else if(k==='tab'){DS.tab=a.dataset.v;renderDash()}else if(k==='type'){DS.type=v;DS.limit=10;renderDash('table')}else if(k==='st'){DS.st=v;DS.limit=10;renderDash('table')}
  else if(k==='more'){DS.limit+=20;renderDash('table')}else if(k==='lbfull'){if(window.ptcSetPane)window.ptcSetPane('entrylog')}
- else if(k==='lbtype'){LBK.type=LBK.type===a.dataset.v?'':a.dataset.v;LBK.limit=6;lbkRefresh()}else if(k==='lbpend'){LBK.pend=!LBK.pend;LBK.limit=6;lbkRefresh()}
- else if(k==='lbmore'){LBK.limit+=8;lbkRefresh()}else if(k==='lbcopy'){lbkCopy(a)}else if(k==='lbclear'){LBK.type='';LBK.q='';LBK.pend=false;LBK.limit=6;renderDash()}else if(k==='open')openDetail(+a.dataset.i)
+ else if(k==='lbview'){DS.view=a.dataset.v==='table'?'table':'timeline';try{localStorage.setItem('aeroops.lbview',DS.view)}catch(x){}renderDash()}else if(k==='lbcopy'){lbkCopy(a)}else if(k==='open')openDetail(+a.dataset.i)
  else if(k==='itab'){IS.tab=a.dataset.v;renderIntel()}else if(k==='igr'){IS.gr=a.dataset.v;renderIntel()}else if(k==='igo'){R.key='all';DS.tab='recent';DS.st=a.dataset.v;DS.type='';DS.q='';DS.limit=10;var wb=document.querySelector('#ptc-nav .ao-nav[data-ao="wr"]');if(wb)wb.click();renderAll()}else if(k==='co'){try{localStorage.setItem(FK,v)}catch(x){}renderAll()}
  else if(k==='export'){exportCsv(rows(span()).sort(function(a,b){return(a.e.date||'').localeCompare(b.e.date||'')}))}}
 [dash,intel].forEach(function(n){n.addEventListener('click',function(e){var t=e.target.closest('[data-act]');if(t&&t.tagName==='SELECT'||t&&t.tagName==='INPUT')return;onAct(e)});n.addEventListener('change',function(e){var t=e.target;if(t.tagName==='SELECT'||t.type==='date')onAct(e)})});
-dash.addEventListener('input',function(e){if(e.target.id==='wr-q'){DS.q=e.target.value;DS.limit=10;renderDash('table')}else if(e.target.id==='lbk-q'){LBK.q=e.target.value;LBK.limit=6;lbkRefresh()}});
+dash.addEventListener('input',function(e){if(e.target.id==='wr-q'){DS.q=e.target.value;DS.limit=10;renderDash('table')}});
 dash.addEventListener('keydown',function(e){var t=e.target;if((e.key==='Enter'||e.key===' ')&&t.classList&&t.classList.contains('lbk-row')){e.preventDefault();openDetail(+t.dataset.i)}});
 intel.addEventListener('input',function(e){if(e.target.id==='wr-iq'){IS.q=e.target.value;var s=span(),f=filt(sorted(rows(s)),IS);$('wr-irec').innerHTML=recTable(f)}});
 intel.addEventListener('click',function(e){var b=e.target.closest('[data-act="open"]');if(b)openDetail(+b.dataset.i)});
@@ -13517,5 +13504,14 @@ html #cloud-auth-modal-backdrop .aero-auth-footer{
 .lbk-none{padding:22px 8px;text-align:center;color:#64748B;font-size:13px}
 @media(max-width:1100px){.lbk-list{max-height:none}}
 @media(prefers-reduced-motion:reduce){.lbk-cp,.lbk-row,.lbk-chip{transition:none}}
+.lbk-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.lbk-seg{display:inline-flex;background:#EEF2F7;border-radius:9px;padding:3px}
+.lbk-seg button{font:inherit;font-size:12px;font-weight:650;border:0;background:none;padding:4px 12px;border-radius:7px;cursor:pointer;color:#64748B}
+.lbk-seg button.on{background:#fff;color:#0F172A;box-shadow:0 1px 2px rgba(0,0,0,.1)}
+.lbk-tk{flex:none;font-size:11.5px;color:#64748B;white-space:nowrap;width:11em;text-align:left}
+.lbk-r{flex:none;width:96px}
+@media(max-width:700px){.lbk-tk{display:none}}
+.lbk-list{max-height:none !important}
+.lbk-row{padding-right:10px}
 </style>
 </body></html>
