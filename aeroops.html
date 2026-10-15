@@ -12289,15 +12289,38 @@ function periodLabel(){var s=span();return s.from||s.to?fmtD(s.from||'')+(s.to?'
 /* ---- Work Record dashboard ---- */
 var dash=document.createElement('div');dash.id='wr-dash';dash.className='wr';body.insertBefore(dash,body.firstChild);
 function recentBlock(l){var f=filt(sorted(l),DS);return recTable(f,{limit:DS.limit})}
-/* Short Log Book card: the latest records across all dates (company filter respected). Rows open the existing Record Details. */
-var LBK_IC={Ticketing:'\u2708',Reissue:'\u27F3',Refund:'\u21BA',Void:'\u2298'};
-function logBookCard(){var all=sorted(rows({from:'',to:''})),top=all.slice(0,6);
- var h='<div class="wr-card lbk"><div class="lbk-head"><h3>Log Book <span class="lbk-n">'+all.length+'</span></h3><button type="button" class="lbk-all" data-act="lbfull">View all \u2192</button></div>';
- if(!top.length)return h+'<div class="wr-empty">No records yet</div></div>';
- return h+'<div class="lbk-list">'+top.map(function(r){var e=r.e,n=names(e),st=status(e),d=fmtD(e.date).replace(/ \d{4}$/,'');
-  return'<button type="button" class="lbk-row" data-act="open" data-i="'+r.i+'" title="'+esc(e.txn+' \u00b7 '+st+' \u00b7 '+d)+'"><span class="lbk-ic" style="--c:'+(TC[e.txn]||'#475569')+'">'+(LBK_IC[e.txn]||'\u2022')+'</span>'
-   +'<span class="lbk-m"><b>'+(n.length?esc(n[0])+(n.length>1?' +'+(n.length-1):''):'\u2014')+'</b><small><span class="mono">'+esc(e.pnrGds||'\u2014')+'</span>'+(e.sector?' \u00b7 '+esc(e.sector):'')+'</small></span>'
-   +'<span class="lbk-r"><b>'+amt(e)+'</b><small style="color:'+(SC[st]||'#64748B')+'">'+esc(st)+'</small></span></button>'}).join('')+'</div></div>'}
+/* Log Book card: a day-grouped timeline of the latest records with type chips, search, a needs-action filter,
+   copy-PNR and show-more. Rows open the existing Record Details; "Open full log" goes to the full Log Book. */
+var LBK_IC={Ticketing:'\u2708',Reissue:'\u27F3',Refund:'\u21BA',Void:'\u2298'},LBK={type:'',q:'',pend:false,limit:6};
+var LBK_CP='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg>';
+function lbkAll(){return sorted(rows({from:'',to:''}))}
+function lbkPend(e){var t=status(e);return t==='Pending Adj.'||t==='Refund Pending'}
+function lbkFilter(all){var q=LBK.q.trim().toUpperCase();return all.filter(function(r){var e=r.e;if(LBK.type&&e.txn!==LBK.type)return false;if(LBK.pend&&!lbkPend(e))return false;
+ if(q){var h=[e.pnrGds,e.pnrAirline,e.pname,e.newTkt,e.oldTkt,e.sector].join(' ').toUpperCase();if(h.indexOf(q)<0)return false}return true})}
+function lbkDay(ds){var t=new Date();if(ds===iso(t))return'Today';if(ds===iso(addD(t,-1)))return'Yesterday';var d=pd(ds);return isNaN(d)?(ds||'No date'):d.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'})}
+function lbkChips(all){var c={Ticketing:0,Reissue:0,Refund:0,Void:0},n=0;all.forEach(function(r){if(c[r.e.txn]!==undefined)c[r.e.txn]++;if(lbkPend(r.e))n++});
+ return'<button type="button" class="lbk-chip'+(!LBK.type?' on':'')+'" data-act="lbtype" data-v="">All <b>'+all.length+'</b></button>'
+  +TY.map(function(t){return'<button type="button" class="lbk-chip'+(LBK.type===t?' on':'')+'" data-act="lbtype" data-v="'+t+'" style="--c:'+TC[t]+'" title="'+t+'"><i>'+LBK_IC[t]+'</i> <b>'+c[t]+'</b></button>'}).join('')
+  +(n?'<button type="button" class="lbk-chip lbk-warn'+(LBK.pend?' on':'')+'" data-act="lbpend" title="Refunds waiting for an adjustment or the airline">\u26A0 Needs action <b>'+n+'</b></button>':'')}
+function lbkRow(r){var e=r.e,n=names(e),st=status(e),w=lbkPend(e),tm=e.createdAt?new Date(e.createdAt):null,t=tm&&!isNaN(tm)?tm.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}):'';
+ return'<div class="lbk-row'+(w?' warn':'')+'" role="button" tabindex="0" data-act="open" data-i="'+r.i+'" title="'+esc(e.txn+' \u00b7 '+st)+'"><span class="lbk-ic" style="--c:'+(TC[e.txn]||'#475569')+'">'+(LBK_IC[e.txn]||'\u2022')+'</span>'
+  +'<span class="lbk-m"><b>'+(n.length?esc(n[0])+(n.length>1?' <u>+'+(n.length-1)+'</u>':''):'\u2014')+'</b><small><span class="mono">'+esc(e.pnrGds||'\u2014')+'</span>'+(e.sector?' \u00b7 '+esc(e.sector):'')+(t?' \u00b7 '+t:'')+'</small></span>'
+  +(e.pnrGds?'<button type="button" class="lbk-cp" data-act="lbcopy" data-pnr="'+esc(e.pnrGds)+'" aria-label="Copy PNR" title="Copy PNR">'+LBK_CP+'</button>':'')
+  +'<span class="lbk-r"><b>'+amt(e)+'</b><small style="color:'+(SC[st]||'#64748B')+'">'+(w?'\u26A0 ':'')+esc(st)+'</small></span></div>'}
+function lbkBody(all){var f=lbkFilter(all);
+ if(!f.length)return'<div class="lbk-none">'+(all.length?'No records match. <button type="button" class="lbk-all" data-act="lbclear">Clear filters</button>':'No records yet')+'</div>';
+ var st={};f.forEach(function(r){var k=r.e.date||'',x=st[k]||(st[k]={n:0,net:0}),v=val(r.e);x.n++;x.net+=r.e.txn==='Refund'?-Math.abs(v):v});
+ var shown=f.slice(0,LBK.limit),last=null,h='<div class="lbk-tl">';
+ shown.forEach(function(r){var k=r.e.date||'';if(k!==last){last=k;h+='<div class="lbk-day"><span>'+esc(lbkDay(k))+'</span><em>'+st[k].n+(st[k].n===1?' record':' records')+' \u00b7 '+fm(st[k].net)+'</em></div>'}h+=lbkRow(r)});
+ h+='</div>';if(f.length>shown.length)h+='<button type="button" class="lbk-more" data-act="lbmore">Show '+Math.min(8,f.length-shown.length)+' more <span>('+(f.length-shown.length)+' left)</span></button>';return h}
+function logBookCard(){var all=lbkAll();
+ return'<div class="wr-card lbk" id="wr-lbk"><div class="lbk-head"><h3>Log Book <span class="lbk-n">'+all.length+'</span></h3><button type="button" class="lbk-all" data-act="lbfull">Open full log \u2192</button></div>'
+  +'<input class="lbk-q" id="lbk-q" type="search" placeholder="Find PNR, ticket or name" value="'+esc(LBK.q)+'" aria-label="Search Log Book">'
+  +'<div class="lbk-chips" id="lbk-chips">'+lbkChips(all)+'</div><div class="lbk-list" id="lbk-body">'+lbkBody(all)+'</div></div>'}
+function lbkRefresh(){var a=lbkAll(),c=dash.querySelector('#lbk-chips'),b=dash.querySelector('#lbk-body');if(c)c.innerHTML=lbkChips(a);if(b)b.innerHTML=lbkBody(a)}
+function lbkCopy(b){var t=b.dataset.pnr||'',ok=function(){b.innerHTML='\u2713';b.classList.add('ok');setTimeout(function(){b.innerHTML=LBK_CP;b.classList.remove('ok')},1200)};
+ var fb=function(){var a=document.createElement('textarea');a.value=t;a.style.cssText='position:fixed;opacity:0';document.body.appendChild(a);a.select();try{document.execCommand('copy')}catch(x){}a.remove();ok()};
+ try{navigator.clipboard.writeText(t).then(ok,fb)}catch(x){fb()}}
 function renderDash(partial){var s=span(),l=rows(s),ps=prevSpan(),pl=ps?rows(ps):null;
  if(partial==='table'){var tb=dash.querySelector('#wr-rec');if(tb){tb.innerHTML=recentBlock(l);return}}
  var filters='<div class="wr-filters"><input id="wr-q" type="search" placeholder="Search PNR, ticket number or passenger" value="'+esc(DS.q)+'" aria-label="Search records"><select data-act="type" aria-label="Type"><option value="">All types</option>'+TY.map(function(t){return'<option'+(DS.type===t?' selected':'')+'>'+t+'</option>'}).join('')+'</select><select data-act="st" aria-label="Status"><option value="">All status</option>'+Object.keys(SC).map(function(t){return'<option'+(DS.st===t?' selected':'')+'>'+t+'</option>'}).join('')+'</select></div><div id="wr-rec">'+recentBlock(l)+'</div>';
@@ -12485,11 +12508,14 @@ function onAct(ev){var a=ev.target.closest&&ev.target.closest('[data-act]');if(!
  else if(k==='from'){R.from=v;renderAll()}else if(k==='to'){R.to=v;renderAll()}
  else if(k==='new'){if(card.classList.contains('ptc-editing')){var c=$('btn-cancel-edit');if(c)c.click()}openForm()}
  else if(k==='tab'){DS.tab=a.dataset.v;renderDash()}else if(k==='type'){DS.type=v;DS.limit=10;renderDash('table')}else if(k==='st'){DS.st=v;DS.limit=10;renderDash('table')}
- else if(k==='more'){DS.limit+=20;renderDash('table')}else if(k==='lbfull'){if(window.ptcSetPane)window.ptcSetPane('entrylog')}else if(k==='open')openDetail(+a.dataset.i)
+ else if(k==='more'){DS.limit+=20;renderDash('table')}else if(k==='lbfull'){if(window.ptcSetPane)window.ptcSetPane('entrylog')}
+ else if(k==='lbtype'){LBK.type=LBK.type===a.dataset.v?'':a.dataset.v;LBK.limit=6;lbkRefresh()}else if(k==='lbpend'){LBK.pend=!LBK.pend;LBK.limit=6;lbkRefresh()}
+ else if(k==='lbmore'){LBK.limit+=8;lbkRefresh()}else if(k==='lbcopy'){lbkCopy(a)}else if(k==='lbclear'){LBK.type='';LBK.q='';LBK.pend=false;LBK.limit=6;renderDash()}else if(k==='open')openDetail(+a.dataset.i)
  else if(k==='itab'){IS.tab=a.dataset.v;renderIntel()}else if(k==='igr'){IS.gr=a.dataset.v;renderIntel()}else if(k==='igo'){R.key='all';DS.tab='recent';DS.st=a.dataset.v;DS.type='';DS.q='';DS.limit=10;var wb=document.querySelector('#ptc-nav .ao-nav[data-ao="wr"]');if(wb)wb.click();renderAll()}else if(k==='co'){try{localStorage.setItem(FK,v)}catch(x){}renderAll()}
  else if(k==='export'){exportCsv(rows(span()).sort(function(a,b){return(a.e.date||'').localeCompare(b.e.date||'')}))}}
 [dash,intel].forEach(function(n){n.addEventListener('click',function(e){var t=e.target.closest('[data-act]');if(t&&t.tagName==='SELECT'||t&&t.tagName==='INPUT')return;onAct(e)});n.addEventListener('change',function(e){var t=e.target;if(t.tagName==='SELECT'||t.type==='date')onAct(e)})});
-dash.addEventListener('input',function(e){if(e.target.id==='wr-q'){DS.q=e.target.value;DS.limit=10;renderDash('table')}});
+dash.addEventListener('input',function(e){if(e.target.id==='wr-q'){DS.q=e.target.value;DS.limit=10;renderDash('table')}else if(e.target.id==='lbk-q'){LBK.q=e.target.value;LBK.limit=6;lbkRefresh()}});
+dash.addEventListener('keydown',function(e){var t=e.target;if((e.key==='Enter'||e.key===' ')&&t.classList&&t.classList.contains('lbk-row')){e.preventDefault();openDetail(+t.dataset.i)}});
 intel.addEventListener('input',function(e){if(e.target.id==='wr-iq'){IS.q=e.target.value;var s=span(),f=filt(sorted(rows(s)),IS);$('wr-irec').innerHTML=recTable(f)}});
 intel.addEventListener('click',function(e){var b=e.target.closest('[data-act="open"]');if(b)openDetail(+b.dataset.i)});
 /* Intelligence nav button */
@@ -13443,24 +13469,53 @@ html #cloud-auth-modal-backdrop .aero-auth-footer{
 @media (prefers-reduced-motion:reduce){ #cloud-auth-modal-backdrop *{ animation:none !important; transition:none !important; } }
 </style>
 <style id="aeroops-logbook-card">
-/* Work Record: compact Log Book card (presentation only) */
-.wr-card.lbk{padding:12px 12px 8px !important}
-.lbk-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}
+/* Work Record: Log Book timeline card (presentation only) */
+.wr-card.lbk{padding:12px !important;overflow:hidden}
+.lbk-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
 .lbk-head h3{margin:0 !important;display:flex;align-items:center;gap:8px}
 .lbk-n{font-size:11px;font-weight:700;color:#2563EB;background:#EAF1FF;border-radius:999px;padding:1px 8px}
 .lbk-all{background:none;border:0;padding:4px 6px;font:inherit;font-size:12px;font-weight:700;color:#2563EB;cursor:pointer;border-radius:8px}
 .lbk-all:hover{background:#EAF1FF}
-.lbk-list{display:grid;gap:2px}
-.lbk-row{box-sizing:border-box;display:flex;align-items:center;gap:10px;width:100%;min-width:0;text-align:left;background:none;border:0;border-radius:10px;padding:7px 6px;font:inherit;color:inherit;cursor:pointer;transition:background .15s}
+.lbk-q{width:100%;box-sizing:border-box;height:34px;border:1px solid #E3E9F2;border-radius:10px;background:#F4F7FB url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-3.5-3.5'/%3E%3C/svg%3E") no-repeat 10px 50%;padding:0 10px 0 30px;font:inherit;font-size:12.5px;color:#0F172A;outline:none;transition:border-color .15s,box-shadow .15s,background-color .15s}
+.lbk-q:focus{background-color:#fff;border-color:#4C7FF0;box-shadow:0 0 0 3px rgba(40,100,240,.1)}
+.lbk-chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 4px}
+.lbk-chip{--c:#0F2742;display:inline-flex;align-items:center;gap:5px;height:26px;padding:0 10px;border:1px solid #E3E9F2;border-radius:999px;background:#fff;font:inherit;font-size:12px;font-weight:650;color:#475569;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
+.lbk-chip i{font-style:normal;color:var(--c)}
+.lbk-chip b{font-weight:800;font-size:11.5px}
+.lbk-chip:hover{border-color:var(--c);background:color-mix(in srgb,var(--c) 7%,#fff)}
+.lbk-chip.on{background:var(--c);border-color:var(--c);color:#fff}.lbk-chip.on i{color:#fff}
+.lbk-chip.lbk-warn{--c:#C2410C;color:#C2410C;background:#FFF6E8;border-color:#F6D3A7}
+.lbk-chip.lbk-warn.on{background:#C2410C;color:#fff}
+.lbk-list{max-height:430px;overflow-y:auto;margin:6px -4px 0;padding:0 4px;scrollbar-width:thin}
+.lbk-tl{position:relative}
+.lbk-tl::before{content:"";position:absolute;left:17px;top:4px;bottom:4px;width:2px;border-radius:2px;background:linear-gradient(#DCE5F1,#EEF2F8)}
+.lbk-day{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:8px;margin:10px 0 3px}
+.lbk-day:first-child{margin-top:2px}
+.lbk-day span{background:#0F2742;color:#fff;border-radius:999px;padding:2px 10px;font-size:10.5px;font-weight:750;letter-spacing:.05em;text-transform:uppercase}
+.lbk-day em{font-style:normal;font-size:11px;font-weight:600;color:#64748B;white-space:nowrap}
+.lbk-row{position:relative;box-sizing:border-box;display:flex;align-items:center;gap:10px;width:100%;min-width:0;padding:6px 6px 6px 2px;border-radius:12px;cursor:pointer;transition:background .15s}
 .lbk-row:hover,.lbk-row:focus-visible{background:#F3F7FB;outline:none}
-.lbk-ic{flex:none;width:32px;height:32px;border-radius:10px;display:grid;place-items:center;font-size:15px;font-weight:700;background:color-mix(in srgb,var(--c) 13%,#fff);color:var(--c)}
+.lbk-row:focus-visible{box-shadow:0 0 0 2px #4C7FF0}
+.lbk-row.warn{background:linear-gradient(90deg,#FFF3E0,rgba(255,243,224,0) 75%)}
+.lbk-ic{position:relative;z-index:1;flex:none;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-size:14px;font-weight:700;background:color-mix(in srgb,var(--c) 14%,#fff);color:var(--c);box-shadow:0 0 0 3px #fff}
+.lbk-row:hover .lbk-ic{box-shadow:0 0 0 3px #F3F7FB}
+.lbk-row.warn .lbk-ic{box-shadow:0 0 0 3px #FFF3E0,0 0 0 4.5px #F2B36B}
 .lbk-m{flex:1;min-width:0}
 .lbk-m b,.lbk-m small,.lbk-r small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .lbk-m b{font-size:13px;font-weight:650;color:#0F172A}
+.lbk-m b u{text-decoration:none;font-size:10.5px;font-weight:700;color:#2563EB;background:#EAF1FF;border-radius:999px;padding:0 6px;margin-left:2px}
 .lbk-m small{font-size:11.5px;color:#64748B}
 .lbk-r{flex:none;text-align:right}
-.lbk-r b{display:block;font-size:12.5px;font-weight:700;color:#0F172A}
-.lbk-r small{font-size:11px;font-weight:600}
-@media(max-width:1100px){.lbk-list{grid-template-columns:repeat(auto-fit,minmax(260px,1fr));column-gap:10px}}
+.lbk-r b{display:block;font-size:12.5px;font-weight:750;color:#0F172A;font-variant-numeric:tabular-nums}
+.lbk-r small{font-size:11px;font-weight:650}
+.lbk-cp{flex:none;width:0;height:26px;padding:0;border:0;border-radius:8px;overflow:hidden;opacity:0;background:#EAF1FF;color:#2563EB;display:grid;place-items:center;cursor:pointer;font-size:13px;font-weight:800;transition:width .15s,opacity .15s}
+.lbk-row:hover .lbk-cp,.lbk-cp:focus-visible{width:26px;opacity:1}
+.lbk-cp.ok{width:26px;opacity:1;background:#DDF3E7;color:#15803D}
+@media(hover:none){.lbk-cp{width:26px;opacity:1}}
+.lbk-more{display:block;width:100%;margin:8px 0 2px;padding:8px;border:1px dashed #C9D6E8;border-radius:10px;background:#fff;font:inherit;font-size:12.5px;font-weight:700;color:#2563EB;cursor:pointer}
+.lbk-more span{font-weight:600;color:#64748B}.lbk-more:hover{background:#F3F7FB}
+.lbk-none{padding:22px 8px;text-align:center;color:#64748B;font-size:13px}
+@media(max-width:1100px){.lbk-list{max-height:none}}
+@media(prefers-reduced-motion:reduce){.lbk-cp,.lbk-row,.lbk-chip{transition:none}}
 </style>
 </body></html>
