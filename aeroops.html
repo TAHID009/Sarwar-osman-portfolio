@@ -3357,18 +3357,26 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
 <script>(function(){var t="light";document.documentElement.setAttribute("data-theme",t)})();</script>
 </head><body>
     <div class="ptc-modal-backdrop" id="cloud-auth-modal-backdrop" style="display:flex; z-index:5000;">
-      <div class="aero-auth-topbar">
-        <a class="brandmark" href="index.html" aria-label="Return to Home"><span>AEROOPS<small>WORK RECORD SYSTEM</small></span></a>
-        <div class="aero-auth-status"><span class="dot"></span>SECURE ACCESS</div>
-      </div>
-
-      <div class="ptc-modal">
-
-        <div class="aero-auth-brand">
-          <div class="icon"><svg viewBox="0 0 32 32" width="34" height="34" aria-hidden="true"><defs><linearGradient id="aoG2" x1="4" y1="2" x2="28" y2="30" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#60A5FA"/><stop offset="1" stop-color="#1D4ED8"/></linearGradient></defs><rect width="32" height="32" rx="9" fill="url(#aoG2)"/><path d="M24.6 7.4 7.4 14.1l6.3 2.9z" fill="#fff"/><path d="M24.6 7.4 13.7 17l3.1 7.6z" fill="#fff" fill-opacity=".72"/></svg></div>
-          <div class="name">AEROOPS</div>
-          <div class="tag">Work Record System</div>
+      <div class="aero-auth-split">
+        <div class="aero-auth-hero">
+          <a class="aero-hero-brand" href="index.html" aria-label="Return to Home">
+            <svg viewBox="0 0 32 32" width="40" height="40" aria-hidden="true"><defs><linearGradient id="aoG2" x1="4" y1="2" x2="28" y2="30" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#60A5FA"/><stop offset="1" stop-color="#1D4ED8"/></linearGradient></defs><rect width="32" height="32" rx="9" fill="url(#aoG2)"/><path d="M24.6 7.4 7.4 14.1l6.3 2.9z" fill="#fff"/><path d="M24.6 7.4 13.7 17l3.1 7.6z" fill="#fff" fill-opacity=".72"/></svg>
+            <span>AEROOPS<small>WORK RECORD SYSTEM</small></span>
+          </a>
+          <div class="aero-hero-copy">
+            <h2>Your ticketing and reservation records, in one place.</h2>
+            <p>Sign in to record and review ticketing, reissue, refund and void work.</p>
+            <ul class="aero-hero-points">
+              <li>Records sync live across your signed-in devices</li>
+              <li>The session ends when the page is reloaded or left idle</li>
+              <li>Access is limited to authorised accounts</li>
+            </ul>
+          </div>
+          <div class="aero-hero-foot"><span class="dot"></span>SECURE ACCESS</div>
         </div>
+
+        <div class="aero-auth-panel">
+      <div class="ptc-modal">
 
         <!-- ===== VIEW: SIGN IN ===== -->
         <div id="auth-view-signin">
@@ -3429,14 +3437,14 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
           <div class="ptc-field" style="margin-bottom:10px;">
             <label for="setpw-password">New Access Code</label>
             <div style="position:relative;">
-              <input type="password" id="setpw-password" placeholder="At least 6 characters" style="width:100%; box-sizing:border-box; padding-right:42px;" />
+              <input type="password" id="setpw-password" placeholder="At least 12 characters" style="width:100%; box-sizing:border-box; padding-right:42px;" />
               <button type="button" class="ptc-eye-toggle" data-target="setpw-password" aria-label="Show password"></button>
             </div>
           </div>
           <div id="aero-pw-rules">
             <p>Access Code requirements</p>
             <ul>
-              <li id="pw-rule-length">At least 6 characters</li>
+              <li id="pw-rule-length">At least 12 characters</li>
               <li id="pw-rule-letter">At least one letter (a–z / A–Z)</li>
               <li id="pw-rule-number">At least one number (0–9)</li>
               <li id="pw-rule-special">At least one special character (e.g. ! @ # $ % *)</li>
@@ -3456,7 +3464,9 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
         </div>
 
       </div>
-      <div class="aero-auth-footer">AUTHORIZED PERSONNEL ONLY</div>
+          <div class="aero-auth-footer">AUTHORIZED PERSONNEL ONLY</div>
+        </div>
+      </div>
 
     </div>
 <div class="site-shell">
@@ -4595,6 +4605,7 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
         <div id="sales-search-results" style="margin-top:12px; display:none;"></div>
       </div>
 
+      <div id="sales-sync-line" class="ptc-sync-line" role="status" aria-live="polite"></div>
       <div class="ptc-table-wrap" id="sales-table-wrap">
         <table class="ptc-table ptc-compact" id="sales-table">
           <thead>
@@ -5455,6 +5466,90 @@ A.onChange(A.fillForm);
   const CLOUD_CONFIG_KEY = 'wrd_cloud_config_v1';
   const CLOUD_COLLECTION = 'work_record_entries';
   const SALES_COLLECTION = 'work_record_sales';
+  /* Aero Travels is the user's own private ledger. It must not disappear because a different employer workspace is
+     active in this browser. true = every saved Aero Travels sale is listed, whatever workspace id it was saved under.
+     Nothing is rewritten, moved or deleted; a small badge marks records saved under another workspace. */
+  const AERO_TRAVELS_ALL_WORKSPACES = true;
+  const SALES_EMPTY_DEFAULT = 'No sales recorded yet — fill the form above and click "Add Sale".';
+
+  /* ---- Live sync status for the record lists: loading / ready / error. Only real database results are shown. ---- */
+  const SYNC_LABEL = { sales:'Aero Travels records', entries:'Work Records' };
+  const syncStatus = {
+    sales:   { state:'idle', docs:null, fromCache:false, code:'', message:'' },
+    entries: { state:'idle', docs:null, fromCache:false, code:'', message:'' }
+  };
+  function explainSyncError(err){
+    const code = (err && err.code) || '';
+    let who = 'this account';
+    try{ if(cloudAuthUser && cloudAuthUser.email) who = cloudAuthUser.email; }catch(e){}
+    if(code === 'permission-denied') return 'The database refused the read (permission-denied) for ' + who + '. Nothing has been deleted. Check that the published Firestore rules allow this signed-in account, then press Retry.';
+    if(code === 'unavailable') return 'The database could not be reached (offline, or blocked by a network filter). Check your connection, then press Retry.';
+    if(code === 'unauthenticated') return 'You are not signed in to the database. Sign in again.';
+    if(code === 'failed-precondition') return 'The database is missing a setting or index (failed-precondition).';
+    return 'The database returned an error' + (code ? ' (' + code + ')' : '') + '. Press Retry; if it keeps happening, open the browser console for details.';
+  }
+  function setSyncStatus(key, patch){
+    Object.assign(syncStatus[key], patch);
+    try{ renderSyncNotices(); }catch(e){}
+  }
+  /* Keeps a copy of what this browser had before a cloud snapshot replaces it with FEWER records. */
+  function guardLocalBackup(key, incomingCount){
+    try{
+      const prev = localStorage.getItem(key); if(!prev) return;
+      const arr = JSON.parse(prev);
+      if(!Array.isArray(arr) || arr.length <= incomingCount) return;
+      const bk = key + '_pre_cloud_backup';
+      let oldLen = 0; try{ oldLen = JSON.parse(localStorage.getItem(bk) || '[]').length; }catch(e){}
+      if(oldLen < arr.length) localStorage.setItem(bk, prev);
+    }catch(e){}
+  }
+  function renderSyncNotices(){
+    let box = document.getElementById('ao-sync-notice');
+    if(!box){
+      box = document.createElement('div'); box.id = 'ao-sync-notice'; box.setAttribute('role', 'alert'); box.hidden = true;
+      box.addEventListener('click', (ev) => {
+        const b = ev.target.closest('[data-sync-act="retry"]'); if(!b) return;
+        if(syncStatus.entries.state === 'error') subscribeCloud();
+        if(syncStatus.sales.state === 'error') subscribeSalesCloud();
+      });
+      document.body.appendChild(box);
+    }
+    const keys = Object.keys(syncStatus);
+    const errs = keys.filter(k => syncStatus[k].state === 'error');
+    const loading = keys.filter(k => syncStatus[k].state === 'loading');
+    if(errs.length){
+      box.className = 'is-error'; box.setAttribute('role', 'alert');
+      box.innerHTML = errs.map(k => '<div><strong>' + esc(SYNC_LABEL[k]) + ' could not be loaded.</strong> ' + esc(syncStatus[k].message) + '</div>').join('') +
+        '<button type="button" data-sync-act="retry">Retry</button>';
+      box.hidden = false;
+    } else if(loading.length){
+      box.className = 'is-loading'; box.setAttribute('role', 'status');
+      box.innerHTML = '<span class="ao-sync-spin"></span> Loading ' + loading.map(k => esc(SYNC_LABEL[k])).join(' and ') + '…';
+      box.hidden = false;
+    } else { box.hidden = true; box.innerHTML = ''; }
+
+    const line = document.getElementById('sales-sync-line');
+    if(line){
+      const st = syncStatus.sales; let shown = 0, total = 0;
+      try{ shown = salesEntries.length; total = shown + otherSales.length; }catch(e){}
+      let txt = '', cls = '';
+      if(st.state === 'loading'){ txt = 'Loading Aero Travels records from the cloud…'; cls = 'is-loading'; }
+      else if(st.state === 'error'){ txt = 'Cloud records could not be loaded' + (shown ? ' — showing the ' + shown + ' record' + (shown === 1 ? '' : 's') + ' saved on this device.' : '.'); cls = 'is-error'; }
+      else if(st.state === 'ready'){
+        txt = 'Cloud database: ' + st.docs + ' record' + (st.docs === 1 ? '' : 's') + ' · ' + shown + ' listed' +
+              (total > shown ? ' · ' + (total - shown) + ' hidden (saved under another workspace)' : '') +
+              (st.fromCache ? ' · from the offline cache, may be incomplete' : '');
+        cls = 'is-ready';
+      }
+      line.className = 'ptc-sync-line ' + cls; line.textContent = txt;
+    }
+  }
+  function saveFailMessage(err){
+    const code = (err && err.code) || '';
+    if(code === 'permission-denied') return 'NOT SAVED — the database refused this write (permission-denied). Your entry is back in the form; nothing was lost.';
+    if(code === 'unavailable') return 'NOT SAVED — the database could not be reached. Your entry is back in the form; check your connection and try again.';
+    return 'NOT SAVED — the cloud save failed' + (code ? ' (' + code + ')' : '') + '. Your entry is back in the form.';
+  }
   let cloudDb = null;
   let cloudUnsub = null;
   let salesCloudUnsub = null;
@@ -6066,6 +6161,7 @@ A.onChange(A.fillForm);
   function expandCloudDoc(id, data){
     const full = {};
     FIELD_ORDER.forEach(f => { full[f] = (data[f] !== undefined ? data[f] : ''); });
+    Object.keys(data).forEach(k => { if(!(k in full)) full[k] = data[k]; }); // never drop a stored field
     full._id = id;
     return full;
   }
@@ -6075,6 +6171,9 @@ A.onChange(A.fillForm);
   function expandSalesCloudDoc(id, data){
     const full = {};
     SALES_FIELD_ORDER.forEach(f => { full[f] = (data[f] !== undefined ? data[f] : ''); });
+    // keep every other stored field too (older record layouts, e.g. a single "pnr" / "ptype") so nothing is dropped on read or on re-save
+    Object.keys(data).forEach(k => { if(!(k in full)) full[k] = data[k]; });
+    if(!full.pnrGds && data.pnr) full.pnrGds = data.pnr;
     full._id = id;
     return full;
   }
@@ -6082,9 +6181,11 @@ A.onChange(A.fillForm);
   function subscribeCloud(){
     if(!cloudDb) return;
     if(cloudUnsub) cloudUnsub();
+    setSyncStatus('entries', { state:'loading', code:'', message:'' });
     cloudUnsub = cloudDb.collection(CLOUD_COLLECTION).onSnapshot((snap) => {
       const list = [];
       snap.forEach(doc => list.push(expandCloudDoc(doc.id, doc.data())));
+      setSyncStatus('entries', { state:'ready', docs:list.length, fromCache:!!(snap.metadata && snap.metadata.fromCache), code:'', message:'' });
 
       if(snap.empty && (entries.length + otherEntries.length) > 0 && !cloudDb.__migrated){
         cloudDb.__migrated = true;
@@ -6101,12 +6202,14 @@ A.onChange(A.fillForm);
 
       list.sort((a,b) => (b.date||'').localeCompare(a.date||''));
       wsApplyEntries(list);
+      guardLocalBackup('pnr_entries_v1', list.length);
       persist();
       writeToConnectedFile();
       render();
       pushPublicStats();
     }, (err) => {
       console.error('Cloud sync error', err);
+      setSyncStatus('entries', { state:'error', code:(err && err.code) || '', message:explainSyncError(err) });
       toast('Cloud sync interrupted — check your internet connection or that you\'re still signed in.');
     });
   }
@@ -6140,9 +6243,11 @@ A.onChange(A.fillForm);
   function subscribeSalesCloud(){
     if(!cloudDb) return;
     if(salesCloudUnsub) salesCloudUnsub();
+    setSyncStatus('sales', { state:'loading', code:'', message:'' });
     salesCloudUnsub = cloudDb.collection(SALES_COLLECTION).onSnapshot((snap) => {
       const list = [];
       snap.forEach(doc => list.push(expandSalesCloudDoc(doc.id, doc.data())));
+      setSyncStatus('sales', { state:'ready', docs:list.length, fromCache:!!(snap.metadata && snap.metadata.fromCache), code:'', message:'' });
 
       if(snap.empty && (salesEntries.length + otherSales.length) > 0 && !cloudDb.__salesMigrated){
         cloudDb.__salesMigrated = true;
@@ -6159,10 +6264,13 @@ A.onChange(A.fillForm);
 
       list.sort((a,b) => (b.date||'').localeCompare(a.date||''));
       wsApplySales(list);
+      guardLocalBackup('pnr_sales_v1', list.length);
       persistSales();
       renderSales();
     }, (err) => {
       console.error('Sales cloud sync error', err);
+      setSyncStatus('sales', { state:'error', code:(err && err.code) || '', message:explainSyncError(err) });
+      try{ renderSales(); }catch(e){}
       toast('Revenue Desk cloud sync interrupted — check your internet connection or that you\'re still signed in.');
     });
   }
@@ -6238,6 +6346,7 @@ A.onChange(A.fillForm);
           if(user){
             if(awaitingNewPassword){ return; } // keep the Set Access Code view open — don't jump to the dashboard yet
             $('cloud-auth-modal-backdrop').style.display = 'none';
+            $('cloud-auth-password').value = '';   // do not leave the typed Access Code sitting in the form
             cloudDb = firebase.firestore();
             try{ if(window.aeroWs) aeroWs.cloudOn(cloudDb); }catch(e){}
             localStorage.setItem(CLOUD_CONFIG_KEY, JSON.stringify(config));
@@ -6251,7 +6360,10 @@ A.onChange(A.fillForm);
             if(cloudUnsub){ cloudUnsub(); cloudUnsub = null; }
             if(salesCloudUnsub){ salesCloudUnsub(); salesCloudUnsub = null; }
             setCloudStatus('idle');
+            setSyncStatus('sales', { state:'idle', docs:null, code:'', message:'' }); setSyncStatus('entries', { state:'idle', docs:null, code:'', message:'' });
             $('cloud-auth-error').textContent = '';
+            $('cloud-auth-password').value = '';
+            try{ setupSignInView(); }catch(e){}   // re-evaluate remembered-email state so "Not your account?" is correct after sign-out
             $('cloud-auth-modal-backdrop').style.display = 'flex';
             disarmInactivityWatch();
           }
@@ -6383,7 +6495,7 @@ A.onChange(A.fillForm);
     const pw = $('setpw-password').value;
     const confirm = $('setpw-confirm').value;
     const rules = {
-      'pw-rule-length': pw.length >= 6,
+      'pw-rule-length': pw.length >= 12,
       'pw-rule-letter': /[a-zA-Z]/.test(pw),
       'pw-rule-number': /[0-9]/.test(pw),
       'pw-rule-special': /[^a-zA-Z0-9]/.test(pw)
@@ -6551,8 +6663,11 @@ A.onChange(A.fillForm);
         awaitingNewPassword = false;
         $('cloud-auth-modal-backdrop').style.display = 'none';
         cloudDb = firebase.firestore();
+        try{ if(window.aeroWs) aeroWs.cloudOn(cloudDb); }catch(e){}
         setCloudStatus('connected');
         subscribeCloud();
+        subscribeSalesCloud();   // was missing: Aero Travels records stayed empty for the rest of this session
+        armInactivityWatch();
         toast('Access Code set — you\'re in.');
       })
       .catch(err => { $('setpw-error').textContent = friendlyAuthError(err); });
@@ -8685,7 +8800,14 @@ A.onChange(A.fillForm);
   // day-to-day ledger of what you sold, to whom, and whether they've paid in full.
   let salesEntries = [];
   let otherSales = [];
-  function wsApplySales(all){ const a = []; const o = []; (Array.isArray(all) ? all : []).forEach(e => { ((!window.aeroWs || aeroWs.isActiveStrict(e)) ? a : o).push(e); }); salesEntries = a; otherSales = o; }
+  function wsApplySales(all){ const a = []; const o = []; (Array.isArray(all) ? all : []).forEach(e => { ((!window.aeroWs || AERO_TRAVELS_ALL_WORKSPACES || aeroWs.isActiveStrict(e)) ? a : o).push(e); }); salesEntries = a; otherSales = o; }
+  function wsBadgeHTML(s){
+    try{
+      if(!window.aeroWs || aeroWs.isActiveStrict(s)) return '';
+      const w = aeroWs.resolve(s);
+      return '<div class="ptc-ws-note" title="Saved under another workspace">' + esc((w && w.name) || 'Other workspace') + '</div>';
+    }catch(e){ return ''; }
+  }
   let salesEditingIndex = null;
   const SALES_STORE_KEY = 'pnr_sales_v1';
 
@@ -8825,12 +8947,18 @@ A.onChange(A.fillForm);
     if(!sale) return;
     const status = normalizeTicketStatus(newStatus);
     if(normalizeTicketStatus(sale.ticketStatus) === status) return;
+    const prevStatus = sale.ticketStatus;
     sale.ticketStatus = status;
 
     if(isCloudConnected() && sale._id){
-      cloudDb.collection(SALES_COLLECTION).doc(sale._id).update({ ticketStatus: status })
+      // legacy records saved before workspaces existed have no companyId; the database rules require one on every update
+      cloudDb.collection(SALES_COLLECTION).doc(sale._id).update({ ticketStatus: status, companyId: sale.companyId || wsStamp().companyId || '' })
         .then(() => toast('Ticket status updated to ' + status + ' — synced to the cloud'))
-        .catch(err => { console.error(err); toast('Cloud update failed — check your connection.'); });
+        .catch(err => {
+          console.error(err);
+          sale.ticketStatus = prevStatus; renderSales();   // do not show a status the database did not accept
+          toast('NOT UPDATED — ' + saveFailMessage(err).replace(/^NOT SAVED — /, ''));
+        });
       return; // the live sync listener refreshes the list once the cloud confirms
     }
 
@@ -9177,12 +9305,17 @@ A.onChange(A.fillForm);
     const empty = $('sales-empty');
     tbody.innerHTML = '';
     $('sales-count').textContent = salesEntries.length + (salesEntries.length === 1 ? ' sale' : ' sales');
+    try{ renderSyncNotices(); }catch(e){}
     renderSalesKpis();
     renderSalesCharts();
     renderDuePanel();
     renderSalesSearchResults();
 
     if(salesEntries.length === 0){
+      const st = syncStatus.sales.state;
+      empty.textContent = st === 'loading' ? 'Loading your Aero Travels records…'
+        : st === 'error' ? 'Aero Travels records could not be loaded — see the notice at the top of the page. Nothing has been deleted.'
+        : SALES_EMPTY_DEFAULT;
       empty.style.display = 'block';
       return;
     }
@@ -9194,7 +9327,7 @@ A.onChange(A.fillForm);
       else if(s.status === 'PARTIAL') tr.classList.add('ptc-row-partial');
       tr.innerHTML = `
         <td>${esc(s.date)}</td>
-        <td>${formatPassengerNamesHTML(s.pname)}</td>
+        <td>${formatPassengerNamesHTML(s.pname)}${wsBadgeHTML(s)}</td>
         <td class="mono ptc-col-secondary">${paxSummary(s)}</td>
         <td class="mono ptc-col-secondary">${esc(s.phone)}</td>
         <td class="mono">${fmtTicketListHTML(s.tkt)}</td>
@@ -9294,7 +9427,11 @@ A.onChange(A.fillForm);
   }
 
   $('btn-sales-add').addEventListener('click', () => {
-    const sale = collectSale(); sale.companyId = wsStamp().companyId || '';
+    const sale = collectSale();
+    const editingExisting = salesEditingIndex !== null ? salesEntries[salesEditingIndex] : null;
+    // an existing record keeps the workspace id it was saved with (the database rules do not allow it to change)
+    sale.companyId = (editingExisting && editingExisting.companyId) || wsStamp().companyId || '';
+    if(editingExisting){ Object.keys(editingExisting).forEach(k => { if(!(k in sale) && k !== '_id') sale[k] = editingExisting[k]; }); }
     const err = validateSale(sale);
     if(err){ toast(err); return; }
 
@@ -9307,13 +9444,19 @@ A.onChange(A.fillForm);
 
     if(isCloudConnected()){
       const wasEditing = salesEditingIndex !== null;
+      const editIdx = salesEditingIndex;
       const existing = wasEditing ? salesEntries[salesEditingIndex] : null;
       sale._id = existing && existing._id ? existing._id : (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(16).slice(2));
       if(wasEditing) stopSaleEdit();
       clearSaleForm();
       cloudDb.collection(SALES_COLLECTION).doc(sale._id).set(trimForCloud(sale))
         .then(() => toast(wasEditing ? 'Sale updated — synced to the cloud' : 'Sale added — synced to the cloud'))
-        .catch(err2 => { console.error(err2); toast('Cloud save failed — check your connection.'); });
+        .catch(err2 => {
+          console.error('Sale save failed', err2);
+          // put the entry back so a rejected save never costs the user their typing
+          try{ if(wasEditing && salesEntries[editIdx]) startSaleEdit(editIdx); populateSaleForm(sale); }catch(e){}
+          toast(saveFailMessage(err2));
+        });
       return;
     }
 
@@ -12963,4 +13106,180 @@ var root=document.getElementById('ptc-root');if(root&&window.MutationObserver)ne
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
 </script>
+<style id="aeroops-login-v2">
+/* ===== AeroOps sign-in v2: responsive split screen. Presentation only: every id, field and handler is unchanged.
+   This is the LAST style block in the file so it wins over the three older sign-in rule sets above it. ===== */
+html #cloud-auth-modal-backdrop{
+  position:fixed !important; inset:0 !important; z-index:5000;
+  padding:0 !important; overflow-y:auto !important; overflow-x:hidden; -webkit-overflow-scrolling:touch;
+  background:#F4F7FB !important; color:#0F172A;
+  font-family:'Inter','IBM Plex Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+html #cloud-auth-modal-backdrop::before,
+html #cloud-auth-modal-backdrop::after{ display:none !important; }
+
+#cloud-auth-modal-backdrop .aero-auth-split{
+  display:grid; grid-template-columns:minmax(340px,1.08fr) minmax(0,1fr);
+  width:100%; min-height:100vh; min-height:100dvh;
+}
+
+/* ---- left: brand panel (solid navy underneath, so it never renders blank if the photo is missing) ---- */
+#cloud-auth-modal-backdrop .aero-auth-hero{
+  position:relative; display:flex; flex-direction:column; justify-content:space-between; gap:32px;
+  padding:40px 48px; color:#fff; overflow:hidden;
+  background:
+    linear-gradient(160deg, rgba(7,24,52,.80) 0%, rgba(8,32,66,.90) 55%, rgba(11,37,69,.96) 100%),
+    var(--bg-scene, none) center/cover no-repeat,
+    #0B2545;
+}
+#cloud-auth-modal-backdrop .aero-hero-brand{
+  display:inline-flex; align-items:center; gap:12px; align-self:flex-start;
+  color:#fff !important; text-decoration:none; font-size:14px; font-weight:800; letter-spacing:.14em;
+}
+#cloud-auth-modal-backdrop .aero-hero-brand:hover{ opacity:.85; }
+#cloud-auth-modal-backdrop .aero-hero-brand svg{ width:40px; height:40px; flex:0 0 auto; }
+#cloud-auth-modal-backdrop .aero-hero-brand small{
+  display:block; margin-top:3px; font-size:10px; font-weight:600; letter-spacing:.16em; color:rgba(255,255,255,.75);
+}
+#cloud-auth-modal-backdrop .aero-hero-copy h2{
+  margin:0 0 14px; color:#fff; font-size:clamp(26px,3vw,38px); line-height:1.15; font-weight:800; letter-spacing:-.02em;
+}
+#cloud-auth-modal-backdrop .aero-hero-copy p{
+  margin:0 0 24px; max-width:46ch; font-size:15px; line-height:1.6; color:rgba(255,255,255,.84);
+}
+#cloud-auth-modal-backdrop .aero-hero-points{ list-style:none; margin:0; padding:0; display:grid; gap:12px; }
+#cloud-auth-modal-backdrop .aero-hero-points li{
+  display:flex; gap:12px; align-items:flex-start; font-size:14px; line-height:1.45; color:rgba(255,255,255,.92);
+}
+#cloud-auth-modal-backdrop .aero-hero-points li::before{
+  content:""; flex:0 0 auto; width:8px; height:8px; margin-top:6px; border-radius:50%;
+  background:#3DDC97; box-shadow:0 0 0 4px rgba(61,220,151,.18);
+}
+#cloud-auth-modal-backdrop .aero-hero-foot{ font-size:10.5px; font-weight:700; letter-spacing:.16em; color:rgba(255,255,255,.75); }
+#cloud-auth-modal-backdrop .aero-hero-foot .dot{
+  display:inline-block; width:6px; height:6px; margin-right:8px; border-radius:50%;
+  background:#3DDC97; box-shadow:0 0 0 3px rgba(61,220,151,.2);
+}
+
+/* ---- right: form panel ---- */
+#cloud-auth-modal-backdrop .aero-auth-panel{
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  padding:40px 32px; background:#fff; min-width:0;
+}
+html #cloud-auth-modal-backdrop .ptc-modal{
+  position:static !important; width:100%; max-width:400px; max-height:none !important; overflow:visible !important;
+  margin:0 auto; padding:0 !important; border:0 !important; border-radius:0 !important;
+  background:transparent !important; box-shadow:none !important; animation:none !important;
+}
+html #cloud-auth-modal-backdrop h3{
+  text-align:left !important; margin:0 0 6px !important; color:#0F172A;
+  font-size:26px !important; font-weight:800 !important; letter-spacing:-.02em;
+}
+html #cloud-auth-modal-backdrop #signin-subtext,
+html #cloud-auth-modal-backdrop #auth-view-register > p,
+html #cloud-auth-modal-backdrop #auth-view-setpassword > p,
+html #cloud-auth-modal-backdrop #auth-view-sent > p{
+  text-align:left !important; margin:0 0 22px !important; color:#475569; font-size:14px; line-height:1.55;
+}
+html #cloud-auth-modal-backdrop #auth-view-sent{ text-align:left !important; }
+html #cloud-auth-modal-backdrop .ptc-field label{
+  display:block; margin-bottom:6px; font-size:11px !important; font-weight:700 !important;
+  letter-spacing:.05em; text-transform:uppercase; color:#475569;
+}
+html #cloud-auth-modal-backdrop input[type="email"],
+html #cloud-auth-modal-backdrop input[type="password"],
+html #cloud-auth-modal-backdrop input[type="text"]{
+  width:100%; box-sizing:border-box; height:48px !important; padding:0 14px; border-radius:10px !important;
+  border:1.5px solid #D9E0EA !important; background:#fff; color:#0F172A; font-size:15px !important;
+  transition:border-color .15s ease, box-shadow .15s ease;
+}
+html #cloud-auth-modal-backdrop input[type="password"],
+html #cloud-auth-modal-backdrop #auth-view-signin input[type="text"]{ padding-right:44px; }
+html #cloud-auth-modal-backdrop input:focus{
+  outline:none; border-color:#2563EB !important; box-shadow:0 0 0 3px rgba(37,99,235,.16);
+}
+html #cloud-auth-modal-backdrop :is(a, button, input):focus-visible{ outline:2px solid #2563EB; outline-offset:2px; }
+html #cloud-auth-modal-backdrop .ptc-eye-toggle{ color:#64748B; }
+html #cloud-auth-modal-backdrop .ptc-eye-toggle:hover{ color:#0F172A; }
+html #cloud-auth-modal-backdrop #btn-cloud-auth-signin,
+html #cloud-auth-modal-backdrop #btn-send-verify-link,
+html #cloud-auth-modal-backdrop #btn-set-password{
+  width:100% !important; height:50px !important; border-radius:10px !important; border:0 !important;
+  background:#2563EB !important; color:#fff !important; font-size:14.5px !important; font-weight:700 !important;
+  letter-spacing:.02em; display:flex; align-items:center; justify-content:center; gap:8px; cursor:pointer;
+  transition:background .15s ease, box-shadow .15s ease;
+}
+html #cloud-auth-modal-backdrop #btn-cloud-auth-signin:hover:not(:disabled),
+html #cloud-auth-modal-backdrop #btn-send-verify-link:hover:not(:disabled),
+html #cloud-auth-modal-backdrop #btn-set-password:hover:not(:disabled){
+  background:#1D4ED8 !important; box-shadow:0 8px 20px rgba(37,99,235,.28); transform:none;
+}
+html #cloud-auth-modal-backdrop button:disabled{ opacity:.6; cursor:not-allowed; }
+html #cloud-auth-modal-backdrop #btn-cloud-auth-reset{ color:#2563EB !important; }
+html #cloud-auth-modal-backdrop #auth-view-signin > p:has(> #btn-cloud-auth-reset){ text-align:right !important; }
+#cloud-auth-modal-backdrop #auth-view-signin .ptc-actions{ margin-top:6px !important; }
+#cloud-auth-modal-backdrop .aero-auth-footer{
+  position:static !important; margin-top:28px; text-align:center; pointer-events:none;
+  font-size:10px; font-weight:700; letter-spacing:.2em; color:#94A3B8 !important;
+}
+
+/* ---- tablet: narrower brand panel ---- */
+@media (max-width:1024px){
+  #cloud-auth-modal-backdrop .aero-auth-split{ grid-template-columns:minmax(280px,.85fr) minmax(0,1fr); }
+  #cloud-auth-modal-backdrop .aero-auth-hero{ padding:32px 28px; }
+  #cloud-auth-modal-backdrop .aero-auth-panel{ padding:32px 24px; }
+}
+/* ---- small tablet / large phone: stack, brand panel becomes a compact header ---- */
+@media (max-width:860px){
+  #cloud-auth-modal-backdrop .aero-auth-split{ grid-template-columns:1fr; grid-template-rows:auto 1fr; }
+  #cloud-auth-modal-backdrop .aero-auth-hero{ padding:22px 24px; gap:14px; }
+  #cloud-auth-modal-backdrop .aero-hero-copy h2{ font-size:22px; margin:0; }
+  #cloud-auth-modal-backdrop .aero-hero-copy p,
+  #cloud-auth-modal-backdrop .aero-hero-points,
+  #cloud-auth-modal-backdrop .aero-hero-foot{ display:none; }
+  #cloud-auth-modal-backdrop .aero-auth-panel{ justify-content:flex-start; padding:32px 24px 28px; }
+}
+/* ---- phone ---- */
+@media (max-width:480px){
+  #cloud-auth-modal-backdrop .aero-auth-hero{ padding:16px 18px; }
+  #cloud-auth-modal-backdrop .aero-hero-copy{ display:none; }
+  #cloud-auth-modal-backdrop .aero-auth-panel{ padding:24px 18px 24px; }
+  html #cloud-auth-modal-backdrop h3{ font-size:23px !important; }
+  html #cloud-auth-modal-backdrop input[type="email"],
+  html #cloud-auth-modal-backdrop input[type="password"],
+  html #cloud-auth-modal-backdrop input[type="text"]{ font-size:16px !important; }   /* stops iOS zooming into the field */
+}
+@media (max-height:520px) and (min-width:861px){
+  #cloud-auth-modal-backdrop .aero-auth-hero{ padding:20px 32px; gap:16px; }
+  #cloud-auth-modal-backdrop .aero-hero-points{ display:none; }
+}
+@media (prefers-reduced-motion:reduce){
+  html #cloud-auth-modal-backdrop *{ transition:none !important; animation:none !important; }
+  .aero-spinner{ animation:none !important; }
+}
+
+/* ===== Record-list status (Task 2): top notice + inline line + workspace badge ===== */
+#ao-sync-notice{
+  position:fixed; top:10px; left:50%; transform:translateX(-50%); z-index:4000;
+  width:min(720px, calc(100vw - 24px)); box-sizing:border-box;
+  display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+  padding:10px 14px; border-radius:10px; font:600 13px/1.45 'Inter','IBM Plex Sans',system-ui,sans-serif;
+  box-shadow:0 8px 24px rgba(15,23,42,.14);
+}
+#ao-sync-notice[hidden]{ display:none; }
+#ao-sync-notice.is-error{ background:#FEF2F2; color:#7F1D1D; border:1px solid #FCA5A5; }
+#ao-sync-notice.is-error > div{ flex:1 1 320px; font-weight:500; }
+#ao-sync-notice.is-error strong{ font-weight:800; }
+#ao-sync-notice button{ flex:0 0 auto; border:0; border-radius:8px; padding:7px 14px; background:#B91C1C; color:#fff; font:700 12.5px inherit; cursor:pointer; }
+#ao-sync-notice.is-loading{ background:#EFF6FF; color:#1E3A8A; border:1px solid #BFDBFE; opacity:0; animation:aoSyncIn .2s ease .7s forwards; }
+@keyframes aoSyncIn{ to{ opacity:1; } }   /* appears only if loading takes longer than ~0.7 s, so quick loads never flicker */
+.ao-sync-spin{ width:13px; height:13px; border-radius:50%; border:2px solid #93C5FD; border-top-color:#1D4ED8; animation:aeroSpin .7s linear infinite; }
+.ptc-sync-line{ margin:0 0 8px; font-size:12px; font-weight:600; color:#64748B; min-height:0; }
+.ptc-sync-line:empty{ display:none; }
+.ptc-sync-line.is-error{ color:#B91C1C; }
+.ptc-sync-line.is-loading{ color:#1D4ED8; }
+.ptc-ws-note{ margin-top:3px; font-size:10.5px; font-weight:600; color:#64748B; }
+@media (prefers-reduced-motion:reduce){ .ao-sync-spin{ animation:none; } #ao-sync-notice.is-loading{ animation:none; opacity:1; } }
+
+</style>
 </body></html>
