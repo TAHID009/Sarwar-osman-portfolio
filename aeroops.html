@@ -2262,7 +2262,8 @@ document.documentElement.setAttribute("data-ui","v2");window.__aeroUI="v2";
 
 /* ===== LOG BOARD (presentation layer — no data/logic changes) ===== */
 #lb{ display:none; --n:#0B2545; --bl:#2563C9; --cy:#0E9AA7; --ln:#E3E9F2; --sf:#F4F7FB; --mu:#64748B; margin:0 0 14px; font-family:'IBM Plex Sans',Inter,system-ui,sans-serif; color:var(--n); }
-#ptc-root[data-pane="entrylog"] #lb, #ptc-root[data-pane="saleslog"] #lb, #ptc-root[data-pane="reports"] #lb, #ptc-root[data-pane="systemlog"] #lb{ display:block; }
+#ptc-root[data-pane="entrylog"] #lb, #ptc-root[data-pane="saleslog"] #lb, #ptc-root[data-pane="salesdesk"] #lb, #ptc-root[data-pane="reports"] #lb, #ptc-root[data-pane="systemlog"] #lb{ display:block; }
+#lb.lb-inline{ margin:18px 0 14px; } #lb.lb-inline .lb-tabs{ display:none; } #lb.lb-inline .lb-filters{ border-top:1px solid var(--ln); }
 #lb [hidden]{ display:none !important; }
 .lb-head{ position:relative; overflow:hidden; background:var(--n); color:#fff; border-radius:12px 12px 0 0; padding:16px 20px; display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap; }
 .lb-head::after{ content:""; position:absolute; left:20px; right:64px; bottom:9px; border-top:1.5px dashed rgba(94,214,224,.28); pointer-events:none; }
@@ -3360,19 +3361,17 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
       <div class="aero-auth-split">
         <div class="aero-auth-hero">
           <a class="aero-hero-brand" href="index.html" aria-label="Return to Home">
-            <svg viewBox="0 0 32 32" width="40" height="40" aria-hidden="true"><defs><linearGradient id="aoG2" x1="4" y1="2" x2="28" y2="30" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#60A5FA"/><stop offset="1" stop-color="#1D4ED8"/></linearGradient></defs><rect width="32" height="32" rx="9" fill="url(#aoG2)"/><path d="M24.6 7.4 7.4 14.1l6.3 2.9z" fill="#fff"/><path d="M24.6 7.4 13.7 17l3.1 7.6z" fill="#fff" fill-opacity=".72"/></svg>
+            <span class="aero-brandmark"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 11.3 21 3l-7.9 18-2.8-7.4L3 11.3Z" fill="currentColor"/><path d="M10.3 13.6 21 3" stroke="#fff" stroke-width="1.2"/></svg></span>
             <span>AEROOPS<small>WORK RECORD SYSTEM</small></span>
           </a>
           <div class="aero-hero-copy">
-            <h2>Your ticketing and reservation records, in one place.</h2>
-            <p>Sign in to record and review ticketing, reissue, refund and void work.</p>
-            <ul class="aero-hero-points">
-              <li>Records sync live across your signed-in devices</li>
-              <li>The session ends when the page is reloaded or left idle</li>
-              <li>Access is limited to authorised accounts</li>
-            </ul>
+            <div class="aero-eyebrow">Your operations workspace</div>
+            <h2>Clarity for every<br><span>workday.</span></h2>
+            <p>One focused workspace for operational records, ticketing activity, and performance insights.</p>
           </div>
-          <div class="aero-hero-foot"><span class="dot"></span>SECURE ACCESS</div>
+          <div class="aero-orbit" aria-hidden="true"><i class="dot"></i></div>
+          <svg class="aero-route" viewBox="0 0 900 350" preserveAspectRatio="none" aria-hidden="true"><path d="M0 280 C170 180 210 330 370 245 S600 85 900 130" fill="none" stroke="#58d9eb" stroke-opacity=".34" stroke-width="1.5" stroke-dasharray="5 8"/><circle cx="370" cy="245" r="4" fill="#66e4f1"/><circle cx="680" cy="105" r="3" fill="#66e4f1"/></svg>
+          <div class="aero-hero-foot"><span>PRIVATE WORKSPACE</span><span>OPERATIONAL INTELLIGENCE</span></div>
         </div>
 
         <div class="aero-auth-panel">
@@ -3380,7 +3379,8 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
 
         <!-- ===== VIEW: SIGN IN ===== -->
         <div id="auth-view-signin">
-          <h3>Welcome back</h3>
+          <div class="aero-kicker">Secure sign-in</div>
+          <h3>Welcome back.</h3>
           <p id="signin-subtext">Sign in to continue to your AeroOps workspace.</p>
           <div class="ptc-field" id="signin-email-field" style="margin-bottom:14px; display:none;">
             <label for="cloud-auth-email">Registered Email</label>
@@ -3399,9 +3399,10 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
             <a href="#" id="btn-cloud-auth-reset" style="font-size:12.5px; font-weight:600; color:var(--booking);">Forgot Access Code?</a>
           </p>
           <div class="ptc-actions" style="display:block;">
-            <button class="ptc-btn ptc-btn-primary" id="btn-cloud-auth-signin"><span id="signin-btn-label">SIGN IN →</span></button>
+            <button class="ptc-btn ptc-btn-primary" id="btn-cloud-auth-signin"><span id="signin-btn-label">CONTINUE</span><span class="aero-arrow" aria-hidden="true">→</span></button>
           </div>
-          <p style="font-size:12px; color:var(--muted); margin:16px 0 0; text-align:center;">
+          <div class="aero-divider">ACCOUNT ACCESS</div>
+          <p class="aero-acct-links" style="font-size:12px; color:var(--muted); margin:16px 0 0; text-align:center;">
             <a href="#" id="link-go-register" style="color:var(--muted); font-weight:600;">First time here? Register with your email →</a><br>
             <a href="#" id="link-use-different-email" style="color:var(--muted); font-weight:600; display:none;">Not your account? Sign in with a different email →</a>
           </p>
@@ -6536,7 +6537,7 @@ A.onChange(A.fillForm);
       })
       .finally(() => {
         btn.disabled = false;
-        $('signin-btn-label').textContent = 'SIGN IN →';
+        $('signin-btn-label').textContent = 'CONTINUE';
       });
   });
 
@@ -10242,7 +10243,7 @@ A.onChange(A.fillForm);
   const lbEl = $('lb'), lbBody = $('lb-tbody'), lbGs = $('ptc-global-search');
   // The detail cards and their Clear button are the existing renderers' elements; show them inside the Log Board.
   ['ptc-search-meta','btn-search-clear','ptc-search-results','sales-search-meta','btn-sales-search-clear','sales-search-results'].forEach(id => { const el = $(id); if(el) $('lb-details').appendChild(el); });
-  const lb = { from:'', to:'', type:'', status:'', limit:50, sig:'', tab:'' };
+  const lb = { from:'', to:'', type:'', status:'', limit:50, sig:'', tab:'', stSig:'' };
   const lbSys = [{ t:new Date(), m:'Session started' }];
   const LB_STAT = ['Ticketed','Reissued','Refunded','Voided','Pending Adj.','Refund Pending'];
   const LB_IC = {
@@ -10253,7 +10254,7 @@ A.onChange(A.fillForm);
     go:'<path d="m9 18 6-6-6-6"/>'
   };
   const lbIc = (n, s) => `<svg width="${s||15}" height="${s||15}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${LB_IC[n] || LB_IC.Ticketing}</svg>`;
-  const lbSales = () => ptcPane === 'saleslog';
+  const lbSales = () => ptcPane === 'saleslog' || ptcPane === 'salesdesk';
   function lbStatus(e){
     if(e.txn === 'Ticketing') return ['Ticketed','ok'];
     if(e.txn === 'Reissue') return ['Reissued','re'];
@@ -10309,10 +10310,11 @@ A.onChange(A.fillForm);
   function lbHead(){
     $('lb-date').textContent = new Date().toLocaleDateString(undefined, { weekday:'short', day:'numeric', month:'short', year:'numeric' });
     const p = entries.filter(e => lbStatus(e)[0] === 'Pending Adj.').length, b = $('lb-pend'), pv = root.classList.contains('ptc-pending-view');
-    $('lb-title').textContent = pv ? 'Pending adjustments' : 'Log Book';
-    $('lb-sub').textContent = pv ? 'Refunds waiting for their adjustment' : 'Transaction history & operational records';
+    const sd = ptcPane === 'salesdesk';
+    $('lb-title').textContent = pv ? 'Pending adjustments' : sd ? 'Aero Travels Record Log' : 'Log Book';
+    $('lb-sub').textContent = pv ? 'Refunds waiting for their adjustment' : sd ? 'Your private sale records, newest first' : 'Transaction history & operational records';
     b.classList.toggle('lb-all', pv);
-    b.hidden = !pv && !p; b.textContent = pv ? 'Show all logs' : p + ' pending adj.';
+    b.hidden = sd || (!pv && !p); b.textContent = pv ? 'Show all logs' : p + ' pending adj.';
   }
   function lbRenderSys(){
     const cloud = ($('ptc-cloud-status') || {}).textContent || '';
@@ -10323,8 +10325,12 @@ A.onChange(A.fillForm);
     lbHead();
     if(root.classList.contains('ptc-pending-view')) return;
     if(ptcPane === 'systemlog'){ lbRenderSys(); return; }
-    if(ptcPane !== 'entrylog' && ptcPane !== 'saleslog') return;
+    if(ptcPane !== 'entrylog' && ptcPane !== 'saleslog' && ptcPane !== 'salesdesk') return;
     const sales = lbSales(), m = lbModel(), shown = m.rows.slice(0, lb.limit);
+    if(sales){
+      const sts = Array.from(new Set(salesEntries.map(x => lbSaleStatus(x)[0]).filter(x => x !== '—'))), sg = sts.join('|');
+      if(sg !== lb.stSig){ lb.stSig = sg; const cur = $('lb-status').value; $('lb-status').innerHTML = '<option value="">All statuses</option>' + sts.map(x => `<option>${esc(x)}</option>`).join(''); $('lb-status').value = sts.includes(cur) ? cur : ''; }
+    }
     const html = shown.map((r, n) => lbRow(r, n, sales)).join('');
     if(ptcPane + html !== lb.sig){ lb.sig = ptcPane + html; lbBody.innerHTML = html; }
     $('lb-empty').hidden = m.rows.length > 0;
@@ -10338,8 +10344,17 @@ A.onChange(A.fillForm);
     if(!a){ i.style.opacity = 0; return; }
     i.style.width = a.offsetWidth + 'px'; i.style.transform = 'translateX(' + a.offsetLeft + 'px)'; i.style.opacity = 1;
   }
+  // On the Revenue Desk the Aero Travels record log sits directly under the Ticket Sale Information card;
+  // on every other pane the board returns to its normal place above the page body.
+  const lbHome = $('ptc-body-grid');
+  function lbPlace(inline){
+    const card = $('sales-card');
+    if(inline && card){ if(card.nextElementSibling !== lbEl) card.insertAdjacentElement('afterend', lbEl); }
+    else if(lbHome && lbHome.parentNode && lbEl.nextElementSibling !== lbHome) lbHome.parentNode.insertBefore(lbEl, lbHome);
+  }
   function lbSync(){
-    const p = root.getAttribute('data-pane'), key = { entrylog:'entry', saleslog:'sales', reports:'report', systemlog:'system' }[p];
+    const rp = root.getAttribute('data-pane'), p = rp === 'salesdesk' ? 'saleslog' : rp, key = { entrylog:'entry', saleslog:'sales', reports:'report', systemlog:'system' }[p];
+    lbPlace(rp === 'salesdesk'); lbEl.classList.toggle('lb-inline', rp === 'salesdesk');
     lbEl.setAttribute('data-pane', p);
     lbEl.querySelectorAll('.lb-tab').forEach(b => { const on = b.dataset.tab === key; b.classList.toggle('on', on); b.setAttribute('aria-selected', on ? 'true' : 'false'); });
     if(p === 'entrylog' || p === 'saleslog'){
@@ -13281,5 +13296,141 @@ html #cloud-auth-modal-backdrop #auth-view-signin > p:has(> #btn-cloud-auth-rese
 .ptc-ws-note{ margin-top:3px; font-size:10.5px; font-weight:600; color:#64748B; }
 @media (prefers-reduced-motion:reduce){ .ao-sync-spin{ animation:none; } #ao-sync-notice.is-loading{ animation:none; opacity:1; } }
 
+</style>
+<style id="aeroops-login-v3">
+/* ===== AeroOps sign-in v3: "Operations Access" board look. Presentation only; every id, field and handler is unchanged.
+   Last style block in the file, so it wins over the v2 sign-in rules. ===== */
+html #cloud-auth-modal-backdrop{ background:#f2f5fa !important; align-items:flex-start !important; justify-content:flex-start !important; }
+html #cloud-auth-modal-backdrop .aero-auth-split{ align-self:flex-start; margin:0; }
+html #cloud-auth-modal-backdrop .aero-auth-split{ grid-template-columns:minmax(0,1.08fr) minmax(420px,.92fr); }
+
+/* ---- left: brand / visual panel ---- */
+html #cloud-auth-modal-backdrop .aero-auth-hero{
+  position:relative; display:block; min-height:100vh; min-height:100dvh; overflow:hidden;
+  padding:38px clamp(28px,5vw,76px); color:#fff;
+  background:radial-gradient(ellipse at 70% 25%,#174e78 0%,transparent 40%),linear-gradient(145deg,#06172e 0%,#0b2c4b 56%,#09203d 100%) !important;
+}
+#cloud-auth-modal-backdrop .aero-auth-hero::before{
+  content:""; position:absolute; inset:0; opacity:.16; pointer-events:none;
+  background-image:linear-gradient(rgba(151,220,255,.18) 1px,transparent 1px),linear-gradient(90deg,rgba(151,220,255,.18) 1px,transparent 1px);
+  background-size:58px 58px; -webkit-mask-image:linear-gradient(120deg,#000,transparent 80%); mask-image:linear-gradient(120deg,#000,transparent 80%);
+}
+#cloud-auth-modal-backdrop .aero-auth-hero::after{
+  content:""; position:absolute; width:520px; height:520px; right:-130px; top:17%; pointer-events:none;
+  border:1px solid rgba(87,213,237,.2); border-radius:50%;
+  box-shadow:0 0 0 48px rgba(87,213,237,.035),0 0 0 96px rgba(87,213,237,.025),0 0 0 145px rgba(87,213,237,.02);
+}
+html #cloud-auth-modal-backdrop .aero-hero-brand{
+  position:relative; z-index:2; display:flex; align-items:center; gap:12px; align-self:auto;
+  font-size:14px; font-weight:850; letter-spacing:.14em; color:#fff !important;
+}
+html #cloud-auth-modal-backdrop .aero-hero-brand small{ display:block; margin-top:4px; font-size:9px; letter-spacing:.2em; color:#a9c4dc; font-weight:700; }
+#cloud-auth-modal-backdrop .aero-brandmark{
+  display:grid; place-items:center; width:38px; height:38px; flex:0 0 auto; color:#79e6fa;
+  border:1px solid rgba(119,226,255,.36); border-radius:12px; background:linear-gradient(145deg,rgba(73,192,242,.25),rgba(33,91,177,.16));
+}
+html #cloud-auth-modal-backdrop .aero-hero-brand .aero-brandmark svg{ width:22px; height:22px; }
+#cloud-auth-modal-backdrop .aero-hero-copy{ position:relative; z-index:2; max-width:580px; margin-top:clamp(90px,17vh,180px); }
+#cloud-auth-modal-backdrop .aero-eyebrow{
+  display:flex; align-items:center; gap:10px; color:#74dff0; font-size:10px; font-weight:850; letter-spacing:.2em; text-transform:uppercase;
+}
+#cloud-auth-modal-backdrop .aero-eyebrow::before{ content:""; width:25px; height:2px; background:#59d9eb; }
+html #cloud-auth-modal-backdrop .aero-hero-copy h2{
+  margin:22px 0 19px; color:#fff; font-size:clamp(38px,5.2vw,68px); line-height:1.02; letter-spacing:-.055em; font-weight:760;
+}
+#cloud-auth-modal-backdrop .aero-hero-copy h2 span{ color:#70d9ec; }
+html #cloud-auth-modal-backdrop .aero-hero-copy p{ display:block; max-width:425px; margin:0; color:#b2c7dc; line-height:1.8; font-size:14px; }
+#cloud-auth-modal-backdrop .aero-orbit{
+  position:absolute; z-index:1; right:6%; bottom:13%; width:min(39vw,430px); height:min(39vw,430px);
+  border:1px solid rgba(100,220,239,.23); border-radius:50%; transform:rotate(-25deg); pointer-events:none;
+}
+#cloud-auth-modal-backdrop .aero-orbit::before,
+#cloud-auth-modal-backdrop .aero-orbit::after{ content:""; position:absolute; border:1px solid rgba(100,220,239,.17); border-radius:50%; inset:13% -9%; transform:rotate(52deg); }
+#cloud-auth-modal-backdrop .aero-orbit::after{ inset:28% -17%; transform:rotate(-33deg); }
+#cloud-auth-modal-backdrop .aero-orbit .dot{ position:absolute; width:10px; height:10px; border-radius:50%; background:#70e7f1; box-shadow:0 0 22px #70e7f1; top:18%; right:13%; }
+#cloud-auth-modal-backdrop .aero-route{ position:absolute; right:0; bottom:0; width:100%; height:40%; opacity:.65; pointer-events:none; }
+html #cloud-auth-modal-backdrop .aero-hero-foot{
+  position:absolute; z-index:2; bottom:27px; left:clamp(28px,5vw,76px); right:30px; display:flex; gap:18px; flex-wrap:wrap;
+  color:#88a8c5; font-size:9px; letter-spacing:.14em; font-weight:800;
+}
+#cloud-auth-modal-backdrop .aero-hero-foot span+span::before{ content:"•"; margin-right:18px; color:#57d7e8; }
+
+/* ---- right: form panel ---- */
+html #cloud-auth-modal-backdrop .aero-auth-panel{
+  display:flex; align-items:center; justify-content:center; flex-direction:column;
+  padding:48px clamp(24px,5vw,74px); background:linear-gradient(145deg,#f8faff,#edf2f8);
+}
+html #cloud-auth-modal-backdrop .ptc-modal{ max-width:400px; }
+@keyframes aeroLoginAppear{ from{ opacity:0; transform:translateY(10px); } to{ opacity:1; transform:translateY(0); } }
+#cloud-auth-modal-backdrop #auth-view-signin,
+#cloud-auth-modal-backdrop #auth-view-register,
+#cloud-auth-modal-backdrop #auth-view-sent,
+#cloud-auth-modal-backdrop #auth-view-setpassword{ animation:aeroLoginAppear .55s ease both; }
+#cloud-auth-modal-backdrop .aero-kicker{ color:#2864f0; font-size:10px; letter-spacing:.17em; font-weight:850; text-transform:uppercase; }
+html #cloud-auth-modal-backdrop h3{ margin:12px 0 8px !important; color:#102744; font-size:34px !important; font-weight:800 !important; letter-spacing:-.045em; }
+html #cloud-auth-modal-backdrop #signin-subtext,
+html #cloud-auth-modal-backdrop #auth-view-register > p,
+html #cloud-auth-modal-backdrop #auth-view-setpassword > p,
+html #cloud-auth-modal-backdrop #auth-view-sent > p{ margin:0 0 32px !important; color:#73839a; font-size:13px; line-height:1.7; }
+html #cloud-auth-modal-backdrop .ptc-field label{ display:block; margin-bottom:9px; font-size:10px !important; font-weight:850 !important; letter-spacing:.12em; text-transform:uppercase; color:#435b78; }
+html #cloud-auth-modal-backdrop input[type="email"],
+html #cloud-auth-modal-backdrop input[type="password"],
+html #cloud-auth-modal-backdrop input[type="text"]{
+  height:53px !important; padding:0 48px 0 14px; border:1px solid #dce5f0 !important; border-radius:10px !important;
+  background:#fff; color:#173250; font-size:14px !important; transition:.2s;
+}
+html #cloud-auth-modal-backdrop input:focus{ border-color:#4c7ff0 !important; box-shadow:0 0 0 4px rgba(40,100,240,.1); }
+html #cloud-auth-modal-backdrop .ptc-eye-toggle{ right:10px; top:10px; width:34px; height:34px; transform:none; color:#647994; }
+html #cloud-auth-modal-backdrop .ptc-eye-toggle:hover{ color:#173250; }
+html #cloud-auth-modal-backdrop #auth-view-signin > p:has(> #btn-cloud-auth-reset){ margin:-4px 0 22px !important; text-align:right !important; }
+html #cloud-auth-modal-backdrop a{ font-size:12px; font-weight:750; text-decoration:none; }
+html #cloud-auth-modal-backdrop a:hover{ text-decoration:underline; }
+html #cloud-auth-modal-backdrop #btn-cloud-auth-reset{ color:#2a66d8 !important; font-size:12px !important; font-weight:750 !important; }
+html #cloud-auth-modal-backdrop #btn-cloud-auth-signin,
+html #cloud-auth-modal-backdrop #btn-send-verify-link,
+html #cloud-auth-modal-backdrop #btn-set-password{
+  position:relative; height:53px !important; border-radius:10px !important; background:#2864f0 !important;
+  font-size:12px !important; letter-spacing:.08em; font-weight:850 !important; box-shadow:0 9px 20px rgba(40,100,240,.18);
+  transition:transform .2s,box-shadow .2s,background .2s;
+}
+html #cloud-auth-modal-backdrop #btn-cloud-auth-signin:hover:not(:disabled),
+html #cloud-auth-modal-backdrop #btn-send-verify-link:hover:not(:disabled),
+html #cloud-auth-modal-backdrop #btn-set-password:hover:not(:disabled){ background:#1e55d4 !important; transform:translateY(-2px); box-shadow:0 13px 25px rgba(40,100,240,.25); }
+#cloud-auth-modal-backdrop .aero-arrow{ position:absolute; right:20px; top:50%; transform:translateY(-52%); font-size:18px; line-height:1; letter-spacing:0; }
+#cloud-auth-modal-backdrop #btn-cloud-auth-signin:disabled .aero-arrow{ opacity:0; }
+#cloud-auth-modal-backdrop .aero-divider{ display:flex; align-items:center; gap:12px; margin:26px 0 17px; color:#a1adbd; font-size:9px; letter-spacing:.12em; font-weight:800; }
+#cloud-auth-modal-backdrop .aero-divider::before,
+#cloud-auth-modal-backdrop .aero-divider::after{ content:""; flex:1; height:1px; background:#dfe6ef; }
+html #cloud-auth-modal-backdrop .aero-acct-links{ margin:0 !important; line-height:2; }
+html #cloud-auth-modal-backdrop .aero-acct-links a{ color:#6c7e95 !important; font-weight:600 !important; }
+html #cloud-auth-modal-backdrop .aero-auth-footer{
+  display:flex; justify-content:center; align-items:center; gap:7px; margin-top:36px; color:#8a98aa !important; font-size:9px; font-weight:800; letter-spacing:.13em;
+}
+#cloud-auth-modal-backdrop .aero-auth-footer::before{ content:""; width:6px; height:6px; border-radius:50%; background:#26bd92; }
+
+@media (max-width:850px){
+  html #cloud-auth-modal-backdrop .aero-auth-split{ grid-template-columns:1fr; grid-template-rows:auto 1fr; }
+  html #cloud-auth-modal-backdrop .aero-auth-hero{ min-height:280px; padding:24px 25px; }
+  html #cloud-auth-modal-backdrop .aero-hero-copy{ display:block; margin-top:44px; padding-bottom:45px; }
+  html #cloud-auth-modal-backdrop .aero-hero-copy h2{ font-size:42px; max-width:430px; }
+  html #cloud-auth-modal-backdrop .aero-hero-copy p{ display:block; max-width:410px; }
+  #cloud-auth-modal-backdrop .aero-orbit{ width:250px; height:250px; right:-55px; bottom:-45px; }
+  #cloud-auth-modal-backdrop .aero-route{ height:50%; opacity:.3; }
+  html #cloud-auth-modal-backdrop .aero-hero-foot{ display:none; }
+  html #cloud-auth-modal-backdrop .aero-auth-panel{ justify-content:flex-start; padding:48px 22px 40px; }
+  html #cloud-auth-modal-backdrop .ptc-modal{ max-width:430px; }
+}
+@media (max-width:480px){
+  html #cloud-auth-modal-backdrop .aero-auth-hero{ min-height:245px; padding:24px 25px; }
+  html #cloud-auth-modal-backdrop .aero-hero-copy{ display:block; margin-top:32px; }
+  html #cloud-auth-modal-backdrop .aero-hero-copy h2{ font-size:36px; margin:15px 0 12px; }
+  html #cloud-auth-modal-backdrop .aero-hero-copy p{ font-size:12px; }
+  html #cloud-auth-modal-backdrop .aero-hero-brand{ font-size:12px; }
+  #cloud-auth-modal-backdrop .aero-brandmark{ width:34px; height:34px; }
+  html #cloud-auth-modal-backdrop .aero-auth-panel{ padding-top:38px; }
+  html #cloud-auth-modal-backdrop h3{ font-size:30px !important; }
+  html #cloud-auth-modal-backdrop #signin-subtext{ margin-bottom:26px !important; }
+}
+@media (prefers-reduced-motion:reduce){ #cloud-auth-modal-backdrop *{ animation:none !important; transition:none !important; } }
 </style>
 </body></html>
