@@ -3359,24 +3359,44 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
 <style>/* PASSENGER INFORMATION MODULE (styles) */
 #aero-pax{display:none}#ptc-root.pax-active #aero-pax{display:block}
 #ptc-root.pax-active #lb,#ptc-root.pax-active #ptc-body-grid,#ptc-root.pax-active #pwi-root,#ptc-root.pax-active #aero-master,#ptc-root.pax-active #aero-settings{display:none!important}
+#aero-pax .px-hero{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;padding:18px 22px;margin-bottom:12px;border-radius:12px;color:#fff;background:linear-gradient(100deg,#0B2545 0%,#0E5A6E 70%,#0E9AA7 100%)}
+#aero-pax .px-hero h2{margin:2px 0;font-size:22px;color:#fff}#aero-pax .px-hero p{margin:0;font-size:13px;color:#D6EEF1}
+#aero-pax .px-kick{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8FE3EA}
+#aero-pax .px-hero-act{display:flex;gap:8px;flex-wrap:wrap}
+#aero-pax .px-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-bottom:12px}
+#aero-pax .px-kpi{background:var(--card,#fff);border:1px solid var(--line,#DCE3EC);border-left:3px solid #0E9AA7;border-radius:10px;padding:10px 14px;box-shadow:0 1px 3px rgba(11,37,69,.06)}
+#aero-pax .px-kpi.warn{border-left-color:#D99A00}
+#aero-pax .px-kpi span{display:block;font-size:11.5px;font-weight:600;color:var(--muted,#667085)}#aero-pax .px-kpi b{font-size:24px;color:var(--ink,#0B2545)}
+#aero-pax .px-sec{margin:14px 0 8px;padding-bottom:4px;border-bottom:1px solid var(--line,#DCE3EC);font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#0E7C86}
+#aero-pax .px-req{color:#B42318;font-style:normal}
 #aero-pax .px-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
 #aero-pax label{font-size:12px;font-weight:600;color:var(--ink-soft,#475467);display:block}
-#aero-pax input,#aero-pax select,#aero-pax textarea{width:100%;margin-top:4px;padding:8px 10px;border:1px solid var(--line,#DCE3EC);border-radius:8px;font:inherit;font-size:13.5px}
+#aero-pax input,#aero-pax select,#aero-pax textarea{width:100%;margin-top:4px;padding:8px 10px;min-height:38px;border:1px solid var(--line,#DCE3EC);border-radius:8px;font:inherit;font-size:13.5px}
+#aero-pax input:focus-visible,#aero-pax select:focus-visible,#aero-pax textarea:focus-visible,#aero-pax .px-btn:focus-visible,#aero-pax summary:focus-visible{outline:2px solid #0E9AA7;outline-offset:2px}
 #aero-pax .px-actions,#aero-pax .px-pager{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:12px}
-#aero-pax .px-btn{width:auto;border:0;border-radius:8px;padding:9px 18px;font-weight:700;font-size:12.5px;cursor:pointer;background:#0E9AA7;color:#fff}
-#aero-pax .px-btn.alt{background:#EEF2F6;color:#0B2545}#aero-pax .px-btn:disabled{opacity:.55;cursor:not-allowed}
+#aero-pax .px-btn{width:auto;min-height:38px;border:0;border-radius:8px;padding:9px 18px;font-weight:700;font-size:12.5px;cursor:pointer;background:#0E9AA7;color:#fff}
+#aero-pax .px-btn:hover{filter:brightness(.94)}
+#aero-pax .px-btn.alt{background:#EEF2F6;color:#0B2545}#aero-pax .px-btn.light{background:#fff;color:#0B2545}
+#aero-pax .px-btn.ghost{background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.55)}
+#aero-pax .px-btn:disabled{opacity:.55;cursor:not-allowed}
 #aero-pax .px-hint{font-size:12px;color:var(--muted,#667085);margin-top:6px}
-#aero-pax .px-mrz{margin-top:12px}#aero-pax .px-mrz textarea{font-family:'IBM Plex Mono',monospace;letter-spacing:.02em}
-#aero-pax .px-filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-bottom:10px}
+#aero-pax .px-mrz summary{cursor:pointer;font-size:13px;font-weight:600;color:#0E7C86}
+#aero-pax .px-mrz textarea{font-family:'IBM Plex Mono',monospace;letter-spacing:.02em}
+#aero-pax .px-filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-bottom:10px;align-items:end}
+#aero-pax .px-filters .px-btn{margin-top:0}#aero-pax .px-dl{font-size:11px}
 #aero-pax .px-wrap{overflow:auto;max-height:60vh;border:1px solid var(--line,#DCE3EC);border-radius:8px}
 #aero-pax table{border-collapse:collapse;width:100%;font-size:12.5px;white-space:nowrap}
-#aero-pax th{position:sticky;top:0;background:var(--card,#fff);cursor:pointer;text-align:left;padding:8px 10px;border-bottom:1px solid var(--line,#DCE3EC);z-index:1}
-#aero-pax td{padding:7px 10px}#aero-pax tbody tr:nth-child(even){background:rgba(14,154,167,.06)}
-#aero-pax .px-badge{display:inline-block;margin-left:6px;padding:1px 7px;border-radius:99px;font-size:11px;background:rgba(14,154,167,.14)}
+#aero-pax th{position:sticky;top:0;background:#0B2545;color:#fff;cursor:pointer;text-align:left;padding:9px 10px;z-index:1;font-size:11.5px}
+#aero-pax td{padding:7px 10px;border-bottom:1px solid var(--line,#DCE3EC)}
+#aero-pax tbody tr:nth-child(even){background:rgba(14,154,167,.06)}#aero-pax tbody tr:hover{background:rgba(14,154,167,.14)}
+#aero-pax .px-badge{display:inline-block;margin-left:6px;padding:1px 8px;border-radius:99px;font-size:11px;font-weight:600;border:1px solid transparent}
+#aero-pax .px-st-valid{background:rgba(21,128,61,.12);color:#166534;border-color:rgba(21,128,61,.3)}
+#aero-pax .px-st-soon{background:rgba(217,154,0,.16);color:#8A5A00;border-color:rgba(217,154,0,.4)}
+#aero-pax .px-st-exp{background:rgba(180,35,24,.12);color:#B42318;border-color:rgba(180,35,24,.3)}
 #aero-pax .px-warn{border-color:#D99A00!important;background:rgba(217,154,0,.12)!important}
-#aero-pax .px-auto{font-size:10.5px;font-weight:700;color:#0E9AA7;margin-left:6px}
-#aero-pax .px-w{color:#B7791F;font-size:12px;margin-top:4px}
+#aero-pax .px-auto{font-size:10.5px;font-weight:700;color:#0E9AA7;margin-left:6px}#aero-pax .px-w{color:#B7791F;font-size:12px;margin-top:4px}
 #aero-toast{z-index:99999}
+@media (max-width:640px){#aero-pax .px-hero{padding:14px}#aero-pax .px-hero-act,#aero-pax .px-hero-act .px-btn{width:100%}}
 </style>
 </head><body>
     <div class="ptc-modal-backdrop" id="cloud-auth-modal-backdrop" style="display:flex; z-index:5000;">
@@ -4678,33 +4698,40 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
 
     <!-- ===== Professional Work Intelligence (PWI) — additive module ===== -->
 <!-- PASSENGER INFORMATION MODULE (page) -->
-<section id="aero-pax" class="aero-page" aria-label="Passenger Information"><div class="aset-head"><div class="pwi-kicker" style="color:#0E9AA7;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase">Travel Operations</div><h2>Passenger Information</h2><p>Passenger records are stored in Firebase and sync across your signed-in devices.</p></div>
-<div class="aset-card"><h3>Passenger Entry</h3>
+<section id="aero-pax" class="aero-page" aria-label="Passenger Records">
+<div class="px-hero"><div><div class="px-kick">Travel Operations</div><h2>Passenger Records</h2><p>Manage passenger contact and passport details in one place.</p></div>
+<div class="px-hero-act"><button type="button" id="px-add" class="px-btn light">+ Add Passenger</button><button type="button" id="px-csv2" class="px-btn ghost">Export CSV</button></div></div>
+<div class="px-kpis" aria-label="Summary">
+<div class="px-kpi"><span>Total Passengers</span><b id="px-k1">0</b></div>
+<div class="px-kpi"><span>Departments</span><b id="px-k2">0</b></div>
+<div class="px-kpi"><span>Billing Companies</span><b id="px-k3">0</b></div>
+<div class="px-kpi warn" title="Passport expiry within the next 90 days (not yet expired)"><span>Passports Expiring Soon</span><b id="px-k4">0</b></div></div>
+<div class="aset-card" id="px-formcard"><h3>Passenger Entry</h3>
+<div class="px-sec">Contact Details</div>
 <div class="px-grid">
-<label>Passenger Name *<input id="px-name" autocomplete="off"></label>
-<label>Phone Number *<input id="px-phone" inputmode="tel" autocomplete="off"></label>
+<label>Passenger Name <i class="px-req">*</i><input id="px-name" autocomplete="off" required></label>
+<label>Phone Number <i class="px-req">*</i><input id="px-phone" inputmode="tel" autocomplete="off" required></label>
 <label>Department<input id="px-dept" autocomplete="off"></label>
-<label>Billing Company<input id="px-co" autocomplete="off"></label>
-</div>
-<h3 style="margin-top:14px">Passport Information</h3>
+<label>Billing Company<input id="px-co" autocomplete="off"></label></div>
+<div class="px-sec">Passport Details</div>
 <div class="px-grid">
 <label>Passport Number<input id="px-pp" autocomplete="off" style="text-transform:uppercase"></label>
 <label>Nationality<input id="px-nat" autocomplete="off"></label>
 <label>Date of Birth<input id="px-dob" type="date"></label>
 <label>Passport Issue Date<input id="px-iss" type="date"></label>
-<label>Passport Expiry Date<input id="px-exp" type="date"></label>
-</div>
+<label>Passport Expiry Date<input id="px-exp" type="date"></label></div>
+<div class="px-sec">Additional Information</div>
 <details class="px-mrz"><summary>Paste MRZ text (two lines at the bottom of the passport photo page)</summary>
-<textarea id="px-mrz" rows="2" spellcheck="false" placeholder="P&lt;UTOERIKSSON&lt;&lt;ANNA&lt;MARIA&lt;&lt;&lt;&lt;…&#10;L898902C36UTO7408122F…"></textarea>
+<textarea id="px-mrz" rows="2" spellcheck="false" placeholder="P&lt;UTOERIKSSON&lt;&lt;ANNA&lt;MARIA&lt;&lt;&lt;&lt;&#10;L898902C36UTO7408122F…"></textarea>
 <button type="button" id="px-mrz-go" class="px-btn alt">Read MRZ</button>
 <div class="px-hint">Issue date is not in the machine-readable zone; please enter it manually.</div>
 <div id="px-rev" aria-live="polite"></div></details>
 <label style="display:block;margin-top:10px">Note<textarea id="px-note" rows="2"></textarea></label>
-<div class="px-actions"><button type="button" id="px-save" class="px-btn">SAVE</button><button type="button" id="px-clear" class="px-btn alt">CLEAR FORM</button><span class="px-hint">Ctrl+Enter saves</span></div></div>
+<div class="px-actions"><button type="button" id="px-save" class="px-btn">Save Passenger</button><button type="button" id="px-clear" class="px-btn alt">Clear Form</button><span class="px-hint">Ctrl+Enter saves</span></div></div>
 <div class="aset-card"><h3>Passenger Database</h3>
-<div class="px-filters"><input id="px-q" placeholder="Search name, phone, passport, company"><select id="px-fd"><option value="">All departments</option></select><select id="px-fc"><option value="">All billing companies</option></select><select id="px-fn"><option value="">All nationalities</option></select><input id="px-from" type="date" title="Entry date from"><input id="px-to" type="date" title="Entry date to"><button type="button" id="px-csv" class="px-btn alt">Export CSV</button></div>
+<div class="px-filters"><input id="px-q" placeholder="Search name, phone, passport, company" aria-label="Search"><select id="px-fd" aria-label="Department"><option value="">All departments</option></select><select id="px-fc" aria-label="Billing company"><option value="">All billing companies</option></select><select id="px-fn" aria-label="Nationality"><option value="">All nationalities</option></select><label class="px-dl">Entry from<input id="px-from" type="date"></label><label class="px-dl">Entry to<input id="px-to" type="date"></label><button type="button" id="px-csv" class="px-btn alt">Export CSV</button></div>
 <div class="px-wrap"><table id="px-tbl"><thead></thead><tbody></tbody></table></div>
-<div id="px-empty" class="px-hint"></div><div class="px-pager"><button type="button" id="px-prev" class="px-btn alt">Prev</button><span id="px-pg"></span><button type="button" id="px-next" class="px-btn alt">Next</button></div></div></section>
+<div id="px-empty" class="px-hint" role="status"></div><div class="px-pager"><button type="button" id="px-prev" class="px-btn alt">Prev</button><span id="px-pg"></span><button type="button" id="px-next" class="px-btn alt">Next</button></div></div></section>
     <section id="aero-master" class="aero-page" aria-label="Master Data"><div class="aset-head"><div style="color:#0E9AA7;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase">Download Center</div><h2>Master Data</h2><p>Download any of your data as an Excel file. Pick a report below.</p></div><div class="aset-card aset-hero"><div><b>Complete Data Pack</b><span>Everything in one Excel file: all entries, sales, pending adjustments, dashboard summary and activities.</span></div><button type="button" class="aset-dl big" data-dl="all">Download everything</button></div><div class="aset-card"><h3>Individual reports</h3><div class="aset-row"><div><b>Work Record — All Entries</b><span>Ticketing, Reissue, Refund and Void, with a sheet for each · <em class="am-n" data-n="entries">…</em></span></div><button type="button" class="aset-dl" data-dl="entries">Download Excel</button></div><div class="aset-row"><div><b>Revenue Desk — Sales &amp; Payments</b><span>Every sale with price, profit, paid and due · <em class="am-n" data-n="sales">…</em></span></div><button type="button" class="aset-dl" data-dl="sales">Download Excel</button></div><div class="aset-row"><div><b>Pending Adjustments</b><span>Refunds still waiting for their adjustment · <em class="am-n" data-n="pending">…</em></span></div><button type="button" class="aset-dl" data-dl="pending">Download Excel</button></div><div class="aset-row"><div><b>Dashboard Summary</b><span>Totals by type and by month, revenue and activity numbers · <em class="am-n" data-n="summary">…</em></span></div><button type="button" class="aset-dl" data-dl="summary">Download Excel</button></div><div class="aset-row"><div><b>Activity Tracker — All Activities</b><span>Every logged task with source, client, status and effort · <em class="am-n" data-n="activities">…</em></span></div><button type="button" class="aset-dl" data-dl="activities">Download Excel</button></div></div><div class="aset-card"><h3>Auto-save file</h3><div class="aset-row"><div><b>Master Data File</b><span>Connect an Excel file so every new entry is saved to it automatically.</span></div><button type="button" class="aset-dl" id="am-connect">Set Master Data File</button></div></div></section>
 
     <section id="aero-settings" class="aero-page" aria-label="AeroOps Settings"><div class="aset-head"><div class="pwi-kicker" style="color:#0E9AA7;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase">Control Center</div><h2>AeroOps Settings</h2><p>Changes apply immediately and are remembered on this device.</p></div><div class="aset-card"><h3>Appearance</h3><div class="aset-row"><div><b>Sidebar</b><span>Full labels, or a slim icon-only sidebar.</span></div><div class="aset-seg" data-key="sidebar"><button type="button" data-v="expanded">Expanded</button><button type="button" data-v="compact">Compact</button></div></div><div class="aset-row"><div><b>Animations</b><span>Turn off transitions and motion across the app.</span></div><div class="aset-seg" data-key="anim"><button type="button" data-v="on">On</button><button type="button" data-v="off">Off</button></div></div></div><div class="aset-card"><h3>Activity Tracker</h3><div class="aset-row"><div><b>Open on</b><span>The tab shown when you open Activity Tracker.</span></div><div class="aset-seg" data-key="tab"><button type="button" data-v="entry">Quick Entry</button><button type="button" data-v="dash">Dashboard</button></div></div></div><div class="aset-card"><h3>Data &amp; Storage</h3><p class="aset-note">Activity records are stored in Firebase (collection <code>work_record_pwi</code>) and sync across your signed-in devices. Nothing here deletes records.</p><div class="aset-btns"><button type="button" data-sact="export-all">Export all activities (CSV)</button><button type="button" data-sact="backup">Backup (JSON)</button><button type="button" data-sact="restore">Restore from backup…</button></div></div><div class="aset-card"><h3>Reset</h3><div class="aset-row"><div><b>Reset settings</b><span>Restores the options on this page to their defaults. Your activity records are not touched.</span></div><button type="button" class="aset-danger" id="aset-reset">Reset settings</button></div></div></section>
@@ -13625,10 +13652,10 @@ function save(){
  .then(function(){saving=false;$('px-save').disabled=false});
 }
 /* ---- live data (same sign-in gate the other modules use) ---- */
-function tick(){try{var u=window.firebase&&firebase.apps&&firebase.apps.length&&firebase.auth().currentUser;
+function tick(){if(!unsub&&!root.classList.contains('pax-active'))return;try{var u=window.firebase&&firebase.apps&&firebase.apps.length&&firebase.auth().currentUser;
  if(!u){if(unsub){unsub();unsub=null}uid=null;if(rows.length){rows=[];render()}return}
  if(unsub&&uid===u.uid)return;uid=u.uid;
- unsub=firebase.firestore().collection(COLL).onSnapshot(function(s){var o=[];s.forEach(function(d){var v=d.data();v._id=d.id;if(!window.aeroWs||aeroWs.isActiveStrict(v))o.push(v)});rows=o;render()},function(e){console.warn(e);say('Could not read passenger records.')})}catch(e){}}
+ unsub=firebase.firestore().collection(COLL).onSnapshot(function(s){var o=[];s.forEach(function(d){var v=d.data();v._id=d.id;if(!window.aeroWs||aeroWs.isActiveStrict(v))o.push(v)});rows=o;render()},function(e){console.warn('passenger records',e&&e.code);if(root.classList.contains('pax-active'))say(e&&e.code==='permission-denied'?'Firebase rules block "'+COLL+'" - check the rules were published.':'Could not read passenger records.')})}catch(e){}}
 setInterval(tick,2500);setTimeout(tick,800);
 /* ---- table ---- */
 function view(){var q=norm($('px-q').value),fd1=$('px-fd').value,fc=$('px-fc').value,fn=$('px-fn').value,a=$('px-from').value,b=$('px-to').value;
@@ -13636,8 +13663,11 @@ function view(){var q=norm($('px-q').value),fd1=$('px-fd').value,fc=$('px-fc').v
   return(!q||[r.name,r.phone,r.passportNo,r.billingCompany].some(function(x){return norm(x).indexOf(q)>-1}))&&(!fd1||r.dept===fd1)&&(!fc||r.billingCompany===fc)&&(!fn||r.nationality===fn)&&(!a||d>=a)&&(!b||d<=b)});
  l.sort(function(x,y){var p=x[sortK],q2=y[sortK];if(sortK==='sl')return((+p||0)-(+q2||0))*sortD;return String(p||'').localeCompare(String(q2||''),undefined,{numeric:true})*sortD});return l}
 function fill(id,key,all){var s=$(id),cur=s.value,v=Array.from(new Set(all.map(function(r){return r[key]}).filter(Boolean))).sort();s.options.length=1;v.forEach(function(x){var o=document.createElement('option');o.value=o.textContent=x;s.appendChild(o)});s.value=v.indexOf(cur)>-1?cur:''}
-function badge(r){if(!r.expiry)return'';var d=Math.round((Date.parse(r.expiry+'T00:00:00')-Date.parse(new Date().toISOString().slice(0,10)+'T00:00:00'))/864e5);return'<span class="px-badge">'+(d<0?'Expired':d===0?'Expires today':'Expires in '+d+' day'+(d===1?'':'s'))+'</span>'}
-function render(){fill('px-fd','dept',rows);fill('px-fc','billingCompany',rows);fill('px-fn','nationality',rows);
+function status(r){var m=/^\d{4}-\d{2}-\d{2}$/.test(r.expiry||'');if(!m)return null;var t=Date.parse(r.expiry+'T00:00:00');if(isNaN(t))return null;var d=Math.round((t-Date.parse(new Date().toISOString().slice(0,10)+'T00:00:00'))/864e5);return{d:d,k:d<0?'exp':d<=90?'soon':'valid',t:d<0?'Expired':d<=90?'Expiring Soon':'Valid'}}
+function badge(r){var x=status(r);return x?'<span class="px-badge px-st-'+x.k+'" title="Passport expiry only; not ticket validity or immigration eligibility. '+(x.d<0?'Expired '+(-x.d)+' day(s) ago':'Expires in '+x.d+' day(s)')+'">'+x.t+'</span>':''}
+function uniq(k){var o={};rows.forEach(function(r){var v=norm(r[k]);if(v)o[v]=1});return Object.keys(o).length}
+function kpis(){$('px-k1').textContent=rows.length;$('px-k2').textContent=uniq('dept');$('px-k3').textContent=uniq('billingCompany');$('px-k4').textContent=rows.filter(function(r){var x=status(r);return x&&x.k==='soon'}).length}
+function render(){kpis();fill('px-fd','dept',rows);fill('px-fc','billingCompany',rows);fill('px-fn','nationality',rows);
  var l=view(),pages=Math.max(1,Math.ceil(l.length/PS));if(page>=pages)page=pages-1;
  $('px-tbl').tHead.innerHTML='<tr>'+COLS.map(function(c){return'<th data-k="'+c[0]+'">'+c[1]+(sortK===c[0]?(sortD>0?' ▲':' ▼'):'')+'</th>'}).join('')+'</tr>';
  $('px-tbl').tBodies[0].innerHTML=l.slice(page*PS,page*PS+PS).map(function(r){return'<tr>'+COLS.map(function(c){var v=r[c[0]];var t=v==null||v===''?'-':DATEK[c[0]]?fd(v):esc(v);return'<td>'+t+(c[0]==='expiry'?badge(r):'')+'</td>'}).join('')+'</tr>'}).join('');
@@ -13652,8 +13682,9 @@ $('px-csv').onclick=function(){var l=view();if(!l.length){say('Nothing to export
  var a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+out.join('\r\n')],{type:'text/csv'}));a.download='Passenger_Information_'+new Date().toISOString().slice(0,10)+'.csv';document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},500)};
 /* ---- form events ---- */
 $('px-save').onclick=save;$('px-clear').onclick=clearForm;
+$('px-add').onclick=function(){$('px-formcard').scrollIntoView({behavior:'smooth',block:'start'});$(F.name).focus()};$('px-csv2').onclick=function(){$('px-csv').click()};
 $('aero-pax').addEventListener('keydown',function(e){if(e.key==='Enter'&&(e.ctrlKey||e.metaKey)){e.preventDefault();save();return}
- if(e.key==='Enter'&&e.target.tagName==='INPUT'&&e.target.closest('.aset-card')===$('px-name').closest('.aset-card')){e.preventDefault();var f=Array.from($('aero-pax').querySelectorAll('.aset-card:first-of-type input,.aset-card:first-of-type textarea')).filter(function(x){return x.id!=='px-mrz'});var i=f.indexOf(e.target);if(f[i+1])f[i+1].focus()}});
+ if(e.key==='Enter'&&e.target.tagName==='INPUT'&&e.target.closest('.aset-card')===$('px-name').closest('.aset-card')){e.preventDefault();var f=Array.from($(F.name).closest('.aset-card').querySelectorAll('input,textarea')).filter(function(x){return x.id!=='px-mrz'});var i=f.indexOf(e.target);if(f[i+1])f[i+1].focus()}});
 $(F.passportNo).addEventListener('input',function(){this.value=this.value.toUpperCase()});
 /* ---- MRZ paste ---- */
 
@@ -13664,7 +13695,7 @@ $('px-mrz-go').onclick=function(){var r=paxParse($('px-mrz').value),rv=$('px-rev
 /* ---- navigation hook (adds a class only; existing handlers untouched) ---- */
 var nb=document.querySelector('#ptc-nav [data-aero="passengers"]'),all=[].slice.call(document.querySelectorAll('#ptc-nav .ptc-nav-btn'));
 function mark(){if(!root.classList.contains('pax-active'))return;all.forEach(function(b){b.classList.toggle('active',b===nb)})}
-if(nb){nb.addEventListener('click',function(){root.classList.remove('set-active','mas-active');root.classList.add('pax-active');render();setTimeout(mark,0);try{window.scrollTo({top:0})}catch(e){}});
+if(nb){nb.addEventListener('click',function(){root.classList.remove('set-active','mas-active');root.classList.add('pax-active');tick();render();setTimeout(mark,0);try{window.scrollTo({top:0})}catch(e){}});
  all.forEach(function(b){if(b!==nb)b.addEventListener('click',function(){root.classList.remove('pax-active')},true)});
  if(window.MutationObserver)new MutationObserver(mark).observe(root,{attributes:true,attributeFilter:['class','data-pane']});
  var o=window.ptcSetPane;if(typeof o==='function')window.ptcSetPane=function(){root.classList.remove('pax-active');return o.apply(this,arguments)}}
