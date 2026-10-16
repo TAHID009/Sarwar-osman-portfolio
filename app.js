@@ -156,6 +156,21 @@
       </article>`).join("");
   }
 
+  // Training & Workshops (Home page) — latest three; link to the full list when there are more
+  if (el("homeTrainingGrid") && profile.workshops) {
+    el("homeTrainingGrid").innerHTML = profile.workshops.slice(0, 3).map(w => `
+      <article class="h-train-card">
+        <img class="h-train-img" src="${esc(w.image)}" alt="${esc(w.title)}" loading="lazy">
+        <div class="h-train-body">
+          <div class="h-train-meta">${w.date ? `<span class="h-train-chip">${esc(w.date)}</span>` : ""}${w.location ? `<span class="h-train-chip">${esc(w.location)}</span>` : ""}</div>
+          <h3>${esc(w.title)}</h3>
+          ${w.organizer ? `<p class="h-train-org">${esc(w.organizer)}</p>` : ""}
+          <p class="h-train-desc">${esc(w.description)}</p>
+        </div>
+      </article>`).join("");
+    if (el("homeTrainingMore") && profile.workshops.length > 3) el("homeTrainingMore").hidden = false;
+  }
+
   // Contact links (footer + simple text links)
   document.querySelectorAll("[data-email-link]").forEach(a => { a.href = `mailto:${profile.email}`; a.textContent = profile.email; });
   document.querySelectorAll("[data-phone-link]").forEach(a => { a.href = `tel:${profile.phone.replace(/\s+/g,'')}`; a.textContent = profile.phone; });
