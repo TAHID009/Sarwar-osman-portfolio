@@ -142,6 +142,20 @@
       </li>`).join("");
   }
 
+  // Training & Workshops (Experience page) — data lives in profile.workshops
+  if (el("trainingGrid") && profile.workshops) {
+    el("trainingGrid").innerHTML = profile.workshops.map(w => `
+      <article class="tw-card">
+        <img class="tw-img" src="${esc(w.image)}" alt="${esc(w.title)}" loading="lazy">
+        <div class="tw-body">
+          <div class="tw-meta">${w.date ? `<span class="tw-chip">${esc(w.date)}</span>` : ""}${w.location ? `<span class="tw-chip">${esc(w.location)}</span>` : ""}</div>
+          <h3>${esc(w.title)}</h3>
+          ${w.organizer ? `<p class="tw-org">${esc(w.organizer)}</p>` : ""}
+          <p class="tw-desc">${esc(w.description)}</p>
+        </div>
+      </article>`).join("");
+  }
+
   // Contact links (footer + simple text links)
   document.querySelectorAll("[data-email-link]").forEach(a => { a.href = `mailto:${profile.email}`; a.textContent = profile.email; });
   document.querySelectorAll("[data-phone-link]").forEach(a => { a.href = `tel:${profile.phone.replace(/\s+/g,'')}`; a.textContent = profile.phone; });

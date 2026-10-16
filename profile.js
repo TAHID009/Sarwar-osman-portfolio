@@ -91,6 +91,26 @@ const profile = {
     { title: "Technology & Analytics", items: ["Power BI","Operational Data","Web Technologies","MS Office"] }
   ],
   researchInterests: ["Aviation","Airfare Pricing","Airline Revenue","Tourism","Hospitality","International Business","Entrepreneurship","Technology in Travel"],
+  // Training & Workshops (Experience page). To add one, copy a block below and fill it in.
+  // Put the photo in the repo root and point "image" at it. Leave organizer/date/location out if unknown. Newest first.
+  workshops: [
+    {
+      image: "./workshop-verteil.jpg",
+      title: "Verteil Travel Agency Workshop",
+      organizer: "Verteil Technologies × Saimon Global",
+      date: "14 October 2026",
+      location: "Hotel Sarina, Dhaka",
+      description: "Exclusive agency workshop on Verteil's NDC platform, which connects 85+ global airlines with 22,000+ travel agencies, covering new opportunities for agencies in the Bangladesh market."
+    },
+    {
+      image: "./workshop-china-southern.jpg",
+      title: "China Southern Airlines Agency Workshop Program 2026",
+      organizer: "China Southern Airlines, Dhaka Office",
+      date: "12 October 2026",
+      location: "Banani Club Limited, Dhaka",
+      description: "Airline agency workshop bringing travel partners together with the sales team to strengthen collaboration and share practical insights on working with the airline."
+    }
+  ],
   // Live counts, not estimates — pulled straight from the real ticketing log via
   // public-stats.js (reads a small public Firestore summary AeroOps keeps updated
   // whenever entries change). The numbers below are only the fallback shown
