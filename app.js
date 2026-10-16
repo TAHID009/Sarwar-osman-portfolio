@@ -142,23 +142,14 @@
       </li>`).join("");
   }
 
-  // Training & Workshops (Experience page) — data lives in profile.workshops
-  if (el("trainingGrid") && profile.workshops) {
-    el("trainingGrid").innerHTML = profile.workshops.map(w => `
-      <article class="tw-card">
-        <img class="tw-img" src="${esc(w.image)}" alt="${esc(w.title)}" loading="lazy">
-        <div class="tw-body">
-          <div class="tw-meta">${w.date ? `<span class="tw-chip">${esc(w.date)}</span>` : ""}${w.location ? `<span class="tw-chip">${esc(w.location)}</span>` : ""}</div>
-          <h3>${esc(w.title)}</h3>
-          ${w.organizer ? `<p class="tw-org">${esc(w.organizer)}</p>` : ""}
-          <p class="tw-desc">${esc(w.description)}</p>
-        </div>
-      </article>`).join("");
-  }
+  // Years of experience (automatic from profile.experienceStart, or profile.yearsExperienceManual)
+  document.querySelectorAll("[data-exp-years]").forEach(n => { if (profile.yearsExperience) n.textContent = profile.yearsExperience; });
+  document.querySelectorAll("[data-exp-short]").forEach(n => { if (profile.yearsShort) n.textContent = profile.yearsShort; });
+  document.querySelectorAll("[data-exp-words]").forEach(n => { if (profile.yearsWords) n.textContent = profile.yearsWords; });
 
-  // Training & Workshops (Home page) — latest three; link to the full list when there are more
+  // Training & Workshops (Home page) — data lives in profile.workshops
   if (el("homeTrainingGrid") && profile.workshops) {
-    el("homeTrainingGrid").innerHTML = profile.workshops.slice(0, 3).map(w => `
+    el("homeTrainingGrid").innerHTML = profile.workshops.map(w => `
       <article class="h-train-card">
         <img class="h-train-img" src="${esc(w.image)}" alt="${esc(w.title)}" loading="lazy">
         <div class="h-train-body">
@@ -168,7 +159,19 @@
           <p class="h-train-desc">${esc(w.description)}</p>
         </div>
       </article>`).join("");
-    if (el("homeTrainingMore") && profile.workshops.length > 3) el("homeTrainingMore").hidden = false;
+  }
+
+  // Quote card (Home page) — rotates through profile.quotes every profile.quoteEveryDays days
+  if (el("dailyQuote") && Array.isArray(profile.quotes) && profile.quotes.length) {
+    const now = new Date();
+    const dayNumber = Math.floor(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()) / 86400000);
+    const step = Math.max(1, profile.quoteEveryDays || 1);
+    const q = profile.quotes[Math.floor(dayNumber / step) % profile.quotes.length];
+    el("dailyQuote").textContent = q.text;
+    if (el("dailyQuoteBy")) {
+      el("dailyQuoteBy").textContent = q.author ? "— " + q.author : "";
+      el("dailyQuoteBy").hidden = !q.author;
+    }
   }
 
   // Contact links (footer + simple text links)

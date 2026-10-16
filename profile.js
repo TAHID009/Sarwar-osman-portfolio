@@ -11,6 +11,10 @@ const profile = {
   yearsExperience: "3+ Years",
   gdsCount: "3 GDS",
   focus: "Travel Operations",
+  // Years of experience shown on the home page. It updates automatically from this start month (YYYY-MM).
+  // To type your own value instead (for example "4+ Years"), fill yearsExperienceManual; leave it "" to keep it automatic.
+  experienceStart: "2023-06",
+  yearsExperienceManual: "",
   summary: "Reservation and ticketing professional focused on accurate air bookings, fare rules, reissue and refund handling, GDS, NDC and OTA workflows, and clear customer communication.",
   about: "I work across airline reservation and ticketing workflows, combining GDS knowledge, fare and policy review, customer communication, and travel operations support. My goal is to make every booking accurate, efficient, and easy for the customer. On the academic side, I hold a BBA in Human Resource Management from Southern University Bangladesh and a Master's in International Business from Wuhan University, China, on a Chinese Government Scholarship.",
   experience: [
@@ -93,6 +97,16 @@ const profile = {
   researchInterests: ["Aviation","Airfare Pricing","Airline Revenue","Tourism","Hospitality","International Business","Entrepreneurship","Technology in Travel"],
   // Training & Workshops (Experience page). To add one, copy a block below and fill it in.
   // Put the photo in the repo root and point "image" at it. Leave organizer/date/location out if unknown. Newest first.
+  // Quote card on the home page (beside Professional Focus). A new quote shows every quoteEveryDays days, in order.
+  // Add, edit or remove quotes freely. Leave author "" to show no name. Please double-check any quote you add.
+  quoteEveryDays: 1,
+  quotes: [
+    { text: "Aviation is not just a profession for me. It's a passion for building better systems and smarter solutions.", author: "" },
+    { text: "It is possible to fly without motors, but not without knowledge and skill.", author: "Wilbur Wright" },
+    { text: "A designer knows he has achieved perfection not when there is nothing left to add, but when there is nothing left to take away.", author: "Antoine de Saint-Exupéry" },
+    { text: "The most difficult thing is the decision to act, the rest is merely tenacity.", author: "Amelia Earhart" },
+    { text: "If we worked on the assumption that what is accepted as true really is true, there would be little hope for advance.", author: "Orville Wright" }
+  ],
   workshops: [
     {
       image: "./workshop-verteil.jpg",
@@ -124,3 +138,24 @@ const profile = {
   ],
   impactNote: "Live counts from the ticketing log — updates automatically as new work is recorded."
 };
+
+// Automatic years of experience (runs once when the page loads)
+(function () {
+  const words = ["zero","one","two","three","four","five","six","seven","eight","nine","ten","eleven","twelve","thirteen","fourteen","fifteen"];
+  const manual = (profile.yearsExperienceManual || "").trim();
+  if (manual) {
+    const n = parseInt(manual, 10);
+    profile.yearsExperience = manual;
+    profile.yearsShort = manual.split(" ")[0];
+    profile.yearsWords = (words[n] || String(n)) + "-plus";
+    return;
+  }
+  const m = /^(\d{4})-(\d{2})/.exec(profile.experienceStart || "");
+  if (!m) return;
+  const now = new Date();
+  const months = (now.getFullYear() - +m[1]) * 12 + (now.getMonth() + 1 - +m[2]);
+  const y = Math.max(0, Math.floor(months / 12));
+  profile.yearsShort = y >= 1 ? y + "+" : "<1";
+  profile.yearsExperience = y >= 1 ? y + "+ Years" : "Under 1 Year";
+  profile.yearsWords = y >= 1 ? (words[y] || String(y)) + "-plus" : "under one";
+})();

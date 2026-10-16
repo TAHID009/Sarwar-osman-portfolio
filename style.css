@@ -179,19 +179,3 @@ img{max-width:100%;display:block}
 
 /* Legacy blocks marked .v2-only stay hidden: the portfolio uses this single design. */
 .v2-only{display:none}
-
-
-/* Training & Workshops (Experience page) */
-.tw-section{padding:20px 0 64px}
-.tw-title{font-family:"Source Serif 4",Georgia,serif;font-size:clamp(30px,4vw,42px);margin:10px 0 8px;color:var(--ink)}
-.tw-lead{color:var(--muted);font-size:14px;max-width:640px;margin:0 0 28px}
-.tw-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr));gap:22px}
-.tw-card{background:var(--surface);border:1px solid var(--line);border-radius:20px;overflow:hidden;box-shadow:0 12px 34px rgba(39,54,78,.07);display:flex;flex-direction:column;transition:transform .22s ease,box-shadow .22s ease}
-.tw-card:hover{transform:translateY(-3px);box-shadow:0 18px 44px rgba(39,54,78,.13)}
-.tw-img{aspect-ratio:16/9;width:100%;object-fit:cover;object-position:center 35%;display:block}
-.tw-body{padding:20px 22px 24px}
-.tw-meta{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
-.tw-chip{font-size:11px;font-weight:700;background:var(--surface-2);color:var(--accent);padding:5px 10px;border-radius:99px}
-.tw-card h3{margin:0 0 8px;font-size:18px;line-height:1.3}
-.tw-org{margin:0 0 10px;font-size:12.5px;font-weight:600;color:var(--accent)}
-.tw-desc{margin:0;font-size:13.5px;line-height:1.65;color:var(--muted)}
