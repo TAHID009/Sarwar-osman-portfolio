@@ -10993,7 +10993,7 @@ A.onChange(A.fillForm);
     else setSync('offline');
   }
   function writeFail(err){ cloudErr(err); toast('Could not save to Firebase — that change was not stored.'); }
-  function cloudPut(a){ if(cloud.db) cloud.db.collection(COLL).doc(a.id).set(a).catch(writeFail); }
+  function cloudPut(a, undo){ if(cloud.db) cloud.db.collection(COLL).doc(a.id).set(a).catch(function(e){ if(typeof undo === 'function'){ try{ undo(); }catch(x){} } writeFail(e); }); }
   function cloudDel(id){ if(cloud.db) cloud.db.collection(COLL).doc(id).delete().catch(writeFail); }
   /* One-time move of records saved on this device by the earlier version. Safe to repeat: writes are keyed by id. */
   function migrateLocal(remote){
@@ -11213,7 +11213,7 @@ A.onChange(A.fillForm);
              category:form.category, status:form.status, kind:form.kind, effort:form.effort, note:$('pwi-note').value.trim().slice(0,500),
              created:nowISO(), updated:nowISO(), taskType:form.taskType, ref:$('pwi-ref').value.trim().toUpperCase().slice(0,30), reopened:0, hist:[]};
     a.hist.push({s:a.status, at:a.created});
-    acts.push(a); sortActs(); cloudPut(a);
+    acts.push(a); sortActs(); cloudPut(a, function(){ acts = acts.filter(function(x){ return x.id !== a.id; }); renderAll(); /* write was rejected: drop the unsaved record */ });
     settings.lastSource = form.source; settings.keep = $('pwi-keep').checked; saveSettings();
     form.category = ''; form.taskType = ''; form.status = 'Solved'; form.kind = 'new'; form.dismissed = false; form.effort = ''; form.date = ''; form.time = ''; $('pwi-ref').value = ''; renderTypes();
     $('pwi-note').value = '';
@@ -13663,7 +13663,7 @@ function view(){var q=norm($('px-q').value),fd1=$('px-fd').value,fc=$('px-fc').v
   return(!q||[r.name,r.phone,r.passportNo,r.billingCompany].some(function(x){return norm(x).indexOf(q)>-1}))&&(!fd1||r.dept===fd1)&&(!fc||r.billingCompany===fc)&&(!fn||r.nationality===fn)&&(!a||d>=a)&&(!b||d<=b)});
  l.sort(function(x,y){var p=x[sortK],q2=y[sortK];if(sortK==='sl')return((+p||0)-(+q2||0))*sortD;return String(p||'').localeCompare(String(q2||''),undefined,{numeric:true})*sortD});return l}
 function fill(id,key,all){var s=$(id),cur=s.value,v=Array.from(new Set(all.map(function(r){return r[key]}).filter(Boolean))).sort();s.options.length=1;v.forEach(function(x){var o=document.createElement('option');o.value=o.textContent=x;s.appendChild(o)});s.value=v.indexOf(cur)>-1?cur:''}
-function status(r){var m=/^\d{4}-\d{2}-\d{2}$/.test(r.expiry||'');if(!m)return null;var t=Date.parse(r.expiry+'T00:00:00');if(isNaN(t))return null;var d=Math.round((t-Date.parse(new Date().toISOString().slice(0,10)+'T00:00:00'))/864e5);return{d:d,k:d<0?'exp':d<=90?'soon':'valid',t:d<0?'Expired':d<=90?'Expiring Soon':'Valid'}}
+function status(r){var m=/^\d{4}-\d{2}-\d{2}$/.test(r.expiry||'');if(!m)return null;var t=Date.parse(r.expiry+'T00:00:00');if(isNaN(t))return null;var d=Math.round((t-(function(n){return new Date(n.getFullYear(),n.getMonth(),n.getDate()).getTime()})(new Date()))/864e5);return{d:d,k:d<0?'exp':d<=90?'soon':'valid',t:d<0?'Expired':d<=90?'Expiring Soon':'Valid'}}
 function badge(r){var x=status(r);return x?'<span class="px-badge px-st-'+x.k+'" title="Passport expiry only; not ticket validity or immigration eligibility. '+(x.d<0?'Expired '+(-x.d)+' day(s) ago':'Expires in '+x.d+' day(s)')+'">'+x.t+'</span>':''}
 function uniq(k){var o={};rows.forEach(function(r){var v=norm(r[k]);if(v)o[v]=1});return Object.keys(o).length}
 function kpis(){$('px-k1').textContent=rows.length;$('px-k2').textContent=uniq('dept');$('px-k3').textContent=uniq('billingCompany');$('px-k4').textContent=rows.filter(function(r){var x=status(r);return x&&x.k==='soon'}).length}
