@@ -13534,6 +13534,181 @@ html #cloud-auth-modal-backdrop .aero-auth-footer{
 }
 @media (prefers-reduced-motion:reduce){ #cloud-auth-modal-backdrop *{ animation:none !important; transition:none !important; } }
 </style>
+<style id="aeroops-login-glass">
+/* ===== AeroOps sign-in v4: dark-navy aviation scene + transparent glass panel.
+   Presentation only: every id, field, handler, redirect and Firebase call is unchanged.
+   Scoped to #cloud-auth-modal-backdrop; last of the login style blocks so it wins over v2/v3. ===== */
+
+/* ---- scene: dark navy with subtle cyan lighting ---- */
+html #cloud-auth-modal-backdrop,
+html[data-theme] #cloud-auth-modal-backdrop{
+  /* cyan light  >  deep navy wash  >  the app's existing airport scene (kept only as faint texture)  >  solid navy */
+  background:
+    radial-gradient(820px 560px at 80% 28%, rgba(34,211,238,.20), transparent 62%),
+    radial-gradient(700px 500px at 6% -4%, rgba(56,189,248,.14), transparent 60%),
+    radial-gradient(900px 620px at 58% 112%, rgba(14,116,144,.26), transparent 60%),
+    linear-gradient(160deg,rgba(3,10,24,.90) 0%,rgba(6,22,46,.88) 52%,rgba(4,13,30,.93) 100%),
+    var(--bg-scene, none) center/cover no-repeat,
+    #040d1c !important;
+  color:#fff;
+}
+html #cloud-auth-modal-backdrop .aero-auth-hero{ background:transparent !important; overflow:visible !important; }
+html #cloud-auth-modal-backdrop .aero-hero-copy p{ color:rgba(226,238,250,.86); }
+html #cloud-auth-modal-backdrop .aero-hero-foot{ color:rgba(190,214,236,.8); }
+
+/* ---- right column: transparent, with soft light shapes behind the glass so the blur is visible ---- */
+html #cloud-auth-modal-backdrop .aero-auth-panel{
+  position:relative; isolation:isolate; background:transparent !important;
+}
+#cloud-auth-modal-backdrop .aero-auth-panel::before,
+#cloud-auth-modal-backdrop .aero-auth-panel::after{
+  content:""; position:absolute; z-index:-1; border-radius:50%; pointer-events:none;
+}
+#cloud-auth-modal-backdrop .aero-auth-panel::before{
+  width:360px; height:360px; left:calc(50% - 330px); top:calc(50% - 300px);
+  background:radial-gradient(circle at 35% 35%, rgba(34,211,238,.48), rgba(8,145,178,.16) 58%, transparent 72%);
+}
+#cloud-auth-modal-backdrop .aero-auth-panel::after{
+  width:280px; height:280px; left:calc(50% + 60px); top:calc(50% + 110px);
+  background:radial-gradient(circle at 60% 60%, rgba(59,130,246,.40), rgba(37,99,235,.12) 58%, transparent 72%);
+}
+
+/* ---- the glass panel ---- */
+html #cloud-auth-modal-backdrop .ptc-modal{
+  position:relative !important; z-index:1; width:100%; max-width:440px;
+  padding:38px 34px 32px !important;
+  border-radius:22px !important;
+  border:1px solid rgba(255,255,255,.30) !important;
+  background:
+    linear-gradient(145deg, rgba(255,255,255,.12) 0%, rgba(255,255,255,.02) 46%, rgba(255,255,255,.05) 100%),
+    rgba(8,24,50,.24) !important;
+  -webkit-backdrop-filter:blur(18px) saturate(160%);
+          backdrop-filter:blur(18px) saturate(160%);
+  box-shadow:0 28px 70px rgba(0,6,20,.55), 0 2px 0 rgba(255,255,255,.06) inset, 0 1px 0 rgba(255,255,255,.28) inset !important;
+  animation:aeroGlassIn .6s cubic-bezier(.2,.7,.2,1) both !important;
+}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  html #cloud-auth-modal-backdrop .ptc-modal{ background:rgba(9,26,54,.94) !important; }
+}
+@keyframes aeroGlassIn{ from{opacity:0; transform:translateY(14px) scale(.985);} to{opacity:1; transform:none;} }
+
+/* ---- text: white on dark glass ---- */
+html #cloud-auth-modal-backdrop h3{ color:#fff !important; font-size:32px !important; margin:10px 0 8px !important; }
+html #cloud-auth-modal-backdrop #signin-subtext,
+html #cloud-auth-modal-backdrop #auth-view-register > p,
+html #cloud-auth-modal-backdrop #auth-view-setpassword > p,
+html #cloud-auth-modal-backdrop #auth-view-sent > p{ color:rgba(255,255,255,.80) !important; font-size:13.5px; }
+html #cloud-auth-modal-backdrop #auth-view-sent strong{ color:#fff; }
+#cloud-auth-modal-backdrop .aero-kicker{ color:#67e8f9 !important; }
+html #cloud-auth-modal-backdrop .ptc-field label{ color:rgba(255,255,255,.88) !important; }
+
+/* ---- inputs ---- */
+html #cloud-auth-modal-backdrop input[type="email"],
+html #cloud-auth-modal-backdrop input[type="password"],
+html #cloud-auth-modal-backdrop input[type="text"]{
+  height:52px !important; border-radius:12px !important;
+  border:1px solid rgba(255,255,255,.26) !important;
+  background:rgba(3,13,30,.55) !important; color:#fff !important; caret-color:#67e8f9;
+  transition:border-color .2s ease, box-shadow .2s ease, background-color .2s ease;
+}
+html #cloud-auth-modal-backdrop input::placeholder{ color:rgba(255,255,255,.55); opacity:1; }
+html #cloud-auth-modal-backdrop input:hover{ border-color:rgba(255,255,255,.42) !important; }
+html #cloud-auth-modal-backdrop input:focus{
+  border-color:#22d3ee !important; background:rgba(3,13,30,.7) !important;
+  box-shadow:0 0 0 4px rgba(34,211,238,.20) !important;
+}
+html #cloud-auth-modal-backdrop input:-webkit-autofill,
+html #cloud-auth-modal-backdrop input:-webkit-autofill:hover,
+html #cloud-auth-modal-backdrop input:-webkit-autofill:focus{
+  -webkit-text-fill-color:#fff; caret-color:#67e8f9;
+  -webkit-box-shadow:0 0 0 1000px #0a1d3a inset !important; box-shadow:0 0 0 1000px #0a1d3a inset !important;
+  transition:background-color 9999s ease-out 0s;
+}
+html #cloud-auth-modal-backdrop :is(a, button, input):focus-visible{ outline:2px solid #22d3ee; outline-offset:2px; }
+html #cloud-auth-modal-backdrop .ptc-eye-toggle{ color:rgba(255,255,255,.72); top:9px; transition:color .2s ease; }
+html #cloud-auth-modal-backdrop .ptc-eye-toggle:hover{ color:#fff; }
+
+/* ---- cyan primary button ---- */
+html #cloud-auth-modal-backdrop #btn-cloud-auth-signin,
+html #cloud-auth-modal-backdrop #btn-send-verify-link,
+html #cloud-auth-modal-backdrop #btn-set-password{
+  height:52px !important; border-radius:12px !important; border:0 !important;
+  background:linear-gradient(135deg,#22d3ee 0%,#06b6d4 55%,#0ea5c9 100%) !important;
+  color:#031826 !important; font-size:12.5px !important; font-weight:850 !important; letter-spacing:.09em;
+  box-shadow:0 10px 26px rgba(6,182,212,.30), 0 1px 0 rgba(255,255,255,.35) inset;
+  transition:transform .2s ease, box-shadow .2s ease, filter .2s ease;
+}
+html #cloud-auth-modal-backdrop #btn-cloud-auth-signin:hover:not(:disabled),
+html #cloud-auth-modal-backdrop #btn-send-verify-link:hover:not(:disabled),
+html #cloud-auth-modal-backdrop #btn-set-password:hover:not(:disabled){
+  background:linear-gradient(135deg,#4be0f5 0%,#22d3ee 55%,#14b8d8 100%) !important;
+  transform:translateY(-2px); box-shadow:0 14px 32px rgba(34,211,238,.42), 0 1px 0 rgba(255,255,255,.4) inset;
+}
+html #cloud-auth-modal-backdrop #btn-cloud-auth-signin:active:not(:disabled){ transform:translateY(0); filter:brightness(.96); }
+html #cloud-auth-modal-backdrop button:disabled{ opacity:.65; }
+#cloud-auth-modal-backdrop .aero-spinner{ border-color:rgba(3,24,38,.3); border-top-color:#031826; }
+
+/* ---- links, divider, footer ---- */
+html #cloud-auth-modal-backdrop #btn-cloud-auth-reset{ color:#67e8f9 !important; transition:color .2s ease; }
+html #cloud-auth-modal-backdrop #btn-cloud-auth-reset:hover{ color:#a5f3fc !important; }
+html #cloud-auth-modal-backdrop .aero-acct-links a{ color:rgba(255,255,255,.80) !important; transition:color .2s ease; }
+html #cloud-auth-modal-backdrop .aero-acct-links a:hover{ color:#fff !important; }
+html #cloud-auth-modal-backdrop #link-back-to-signin{ color:rgba(255,255,255,.82) !important; }
+html #cloud-auth-modal-backdrop #link-back-to-signin:hover{ color:#fff !important; background:none !important; }
+html #cloud-auth-modal-backdrop #link-back-to-signin-2{
+  color:#fff !important; border-color:rgba(255,255,255,.3) !important; background:rgba(255,255,255,.06) !important;
+}
+html #cloud-auth-modal-backdrop #link-back-to-signin-2:hover{ background:rgba(255,255,255,.14) !important; }
+#cloud-auth-modal-backdrop .aero-divider{ color:rgba(255,255,255,.62); }
+#cloud-auth-modal-backdrop .aero-divider::before,
+#cloud-auth-modal-backdrop .aero-divider::after{ background:rgba(255,255,255,.2); }
+html #cloud-auth-modal-backdrop .aero-auth-footer{ color:rgba(255,255,255,.62) !important; }
+
+/* ---- messages + password rules (readable on dark glass) ---- */
+#cloud-auth-error:not(:empty), #reg-error:not(:empty), #setpw-error:not(:empty){
+  font-size:13px; line-height:1.45;
+  background:rgba(248,113,113,.16) !important; border-color:rgba(252,165,165,.5) !important; color:#fee2e2 !important;
+}
+#cloud-auth-reset-msg.aero-visible{
+  background:rgba(34,211,238,.14) !important; border-color:rgba(103,232,249,.45) !important; color:#e0fbff !important;
+}
+#cloud-auth-reset-msg.aero-visible::before{ background:#22d3ee !important; color:#031826 !important; }
+#cloud-auth-modal-backdrop #aero-pw-rules{ background:rgba(3,13,30,.45); border-color:rgba(255,255,255,.2); }
+#cloud-auth-modal-backdrop #aero-pw-rules p{ color:#fff; }
+#cloud-auth-modal-backdrop #aero-pw-rules li{ color:rgba(255,255,255,.72); }
+#cloud-auth-modal-backdrop #aero-pw-rules li::before{ background:rgba(255,255,255,.16); color:rgba(255,255,255,.8); }
+#cloud-auth-modal-backdrop #aero-pw-rules li.ok{ color:#fff; }
+#cloud-auth-modal-backdrop #aero-pw-rules li.ok::before{ background:#22d3ee; color:#031826; }
+
+/* ---- one gentle ambient animation ---- */
+#cloud-auth-modal-backdrop .aero-orbit .dot{ animation:aeroGlassPulse 3.2s ease-in-out infinite; }
+@keyframes aeroGlassPulse{ 0%,100%{ box-shadow:0 0 14px #70e7f1; opacity:.85; } 50%{ box-shadow:0 0 28px #70e7f1; opacity:1; } }
+
+/* ---- responsive ---- */
+@media (max-width:850px){
+  html #cloud-auth-modal-backdrop .aero-auth-hero{ min-height:0; padding:22px 22px 4px; }
+  html #cloud-auth-modal-backdrop .aero-hero-copy{ margin-top:26px; padding-bottom:6px; }
+  html #cloud-auth-modal-backdrop .aero-hero-copy h2{ font-size:34px; margin:12px 0 0; }
+  html #cloud-auth-modal-backdrop .aero-hero-copy p,
+  #cloud-auth-modal-backdrop .aero-orbit,
+  #cloud-auth-modal-backdrop .aero-route{ display:none; }
+  html #cloud-auth-modal-backdrop .aero-auth-panel{ padding:22px 18px 34px; justify-content:flex-start; }
+  #cloud-auth-modal-backdrop .aero-auth-panel::before{ left:calc(50% - 250px); top:-10px; width:300px; height:300px; }
+  #cloud-auth-modal-backdrop .aero-auth-panel::after{ left:calc(50% + 10px); top:260px; width:240px; height:240px; }
+  html #cloud-auth-modal-backdrop .ptc-modal{ max-width:460px; }
+}
+@media (max-width:480px){
+  html #cloud-auth-modal-backdrop .aero-auth-hero{ min-height:0; padding:18px 18px 2px; }
+  html #cloud-auth-modal-backdrop .aero-hero-copy{ margin-top:20px; }
+  html #cloud-auth-modal-backdrop .aero-hero-copy h2{ font-size:28px; }
+  html #cloud-auth-modal-backdrop .aero-auth-panel{ padding:18px 14px 30px; }
+  html #cloud-auth-modal-backdrop .ptc-modal{ padding:28px 20px 24px !important; border-radius:20px !important; }
+  html #cloud-auth-modal-backdrop h3{ font-size:28px !important; }
+}
+@media (prefers-reduced-motion:reduce){
+  #cloud-auth-modal-backdrop *, html #cloud-auth-modal-backdrop .ptc-modal{ animation:none !important; transition:none !important; }
+}
+</style>
 <style id="aeroops-logbook-card">
 /* Work Record: Log Book timeline card (presentation only) */
 .wr-card.lbk{padding:12px !important;overflow:hidden}
