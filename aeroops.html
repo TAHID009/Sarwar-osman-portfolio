@@ -20,6 +20,18 @@ document.documentElement.setAttribute("data-ui","v2");window.__aeroUI="v2";
   });
 })();
 </script>
+<style id="aero-auth-boot">
+/* Login board is the first thing in this very large document. Without this gate the browser paints it half-parsed
+   (hero only, empty form panel) and the rest of the page behind it, then repaints. Everything except the board stays
+   hidden until the board's markup is fully parsed (flag set by the inline script right after it). */
+html:not(.aero-auth-ready){background:#0B2545 !important}
+html:not(.aero-auth-ready) body>*:not(#cloud-auth-modal-backdrop){visibility:hidden !important}
+html:not(.aero-auth-ready) #cloud-auth-modal-backdrop{visibility:hidden}
+html:not(.aero-auth-ready) body::before{content:"";position:fixed;left:50%;top:50%;width:30px;height:30px;margin:-15px 0 0 -15px;border:3px solid rgba(255,255,255,.22);border-top-color:#58d9eb;border-radius:50%;animation:aeroBootSpin .7s linear infinite;z-index:6000}
+@keyframes aeroBootSpin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){html:not(.aero-auth-ready) body::before{animation-duration:2.4s}}
+</style>
+<script>setTimeout(function(){document.documentElement.classList.add("aero-auth-ready")},5000);/* safety net only */</script>
 <title>SARWAR OSMAN | PORTFOLIO</title>
 <meta name="description" content="Internal work record and ticket sales tracker for Md Sarwar Osman Sagar.">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -3398,7 +3410,20 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
 #aero-toast{z-index:99999}
 @media (max-width:640px){#aero-pax .px-hero{padding:14px}#aero-pax .px-hero-act,#aero-pax .px-hero-act .px-btn{width:100%}}
 </style>
-</head><body>
+<style id="aero-activity-style">
+#pwi-root .pwi-import{background:#F3F8FF;border:1.5px solid #9DBDF0;border-radius:12px;padding:12px 14px}
+#pwi-root .pwi-import label{font-weight:700;color:#0B2545;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+#pwi-root .pwi-import-cat{font-weight:600;color:#2563C9;font-size:12px}
+#pwi-root .pwi-import textarea{width:100%;min-height:96px;resize:vertical;background:#fff;border:1px solid #C9D6E8;border-radius:8px;padding:10px 12px;margin-top:6px;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:12.5px}
+#pwi-root .pwi-import textarea:focus,#pwi-root #pwi-custom-type:focus{outline:2px solid #2563C9;outline-offset:1px}
+#pwi-root .pwi-import small{display:block;text-align:right;color:#6B7A8D;font-size:11px;margin-top:2px}
+#pwi-root .pwi-imp{display:block;color:#3C5573;font-size:11px;max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#pwi-root #pwi-custom-wrap input{width:100%}
+#pwi-root #pwi-m-import{width:100%;box-sizing:border-box}
+html[data-theme="dark"] #pwi-root .pwi-import{background:#12243F;border-color:#2C4F86}
+html[data-theme="dark"] #pwi-root .pwi-import label{color:#E6EEF9}
+html[data-theme="dark"] #pwi-root .pwi-import textarea{background:#0E1E36;border-color:#2C4F86;color:#E6EEF9}
+</style></head><body>
     <div class="ptc-modal-backdrop" id="cloud-auth-modal-backdrop" style="display:flex; z-index:5000;">
       <div class="aero-auth-split">
         <div class="aero-auth-hero">
@@ -3513,6 +3538,22 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
 
     </div>
 <div class="site-shell">
+<script>
+/* Runs as soon as the login board is parsed: sets the correct sign-in state once (same rules as setupSignInView, which
+   runs much later at the end of the file and previously changed the form after it was already on screen), then reveals the board. */
+(function(){
+  try{
+    var d=document, g=function(x){return d.getElementById(x);}, r=null;
+    try{ r=localStorage.getItem('aeroops_registered_email'); }catch(e){}
+    var f=g('signin-email-field'), t=g('signin-subtext'), u=g('link-use-different-email'), n=g('link-go-register');
+    if(f&&t&&u&&n){
+      if(r){ f.style.display='none'; t.textContent='Enter your Access Code to continue.'; u.style.display='inline'; n.style.display='none'; }
+      else { f.style.display='block'; t.textContent='Enter your email and Access Code to continue.'; u.style.display='none'; n.style.display='inline'; }
+    }
+  }catch(e){}
+  document.documentElement.classList.add('aero-auth-ready');
+})();
+</script>
 <header class="header"><div class="container nav-wrap"><div class="nav">
 <a class="logo" href="index.html"><span class="logo-mark">S</span><span>SARWAR</span></a>
 <nav class="nav-links" aria-label="Primary navigation">
@@ -4786,9 +4827,11 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
             <div class="hm-f s3"><label for="pwi-ref">PNR / TKT No.</label><input type="text" id="pwi-ref" maxlength="30" placeholder="e.g. 123-4567890" autocomplete="off"></div>
             <div class="pwi-field hm-f s4" data-g="category"><label for="hm-cat">Task Category *</label><select id="hm-cat"></select><div class="pwi-chips hm-hide" id="pwi-cat"></div></div>
             <div class="pwi-field hm-f s4" data-g="taskType"><label for="hm-typ">Task Type *</label><select id="hm-typ"></select><div class="pwi-chips hm-hide" id="pwi-type"></div></div>
+            <div class="pwi-field hm-f s4" data-g="customType" id="pwi-custom-wrap" hidden><label for="pwi-custom-type">Enter Custom Task Type *</label><input type="text" id="pwi-custom-type" maxlength="60" autocomplete="off" placeholder="Type the task name"></div>
             <div class="pwi-field hm-f s4" data-g="kind"><label>Case Type</label><div class="pwi-kind" id="pwi-kind" role="group" aria-label="New task or repeat issue"></div></div>
             <div class="pwi-field hm-f s3" data-g="status"><label for="hm-out">Outcome *</label><select id="hm-out"></select><div class="pwi-status hm-hide" id="pwi-stat"></div></div>
             <div class="hm-f s3"><label for="hm-eff">Effort Level</label><select id="hm-eff"></select><div class="pwi-chips hm-hide" id="pwi-eff"></div></div>
+            <div class="hm-f s12 pwi-import" id="pwi-import-box"><label for="pwi-import">Manual Import <span class="pwi-import-cat" id="pwi-import-cat"></span></label><textarea id="pwi-import" maxlength="2000" rows="4" placeholder="Type or paste PNR details, passenger names, ticket numbers, task information or notes…"></textarea><small id="pwi-import-cnt">0/2000</small></div>
             <div class="hm-f s6 r2"><label for="pwi-note">Notes / Remarks</label><textarea id="pwi-note" maxlength="500" placeholder="Add details about the task, e.g. passenger name, issue, solution…"></textarea><small id="hm-cnt">0/500</small></div>
             <div class="hm-btns hm-f s6"><button type="button" class="pwi-save" id="pwi-save">Save Record</button><button type="button" class="pwi-btn" id="pwi-save2">Save &amp; Add Another</button></div>
             <div class="pwi-ctx hm-f s12" id="pwi-ctx" aria-live="polite" hidden></div>
@@ -4886,6 +4929,8 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
             <div><label for="pwi-m-company">Company / Client</label><input type="text" id="pwi-m-company" list="pwi-co-list" maxlength="80"></div>
             <div><label for="pwi-m-cat">Work / Query</label><select id="pwi-m-cat"></select></div>
             <div><label for="pwi-m-type">Task type</label><select id="pwi-m-type"></select></div>
+            <div id="pwi-m-custom-wrap" hidden><label for="pwi-m-custom">Enter Custom Task Type *</label><input type="text" id="pwi-m-custom" maxlength="60" autocomplete="off"></div>
+            <div style="grid-column:1/-1"><label for="pwi-m-import">Manual Import</label><textarea id="pwi-m-import" maxlength="2000" rows="3"></textarea></div>
             <div><label for="pwi-m-ref">PNR / Ticket no.</label><input type="text" id="pwi-m-ref" maxlength="30"></div>
             <div><label for="pwi-m-status">Status</label><select id="pwi-m-status"></select></div>
             <div><label for="pwi-m-effort">Effort</label><select id="pwi-m-effort"></select></div>
@@ -6359,6 +6404,14 @@ A.onChange(A.fillForm);
   // Firestore rules should be set to `allow read, write: if request.auth != null;`
   // so the apiKey alone (which is not a secret) can no longer grant access —
   // only a real account, password-protected, can.
+  let authWasSignedIn = false;   // true only after a real sign-in, so the first "signed out" callback at start-up cannot wipe what the user already typed
+  let authBusy = false;
+  function setAuthBusy(on){      // clean "connecting" state on the button only while Firebase is still starting
+    if(authBusy === on) return; authBusy = on;
+    const b = document.getElementById('btn-cloud-auth-signin'), l = document.getElementById('signin-btn-label');
+    if(!b || !l) return;
+    b.disabled = on; l.innerHTML = on ? '<span class="aero-spinner"></span> CONNECTING...' : 'CONTINUE';
+  }
   let awaitingNewPassword = false; // true right after email-link verification, until Access Code is set
   let passwordResetOobCode = null; // set once a "Forgot Access Code?" link's code is verified
   let passwordResetEmail = null;
@@ -6403,6 +6456,7 @@ A.onChange(A.fillForm);
 
   function beginCloudConnection(config){
     setCloudStatus('connecting');
+    setAuthBusy(true); setTimeout(() => setAuthBusy(false), 8000);   // never leave the button locked
     loadFirebaseScripts(() => {
       try{
         if(!firebase.apps || !firebase.apps.length){ firebase.initializeApp(config); }
@@ -6423,6 +6477,8 @@ A.onChange(A.fillForm);
         checkForPasswordResetLink();
         auth.onAuthStateChanged((user) => {
           cloudAuthUser = user;
+          setAuthBusy(false);
+          const wasSignedIn = authWasSignedIn; authWasSignedIn = !!user;
           if(user){
             if(awaitingNewPassword){ return; } // keep the Set Access Code view open — don't jump to the dashboard yet
             $('cloud-auth-modal-backdrop').style.display = 'none';
@@ -6442,7 +6498,7 @@ A.onChange(A.fillForm);
             setCloudStatus('idle');
             setSyncStatus('sales', { state:'idle', docs:null, code:'', message:'' }); setSyncStatus('entries', { state:'idle', docs:null, code:'', message:'' });
             $('cloud-auth-error').textContent = '';
-            $('cloud-auth-password').value = '';
+            if(wasSignedIn) $('cloud-auth-password').value = '';   // wipe the code after a real sign-out, not on the first start-up callback
             try{ setupSignInView(); }catch(e){}   // re-evaluate remembered-email state so "Not your account?" is correct after sign-out
             $('cloud-auth-modal-backdrop').style.display = 'flex';
             disarmInactivityWatch();
@@ -6451,9 +6507,11 @@ A.onChange(A.fillForm);
       }catch(err){
         console.error('Cloud connect failed', err);
         toast('Could not connect — check the config and try again.');
+        setAuthBusy(false);
         setCloudStatus('error');
       }
     }, () => {
+      setAuthBusy(false);
       toast('Could not load the cloud library — check your internet connection.');
       var ee = document.getElementById('cloud-auth-error');
       if(ee) ee.textContent = 'Cannot reach Firebase (offline, or gstatic.com is blocked). Check your connection or disable the blocker, then reload.';
@@ -10868,9 +10926,9 @@ A.onChange(A.fillForm);
   /* Activities live ONLY in Firestore (COLL). KEY is read once to migrate older on-device records, then archived to BAK.
      SKEY keeps tiny UI preferences (week start, date range, last source) on this device. */
   var SOURCES = ['WhatsApp','Support','Email','Phone','Internal','Other'];
-  var TYPES = {'Ticketing':['New Booking','Ticket Issuance','Ticket Copy','PNR Support'],'Fare & Availability':['Fare Query','Flight Availability','Fare Rules','Baggage Allowance'],'Reissue':['Voluntary Reissue','Involuntary Reissue','Reissue Calculation'],'Refund':['Refund Request','Refund Calculation','Refund Follow-up'],'Cancellation & Void':['Booking Cancellation','Ticket Void','Segment Cancellation'],'Passenger Services':['Name Correction','Passport Update','SSR','Infant Booking'],'Flight Information':['Schedule Change','Flight Status','Route Information'],'After-Sales Support':['Airline Policy','ADM/ACM','Pending Adjustment','Other Ticketing Support']};
+  var TYPES = {'Ticketing':['New Booking','Flight Availability','Fare Check','Fare Update','Ticket Copy','Others'],'Reissue':['Reissue Charge Checking','Partial Reissue Calculation','Others'],'Refund/Void':['Refund Charge Checking','Partial Refund Calculation','Others'],'Others':['Seat Selection','Name Update','MAAS','Food','Wheelchair','Segment HK','Baggage Update/Check','Others']};
   var CATS = Object.keys(TYPES);
-  var LEGACY = ['Fare Query','Availability','Booking Support','Hotel','Fare Rule / Policy','Problem Solving','Cancellation','Other'];   /* old records keep their category; the form no longer offers these */
+  var LEGACY = ['Fare Query','Availability','Booking Support','Hotel','Fare Rule / Policy','Problem Solving','Cancellation','Other','Fare & Availability','Refund','Cancellation & Void','Passenger Services','Flight Information','After-Sales Support'];   /* old records keep their category; the form no longer offers these */
   var ALLCATS = CATS.concat(LEGACY);
   var STATUSES = ['Solved','Resolved','Pending','Follow-up'];
   var EFFORTS = ['Quick','Standard','Deep'];
@@ -10944,7 +11002,7 @@ A.onChange(A.fillForm);
       source: SOURCES.indexOf(v.source) > -1 ? v.source : 'Other',
       company: normCo(v.company) || 'Unknown',
       category: ALLCATS.indexOf(v.category) > -1 ? v.category : 'Other',
-      taskType: String(v.taskType||'').slice(0,40), ref: String(v.ref||'').trim().toUpperCase().slice(0,30), reopened: Math.max(0, parseInt(v.reopened,10) || 0),
+      taskType: String(v.taskType||'').slice(0,40), customType: String(v.customType||'').trim().slice(0,60), importText: String(v.importText||'').slice(0,2000), userId: String(v.userId||'').slice(0,64), userEmail: String(v.userEmail||'').slice(0,120), userName: String(v.userName||'').slice(0,80), ref: String(v.ref||'').trim().toUpperCase().slice(0,30), reopened: Math.max(0, parseInt(v.reopened,10) || 0),
       hist: Array.isArray(v.hist) ? v.hist.filter(function(h){ return h && STATUSES.indexOf(h.s) > -1 && h.at; }).slice(-30).map(function(h){ return {s:h.s, at:String(h.at)}; }) : [],
       status: STATUSES.indexOf(v.status) > -1 ? v.status : 'Resolved',
       kind: v.kind === 'repeat' ? 'repeat' : v.kind === 'new' ? 'new' : '',
@@ -10993,7 +11051,7 @@ A.onChange(A.fillForm);
     else setSync('offline');
   }
   function writeFail(err){ cloudErr(err); toast('Could not save to Firebase — that change was not stored.'); }
-  function cloudPut(a, undo){ if(cloud.db) cloud.db.collection(COLL).doc(a.id).set(a).catch(function(e){ if(typeof undo === 'function'){ try{ undo(); }catch(x){} } writeFail(e); }); }
+  function cloudPut(a, undo){ if(!cloud.db) return Promise.resolve(false); return cloud.db.collection(COLL).doc(a.id).set(a).then(function(){ return true; }, function(e){ if(typeof undo === 'function'){ try{ undo(); }catch(x){} } writeFail(e); return false; }); }
   function cloudDel(id){ if(cloud.db) cloud.db.collection(COLL).doc(id).delete().catch(writeFail); }
   /* One-time move of records saved on this device by the earlier version. Safe to repeat: writes are keyed by id. */
   function migrateLocal(remote){
@@ -11198,32 +11256,48 @@ A.onChange(A.fillForm);
   function canonCompany(name){ var k = coKey(name); return coNames[k] || normCo(name); }
   function nowISO(){ return new Date().toISOString(); }
 
+  var saving = false;
+  function typeLabel(a){ return a.taskType === 'Others' && a.customType ? 'Others — ' + a.customType : (a.taskType || a.category); }
+  function impSnip(a){ return a.importText ? '<small class="pwi-imp" title="'+esc(a.importText)+'">'+esc(a.importText.slice(0,70))+(a.importText.length > 70 ? '…' : '')+'</small>' : ''; }
+  function curUser(){ var u = null; try{ u = firebase.auth().currentUser; }catch(e){} return u ? {userId:u.uid||'', userEmail:u.email||'', userName:u.displayName||''} : {userId:cloud.uid||'', userEmail:'', userName:''}; }
+  function setSaving(on){ ['pwi-save','pwi-save2'].forEach(function(id){ var b = $(id); if(b) b.disabled = on || (id === 'pwi-save' && !cloud.on); }); }
   function saveForm(another){
-    if(!canWrite()) return;
+    if(saving || !canWrite()) return;
     form.date = $('pwi-date').value || ''; form.time = $('pwi-time').value || '';
-    var co = normCo($('pwi-company').value), miss = [];
+    var co = normCo($('pwi-company').value), custom = $('pwi-custom-type').value.trim(), miss = [];
     if(!form.source) miss.push('source'); if(!co) miss.push('company'); if(!form.category) miss.push('category'); if(form.category && !form.taskType) miss.push('taskType');
+    if(form.taskType === 'Others' && !custom) miss.push('customType');
     if(miss.length){
       miss.forEach(flag);
-      hint('Still needed: ' + miss.map(function(m){ return {source:'Source',company:'Company / Client',category:'Work / Query',taskType:'Task type'}[m]; }).join(', ') + '.', 'err');
-      if(miss.indexOf('company') > -1 && miss.length === 1) $('pwi-company').focus();
+      hint('Still needed: ' + miss.map(function(m){ return {source:'Source',company:'Company / Client',category:'Task category',taskType:'Task type',customType:'Custom task type'}[m]; }).join(', ') + '.', 'err');
+      if(miss.length === 1 && miss[0] === 'company') $('pwi-company').focus();
+      if(miss.length === 1 && miss[0] === 'customType') $('pwi-custom-type').focus();
       return;
     }
+    var u = curUser();
     var a = {id:uid(), date:form.date || todayISO(), time:form.time || nowTime(), source:form.source, company:canonCompany(co), companyId:(window.aeroWs ? aeroWs.active().id : ''),
              category:form.category, status:form.status, kind:form.kind, effort:form.effort, note:$('pwi-note').value.trim().slice(0,500),
-             created:nowISO(), updated:nowISO(), taskType:form.taskType, ref:$('pwi-ref').value.trim().toUpperCase().slice(0,30), reopened:0, hist:[]};
+             created:nowISO(), updated:nowISO(), taskType:form.taskType, customType:form.taskType === 'Others' ? custom.slice(0,60) : '', importText:$('pwi-import').value.trim().slice(0,2000),
+             userId:u.userId, userEmail:u.userEmail, userName:u.userName,
+             ref:$('pwi-ref').value.trim().toUpperCase().slice(0,30), reopened:0, hist:[]};
     a.hist.push({s:a.status, at:a.created});
-    acts.push(a); sortActs(); cloudPut(a, function(){ acts = acts.filter(function(x){ return x.id !== a.id; }); renderAll(); /* write was rejected: drop the unsaved record */ });
-    settings.lastSource = form.source; settings.keep = $('pwi-keep').checked; saveSettings();
-    form.category = ''; form.taskType = ''; form.status = 'Solved'; form.kind = 'new'; form.dismissed = false; form.effort = ''; form.date = ''; form.time = ''; $('pwi-ref').value = ''; renderTypes();
-    $('pwi-note').value = '';
-    if(!settings.keep && !another) $('pwi-company').value = '';
-    fillNow(); $('hm-cnt').textContent = '0/500';
-    renderAll();                       // history now includes this record
-    syncChips(); updatePreview();
-    hint('Tip: press Enter in the client or note field to save.');
-    showDone(a);
-    $('pwi-company').focus(); $('pwi-company').select();
+    saving = true; setSaving(true);
+    var guard = setTimeout(function(){ saving = false; setSaving(false); }, 15000);
+    acts.push(a); sortActs(); renderAll();          // shows in the tracker straight away; removed again if Firebase rejects it
+    cloudPut(a, function(){ acts = acts.filter(function(x){ return x.id !== a.id; }); renderAll(); }).then(function(ok){
+      clearTimeout(guard); saving = false; setSaving(false);
+      if(!ok){ hint('Not saved — what you typed is still in the form. Check the connection and press Save again.', 'err'); return; }
+      settings.lastSource = form.source; settings.keep = $('pwi-keep').checked; saveSettings();
+      form.category = ''; form.taskType = ''; form.status = 'Solved'; form.kind = 'new'; form.dismissed = false; form.effort = ''; form.date = ''; form.time = ''; $('pwi-ref').value = ''; renderTypes();
+      $('pwi-note').value = ''; $('pwi-import').value = ''; $('pwi-custom-type').value = '';
+      if(!settings.keep && !another) $('pwi-company').value = '';
+      fillNow(); $('hm-cnt').textContent = '0/500'; $('pwi-import-cnt').textContent = '0/2000';
+      renderAll();                       // tracker + counts refreshed
+      syncChips(); updatePreview();
+      hint('Tip: press Enter in the client or note field to save.');
+      showDone(a);
+      $('pwi-company').focus(); $('pwi-company').select();
+    });
   }
 
   function stSelect(a){
@@ -11241,8 +11315,8 @@ A.onChange(A.fillForm);
   }
   function liRow(a, left, sub){
     return '<div class="pwi-li"><span class="pwi-li-time">'+esc(left)+(sub ? '<small>'+esc(sub)+'</small>' : '')+'</span><div class="pwi-li-main"><div class="pwi-li-t">'+esc(coName(a))+'</div>' +
-      '<div class="pwi-li-s"><i class="pwi-dot" style="background:'+srcColor(a.source)+'"></i>'+esc(a.source)+' · '+esc(a.category)+(a.kind === 'repeat' ? ' · <span class="pwi-rp">Repeat</span>' : '')+'</div>' +
-      (a.note ? '<div class="pwi-li-n" title="'+esc(a.note)+'">'+esc(a.note)+'</div>' : '')+'</div><div class="pwi-li-a">'+stSelect(a)+acts2(a)+'</div></div>';
+      '<div class="pwi-li-s"><i class="pwi-dot" style="background:'+srcColor(a.source)+'"></i>'+esc(a.source)+' · '+esc(a.category)+(a.taskType ? ' · '+esc(typeLabel(a)) : '')+(a.kind === 'repeat' ? ' · <span class="pwi-rp">Repeat</span>' : '')+'</div>' +
+      (a.importText ? '<div class="pwi-li-n" title="'+esc(a.importText)+'">⇪ '+esc(a.importText)+'</div>' : '')+(a.note ? '<div class="pwi-li-n" title="'+esc(a.note)+'">'+esc(a.note)+'</div>' : '')+'</div><div class="pwi-li-a">'+stSelect(a)+acts2(a)+'</div></div>';
   }
   function renderEntryLists(){
     if(!cloud.loaded){ $('pwi-today-mini').innerHTML = ''; $('pwi-open-list').innerHTML = ''; $('pwi-today-list').innerHTML = '<div class="pwi-empty">' + (cloud.failed ? 'Firebase is blocking this collection — see the status badge.' : cloud.uid ? 'Loading from Firebase…' : 'Sign in to load your records from Firebase.') + '</div>'; return; }
@@ -11282,18 +11356,21 @@ A.onChange(A.fillForm);
     var a = acts.filter(function(x){ return x.id === id; })[0]; if(!a) return;
     st.editId = id;
     $('pwi-m-date').value = a.date; $('pwi-m-time').value = a.time; $('pwi-m-source').value = a.source;
-    $('pwi-m-company').value = coName(a); $('pwi-m-cat').value = a.category; fillMType(a.category, a.taskType); $('pwi-m-ref').value = a.ref || ''; $('pwi-m-status').value = a.status;
+    $('pwi-m-company').value = coName(a); $('pwi-m-cat').value = a.category; fillMType(a.category, a.taskType); $('pwi-m-custom').value = a.customType || ''; $('pwi-m-import').value = a.importText || ''; syncMCustom(); $('pwi-m-ref').value = a.ref || ''; $('pwi-m-status').value = a.status;
     $('pwi-m-effort').value = a.effort || ''; $('pwi-m-kind').value = a.kind || ''; $('pwi-m-note').value = a.note;
     $('pwi-modal').hidden = false; $('pwi-m-company').focus();
   }
+  function syncMCustom(){ var on = $('pwi-m-type').value === 'Others'; $('pwi-m-custom-wrap').hidden = !on; if(!on) $('pwi-m-custom').value = ''; }
   function closeEdit(){ $('pwi-modal').hidden = true; st.editId = null; }
   function saveEdit(){
     if(!canWrite()) return;
     var a = acts.filter(function(x){ return x.id === st.editId; })[0]; if(!a){ closeEdit(); return; }
     var co = normCo($('pwi-m-company').value), d = $('pwi-m-date').value;
     if(!co || !/^\d{4}-\d{2}-\d{2}$/.test(d)){ toast('Client and date are required.'); return; }
+    var mt = $('pwi-m-type').value, mc = $('pwi-m-custom').value.trim();
+    if(mt === 'Others' && !mc){ toast('Enter a custom task type.'); $('pwi-m-custom').focus(); return; }
     a.date = d; a.time = $('pwi-m-time').value || a.time; a.source = $('pwi-m-source').value; a.company = canonCompany(co);
-    a.category = $('pwi-m-cat').value; a.taskType = $('pwi-m-type').value; a.ref = $('pwi-m-ref').value.trim().toUpperCase().slice(0,30); trackStatus(a, $('pwi-m-status').value); a.kind = $('pwi-m-kind').value; a.effort = $('pwi-m-effort').value;
+    a.category = $('pwi-m-cat').value; a.taskType = mt; a.customType = mt === 'Others' ? mc.slice(0,60) : ''; a.importText = $('pwi-m-import').value.trim().slice(0,2000); a.ref = $('pwi-m-ref').value.trim().toUpperCase().slice(0,30); trackStatus(a, $('pwi-m-status').value); a.kind = $('pwi-m-kind').value; a.effort = $('pwi-m-effort').value;
     a.note = $('pwi-m-note').value.trim().slice(0,500); a.updated = nowISO();
     sortActs(); cloudPut(a); closeEdit(); renderAll(); toast('Changes saved.');
   }
@@ -11734,12 +11811,13 @@ A.onChange(A.fillForm);
   function renderKPIsAndRecords(){ renderDash(); }
   pwi.addEventListener('keydown', function(e){
     var t = e.target;
-    if(e.key === 'Enter' && t.id === 'pwi-company'){ e.preventDefault(); saveForm(); }
+    if(e.key === 'Enter' && (t.id === 'pwi-company' || t.id === 'pwi-custom-type')){ e.preventDefault(); saveForm(); }
     else if(e.key === 'Enter' && (e.ctrlKey || e.metaKey) && st.tab === 'home'){ e.preventDefault(); saveForm(); }
   });
   $('pwi-save').addEventListener('click', function(){ saveForm(); });
   $('pwi-save2').addEventListener('click', function(){ saveForm(true); });
-  $('pwi-m-cat').addEventListener('change', function(){ fillMType(this.value, ''); });
+  $('pwi-m-cat').addEventListener('change', function(){ fillMType(this.value, ''); syncMCustom(); });
+  $('pwi-m-type').addEventListener('change', syncMCustom);
   $('pwi-done').addEventListener('click', function(){ this.classList.remove('show'); });
   $('pwi-date-toggle').addEventListener('click', function(){
     var w = $('pwi-date-wrap');
@@ -11926,7 +12004,7 @@ A.onChange(A.fillForm);
     $('hm-rates').innerHTML = '<div><span>Resolution Rate</span><b>'+E.S.rate+'</b><em><u style="width:'+(parseInt(E.S.rate, 10) || 0)+'%;background:#1E9E5A"></u></em></div><div><span>Repeated Issues</span><b>'+E.S.rep+'</b><em><u style="width:'+(parseInt(E.S.rep, 10) || 0)+'%;background:#C97F1E"></u></em></div><div class="hm-note"><i></i>All tasks are from Air Ticketing services</div>';
     /* Performance & Impact */
     var W = hmWin(HM.imp, d), c2 = acts.filter(function(a){ return inR(a, W.f, W.t); }), p2 = acts.filter(function(a){ return inR(a, W.pf, W.pt); }), E2 = evalSet(c2), P2 = evalSet(p2), sc = E2.score, circ = 251.3;
-    var tiles = [['Tickets Issued', IC.plane, function(l){ return cnt(l, function(a){ return a.taskType === 'Ticket Issuance'; }); }], ['Refunds Processed', IC.ref, function(l){ return cnt(l, function(a){ return a.category === 'Refund'; }); }], ['Reissues Handled', ICON.Resolved, function(l){ return cnt(l, function(a){ return a.category === 'Reissue'; }); }], ['Cancellations', IC.cancel, function(l){ return cnt(l, function(a){ return a.category === 'Cancellation & Void' || a.category === 'Cancellation'; }); }]];
+    var tiles = [['Ticketing Tasks', IC.plane, function(l){ return cnt(l, function(a){ return a.category === 'Ticketing'; }); }], ['Reissue Tasks', ICON.Resolved, function(l){ return cnt(l, function(a){ return a.category === 'Reissue'; }); }], ['Refund / Void Tasks', IC.ref, function(l){ return cnt(l, function(a){ return a.category === 'Refund/Void' || a.category === 'Refund' || a.category === 'Cancellation & Void' || a.category === 'Cancellation'; }); }], ['Other Tasks', IC.cancel, function(l){ return cnt(l, function(a){ return a.category === 'Others'; }); }]];
     var rt = E2.S.rate, title = !E2.n ? 'Ready when you are' : rt === '100%' ? 'Great work!' : 'Keep going';
     $('hm-impact').innerHTML = '<div class="hm-ch"><span class="hm-ico">'+IC.chart+'</span><div><h3>Your Performance &amp; Impact</h3><p>How your work creates value for the company</p></div><select id="hm-imp" class="hm-sel hm-sm"><option value="day"'+(HM.imp === 'day' ? ' selected' : '')+'>'+(isT ? 'Today' : 'Selected day')+'</option><option value="last7"'+(HM.imp === 'last7' ? ' selected' : '')+'>Last 7 days</option><option value="month"'+(HM.imp === 'month' ? ' selected' : '')+'>This month</option></select></div>' +
       '<div class="hm-imp"><div class="hm-gauge"><div class="hm-gw"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke="#E6ECF4" stroke-width="9"/><circle cx="50" cy="50" r="40" fill="none" stroke="#1E9E5A" stroke-width="9" stroke-linecap="round" stroke-dasharray="'+((sc || 0) / 100 * circ * 0.75).toFixed(1)+' '+circ+'" transform="rotate(135 50 50)"/></svg><b>'+(sc == null ? '—' : sc + '%')+'</b></div><span>Performance Score</span>'+(sc != null && P2.score != null ? '<small class="hm-dl '+(sc >= P2.score ? 'up' : 'dn')+'">'+(sc >= P2.score ? '▲ +' : '▼ ')+(sc - P2.score)+' pts <em>vs. previous</em></small>' : '<small class="hm-dl"><em>'+(sc == null ? 'needs '+SC.min+'+ records' : 'no earlier score')+'</em></small>')+'</div>' +
@@ -11943,16 +12021,16 @@ A.onChange(A.fillForm);
     var cv = $('hm-c-t'); if(cv && cv.parentNode) cv.parentNode.innerHTML = hmCombo(labels, nums, rates);
     var dc = $('hm-c-d'); if(dc && dc.parentNode){ var tot = lastN.length, off = 0, C = 2 * Math.PI * 40; dc.parentNode.insertAdjacentHTML('afterbegin', '<svg viewBox="0 0 100 100" class="hm-dsvg" role="img" aria-label="Task distribution"><circle cx="50" cy="50" r="40" fill="none" stroke="#EEF2F7" stroke-width="16"/>' + top.map(function(r, i){ var len = r[1] / tot * C, el = '<circle cx="50" cy="50" r="40" fill="none" stroke="'+PAL[i % PAL.length]+'" stroke-width="16" stroke-dasharray="'+len.toFixed(2)+' '+(C - len).toFixed(2)+'" stroke-dashoffset="'+(-off).toFixed(2)+'" transform="rotate(-90 50 50)"><title>'+esc(r[0])+': '+r[1]+'</title></circle>'; off += len; return el; }).join('') + '</svg>'); dc.remove(); }
     /* Recent activity */
-    var q = HM.q, list = cur.filter(function(a){ return (!q || (hay(a) + ' ' + (a.ref || '') + ' ' + (a.taskType || '')).toLowerCase().indexOf(q) > -1) && (!HM.src || a.source === HM.src) && (!HM.typ || a.category === HM.typ) && (!HM.sts || a.status === HM.sts); });
+    var q = HM.q, list = cur.filter(function(a){ return (!q || (hay(a) + ' ' + (a.ref || '') + ' ' + (a.taskType || '') + ' ' + (a.customType || '') + ' ' + (a.importText || '')).toLowerCase().indexOf(q) > -1) && (!HM.src || a.source === HM.src) && (!HM.typ || a.category === HM.typ) && (!HM.sts || a.status === HM.sts); });
     var pages = Math.max(1, Math.ceil(list.length / 5)); HM.pg = Math.min(Math.max(1, HM.pg), pages);
     var rows = list.slice((HM.pg - 1) * 5, HM.pg * 5), pg = '';
     for(var p = Math.max(1, Math.min(HM.pg - 1, pages - 2)); p <= Math.min(pages, Math.max(HM.pg - 1, 1) + 2); p++) pg += '<button type="button" class="'+(p === HM.pg ? 'on' : '')+'" data-act="hm-page" data-v="'+p+'">'+p+'</button>';
     $('hm-recent').innerHTML = '<div class="hm-ch"><span class="hm-ico">'+IC.list+'</span><h3 class="hm-h3">Recent Activity</h3><div class="hm-fl">'+hmSel('hm-fs', SOURCES, HM.src, 'All Sources')+hmSel('hm-ft', ALLCATS, HM.typ, 'All Task Types')+hmSel('hm-fst', STATUSES, HM.sts, 'All Status')+'<button type="button" class="hm-fb" data-act="hm-clear" title="Clear filters" aria-label="Clear filters">⛛</button></div></div>' +
       '<div class="pwi-twrap"><table class="hm-t"><thead><tr><th>Time</th><th>Client / Company</th><th>Task</th><th>Source / Type</th><th>Outcome</th><th>Effort</th><th>Action</th></tr></thead><tbody>'+(rows.length ? rows.map(function(a){ var ef = a.effort === 'Quick' ? 'Low' : a.effort === 'Deep' ? 'High' : a.effort === 'Standard' ? 'Medium' : '—';
-        return '<tr><td><b>'+esc(fmtTime(a.time))+'</b><small>'+esc(fmtDate(a.date))+'</small></td><td><b>'+esc(coName(a))+'</b></td><td>'+esc(a.taskType || a.category)+(a.ref ? '<small>'+esc(a.ref)+'</small>' : '')+'</td><td><span class="hm-sc" style="background:'+srcColor(a.source)+'">'+esc(a.source.charAt(0))+'</span><span class="hm-sn">'+esc(a.source)+'<small>'+esc(a.category)+'</small></span></td><td>'+stSelect(a)+'</td><td><span class="hm-ef e'+ef+'">'+ef+'</span></td><td><details class="hm-menu"><summary aria-label="Actions">⋯</summary><div><button type="button" data-act="edit" data-id="'+esc(a.id)+'">Edit</button><button type="button" class="del" data-act="del" data-id="'+esc(a.id)+'">Delete</button></div></details></td></tr>'; }).join('') : '<tr><td colspan="7"><div class="pwi-empty">'+(cloud.loaded ? 'No records match for this day.' : 'Sign in to load your records.')+'</div></td></tr>')+'</tbody></table></div>' +
+        return '<tr><td><b>'+esc(fmtTime(a.time))+'</b><small>'+esc(fmtDate(a.date))+'</small></td><td><b>'+esc(coName(a))+'</b></td><td>'+esc(typeLabel(a))+(a.ref ? '<small>'+esc(a.ref)+'</small>' : '')+impSnip(a)+'</td><td><span class="hm-sc" style="background:'+srcColor(a.source)+'">'+esc(a.source.charAt(0))+'</span><span class="hm-sn">'+esc(a.source)+'<small>'+esc(a.category)+'</small></span></td><td>'+stSelect(a)+'</td><td><span class="hm-ef e'+ef+'">'+ef+'</span></td><td><details class="hm-menu"><summary aria-label="Actions">⋯</summary><div><button type="button" data-act="edit" data-id="'+esc(a.id)+'">Edit</button><button type="button" class="del" data-act="del" data-id="'+esc(a.id)+'">Delete</button></div></details></td></tr>'; }).join('') : '<tr><td colspan="7"><div class="pwi-empty">'+(cloud.loaded ? 'No records match for this day.' : 'Sign in to load your records.')+'</div></td></tr>')+'</tbody></table></div>' +
       '<div class="hm-pg"><span>Showing '+rows.length+' of '+list.length+' records</span><span class="hm-pn"><button type="button" data-act="hm-page" data-v="'+(HM.pg - 1)+'"'+(HM.pg <= 1 ? ' disabled' : '')+'>‹</button>'+pg+'<button type="button" data-act="hm-page" data-v="'+(HM.pg + 1)+'"'+(HM.pg >= pages ? ' disabled' : '')+'>›</button></span><button type="button" class="pwi-link" data-act="hm-all">View all activity →</button></div>';
     /* Summary */
-    var tt = tally(cur, function(a){ return a.taskType || a.category; })[0], ts = tally(cur, function(a){ return a.source; })[0], ef2 = effLabel(cur);
+    var tt = tally(cur, function(a){ return typeLabel(a); })[0], ts = tally(cur, function(a){ return a.source; })[0], ef2 = effLabel(cur);
     $('hm-sum').innerHTML = '<div class="hm-sumi"><span class="hm-ico">'+IC.chart+'</span><div><h3>'+(isT ? "Today's" : esc(fmtDate(d))+'')+' Performance Summary</h3><p>'+(E.n ? 'You completed '+E.closed.length+' out of '+E.n+' tasks with '+E.S.rate+' resolution rate.'+(E.score != null ? ' <b>'+esc(band(E.score))+' performance!</b>' : '') : 'No tasks recorded for this day.')+'</p></div></div>' +
       '<div class="hm-st"><span class="hm-ti">'+IC.plane+'</span><div><small>Top Task Type</small><b>'+(tt ? esc(tt[0]) : '—')+'</b>'+(tt ? '<em>('+tt[1]+' tasks)</em>' : '')+'</div></div><div class="hm-st"><span class="hm-sc" style="background:'+(ts ? srcColor(ts[0]) : '#8A97A8')+'">'+(ts ? esc(ts[0].charAt(0)) : '–')+'</span><div><small>Top Source</small><b>'+(ts ? esc(ts[0]) : '—')+'</b>'+(ts ? '<em>('+ts[1]+' tasks)</em>' : '')+'</div></div><div class="hm-st"><span class="hm-ti">'+ICON.Pending+'</span><div><small>Avg. Effort</small><b>'+ef2+'</b>'+(E.n ? '<em>('+E.n+' tasks)</em>' : '')+'</div></div><button type="button" class="hm-rep" data-act="hm-report">View Detailed Report →</button>';
   }
@@ -11975,6 +12053,8 @@ A.onChange(A.fillForm);
     s.value = form.source; $('hm-cat').value = form.category; $('hm-out').value = form.status; $('hm-eff').value = form.effort;
     var l = TYPES[form.category] || []; $('hm-typ').innerHTML = '<option value="">' + (l.length ? 'Select type' : 'Select category first') + '</option>' + l.map(opt).join(''); $('hm-typ').value = form.taskType;
     var n = $('pwi-note'), c = $('hm-cnt'); if(n && c) c.textContent = n.value.length + '/500';
+    var cw = $('pwi-custom-wrap'); if(cw){ var showC = form.taskType === 'Others'; cw.hidden = !showC; $('pwi-custom-type').required = showC; if(!showC) $('pwi-custom-type').value = ''; }
+    var ic = $('pwi-import-cat'); if(ic) ic.textContent = form.category ? '· ' + form.category : '';
   }
   pwi.addEventListener('change', function(e){
     var t = e.target, m = {'hm-fs':'src', 'hm-ft':'typ', 'hm-fst':'sts'}, f = {'hm-src':'source', 'hm-cat':'category', 'hm-typ':'taskType', 'hm-out':'status', 'hm-eff':'effort'};
@@ -11992,6 +12072,7 @@ A.onChange(A.fillForm);
   pwi.addEventListener('input', function(e){
     if(e.target.id === 'hm-q'){ HM.q = e.target.value.trim().toLowerCase(); HM.pg = 1; clearTimeout(HM.tm); HM.tm = setTimeout(renderHome, 150); }
     if(e.target.id === 'pwi-note') $('hm-cnt').textContent = e.target.value.length + '/500';
+    if(e.target.id === 'pwi-import') $('pwi-import-cnt').textContent = e.target.value.length + '/2000';
   });
   pwi.addEventListener('click', function(e){ var b = e.target.closest('details.hm-menu button'); if(b){ var dd = b.closest('details'); if(dd) dd.open = false; } });
   (function(){ var f = pwi.querySelector('.pwi-entry'), h = $('hm-entry'); if(f && h) h.appendChild(f); fillNow(); syncSelects(); })();
@@ -13533,181 +13614,6 @@ html #cloud-auth-modal-backdrop .aero-auth-footer{
   html #cloud-auth-modal-backdrop #signin-subtext{ margin-bottom:26px !important; }
 }
 @media (prefers-reduced-motion:reduce){ #cloud-auth-modal-backdrop *{ animation:none !important; transition:none !important; } }
-</style>
-<style id="aeroops-login-glass">
-/* ===== AeroOps sign-in v4: dark-navy aviation scene + transparent glass panel.
-   Presentation only: every id, field, handler, redirect and Firebase call is unchanged.
-   Scoped to #cloud-auth-modal-backdrop; last of the login style blocks so it wins over v2/v3. ===== */
-
-/* ---- scene: dark navy with subtle cyan lighting ---- */
-html #cloud-auth-modal-backdrop,
-html[data-theme] #cloud-auth-modal-backdrop{
-  /* cyan light  >  deep navy wash  >  the app's existing airport scene (kept only as faint texture)  >  solid navy */
-  background:
-    radial-gradient(820px 560px at 80% 28%, rgba(34,211,238,.20), transparent 62%),
-    radial-gradient(700px 500px at 6% -4%, rgba(56,189,248,.14), transparent 60%),
-    radial-gradient(900px 620px at 58% 112%, rgba(14,116,144,.26), transparent 60%),
-    linear-gradient(160deg,rgba(3,10,24,.90) 0%,rgba(6,22,46,.88) 52%,rgba(4,13,30,.93) 100%),
-    var(--bg-scene, none) center/cover no-repeat,
-    #040d1c !important;
-  color:#fff;
-}
-html #cloud-auth-modal-backdrop .aero-auth-hero{ background:transparent !important; overflow:visible !important; }
-html #cloud-auth-modal-backdrop .aero-hero-copy p{ color:rgba(226,238,250,.86); }
-html #cloud-auth-modal-backdrop .aero-hero-foot{ color:rgba(190,214,236,.8); }
-
-/* ---- right column: transparent, with soft light shapes behind the glass so the blur is visible ---- */
-html #cloud-auth-modal-backdrop .aero-auth-panel{
-  position:relative; isolation:isolate; background:transparent !important;
-}
-#cloud-auth-modal-backdrop .aero-auth-panel::before,
-#cloud-auth-modal-backdrop .aero-auth-panel::after{
-  content:""; position:absolute; z-index:-1; border-radius:50%; pointer-events:none;
-}
-#cloud-auth-modal-backdrop .aero-auth-panel::before{
-  width:360px; height:360px; left:calc(50% - 330px); top:calc(50% - 300px);
-  background:radial-gradient(circle at 35% 35%, rgba(34,211,238,.48), rgba(8,145,178,.16) 58%, transparent 72%);
-}
-#cloud-auth-modal-backdrop .aero-auth-panel::after{
-  width:280px; height:280px; left:calc(50% + 60px); top:calc(50% + 110px);
-  background:radial-gradient(circle at 60% 60%, rgba(59,130,246,.40), rgba(37,99,235,.12) 58%, transparent 72%);
-}
-
-/* ---- the glass panel ---- */
-html #cloud-auth-modal-backdrop .ptc-modal{
-  position:relative !important; z-index:1; width:100%; max-width:440px;
-  padding:38px 34px 32px !important;
-  border-radius:22px !important;
-  border:1px solid rgba(255,255,255,.30) !important;
-  background:
-    linear-gradient(145deg, rgba(255,255,255,.12) 0%, rgba(255,255,255,.02) 46%, rgba(255,255,255,.05) 100%),
-    rgba(8,24,50,.24) !important;
-  -webkit-backdrop-filter:blur(18px) saturate(160%);
-          backdrop-filter:blur(18px) saturate(160%);
-  box-shadow:0 28px 70px rgba(0,6,20,.55), 0 2px 0 rgba(255,255,255,.06) inset, 0 1px 0 rgba(255,255,255,.28) inset !important;
-  animation:aeroGlassIn .6s cubic-bezier(.2,.7,.2,1) both !important;
-}
-@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
-  html #cloud-auth-modal-backdrop .ptc-modal{ background:rgba(9,26,54,.94) !important; }
-}
-@keyframes aeroGlassIn{ from{opacity:0; transform:translateY(14px) scale(.985);} to{opacity:1; transform:none;} }
-
-/* ---- text: white on dark glass ---- */
-html #cloud-auth-modal-backdrop h3{ color:#fff !important; font-size:32px !important; margin:10px 0 8px !important; }
-html #cloud-auth-modal-backdrop #signin-subtext,
-html #cloud-auth-modal-backdrop #auth-view-register > p,
-html #cloud-auth-modal-backdrop #auth-view-setpassword > p,
-html #cloud-auth-modal-backdrop #auth-view-sent > p{ color:rgba(255,255,255,.80) !important; font-size:13.5px; }
-html #cloud-auth-modal-backdrop #auth-view-sent strong{ color:#fff; }
-#cloud-auth-modal-backdrop .aero-kicker{ color:#67e8f9 !important; }
-html #cloud-auth-modal-backdrop .ptc-field label{ color:rgba(255,255,255,.88) !important; }
-
-/* ---- inputs ---- */
-html #cloud-auth-modal-backdrop input[type="email"],
-html #cloud-auth-modal-backdrop input[type="password"],
-html #cloud-auth-modal-backdrop input[type="text"]{
-  height:52px !important; border-radius:12px !important;
-  border:1px solid rgba(255,255,255,.26) !important;
-  background:rgba(3,13,30,.55) !important; color:#fff !important; caret-color:#67e8f9;
-  transition:border-color .2s ease, box-shadow .2s ease, background-color .2s ease;
-}
-html #cloud-auth-modal-backdrop input::placeholder{ color:rgba(255,255,255,.55); opacity:1; }
-html #cloud-auth-modal-backdrop input:hover{ border-color:rgba(255,255,255,.42) !important; }
-html #cloud-auth-modal-backdrop input:focus{
-  border-color:#22d3ee !important; background:rgba(3,13,30,.7) !important;
-  box-shadow:0 0 0 4px rgba(34,211,238,.20) !important;
-}
-html #cloud-auth-modal-backdrop input:-webkit-autofill,
-html #cloud-auth-modal-backdrop input:-webkit-autofill:hover,
-html #cloud-auth-modal-backdrop input:-webkit-autofill:focus{
-  -webkit-text-fill-color:#fff; caret-color:#67e8f9;
-  -webkit-box-shadow:0 0 0 1000px #0a1d3a inset !important; box-shadow:0 0 0 1000px #0a1d3a inset !important;
-  transition:background-color 9999s ease-out 0s;
-}
-html #cloud-auth-modal-backdrop :is(a, button, input):focus-visible{ outline:2px solid #22d3ee; outline-offset:2px; }
-html #cloud-auth-modal-backdrop .ptc-eye-toggle{ color:rgba(255,255,255,.72); top:9px; transition:color .2s ease; }
-html #cloud-auth-modal-backdrop .ptc-eye-toggle:hover{ color:#fff; }
-
-/* ---- cyan primary button ---- */
-html #cloud-auth-modal-backdrop #btn-cloud-auth-signin,
-html #cloud-auth-modal-backdrop #btn-send-verify-link,
-html #cloud-auth-modal-backdrop #btn-set-password{
-  height:52px !important; border-radius:12px !important; border:0 !important;
-  background:linear-gradient(135deg,#22d3ee 0%,#06b6d4 55%,#0ea5c9 100%) !important;
-  color:#031826 !important; font-size:12.5px !important; font-weight:850 !important; letter-spacing:.09em;
-  box-shadow:0 10px 26px rgba(6,182,212,.30), 0 1px 0 rgba(255,255,255,.35) inset;
-  transition:transform .2s ease, box-shadow .2s ease, filter .2s ease;
-}
-html #cloud-auth-modal-backdrop #btn-cloud-auth-signin:hover:not(:disabled),
-html #cloud-auth-modal-backdrop #btn-send-verify-link:hover:not(:disabled),
-html #cloud-auth-modal-backdrop #btn-set-password:hover:not(:disabled){
-  background:linear-gradient(135deg,#4be0f5 0%,#22d3ee 55%,#14b8d8 100%) !important;
-  transform:translateY(-2px); box-shadow:0 14px 32px rgba(34,211,238,.42), 0 1px 0 rgba(255,255,255,.4) inset;
-}
-html #cloud-auth-modal-backdrop #btn-cloud-auth-signin:active:not(:disabled){ transform:translateY(0); filter:brightness(.96); }
-html #cloud-auth-modal-backdrop button:disabled{ opacity:.65; }
-#cloud-auth-modal-backdrop .aero-spinner{ border-color:rgba(3,24,38,.3); border-top-color:#031826; }
-
-/* ---- links, divider, footer ---- */
-html #cloud-auth-modal-backdrop #btn-cloud-auth-reset{ color:#67e8f9 !important; transition:color .2s ease; }
-html #cloud-auth-modal-backdrop #btn-cloud-auth-reset:hover{ color:#a5f3fc !important; }
-html #cloud-auth-modal-backdrop .aero-acct-links a{ color:rgba(255,255,255,.80) !important; transition:color .2s ease; }
-html #cloud-auth-modal-backdrop .aero-acct-links a:hover{ color:#fff !important; }
-html #cloud-auth-modal-backdrop #link-back-to-signin{ color:rgba(255,255,255,.82) !important; }
-html #cloud-auth-modal-backdrop #link-back-to-signin:hover{ color:#fff !important; background:none !important; }
-html #cloud-auth-modal-backdrop #link-back-to-signin-2{
-  color:#fff !important; border-color:rgba(255,255,255,.3) !important; background:rgba(255,255,255,.06) !important;
-}
-html #cloud-auth-modal-backdrop #link-back-to-signin-2:hover{ background:rgba(255,255,255,.14) !important; }
-#cloud-auth-modal-backdrop .aero-divider{ color:rgba(255,255,255,.62); }
-#cloud-auth-modal-backdrop .aero-divider::before,
-#cloud-auth-modal-backdrop .aero-divider::after{ background:rgba(255,255,255,.2); }
-html #cloud-auth-modal-backdrop .aero-auth-footer{ color:rgba(255,255,255,.62) !important; }
-
-/* ---- messages + password rules (readable on dark glass) ---- */
-#cloud-auth-error:not(:empty), #reg-error:not(:empty), #setpw-error:not(:empty){
-  font-size:13px; line-height:1.45;
-  background:rgba(248,113,113,.16) !important; border-color:rgba(252,165,165,.5) !important; color:#fee2e2 !important;
-}
-#cloud-auth-reset-msg.aero-visible{
-  background:rgba(34,211,238,.14) !important; border-color:rgba(103,232,249,.45) !important; color:#e0fbff !important;
-}
-#cloud-auth-reset-msg.aero-visible::before{ background:#22d3ee !important; color:#031826 !important; }
-#cloud-auth-modal-backdrop #aero-pw-rules{ background:rgba(3,13,30,.45); border-color:rgba(255,255,255,.2); }
-#cloud-auth-modal-backdrop #aero-pw-rules p{ color:#fff; }
-#cloud-auth-modal-backdrop #aero-pw-rules li{ color:rgba(255,255,255,.72); }
-#cloud-auth-modal-backdrop #aero-pw-rules li::before{ background:rgba(255,255,255,.16); color:rgba(255,255,255,.8); }
-#cloud-auth-modal-backdrop #aero-pw-rules li.ok{ color:#fff; }
-#cloud-auth-modal-backdrop #aero-pw-rules li.ok::before{ background:#22d3ee; color:#031826; }
-
-/* ---- one gentle ambient animation ---- */
-#cloud-auth-modal-backdrop .aero-orbit .dot{ animation:aeroGlassPulse 3.2s ease-in-out infinite; }
-@keyframes aeroGlassPulse{ 0%,100%{ box-shadow:0 0 14px #70e7f1; opacity:.85; } 50%{ box-shadow:0 0 28px #70e7f1; opacity:1; } }
-
-/* ---- responsive ---- */
-@media (max-width:850px){
-  html #cloud-auth-modal-backdrop .aero-auth-hero{ min-height:0; padding:22px 22px 4px; }
-  html #cloud-auth-modal-backdrop .aero-hero-copy{ margin-top:26px; padding-bottom:6px; }
-  html #cloud-auth-modal-backdrop .aero-hero-copy h2{ font-size:34px; margin:12px 0 0; }
-  html #cloud-auth-modal-backdrop .aero-hero-copy p,
-  #cloud-auth-modal-backdrop .aero-orbit,
-  #cloud-auth-modal-backdrop .aero-route{ display:none; }
-  html #cloud-auth-modal-backdrop .aero-auth-panel{ padding:22px 18px 34px; justify-content:flex-start; }
-  #cloud-auth-modal-backdrop .aero-auth-panel::before{ left:calc(50% - 250px); top:-10px; width:300px; height:300px; }
-  #cloud-auth-modal-backdrop .aero-auth-panel::after{ left:calc(50% + 10px); top:260px; width:240px; height:240px; }
-  html #cloud-auth-modal-backdrop .ptc-modal{ max-width:460px; }
-}
-@media (max-width:480px){
-  html #cloud-auth-modal-backdrop .aero-auth-hero{ min-height:0; padding:18px 18px 2px; }
-  html #cloud-auth-modal-backdrop .aero-hero-copy{ margin-top:20px; }
-  html #cloud-auth-modal-backdrop .aero-hero-copy h2{ font-size:28px; }
-  html #cloud-auth-modal-backdrop .aero-auth-panel{ padding:18px 14px 30px; }
-  html #cloud-auth-modal-backdrop .ptc-modal{ padding:28px 20px 24px !important; border-radius:20px !important; }
-  html #cloud-auth-modal-backdrop h3{ font-size:28px !important; }
-}
-@media (prefers-reduced-motion:reduce){
-  #cloud-auth-modal-backdrop *, html #cloud-auth-modal-backdrop .ptc-modal{ animation:none !important; transition:none !important; }
-}
 </style>
 <style id="aeroops-logbook-card">
 /* Work Record: Log Book timeline card (presentation only) */
