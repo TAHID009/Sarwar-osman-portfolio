@@ -10926,7 +10926,7 @@ A.onChange(A.fillForm);
   /* Activities live ONLY in Firestore (COLL). KEY is read once to migrate older on-device records, then archived to BAK.
      SKEY keeps tiny UI preferences (week start, date range, last source) on this device. */
   var SOURCES = ['WhatsApp','Support','Email','Phone','Internal','Other'];
-  var TYPES = {'Ticketing':['New Booking','Flight Availability','Fare Check','Fare Update','Ticket Copy','Others'],'Reissue':['Reissue Charge Checking','Partial Reissue Calculation','Others'],'Refund/Void':['Refund Charge Checking','Partial Refund Calculation','Others'],'Others':['Seat Selection','Name Update','MAAS','Food','Wheelchair','Segment HK','Baggage Update/Check','Others']};
+  var TYPES = {'Ticketing':['New Booking','Flight Availability','Fare Check','Fare Update','Ticket Copy','Others'],'Reissue':['Reissue Charge Checking','Partial Reissue Calculation','Others'],'Refund/Void':['Refund Charge Checking','Partial Refund Calculation','Void','Others'],'Others':['Seat Selection','Name Update','MAAS','Food','Wheelchair','Segment HK','Baggage Update/Check','Others']};
   var CATS = Object.keys(TYPES);
   var LEGACY = ['Fare Query','Availability','Booking Support','Hotel','Fare Rule / Policy','Problem Solving','Cancellation','Other','Fare & Availability','Refund','Cancellation & Void','Passenger Services','Flight Information','After-Sales Support'];   /* old records keep their category; the form no longer offers these */
   var ALLCATS = CATS.concat(LEGACY);
