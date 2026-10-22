@@ -4823,9 +4823,9 @@ html[data-theme="dark"] #pwi-root .pwi-import textarea{background:#0E1E36;border
     <section id="pwi-root" aria-label="Professional Work Intelligence">
       <div class="pwi-head">
         <div>
-          <div class="pwi-kicker">Capture → Process → Outcome → Insight</div>
-          <h2>Professional Work Intelligence</h2>
-          <p>Every task is recorded. Every outcome is measurable. Repeated issues become visible.</p>
+          <div class="pwi-kicker">Record → Measure → Evaluate</div>
+          <h2>Work Record &amp; Performance</h2>
+          <p>Every transaction and task is recorded, every outcome is measurable, and repeated issues become visible.</p>
         </div>
         <div class="pwi-head-r">
           <span class="pwi-sync" id="pwi-sync">● Connecting to Firebase…</span>
@@ -12061,10 +12061,11 @@ A.onChange(A.fillForm);
       (PS.p === 'custom' ? '<span class="pwi-custom">From <input type="date" id="pf-from" value="'+R.f+'"> To <input type="date" id="pf-to" value="'+R.t+'" max="'+T+'"></span>' : '') +
       '<span class="pwi-range-label">' + esc(fmtDate(R.f) + (R.f === R.t ? '' : ' – ' + fmtDate(R.t))) + ' · compared with ' + esc(fmtDate(R.pf) + (R.pf === R.pt ? '' : ' – ' + fmtDate(R.pt))) + '</span></div>';
     var sc = E.score;
-    h += '<div class="pwi-card"><div class="pwi-card-h"><h3>Performance Evaluation</h3><span class="pwi-sub">Configurable score · evidence below</span></div><div class="pf-top"><div class="pf-score"><b>' + (sc == null ? '—' : sc) + '</b><span>' + (sc == null ? (E.n ? 'Not enough records (need ' + SC.min + ')' : 'No records in this period') : band(sc)) + '</span>' + delta(sc, P.score) + '</div>' +
+    h += '<div class="pwi-card"><div class="pwi-card-h"><h3>Task Performance Evaluation</h3><span class="pwi-sub">Configurable score · evidence below</span></div><div class="pf-top"><div class="pf-score"><b>' + (sc == null ? '—' : sc) + '</b><span>' + (sc == null ? (E.n ? 'Not enough records (need ' + SC.min + ')' : 'No records in this period') : band(sc)) + '</span>' + delta(sc, P.score) + '</div>' +
       '<div class="pf-kpis">' + [['Tasks', E.n, P.n], ['Solved', E.S.Solved, P.S.Solved], ['Resolved', E.S.Resolved, P.S.Resolved], ['Pending', E.S.Pending, P.S.Pending], ['Follow-up', E.S.FU, P.S.FU], ['Resolution rate', E.S.rate, P.n ? P.S.rate : null]].map(function(k){ return '<div><span>'+k[0]+'</span><b>'+k[1]+'</b>'+(typeof k[1] === 'number' ? delta(k[1], P.n ? k[2] : null) : (k[2] ? '<small class="pf-d">prev '+k[2]+'</small>' : ''))+'</div>'; }).join('') + '</div></div>' +
       '<table class="pf-tbl"><thead><tr><th>Score component</th><th>Evidence</th><th>Value</th><th>Weight</th><th>Points</th></tr></thead><tbody>' + E.comps.map(function(c){ var eff = c.v != null && c.w > 0 && E.tw ? c.w / E.tw * 100 : 0; return '<tr><td>'+esc(c.k)+'</td><td>'+esc(c.ev)+'</td><td>'+(c.v == null ? 'n/a' : Math.round(c.v * 100) + '%')+'</td><td>'+(c.v == null ? 'excluded' : Math.round(eff) + '%')+'</td><td>'+(c.v == null ? '—' : (c.v * eff).toFixed(1))+'</td></tr>'; }).join('') + '</tbody></table>' +
       '<p class="pwi-sub">Score = Σ(component value × weight) ÷ Σ(weights of components that could be measured). Components with no data are excluded, never scored as zero. Open items inside the ' + SC.grace + '-day grace window are not penalised. Effort points: Quick 1, Standard 2, Deep 3.</p></div>';
+    try{ h += window.aeroWhPerf ? window.aeroWhPerf(R) : ''; }catch(e){}
     h += '<div class="pwi-dgrid"><div class="pwi-card c8"><div class="pwi-card-h"><h3>Task volume &amp; resolution trend</h3></div>' + (E.n ? trendHtml(cur, R) : '<div class="pwi-empty">No records in this period.</div>') + '</div>' +
       '<div class="pwi-card c4"><div class="pwi-card-h"><h3>Effort distribution</h3></div>' + barBlock(tally(cur, function(a){ return a.effort || 'Not set'; }), E.n, '#7C5CC4') + '</div>' +
       '<div class="pwi-card c4"><div class="pwi-card-h"><h3>Category distribution</h3></div>' + barBlock(tally(cur, function(a){ return a.category; }), E.n) + '</div>' +
@@ -13073,7 +13074,7 @@ function fixDark(){if(document.documentElement.getAttribute("data-theme")!=="dar
 function watchFx(){if(!fxObs)fxObs=new MutationObserver(function(){clearTimeout(fxT);fxT=setTimeout(fixDark,160)});
  fxObs.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:["class","hidden","style"]})}
 function orig(k){return q('#ptc-nav .ptc-nav-btn[data-aero="'+k+'"]')}
-var ITEMS=[["wr","Work Records","home"],["ap","Activity & Performance","pwi"],["at","Aero Travels","sales"],["ir","Intelligence & Reports","intel","work"],["se","Settings & Access","settings"]];
+var ITEMS=[["wr","Work Record & Performance","home"],["at","Aero Travels","sales"],["ir","Intelligence & Reports","intel","work"],["se","Settings & Access","settings"]];
 var HIDE=["home","pwi","intel","sales","logs","pending","reports","master","settings"];
 function pickTab(v){var n=0;(function t(){var b=q('[data-act="itab"][data-v="'+v+'"]');if(b)b.click();else if(n++<12)setTimeout(t,120)})()}
 function buildNav(){var nav=q("#ptc-nav");if(!nav||nav.getAttribute("data-ao"))return;
@@ -13093,7 +13094,7 @@ function buildNav(){var nav=q("#ptc-nav");if(!nav||nav.getAttribute("data-ao"))r
  document.addEventListener("click",function(){setTimeout(sync,150)},true);sync()}
 function sync(){var r=q("#ptc-root");if(!r)return;var c=r.classList,pane=r.getAttribute("data-pane")||"",cur="wr";
  if(c.contains("wr-intel-on")){var on=q('[data-act="itab"].on');cur="ir"}
- else if(c.contains("pwi-active"))cur="ap";else if(c.contains("set-active")||/master|settings/.test(pane))cur="se";
+ else if(c.contains("pwi-active"))cur="wr";else if(c.contains("set-active")||/master|settings/.test(pane))cur="se";
  else if(pane==="salesdesk")cur="at";
  qa("#ptc-nav .ao-nav").forEach(function(b){var on=b.getAttribute("data-ao")===cur;if(b.classList.contains("active")!==on)b.classList.toggle("active",on)})}
 function themeBtn(){if(q("#aoTheme"))return;var back=q(".ptc-back-profile");if(!back||!back.parentNode)return;
@@ -13975,6 +13976,165 @@ render();
     if(t.dataset.due==='alerts'&&window.Notification){try{Notification.requestPermission().then(function(){sig='';paint()})}catch(e){}}
   });
   setInterval(paint,2000);paint();
+})();
+</script>
+<script id="aero-wh-js">
+/* Work Record + Activity merged into one workspace.
+   - One sidebar item ("Work Record & Performance") with four tabs: Entries, Activity, Dashboard, Performance.
+   - The Performance tab also scores the ticketing / reissue / refund / void records (window.aeroWhPerf, read-only).
+   Reads data only through window.aeroData. Nothing stored, nothing in Firebase changes. */
+(function(){
+  var root=document.getElementById('ptc-root'),host=root&&root.querySelector('.ptc-body-main'),pwi=document.getElementById('pwi-root');
+  if(!root||!host||!pwi)return;
+  var $=function(i){return document.getElementById(i)};
+  function esc(t){return String(t==null?'':t).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+
+  /* ---------- styles ---------- */
+  var st=document.createElement('style');
+  st.textContent=
+   '.wh-bar{display:flex;align-items:center;justify-content:space-between;gap:10px 16px;flex-wrap:wrap;margin:0 0 12px}'
+  +'.wh-ttl{display:flex;flex-direction:column;min-width:0}.wh-ttl b{font-size:15px;color:#0B2545}.wh-ttl span{font-size:12px;color:#6B7A8D}'
+  +'.wh-tabs{display:inline-flex;gap:2px;padding:3px;border-radius:10px;background:#E9EEF5;border:1px solid #DCE3EC;max-width:100%;overflow-x:auto}'
+  +'.wh-tabs button{border:0;background:transparent;font:inherit;font-size:12.5px;font-weight:600;color:#3C5573;padding:7px 16px;border-radius:8px;cursor:pointer;white-space:nowrap}'
+  +'.wh-tabs button:hover{background:rgba(255,255,255,.65)}'
+  +'.wh-tabs button.on{background:#fff;color:#2563C9;box-shadow:0 1px 3px rgba(11,37,69,.12)}'
+  +'.wh-tabs button:focus-visible{outline:2px solid #2563C9;outline-offset:1px}'
+  +'#pwi-root .pwi-subtabs{display:none!important}'
+  +'#ptc-root:not([data-pane="entrydesk"]) #wh-bar-main{display:none!important}'
+  +'#wh-bar-pwi{margin-top:4px}'
+  +'.wh-note{font-size:11.5px;color:#6B7A8D;margin:8px 0 0}'
+  +'.wh-kp.neg .pf-d.up{color:#C0392B}.wh-kp .pf-d.flat{color:#6B7A8D}'
+  +'html[data-theme="dark"] .wh-ttl b{color:#E6EDF7}html[data-theme="dark"] .wh-ttl span{color:#9FB0C6}'
+  +'html[data-theme="dark"] .wh-tabs{background:#16243A;border-color:#2A3B55}html[data-theme="dark"] .wh-tabs button{color:#B7C7DD}'
+  +'html[data-theme="dark"] .wh-tabs button:hover{background:rgba(255,255,255,.07)}html[data-theme="dark"] .wh-tabs button.on{background:#223552;color:#7FB0FF;box-shadow:none}';
+  document.head.appendChild(st);
+
+  /* ---------- tab bars (one above Entries, one above Activity/Dashboard/Performance) ---------- */
+  function barHtml(withTitle){
+    return (withTitle?'<div class="wh-ttl"><b>Work Record &amp; Performance</b><span>Every transaction and task in one place, evaluated together</span></div>':'<span></span>')
+     +'<div class="wh-tabs" role="tablist" aria-label="Work Record sections">'
+     +'<button type="button" role="tab" data-wh="entries" title="Ticketing, reissue, refund and void entries">Entries</button>'
+     +'<button type="button" role="tab" data-wh="activity" title="Daily tasks, queries and support work">Activity</button>'
+     +'<button type="button" role="tab" data-wh="dash" title="Activity dashboard">Dashboard</button>'
+     +'<button type="button" role="tab" data-wh="perf" title="Performance evaluation">Performance</button></div>';
+  }
+  var bar1=document.createElement('div');bar1.className='wh-bar';bar1.id='wh-bar-main';bar1.innerHTML=barHtml(true);
+  var bar2=document.createElement('div');bar2.className='wh-bar';bar2.id='wh-bar-pwi';bar2.innerHTML=barHtml(false);
+  host.insertBefore(bar1,host.firstChild);
+  var tabsRow=pwi.querySelector('.pwi-subtabs'),head=pwi.querySelector('.pwi-head');
+  if(tabsRow)pwi.insertBefore(bar2,tabsRow);else if(head&&head.nextSibling)pwi.insertBefore(bar2,head.nextSibling);else pwi.insertBefore(bar2,pwi.firstChild);
+
+  /* ---------- navigation: reuse the existing handlers by clicking the original buttons ---------- */
+  var SUB={activity:'home',dash:'dash',perf:'perf'};
+  function go(k){
+    var homeBtn=document.querySelector('#ptc-nav .ptc-nav-btn[data-aero="home"]'),pwiBtn=$('pwi-nav-btn');
+    if(k==='entries'){
+      if(homeBtn&&(root.classList.contains('pwi-active')||root.getAttribute('data-pane')!=='entrydesk'))homeBtn.click();
+      return;
+    }
+    if(!root.classList.contains('pwi-active')&&pwiBtn)pwiBtn.click();
+    var t=pwi.querySelector('.pwi-subtabs button[data-v="'+SUB[k]+'"]');
+    if(t)t.click();
+    setTimeout(sync,60);
+  }
+  document.addEventListener('click',function(e){
+    var b=e.target.closest&&e.target.closest('[data-wh]');if(!b)return;
+    e.preventDefault();go(b.getAttribute('data-wh'));
+  });
+  var last='';
+  function sync(){
+    var k='entries';
+    if(root.classList.contains('pwi-active')){
+      var on=pwi.querySelector('.pwi-subtabs button.on'),v=on?on.getAttribute('data-v'):'home';
+      k=v==='dash'?'dash':v==='perf'?'perf':'activity';
+    }
+    if(k!==last){
+      last=k;
+      [].forEach.call(document.querySelectorAll('.wh-tabs button'),function(b){var on=b.getAttribute('data-wh')===k;b.classList.toggle('on',on);b.setAttribute('aria-selected',on?'true':'false')});
+    }
+    if(host.firstChild!==bar1&&bar1.parentNode===host)host.insertBefore(bar1,host.firstChild);
+  }
+  if(window.MutationObserver){
+    new MutationObserver(sync).observe(root,{attributes:true,attributeFilter:['class','data-pane']});
+    if(tabsRow)new MutationObserver(sync).observe(tabsRow,{attributes:true,subtree:true,attributeFilter:['class']});
+  }
+  setInterval(sync,800);sync();
+
+  /* ---------- transaction performance (shown inside the Performance tab) ---------- */
+  function num(v){return parseFloat(v)||0}
+  function fm(n){return Math.round(n).toLocaleString('en-US')}
+  function d10(e){return String(e.date||'').slice(0,10)}
+  function pdt(s){return new Date(+s.slice(0,4),+s.slice(5,7)-1,+s.slice(8,10))}
+  function iso(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+  function fdate(s){var d=pdt(s);return isNaN(d)?s:d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})}
+  function inr(e,f,t){var d=d10(e);return d&&d>=f&&d<=t}
+  function tkt(e){return String(((e.txn==='Ticketing'||e.txn==='Reissue')?e.newTkt:e.oldTkt)||'').trim()}
+  function stats(l){
+    var days={};l.forEach(function(e){days[d10(e)]=1});
+    var c=function(t){return l.filter(function(e){return e.txn===t}).length};
+    var sm=function(t,k){return l.filter(function(e){return e.txn===t}).reduce(function(s,e){return s+num(e[k])},0)};
+    var ad=Object.keys(days).length,full=l.filter(function(e){return String(e.pnrGds||'').trim()&&tkt(e)}).length;
+    return {n:l.length,tk:c('Ticketing'),re:c('Reissue'),rf:c('Refund'),vd:c('Void'),ad:ad,avg:ad?l.length/ad:0,
+      sales:sm('Ticketing','totalFare'),coll:sm('Reissue','totalCollection'),chg:sm('Refund','refundCharge'),
+      rfRate:c('Ticketing')?c('Refund')*100/c('Ticketing'):null,vdRate:c('Ticketing')?c('Void')*100/c('Ticketing'):null,
+      comp:l.length?full*100/l.length:null};
+  }
+  function delta(a,b,neg){
+    if(a==null||b==null)return '';
+    var d=Math.round((a-b)*10)/10;
+    return '<small class="pf-d '+(d>0?'up':d<0?'dn':'flat')+'">'+(d>0?'▲ +':d<0?'▼ ':'= ')+(d===0?'':d)+' vs previous</small>';
+  }
+  function bars(rows,tot,color){
+    if(!rows.length)return '<div class="pwi-empty">No records in this period.</div>';
+    var mx=rows[0][1];
+    return rows.map(function(r){return '<div class="pf-b"><span class="pf-l" title="'+esc(r[0])+'">'+esc(r[0])+'</span><span class="pf-t"><i style="width:'+(mx?Math.round(r[1]*100/mx):0)+'%;background:'+(color||'#2563C9')+'"></i></span><b>'+r[1]+(tot?' <small>('+Math.round(r[1]*100/tot)+'%)</small>':'')+'</b></div>'}).join('');
+  }
+  function tally(l,fn){var m={};l.forEach(function(e){var k=fn(e)||'Not set';m[k]=(m[k]||0)+1});return Object.keys(m).map(function(k){return[k,m[k]]}).sort(function(a,b){return b[1]-a[1]})}
+  function trend(l,R){
+    var f=pdt(R.f),t=pdt(R.t),weekly=R.days>31,b={},keys=[];
+    for(var x=new Date(f);x<=t;x.setDate(x.getDate()+(weekly?7:1))){var k=iso(x);keys.push(k);b[k]=0}
+    l.forEach(function(e){var d=d10(e),k=d;if(weekly){var i=Math.floor((pdt(d)-f)/864e5/7);k=keys[Math.max(0,Math.min(keys.length-1,i))]}if(k in b)b[k]++});
+    var mx=Math.max.apply(null,keys.map(function(k){return b[k]}).concat([1]));
+    return '<div class="pf-tr">'+keys.map(function(k){return '<div class="pf-col" title="'+esc(fdate(k))+': '+b[k]+' transactions"><div class="pf-bars"><i class="a" style="height:'+Math.round(b[k]*100/mx)+'%"></i></div><small>'+(weekly?'wk ':'')+k.slice(8)+'/'+k.slice(5,7)+'</small></div>'}).join('')+'</div><div class="pwi-sub">Transactions saved per '+(weekly?'week':'day')+'</div>';
+  }
+  window.aeroWhPerf=function(R){
+    var D=window.aeroData;if(!D||!D.entries)return '';
+    var all=D.entries()||[],cur=all.filter(function(e){return inr(e,R.f,R.t)}),prv=all.filter(function(e){return inr(e,R.pf,R.pt)});
+    var S=stats(cur),P=stats(prv),hp=prv.length>0;
+    var pend=0,due=0,over=0;
+    try{pend=(D.pending()||[]).length}catch(e){}
+    try{var dl=(D.dueList()||[]).filter(function(x){return x.d.state!=='pending'});due=dl.length;over=dl.filter(function(x){return x.d.state==='overdue'}).length}catch(e){}
+    function k(label,v,pv,fmt,neutral,tip){
+      return '<div'+(tip?' title="'+esc(tip)+'"':'')+'><span>'+label+'</span><b>'+(v==null?'—':(fmt?fmt(v):v))+'</b>'+(hp?delta(v,pv):'')+'</div>';
+    }
+    var pct=function(v){return (Math.round(v*10)/10)+'%'};
+    var h='<div class="pwi-card wh-kp"><div class="pwi-card-h"><h3>Transaction Performance</h3><span class="pwi-sub">Work Record entries · Ticketing, Reissue, Refund, Void</span></div>';
+    if(!S.n){
+      h+='<div class="pwi-empty">No transactions saved in this period.</div>';
+    }else{
+      h+='<div class="pf-kpis">'
+       +k('Transactions',S.n,P.n)+k('Ticketing',S.tk,P.tk)+k('Reissue',S.re,P.re)+k('Refund',S.rf,P.rf)+k('Void',S.vd,P.vd)
+       +k('Active days',S.ad,P.ad)+k('Avg / active day',Math.round(S.avg*10)/10,Math.round(P.avg*10)/10)
+       +k('Ticket sales (BDT)',S.sales,P.sales,fm)+k('Reissue collection (BDT)',S.coll,P.coll,fm)
+       +k('Refund rate',S.rfRate==null?null:Math.round(S.rfRate*10)/10,P.rfRate==null?null:Math.round(P.rfRate*10)/10,pct,true,'Refunds as a share of tickets issued in the period')
+       +k('Void rate',S.vdRate==null?null:Math.round(S.vdRate*10)/10,P.vdRate==null?null:Math.round(P.vdRate*10)/10,pct,true,'Voids as a share of tickets issued in the period')
+       +k('Record completeness',S.comp==null?null:Math.round(S.comp),P.comp==null?null:Math.round(P.comp),pct,false,'Share of records that have both a PNR and a ticket number')
+       +'</div>';
+    }
+    h+='<p class="wh-note">'+(pend||due?'Open follow-ups right now (any date): '
+        +(pend?pend+' refund adjustment'+(pend>1?'s':'')+' pending':'')
+        +(pend&&due?' · ':'')
+        +(due?due+' ticket payment'+(due>1?'s':'')+' to collect'+(over?' ('+over+' overdue)':''):'')+'.'
+        :'No open refund adjustments or payment follow-ups right now.')
+      +' Rates compare against tickets issued in the same period; deltas compare with the previous period.</p></div>';
+    if(S.n){
+      h+='<div class="pwi-dgrid"><div class="pwi-card c8"><div class="pwi-card-h"><h3>Transaction volume trend</h3></div>'+trend(cur,R)+'</div>'
+       +'<div class="pwi-card c4"><div class="pwi-card-h"><h3>Transaction mix</h3></div>'+bars(tally(cur,function(e){return e.txn}),S.n,'#2563EB')+'</div>'
+       +'<div class="pwi-card c6"><div class="pwi-card-h"><h3>Top airlines</h3></div>'+bars(tally(cur,function(e){return e.airline}).slice(0,6),S.n,'#0E9AA7')+'</div>'
+       +'<div class="pwi-card c6"><div class="pwi-card-h"><h3>Booking platforms</h3></div>'+bars(tally(cur,function(e){return e.platform}).slice(0,6),S.n,'#7C5CC4')+'</div></div>';
+    }
+    return h;
+  };
 })();
 </script>
 </body></html>
