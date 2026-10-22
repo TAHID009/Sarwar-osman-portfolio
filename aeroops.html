@@ -4052,6 +4052,48 @@ html[data-theme="dark"] #pwi-root .pwi-import textarea{background:#0E1E36;border
             <input type="text" id="f-totalfare-t" class="mono" placeholder="0.00" readonly style="background:#F3F5F8; font-weight:700;" title="Total Fare − Discount Amount" />
           </div>
         </div>
+        <div class="ptc-row">
+          <div class="ptc-field">
+            <label for="f-paystat-t">Payment Status</label>
+            <select id="f-paystat-t" title="Choose Partial Payment when the ticket is issued before the client has paid in full.">
+              <option value="FULL" selected>Full Payment</option>
+              <option value="PARTIAL">Partial Payment</option>
+            </select>
+          </div>
+          <div></div>
+        </div>
+        <div id="f-partial-wrap-t" style="display:none;">
+          <div class="ptc-row">
+            <div class="ptc-field">
+              <label for="f-paidamt-t">Amount Received Now <span class="ptc-required">*</span></label>
+              <input type="number" step="0.01" min="0" id="f-paidamt-t" class="mono" placeholder="0.00" />
+            </div>
+            <div class="ptc-field">
+              <label for="f-dueamt-t">Due Amount (auto)</label>
+              <input type="text" id="f-dueamt-t" class="mono" placeholder="0.00" readonly style="background:#F3F5F8; font-weight:700;" title="Payable Fare − Amount Received Now" />
+            </div>
+          </div>
+          <div class="ptc-row">
+            <div class="ptc-field">
+              <label for="f-duedate-t">Due Payment Date <span class="ptc-required">*</span></label>
+              <input type="date" id="f-duedate-t" />
+            </div>
+            <div class="ptc-field">
+              <label for="f-dueref-t">Payment Reference</label>
+              <input type="text" id="f-dueref-t" maxlength="80" placeholder="e.g. bKash TrxID, promised by, follow-up note" autocomplete="off" />
+            </div>
+          </div>
+          <div class="ptc-row">
+            <div class="ptc-field">
+              <label for="f-duestat-t">Due Status</label>
+              <select id="f-duestat-t" title="Set to Received once the due amount is collected — reminders stop.">
+                <option value="PENDING" selected>Due Pending</option>
+                <option value="PAID">Due Received</option>
+              </select>
+            </div>
+            <div></div>
+          </div>
+        </div>
       </div>
 
       <!-- ===== REISSUE FIELDS ===== -->
@@ -4393,6 +4435,7 @@ html[data-theme="dark"] #pwi-root .pwi-import textarea{background:#0E1E36;border
             <th class="ptc-col-secondary">Adjustment</th>
             <th class="ptc-col-secondary">Adj. Amount</th>
             <th class="ptc-col-secondary">Code</th>
+            <th>Payment</th>
             <th>Note</th>
             <th></th>
           </tr>
@@ -4831,7 +4874,6 @@ html[data-theme="dark"] #pwi-root .pwi-import textarea{background:#0E1E36;border
             <div class="pwi-field hm-f s4" data-g="kind"><label>Case Type</label><div class="pwi-kind" id="pwi-kind" role="group" aria-label="New task or repeat issue"></div></div>
             <div class="pwi-field hm-f s3" data-g="status"><label for="hm-out">Outcome *</label><select id="hm-out"></select><div class="pwi-status hm-hide" id="pwi-stat"></div></div>
             <div class="hm-f s3"><label for="hm-eff">Effort Level</label><select id="hm-eff"></select><div class="pwi-chips hm-hide" id="pwi-eff"></div></div>
-            <div class="hm-f s12 pwi-import" id="pwi-import-box"><label for="pwi-import">Manual Import <span class="pwi-import-cat" id="pwi-import-cat"></span></label><textarea id="pwi-import" maxlength="2000" rows="4" placeholder="Type or paste PNR details, passenger names, ticket numbers, task information or notes…"></textarea><small id="pwi-import-cnt">0/2000</small></div>
             <div class="hm-f s6 r2"><label for="pwi-note">Notes / Remarks</label><textarea id="pwi-note" maxlength="500" placeholder="Add details about the task, e.g. passenger name, issue, solution…"></textarea><small id="hm-cnt">0/500</small></div>
             <div class="hm-btns hm-f s6"><button type="button" class="pwi-save" id="pwi-save">Save Record</button><button type="button" class="pwi-btn" id="pwi-save2">Save &amp; Add Another</button></div>
             <div class="pwi-ctx hm-f s12" id="pwi-ctx" aria-live="polite" hidden></div>
@@ -4930,7 +4972,7 @@ html[data-theme="dark"] #pwi-root .pwi-import textarea{background:#0E1E36;border
             <div><label for="pwi-m-cat">Work / Query</label><select id="pwi-m-cat"></select></div>
             <div><label for="pwi-m-type">Task type</label><select id="pwi-m-type"></select></div>
             <div id="pwi-m-custom-wrap" hidden><label for="pwi-m-custom">Enter Custom Task Type *</label><input type="text" id="pwi-m-custom" maxlength="60" autocomplete="off"></div>
-            <div style="grid-column:1/-1"><label for="pwi-m-import">Manual Import</label><textarea id="pwi-m-import" maxlength="2000" rows="3"></textarea></div>
+            
             <div><label for="pwi-m-ref">PNR / Ticket no.</label><input type="text" id="pwi-m-ref" maxlength="30"></div>
             <div><label for="pwi-m-status">Status</label><select id="pwi-m-status"></select></div>
             <div><label for="pwi-m-effort">Effort</label><select id="pwi-m-effort"></select></div>
@@ -5326,6 +5368,12 @@ A.onChange(A.fillForm);
     { h:'ADJUSTMENT GIVEN', f:'adjustmentGiven' },
     { h:'ADJUSTMENT AMOUNT', f:'adjustmentAmount', n:true },
     { h:'REISSUE CODE', f:'code' },
+    { h:'PAYMENT STATUS', f:'payStatus' },
+    { h:'AMOUNT RECEIVED', f:'paidAmount', n:true },
+    { h:'DUE AMOUNT', f:'dueAmount', n:true },
+    { h:'DUE PAYMENT DATE', f:'dueDate' },
+    { h:'PAYMENT REFERENCE', f:'dueRef' },
+    { h:'DUE STATUS', f:'dueStatus' },
     { h:'NOTE', f:'note' },
     { h:'CREATED AT', f:'createdAt' },
     { h:'LAST EDITED', f:'editedAt' },
@@ -5337,7 +5385,7 @@ A.onChange(A.fillForm);
 
   const COMMON_FIELDS = ['date','pnrGds','pnrAirline','pname','pnum','ptype','platform','airline'];
   const SHEET_DEFS = [
-    { name:'Ticketing', fields: COMMON_FIELDS.concat(['newTkt','sector','baseFare','taxFare','airlineTicketPrice','discount','discountAmount','discountPct','totalFare','note']) },
+    { name:'Ticketing', fields: COMMON_FIELDS.concat(['newTkt','sector','baseFare','taxFare','airlineTicketPrice','discount','discountAmount','discountPct','totalFare','payStatus','paidAmount','dueAmount','dueDate','dueRef','dueStatus','note']) },
     { name:'Reissue', fields: COMMON_FIELDS.concat(['oldTkt','newTkt','sector','code','fareDiff','airlineCharge','svc','totalCollection','note']) },
     { name:'Refund', fields: COMMON_FIELDS.concat(['oldTkt','refundType','refTotalFare','usedSegmentFare','usedSegmentTax','refTotalTax','refNonRefundTax','airlineCharge','commissionAdj','refundableFare','refundableTax','airlineRefund','svcApplied','svc','refundCharge','taxRefund','refundStatus','adjustmentGiven','adjustmentAmount','note']) },
     { name:'Void', fields: COMMON_FIELDS.concat(['oldTkt','airlineCharge','svc','refundCharge','note']) },
@@ -7178,7 +7226,22 @@ A.onChange(A.fillForm);
     $('f-atp-t').value = totalFare.toFixed(2);
     $('f-discpct-t').value = base > 0 ? (discountAmt / base * 100).toFixed(2) : '';
     $('f-totalfare-t').value = payableFare.toFixed(2);
+    recalcDueAmount();
   }
+  // ---- Partial payment (Ticketing): Due Amount = Payable Fare − Amount Received Now ----
+  function recalcDueAmount(){
+    const el = $('f-dueamt-t'); if(!el) return;
+    const payable = parseFloat($('f-totalfare-t').value) || 0;
+    const paid = parseFloat($('f-paidamt-t').value);
+    el.value = (isNaN(paid) || $('f-paidamt-t').value === '') ? '' : Math.max(0, payable - paid).toFixed(2);
+  }
+  function syncPartialPay(){
+    const on = $('f-paystat-t') && $('f-paystat-t').value === 'PARTIAL';
+    const w = $('f-partial-wrap-t'); if(w) w.style.display = on ? '' : 'none';
+    recalcDueAmount();
+  }
+  if($('f-paystat-t')) $('f-paystat-t').addEventListener('change', syncPartialPay);
+  if($('f-paidamt-t')) $('f-paidamt-t').addEventListener('input', recalcDueAmount);
   // Used when loading an existing record for edit: shows Total Fare and Discount %,
   // and puts back the record's own saved Payable Fare (falls back to the formula
   // only if the record has none) so opening a record never silently changes totals.
@@ -7353,6 +7416,12 @@ A.onChange(A.fillForm);
       refundStatus: '',
       adjustmentGiven: '',
       adjustmentAmount: '',
+      payStatus: '',
+      paidAmount: '',
+      dueAmount: '',
+      dueDate: '',
+      dueRef: '',
+      dueStatus: '',
       refBaseFare: '',
       refTotalFare: '',
       usedSegmentFare: '',
@@ -7380,6 +7449,16 @@ A.onChange(A.fillForm);
       base.airlineTicketPrice = parseFloat($('f-atp-t').value) || 0;
       base.markupAmount = '';
       base.totalFare = parseFloat($('f-totalfare-t').value) || 0;
+      // Payment: Full by default; Partial records what was received and when the rest is due.
+      base.payStatus = ($('f-paystat-t') && $('f-paystat-t').value === 'PARTIAL') ? 'PARTIAL' : 'FULL';
+      if(base.payStatus === 'PARTIAL'){
+        const paid = parseFloat($('f-paidamt-t').value);
+        base.paidAmount = isNaN(paid) ? '' : paid;
+        base.dueAmount = isNaN(paid) ? '' : Math.max(0, base.totalFare - paid);
+        base.dueDate = $('f-duedate-t').value || '';
+        base.dueRef = val('f-dueref-t');
+        base.dueStatus = $('f-duestat-t').value === 'PAID' ? 'PAID' : 'PENDING';
+      }
     } else if(type === 'Reissue'){
       base.oldTkt = val('f-oldtkt-r');
       base.newTkt = val('f-newtkt-r');
@@ -7479,6 +7558,13 @@ A.onChange(A.fillForm);
       if(err) return err;
       if((entry.discountAmount || 0) < 0) return 'Discount amount cannot be negative.';
       if((entry.discountAmount || 0) > (parseFloat(entry.airlineTicketPrice) || 0)) return 'Discount amount cannot be more than the Total Fare.';
+      if(entry.payStatus === 'PARTIAL'){
+        if(entry.paidAmount === '' || entry.paidAmount === null || entry.paidAmount === undefined) return 'Partial payment: please enter the amount received now.';
+        if(entry.paidAmount < 0) return 'Amount received cannot be negative.';
+        if(entry.paidAmount >= (parseFloat(entry.totalFare) || 0)) return 'Amount received covers the full Payable Fare — switch Payment Status to Full Payment, or reduce the amount received.';
+        if(!entry.dueDate) return 'Partial payment: please enter the Due Payment Date.';
+        if(entry.date && entry.dueDate < entry.date) return 'Due Payment Date cannot be before the ticketing date.';
+      }
     }
     if(entry.txn === 'Reissue'){
       if(!entry.oldTkt) return 'Please add at least one old ticket number.';
@@ -7533,6 +7619,14 @@ A.onChange(A.fillForm);
     return isNaN(legacy) ? '' : legacy;
   }
 
+  // Payment cell: Full-payment / legacy records stay blank; partial payments show due state + amount.
+  function payCellHTML(e){
+    const d = dueInfo(e); if(!d) return '';
+    const amt = d.state === 'paid' ? '' : '<div class="mono" style="font-size:11px;margin-top:2px;">Due ' + fmtMoney(d.amt) + '</div>';
+    const ref = e.dueRef ? '<div style="font-size:11px;color:var(--muted);margin-top:2px;">' + esc(e.dueRef) + '</div>' : '';
+    const dt = (d.state !== 'paid' && d.date) ? '<div class="mono" style="font-size:11px;color:var(--muted);">' + esc(d.date) + '</div>' : '';
+    return '<span class="ptc-tag" style="background:' + dueColor(d.state) + '">' + esc(dueLabel(d)) + '</span>' + amt + dt + ref;
+  }
   function render(){
     const tbody = $('ptc-tbody');
     const empty = $('ptc-empty');
@@ -7593,7 +7687,7 @@ A.onChange(A.fillForm);
       // colspan must match however many columns are actually visible right now,
       // which changes between compact and full view.
       const visibleCols = $('ptc-table').querySelectorAll('thead th:not(.ptc-col-secondary)').length;
-      const spanCols = $('ptc-table').classList.contains('ptc-compact') ? visibleCols : 41;
+      const spanCols = $('ptc-table').classList.contains('ptc-compact') ? visibleCols : 42;
       tbody.innerHTML = '<tr><td colspan="' + spanCols + '" style="text-align:center; padding:20px; color:var(--muted);">No entries in this date range.</td></tr>';
     }
 
@@ -7643,6 +7737,7 @@ A.onChange(A.fillForm);
         <td class="ptc-col-secondary">${esc(e.adjustmentGiven)}</td>
         <td class="mono ptc-col-secondary">${fmtMoney(e.adjustmentAmount)}</td>
         <td class="mono ptc-col-secondary">${esc(e.code)}</td>
+        <td>${payCellHTML(e)}</td>
         <td>${esc(e.note)}</td>
         <td style="white-space:nowrap;">${e.editedAt ? `<span title="Last edited ${esc(new Date(e.editedAt).toLocaleString())}" style="margin-right:6px; font-size:12px; cursor:help;">✏️</span>` : ''}<button class="ptc-edit" data-idx="${idx}">Edit</button><button class="ptc-del" data-idx="${idx}">Remove</button></td>
       `;
@@ -7716,6 +7811,7 @@ A.onChange(A.fillForm);
     try{ if(window.aeroCo) window.aeroCo.resetForm(); }catch(err){}
     ['f-pnr-gds','f-pnr-air','f-pname','f-pnum','f-note','f-platform-other','f-airline-other',
      'f-newtkt-t','f-sector-t','f-basefare-t','f-taxfare-t','f-discamt-t','f-discpct-t','f-atp-t',
+     'f-paidamt-t','f-dueamt-t','f-duedate-t','f-dueref-t',
      'f-oldtkt-r','f-newtkt-r','f-sector-r','f-code-r','f-faredif-r','f-airline-r','f-svc-r',
      'f-oldtkt-f','f-airline-f','f-svc-f','f-charge-f','f-tax-f','f-adjamt-f',
      'f-refbasefare-f','f-usedseg-f','f-usedsegtax-f','f-reftotaltax-f','f-nonrefundtax-f','f-commission-f',
@@ -7745,7 +7841,10 @@ A.onChange(A.fillForm);
     showSection('');
     if($('f-routetype-t')){ $('f-routetype-t').value = ''; if(typeof renderRouteBuilder === 'function') renderRouteBuilder(); }
     if(typeof setAdjustmentGiven === 'function') setAdjustmentGiven('NO');
+    if($('f-paystat-t')) $('f-paystat-t').value = 'FULL';
+    if($('f-duestat-t')) $('f-duestat-t').value = 'PENDING';
     recalcTicketingFare();
+    syncPartialPay();
     if(typeof recalcReissueTotal === 'function') recalcReissueTotal();
     if(typeof applyRefundTypeFields === 'function') applyRefundTypeFields();
     if(typeof recalcRefund === 'function') recalcRefund();
@@ -7816,6 +7915,15 @@ A.onChange(A.fillForm);
       setVal('f-taxfare-t', e.taxFare);
       setVal('f-discamt-t', discountAmountOf(e) || '');
       showTicketingBreakdown(e);
+      // Payment: records saved before this feature have no payStatus — they open as Full Payment.
+      setVal('f-paystat-t', e.payStatus === 'PARTIAL' ? 'PARTIAL' : 'FULL');
+      setVal('f-paidamt-t', e.paidAmount);
+      setVal('f-duedate-t', e.dueDate);
+      setVal('f-dueref-t', e.dueRef);
+      setVal('f-duestat-t', e.dueStatus === 'PAID' ? 'PAID' : 'PENDING');
+      syncPartialPay();
+      // restore the stored Due Amount as-is (never silently recomputed for a saved record)
+      if(e.payStatus === 'PARTIAL' && e.dueAmount !== '' && e.dueAmount !== undefined && e.dueAmount !== null) setVal('f-dueamt-t', Number(e.dueAmount).toFixed(2));
     } else if(e.txn === 'Reissue'){
       if(entryOldTktReissueChips) entryOldTktReissueChips.setTickets(e.oldTkt ? e.oldTkt.toString().split(',').filter(Boolean) : []);
       else setVal('f-oldtkt-r', e.oldTkt);
@@ -8028,6 +8136,7 @@ A.onChange(A.fillForm);
                        'refTotalFare','usedSegmentFare','usedSegmentTax','refTotalTax','refNonRefundTax','commissionAdj','svcApplied',
                        'refundableFare','refundableTax','airlineRefund',
                        'refundCharge','taxRefund','refundType','refundStatus','adjustmentGiven','adjustmentAmount',
+                       'payStatus','paidAmount','dueAmount','dueDate','dueRef','dueStatus',
                        'code','note','createdAt','editedAt','company','companyId'];
   const HEADER_TO_FIELD = {
     'WORKSPACE ID':'companyId','DATE':'date','GDS PNR':'pnrGds','AIRLINE PNR':'pnrAirline','PNR':'pnrGds',
@@ -8046,13 +8155,15 @@ A.onChange(A.fillForm);
     'REFUND CHARGE':'refundCharge','CLIENT REFUND / ADJUSTMENT':'refundCharge',
     'TAX REFUND':'taxRefund','TAX REFUND (LEGACY)':'taxRefund','REFUND TYPE':'refundType','REFUND STATUS':'refundStatus',
     'ADJUSTMENT GIVEN':'adjustmentGiven','ADJUSTMENT AMOUNT':'adjustmentAmount',
+    'PAYMENT STATUS':'payStatus','AMOUNT RECEIVED':'paidAmount','DUE AMOUNT':'dueAmount','DUE PAYMENT DATE':'dueDate',
+    'PAYMENT REFERENCE':'dueRef','DUE STATUS':'dueStatus',
     'REISSUE CODE':'code','NOTE':'note','CREATED AT':'createdAt','LAST EDITED':'editedAt'
   };
   const NUMERIC_FIELDS = ['baseFare','taxFare','airlineTicketPrice','discount','discountAmount','markUp','markupAmount','totalFare','fareDiff',
                           'airlineCharge','svc','totalCollection','payableFare',
                           'refTotalFare','usedSegmentFare','usedSegmentTax','refTotalTax','refNonRefundTax','commissionAdj',
                           'refundableFare','refundableTax','airlineRefund',
-                          'refundCharge','taxRefund','adjustmentAmount'];
+                          'refundCharge','taxRefund','adjustmentAmount','paidAmount','dueAmount'];
 
   function parseCsvLine(line){
     const out = [];
@@ -10894,8 +11005,36 @@ A.onChange(A.fillForm);
     });
   }
   /* read-only hook for the Master Data / Dashboard pages */
+  /* ---- Partial payment: due-date status for a Ticketing record ----
+     state: overdue | today | soon (within 2 days) | pending | paid. Returns null for records without a partial payment. */
+  function dueInfo(e){
+    if(!e || e.txn !== 'Ticketing' || e.payStatus !== 'PARTIAL') return null;
+    const amt = parseFloat(e.dueAmount) || 0;
+    if(e.dueStatus === 'PAID') return { state:'paid', days:0, amt:amt, date:e.dueDate || '' };
+    if(!e.dueDate) return { state:'pending', days:null, amt:amt, date:'' };
+    const t = new Date(), today = new Date(t.getFullYear(), t.getMonth(), t.getDate());
+    const d = new Date(+e.dueDate.slice(0,4), +e.dueDate.slice(5,7)-1, +e.dueDate.slice(8,10));
+    const days = Math.round((d - today) / 864e5);
+    return { state: days < 0 ? 'overdue' : days === 0 ? 'today' : days <= 2 ? 'soon' : 'pending', days:days, amt:amt, date:e.dueDate };
+  }
+  function dueList(){
+    const out = [];
+    entries.forEach(function(e, i){ const d = dueInfo(e); if(d && d.state !== 'paid') out.push({ e:e, i:i, d:d }); });
+    out.sort(function(a, b){ return (a.e.dueDate || '9999').localeCompare(b.e.dueDate || '9999'); });
+    return out;
+  }
+  function dueLabel(d){
+    if(!d) return '';
+    if(d.state === 'paid') return 'Due received';
+    if(d.state === 'overdue') return 'Overdue ' + Math.abs(d.days) + 'd';
+    if(d.state === 'today') return 'Due today';
+    if(d.state === 'soon') return 'Due in ' + d.days + 'd';
+    return d.date ? 'Due ' + d.date : 'Due pending';
+  }
+  function dueColor(st){ return ({ overdue:'#B42318', today:'#C2410C', soon:'#B7791F', pending:'#2563EB', paid:'#16875A' })[st] || '#2563EB'; }
   window.aeroData = { entries:function(){ return entries; }, sales:function(){ return salesEntries; },
     pending:function(){ return entries.filter(function(e){ return lbStatus(e)[0] === 'Pending Adj.'; }); },
+    dueInfo:dueInfo, dueList:dueList, dueLabel:dueLabel, dueColor:dueColor, editEntry:function(i){ startEdit(i); },
     build:buildWorkbook, earn:entryEarnings };
 
 })();
@@ -10926,7 +11065,7 @@ A.onChange(A.fillForm);
   /* Activities live ONLY in Firestore (COLL). KEY is read once to migrate older on-device records, then archived to BAK.
      SKEY keeps tiny UI preferences (week start, date range, last source) on this device. */
   var SOURCES = ['WhatsApp','Support','Email','Phone','Internal','Other'];
-  var TYPES = {'Ticketing':['New Booking','Flight Availability','Fare Check','Fare Update','Ticket Copy','Others'],'Reissue':['Reissue Charge Checking','Partial Reissue Calculation','Others'],'Refund/Void':['Refund Charge Checking','Partial Refund Calculation','Void','Others'],'Others':['Seat Selection','Name Update','MAAS','Food','Wheelchair','Segment HK','Baggage Update/Check','Others']};
+  var TYPES = {'Ticketing':['New Ticket Issue','Partial Ticket Issue','Reissue','Refund','Partial Refund','New Booking','Flight Availability','Fare Check','Fare Update','Ticket Copy','Others'],'Reissue':['Reissue Charge Checking','Partial Reissue Calculation','Others'],'Refund/Void':['Refund Charge Checking','Partial Refund Calculation','Void','Others'],'Others':['Seat Selection','Name Update','MAAS','Food','Wheelchair','Segment HK','Baggage Update/Check','Others']};
   var CATS = Object.keys(TYPES);
   var LEGACY = ['Fare Query','Availability','Booking Support','Hotel','Fare Rule / Policy','Problem Solving','Cancellation','Other','Fare & Availability','Refund','Cancellation & Void','Passenger Services','Flight Information','After-Sales Support'];   /* old records keep their category; the form no longer offers these */
   var ALLCATS = CATS.concat(LEGACY);
@@ -11277,7 +11416,7 @@ A.onChange(A.fillForm);
     var u = curUser();
     var a = {id:uid(), date:form.date || todayISO(), time:form.time || nowTime(), source:form.source, company:canonCompany(co), companyId:(window.aeroWs ? aeroWs.active().id : ''),
              category:form.category, status:form.status, kind:form.kind, effort:form.effort, note:$('pwi-note').value.trim().slice(0,500),
-             created:nowISO(), updated:nowISO(), taskType:form.taskType, customType:form.taskType === 'Others' ? custom.slice(0,60) : '', importText:$('pwi-import').value.trim().slice(0,2000),
+             created:nowISO(), updated:nowISO(), taskType:form.taskType, customType:form.taskType === 'Others' ? custom.slice(0,60) : '', importText:'',
              userId:u.userId, userEmail:u.userEmail, userName:u.userName,
              ref:$('pwi-ref').value.trim().toUpperCase().slice(0,30), reopened:0, hist:[]};
     a.hist.push({s:a.status, at:a.created});
@@ -11289,9 +11428,9 @@ A.onChange(A.fillForm);
       if(!ok){ hint('Not saved — what you typed is still in the form. Check the connection and press Save again.', 'err'); return; }
       settings.lastSource = form.source; settings.keep = $('pwi-keep').checked; saveSettings();
       form.category = ''; form.taskType = ''; form.status = 'Solved'; form.kind = 'new'; form.dismissed = false; form.effort = ''; form.date = ''; form.time = ''; $('pwi-ref').value = ''; renderTypes();
-      $('pwi-note').value = ''; $('pwi-import').value = ''; $('pwi-custom-type').value = '';
+      $('pwi-note').value = ''; $('pwi-custom-type').value = '';
       if(!settings.keep && !another) $('pwi-company').value = '';
-      fillNow(); $('hm-cnt').textContent = '0/500'; $('pwi-import-cnt').textContent = '0/2000';
+      fillNow(); $('hm-cnt').textContent = '0/500';
       renderAll();                       // tracker + counts refreshed
       syncChips(); updatePreview();
       hint('Tip: press Enter in the client or note field to save.');
@@ -11356,7 +11495,7 @@ A.onChange(A.fillForm);
     var a = acts.filter(function(x){ return x.id === id; })[0]; if(!a) return;
     st.editId = id;
     $('pwi-m-date').value = a.date; $('pwi-m-time').value = a.time; $('pwi-m-source').value = a.source;
-    $('pwi-m-company').value = coName(a); $('pwi-m-cat').value = a.category; fillMType(a.category, a.taskType); $('pwi-m-custom').value = a.customType || ''; $('pwi-m-import').value = a.importText || ''; syncMCustom(); $('pwi-m-ref').value = a.ref || ''; $('pwi-m-status').value = a.status;
+    $('pwi-m-company').value = coName(a); $('pwi-m-cat').value = a.category; fillMType(a.category, a.taskType); $('pwi-m-custom').value = a.customType || ''; syncMCustom(); $('pwi-m-ref').value = a.ref || ''; $('pwi-m-status').value = a.status;
     $('pwi-m-effort').value = a.effort || ''; $('pwi-m-kind').value = a.kind || ''; $('pwi-m-note').value = a.note;
     $('pwi-modal').hidden = false; $('pwi-m-company').focus();
   }
@@ -11370,7 +11509,7 @@ A.onChange(A.fillForm);
     var mt = $('pwi-m-type').value, mc = $('pwi-m-custom').value.trim();
     if(mt === 'Others' && !mc){ toast('Enter a custom task type.'); $('pwi-m-custom').focus(); return; }
     a.date = d; a.time = $('pwi-m-time').value || a.time; a.source = $('pwi-m-source').value; a.company = canonCompany(co);
-    a.category = $('pwi-m-cat').value; a.taskType = mt; a.customType = mt === 'Others' ? mc.slice(0,60) : ''; a.importText = $('pwi-m-import').value.trim().slice(0,2000); a.ref = $('pwi-m-ref').value.trim().toUpperCase().slice(0,30); trackStatus(a, $('pwi-m-status').value); a.kind = $('pwi-m-kind').value; a.effort = $('pwi-m-effort').value;
+    a.category = $('pwi-m-cat').value; a.taskType = mt; a.customType = mt === 'Others' ? mc.slice(0,60) : ''; a.ref = $('pwi-m-ref').value.trim().toUpperCase().slice(0,30); trackStatus(a, $('pwi-m-status').value); a.kind = $('pwi-m-kind').value; a.effort = $('pwi-m-effort').value;
     a.note = $('pwi-m-note').value.trim().slice(0,500); a.updated = nowISO();
     sortActs(); cloudPut(a); closeEdit(); renderAll(); toast('Changes saved.');
   }
@@ -12054,7 +12193,6 @@ A.onChange(A.fillForm);
     var l = TYPES[form.category] || []; $('hm-typ').innerHTML = '<option value="">' + (l.length ? 'Select type' : 'Select category first') + '</option>' + l.map(opt).join(''); $('hm-typ').value = form.taskType;
     var n = $('pwi-note'), c = $('hm-cnt'); if(n && c) c.textContent = n.value.length + '/500';
     var cw = $('pwi-custom-wrap'); if(cw){ var showC = form.taskType === 'Others'; cw.hidden = !showC; $('pwi-custom-type').required = showC; if(!showC) $('pwi-custom-type').value = ''; }
-    var ic = $('pwi-import-cat'); if(ic) ic.textContent = form.category ? '· ' + form.category : '';
   }
   pwi.addEventListener('change', function(e){
     var t = e.target, m = {'hm-fs':'src', 'hm-ft':'typ', 'hm-fst':'sts'}, f = {'hm-src':'source', 'hm-cat':'category', 'hm-typ':'taskType', 'hm-out':'status', 'hm-eff':'effort'};
@@ -12072,7 +12210,6 @@ A.onChange(A.fillForm);
   pwi.addEventListener('input', function(e){
     if(e.target.id === 'hm-q'){ HM.q = e.target.value.trim().toLowerCase(); HM.pg = 1; clearTimeout(HM.tm); HM.tm = setTimeout(renderHome, 150); }
     if(e.target.id === 'pwi-note') $('hm-cnt').textContent = e.target.value.length + '/500';
-    if(e.target.id === 'pwi-import') $('pwi-import-cnt').textContent = e.target.value.length + '/2000';
   });
   pwi.addEventListener('click', function(e){ var b = e.target.closest('details.hm-menu button'); if(b){ var dd = b.closest('details'); if(dd) dd.open = false; } });
   (function(){ var f = pwi.querySelector('.pwi-entry'), h = $('hm-entry'); if(f && h) h.appendChild(f); fillNow(); syncSelects(); })();
@@ -12189,8 +12326,8 @@ function hdSync(P,pr,fu){
 function renderDash(force){if(!D()||!dv||!dv.classList.contains('active'))return;
  var f0=from(),keep=function(l){return f0?l.filter(function(x){return(x.date||'')>=f0}):l},E0=D().entries(),S0=D().sales(),A0=acts(),E=keep(E0),S=keep(S0),A=A0?keep(A0):null,P=D().pending();
  var earn=function(e){return num(D().earn(e))},val=function(e){return e.txn==='Ticketing'?num(e.totalFare):e.txn==='Reissue'?num(e.totalCollection):e.txn==='Refund'?num(e.refundCharge):0};
- var pr=E0.filter(function(e){return e.txn==='Refund'&&e.refundStatus==='PENDING'}).length,fuN=A0?A0.filter(function(x){return x.status==='Follow-up'}).length:0,openN=A0?A0.filter(function(x){return x.status==='Pending'||x.status==='Follow-up'}).length:0;
- hdSync(P.length,pr,fuN);
+ var pr=E0.filter(function(e){return e.txn==='Refund'&&e.refundStatus==='PENDING'}).length,fuN=A0?A0.filter(function(x){return x.status==='Follow-up'}).length:0,dueN=D().dueList?D().dueList().filter(function(x){return x.d.state!=='pending'}).length:0,openN=A0?A0.filter(function(x){return x.status==='Pending'||x.status==='Follow-up'}).length:0;
+ hdSync(P.length,pr,fuN+dueN);
  var tE=sum(E,earn),sP=sum(S,function(x){return num(x.price)}),sG=sum(S,function(x){return parseFloat(x.profit)||((parseFloat(x.price)||0)-(parseFloat(x.cost)||0))}),sDu=sum(S,function(x){return num(x.due)}),sDuA=sum(S0,function(x){return num(x.due)}),prP=E.filter(function(e){return e.txn==='Refund'&&e.refundStatus==='PENDING'}).length;
 
  var cA=function(s){return A?A.filter(function(x){return x.status===s}).length:0},tot=A?A.length:null,perL=PERS.filter(function(p){return p[0]===PER})[0][1],
@@ -12201,7 +12338,7 @@ function renderDash(force){if(!D()||!dv||!dv.classList.contains('active'))return
   +kp('Solved','Solved','#15803D','#ECFDF3',IC.ok)+kp('Resolved','Resolved','#0E9AA7','#E6F6F7',IC.res)+kp('Pending','Pending','#B7791F','#FFF4E0',IC.clk)+kp('Follow-up','Follow-up','#7C3AED','#F2ECFE',IC.fu)+'</div>';
  var na=function(n,l,w,z){var on=z===undefined?n:z;return'<div class="'+(on?(w||''):'ok')+'"><b>'+n+'</b><span>'+l+'</span></div>'};
  h+='<section class="ad-s2" id="ad-attn"><div class="ad-sh"><div><h3>Needs Attention</h3></div></div><div class="ad-na">'
-  +na(P.length,'Pending Adjustments')+na(pr,'Pending Refunds')+na(fuN,'Follow-up Tasks','w',fuN)+na(fm(sDuA),'Amount Due','',sDuA)+'</div></section>';
+  +na(P.length,'Pending Adjustments')+na(pr,'Pending Refunds')+na(fuN,'Follow-up Tasks','w',fuN)+na(dueN,'Ticket Payments Due','',dueN)+na(fm(sDuA),'Amount Due','',sDuA)+'</div></section>';
  var wr=function(l,v,c){return'<div style="--c:'+c+'"><span>'+l+'</span><b>'+v+'</b></div>'};
  h+='<section class="ad-s2"><div class="ad-sh"><div><h3>Work Record</h3></div></div><div class="ad-wr">'
   +wr('All Entries',E0.length,'#2563EB')+wr('This Month',E0.filter(function(e){return(e.date||'')>=mS}).length,'#0E9AA7')
@@ -12439,7 +12576,7 @@ function amt(e){if(e.txn==='Void')return'—';var v=val(e);return e.txn==='Refun
 function tkCell(e){var t=tkts(e);return t.length?esc(t[0])+(t.length>1?' <small>+'+(t.length-1)+'</small>':''):'—'}
 function pxCell(e){var n=names(e);return n.length?esc(n[0])+(n.length>1?' <small>+'+(n.length-1)+'</small>':''):'—'}
 function recTable(l,opt){opt=opt||{};if(!l.length)return EMPTY;var lim=opt.limit?l.slice(0,opt.limit):l;
- return'<div class="wr-tw"><table><thead><tr><th>Date</th><th>Type</th><th>PNR</th><th>TKT No.</th><th>Passenger(s)</th><th>Route</th><th>Status</th><th class="r">Amount</th><th></th></tr></thead><tbody>'+lim.map(function(r){var e=r.e,st=status(e);return'<tr><td title="'+fmtD(e.date)+'">'+fmtD(e.date).replace(/ (\d{2})(\d{2})$/," '$2")+'</td><td>'+pill(e.txn,TC[e.txn]||'#475569')+'</td><td class="mono">'+esc(e.pnrGds)+'</td><td class="mono">'+tkCell(e)+'</td><td>'+pxCell(e)+'</td><td>'+esc(e.sector||'—')+'</td><td>'+pill(st,SC[st]||'#475569')+'</td><td class="r">'+amt(e)+'</td><td><button type="button" class="wr-link" data-act="open" data-i="'+r.i+'">View</button></td></tr>'}).join('')+'</tbody></table></div>'+(opt.limit&&l.length>opt.limit?'<div style="text-align:center;margin-top:10px"><button type="button" class="wr-link" data-act="more">Show more ('+(l.length-opt.limit)+' left)</button></div>':'')}
+ return'<div class="wr-tw"><table><thead><tr><th>Date</th><th>Type</th><th>PNR</th><th>TKT No.</th><th>Passenger(s)</th><th>Route</th><th>Status</th><th class="r">Amount</th><th></th></tr></thead><tbody>'+lim.map(function(r){var e=r.e,st=status(e);return'<tr><td title="'+fmtD(e.date)+'">'+fmtD(e.date).replace(/ (\d{2})(\d{2})$/," '$2")+'</td><td>'+pill(e.txn,TC[e.txn]||'#475569')+'</td><td class="mono">'+esc(e.pnrGds)+'</td><td class="mono">'+tkCell(e)+'</td><td>'+pxCell(e)+'</td><td>'+esc(e.sector||'—')+'</td><td>'+pill(st,SC[st]||'#475569')+dueP(e)+'</td><td class="r">'+amt(e)+'</td><td><button type="button" class="wr-link" data-act="open" data-i="'+r.i+'">View</button></td></tr>'}).join('')+'</tbody></table></div>'+(opt.limit&&l.length>opt.limit?'<div style="text-align:center;margin-top:10px"><button type="button" class="wr-link" data-act="more">Show more ('+(l.length-opt.limit)+' left)</button></div>':'')}
 function filt(l,f){var q=(f.q||'').trim().toUpperCase();return l.filter(function(r){var e=r.e;if(f.type&&e.txn!==f.type)return false;if(f.st&&status(e)!==f.st)return false;if(q){var h=[e.pnrGds,e.pnrAirline,e.pname,e.newTkt,e.oldTkt,e.sector,e.airline].join(' ').toUpperCase();if(h.indexOf(q)<0)return false}return true})}
 function topBy(l,keyf,n){var m={};l.forEach(function(r){keyf(r.e).forEach(function(k){m[k]=m[k]||{k:k,n:0,v:0};m[k].n++;m[k].v+=(r.e.txn==='Ticketing'||r.e.txn==='Reissue')?val(r.e):0})});return Object.keys(m).map(function(k){return m[k]}).sort(function(a,b){return b.n-a.n||b.v-a.v}).slice(0,n)}
 function topTable(items,h1){if(!items.length)return EMPTY;return'<div class="wr-tw"><table><thead><tr><th>'+h1+'</th><th class="r">Transactions</th><th class="r">Revenue</th></tr></thead><tbody>'+items.map(function(x){return'<tr><td>'+esc(x.k)+'</td><td class="r">'+x.n+'</td><td class="r">'+fm(x.v)+'</td></tr>'}).join('')+'</tbody></table></div>'}
@@ -12490,10 +12627,12 @@ var ready=false;setTimeout(function(){ready=true},800);
 var ospp=window.ptcSetPane;if(typeof ospp==='function')window.ptcSetPane=function(p){var r=ospp.apply(this,arguments);root.classList.remove('wr-intel-on');if(p==='entrydesk'&&ready&&!navFlag)openForm();syncVis();return r};
 /* ---- Record Details ---- */
 function closeDetail(){var d=$('wr-detail-back');if(d)d.remove()}
+function dueP(e){var d=D().dueInfo&&D().dueInfo(e);return d?' '+pill(D().dueLabel(d),D().dueColor(d.state)):''}
+function dueRows(e){var d=D().dueInfo&&D().dueInfo(e);if(!d)return'';return frow('Payment','Partial payment')+frow('Amount received',num(e.paidAmount))+frow('Due amount',num(e.dueAmount))+frow('Due payment date',e.dueDate?fmtD(e.dueDate):'')+frow('Payment reference',e.dueRef||'')+frow('Due status',d.state==='paid'?'Received':D().dueLabel(d))}
 function frow(l,v){return v===''||v===undefined||v===null?'':'<div><span>'+l+'</span><b>'+(typeof v==='number'?fm(v):esc(v))+'</b></div>'}
 function openDetail(i){var e=E()[i];if(!e)return;closeDetail();var st=status(e),n=names(e),t=tkts(e),m=Math.max(n.length,t.length),pr='';
  for(var k=0;k<m;k++)pr+='<tr><td>'+(k+1)+'</td><td>'+esc(n[k]||'—')+'</td><td class="mono">'+esc(t[k]||'—')+'</td></tr>';
- var fin='';if(e.txn==='Ticketing')fin=frow('Base fare',num(e.baseFare))+frow('Tax',num(e.taxFare))+frow('Total fare',num(e.airlineTicketPrice))+frow('Discount',num(e.discountAmount))+frow('Payable (client pays)',num(e.totalFare));
+ var fin='';if(e.txn==='Ticketing')fin=frow('Base fare',num(e.baseFare))+frow('Tax',num(e.taxFare))+frow('Total fare',num(e.airlineTicketPrice))+frow('Discount',num(e.discountAmount))+frow('Payable (client pays)',num(e.totalFare))+dueRows(e);
  else if(e.txn==='Reissue')fin=frow('Fare difference',num(e.fareDiff))+frow('Airline charge',num(e.airlineCharge))+frow('Service charge',num(e.svc))+frow('Total collection',num(e.totalCollection));
  else if(e.txn==='Refund')fin=frow('Refund type',e.refundType)+frow('Refundable fare',num(e.refundableFare))+frow('Refundable tax',num(e.refundableTax))+frow('Airline fee',num(e.airlineCharge))+frow('Commission adj.',num(e.commissionAdj))+frow('Airline refund',num(e.airlineRefund))+frow('Service charge',num(e.svc))+frow('Client refund',num(e.refundCharge))+frow('Adjustment given',e.adjustmentGiven)+(e.adjustmentGiven==='YES'?frow('Adjustment amount',num(e.adjustmentAmount)):'');
  else fin=frow('Airline charge',num(e.airlineCharge))+frow('Service charge',num(e.svc))+frow('Charge',num(e.refundCharge));
@@ -13782,6 +13921,60 @@ if(nb){nb.addEventListener('click',function(){root.classList.remove('set-active'
  var o=window.ptcSetPane;if(typeof o==='function')window.ptcSetPane=function(){root.classList.remove('pax-active');return o.apply(this,arguments)}}
 render();
 
+})();
+</script>
+<script id="aero-due-js">
+/* Partial-payment reminders: shows a banner in Work Records for ticket payments that are overdue, due today or due within 2 days.
+   Read-only — it only reads window.aeroData; "Open" reuses the normal Edit flow so the due status can be set to Received. */
+(function(){
+  var root=document.getElementById('ptc-root'),host=root&&root.querySelector('.ptc-body-main');
+  if(!root||!host)return;
+  var st=document.createElement('style');
+  st.textContent='#aero-due-banner{margin:0 0 14px;padding:12px 14px;border-radius:12px;background:#FFF4E5;border:1px solid #F5C77E;color:#7A4A06;font-size:13px}'
+   +'#aero-due-banner[hidden]{display:none}#aero-due-banner h4{margin:0 0 6px;font-size:13.5px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}'
+   +'#aero-due-banner.bad{background:#FEF3F2;border-color:#FDA29B;color:#7A271A}'
+   +'#aero-due-banner ul{list-style:none;margin:0;padding:0;display:grid;gap:6px}'
+   +'#aero-due-banner li{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:space-between;background:rgba(255,255,255,.65);border-radius:8px;padding:6px 10px}'
+   +'#aero-due-banner li span{min-width:0}#aero-due-banner button{font:inherit;font-size:12px;font-weight:600;padding:4px 10px;border-radius:7px;border:1px solid currentColor;background:transparent;color:inherit;cursor:pointer}'
+   +'#aero-due-banner .dm{opacity:.8}'
+   +'html[data-theme="dark"] #aero-due-banner{background:#2B2110;border-color:#7A5A1C;color:#F8D49A}html[data-theme="dark"] #aero-due-banner.bad{background:#2E1513;border-color:#8A2F27;color:#FDB5AE}html[data-theme="dark"] #aero-due-banner li{background:rgba(255,255,255,.06)}';
+  document.head.appendChild(st);
+  var b=document.createElement('div');b.id='aero-due-banner';b.setAttribute('role','status');b.setAttribute('aria-live','polite');b.hidden=true;host.insertBefore(b,host.firstChild);
+  function esc(t){return String(t==null?'':t).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+  function money(n){return 'BDT '+Math.round(n).toLocaleString('en-US')}
+  function pname(e){return String(e.pname||'').split(/[,;\n]+/)[0].trim()||'Passenger'}
+  var sig='';
+  function paint(){
+    var D=window.aeroData;if(!D||!D.dueList)return;
+    var l=D.dueList().filter(function(x){return x.d.state!=='pending'});
+    var s=l.map(function(x){return x.i+':'+x.d.state+':'+x.e.dueDate+':'+x.d.amt}).join('|')+'#'+(window.Notification?Notification.permission:'');
+    if(s===sig)return;sig=s;
+    if(!l.length){b.hidden=true;b.innerHTML='';return}
+    var od=l.filter(function(x){return x.d.state==='overdue'}).length,tot=l.reduce(function(a,x){return a+x.d.amt},0);
+    b.className=od?'bad':'';
+    b.innerHTML='<h4>⏰ Ticket payments need follow-up — '+l.length+' item'+(l.length>1?'s':'')+' · '+money(tot)+' to collect'
+      +(window.Notification&&Notification.permission==='default'?' <button type="button" data-due="alerts">Enable device alerts</button>':'')+'</h4><ul>'
+      +l.slice(0,5).map(function(x){var e=x.e;return'<li><span><b>'+esc(pname(e))+'</b> · <span class="dm">PNR '+esc(e.pnrGds||'—')+(e.dueRef?' · '+esc(e.dueRef):'')+'</span></span>'
+        +'<span><b>'+esc(D.dueLabel(x.d))+'</b> · '+money(x.d.amt)+' <button type="button" data-due="open" data-i="'+x.i+'">Open</button></span></li>'}).join('')+'</ul>'
+      +(l.length>5?'<div class="dm" style="margin-top:6px">+ '+(l.length-5)+' more — see the Payment column in the records table.</div>':'');
+    b.hidden=false;
+    notify(l,od,tot);
+  }
+  /* optional device notification — once per day per set of due items, only if the user allowed it */
+  function notify(l,od,tot){
+    try{
+      if(!window.Notification||Notification.permission!=='granted')return;
+      var d=new Date(),day=d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate(),key='aeroDueNotified:'+day+':'+l.length+':'+od;
+      if(sessionStorage.getItem(key))return;sessionStorage.setItem(key,'1');
+      new Notification('AeroOps · ticket payments due',{body:l.length+' payment'+(l.length>1?'s':'')+(od?' ('+od+' overdue)':'')+' · '+money(tot)+' to collect'});
+    }catch(e){}
+  }
+  b.addEventListener('click',function(ev){
+    var t=ev.target.closest&&ev.target.closest('[data-due]');if(!t)return;
+    if(t.dataset.due==='open'&&window.aeroData&&window.aeroData.editEntry)window.aeroData.editEntry(+t.dataset.i);
+    if(t.dataset.due==='alerts'&&window.Notification){try{Notification.requestPermission().then(function(){sig='';paint()})}catch(e){}}
+  });
+  setInterval(paint,2000);paint();
 })();
 </script>
 </body></html>
