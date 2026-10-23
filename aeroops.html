@@ -14223,4 +14223,482 @@ new MutationObserver(function(){run();rows()}).observe(w,{childList:true});run()
 })();
 </script>
 
+<style id="aeroops-login-v4">
+/* ===== AeroOps sign-in v4: animated 3D scene + tilting glass card. Presentation only: every id, field and handler is unchanged.
+   Last login style block, so it wins over v2/v3. Fits the screen height (no page scroll) on desktop and phones. ===== */
+html:root body #cloud-auth-modal-backdrop{ position:fixed !important; inset:0 !important; height:100vh; height:100dvh; overflow-x:hidden !important; overflow-y:auto !important;
+  background:radial-gradient(ellipse at 30% 40%,#0d2a4d 0%,#071a33 45%,#030b17 100%) !important; color:#eaf4ff; font-family:'Inter','IBM Plex Sans',system-ui,sans-serif; align-items:stretch !important; }
+html:root body #cloud-auth-modal-backdrop::before,html:root body #cloud-auth-modal-backdrop::after{ display:none !important; }
+html:root body #cloud-auth-modal-backdrop .aero-scene{ position:fixed; inset:0; width:100%; height:100%; z-index:0; display:block; pointer-events:none; }
+html:root body #cloud-auth-modal-backdrop .aero-auth-split{ position:relative; z-index:1; display:grid !important; grid-template-columns:minmax(0,1.15fr) minmax(380px,.85fr) !important;
+  width:100%; height:100vh; height:100dvh; min-height:0 !important; margin:0; align-self:stretch !important; }
+
+/* left: brand + headline float over the globe */
+html:root body #cloud-auth-modal-backdrop .aero-auth-hero{ background:transparent !important; min-height:0 !important; height:100%; padding:clamp(18px,3.4vh,38px) clamp(24px,4vw,64px) !important;
+  display:flex !important; flex-direction:column; justify-content:space-between; overflow:visible !important; }
+html:root body #cloud-auth-modal-backdrop .aero-auth-hero::before,html:root body #cloud-auth-modal-backdrop .aero-auth-hero::after,html:root body #cloud-auth-modal-backdrop .aero-orbit,html:root body #cloud-auth-modal-backdrop .aero-route,html:root body #cloud-auth-modal-backdrop .aero-hero-foot{ display:none !important; }
+html:root body #cloud-auth-modal-backdrop .aero-hero-copy{ margin:0 !important; max-width:560px; transform:translate3d(calc(var(--mx,0)*-10px),calc(var(--my,0)*-6px),0); transition:transform .25s ease-out; }
+html:root body #cloud-auth-modal-backdrop .aero-hero-copy h2{ font-size:clamp(28px,5.4vh,56px) !important; margin:clamp(8px,1.6vh,18px) 0 !important; text-shadow:0 6px 30px rgba(0,0,0,.45); }
+html:root body #cloud-auth-modal-backdrop .aero-hero-copy h2 span{ background:linear-gradient(90deg,#6ee7f7,#7c9cff); -webkit-background-clip:text; background-clip:text; color:transparent; }
+html:root body #cloud-auth-modal-backdrop .aero-hero-copy p{ font-size:clamp(12px,1.8vh,14px) !important; line-height:1.7 !important; max-width:430px; color:#b9cde2 !important; }
+@media (max-height:720px){ html:root body #cloud-auth-modal-backdrop .aero-hero-copy p{ display:none !important; } }
+
+/* right: 3D glass card */
+html:root body #cloud-auth-modal-backdrop .aero-auth-panel{ background:transparent !important; display:flex !important; flex-direction:column; align-items:center; justify-content:flex-start !important;
+  height:100%; overflow-y:auto; overflow-x:hidden; padding:clamp(14px,3vh,40px) clamp(18px,3.4vw,56px) !important; perspective:1300px; scrollbar-width:none; }
+html:root body #cloud-auth-modal-backdrop .aero-auth-panel::-webkit-scrollbar{ display:none; }
+@property --aeroAng{ syntax:'<angle>'; inherits:false; initial-value:0deg; }
+html:root body #cloud-auth-modal-backdrop .ptc-modal{ position:relative; width:100%; max-width:430px !important; margin:auto 0 0 !important; max-height:none !important; overflow:visible !important;
+  padding:clamp(18px,3.6vh,38px) clamp(20px,2.4vw,34px) !important; border-radius:22px !important;
+  background:linear-gradient(155deg,rgba(18,46,84,.72),rgba(7,22,44,.78)) !important; color:#eaf4ff;
+  border:1px solid rgba(130,200,255,.16) !important; -webkit-backdrop-filter:blur(22px) saturate(150%); backdrop-filter:blur(22px) saturate(150%);
+  box-shadow:0 40px 90px rgba(0,0,0,.55),0 0 80px rgba(60,170,255,.12),inset 0 1px 0 rgba(255,255,255,.1) !important;
+  transform:perspective(1200px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) translateY(var(--fy,0px)); will-change:transform;
+  animation:aeroCardIn .9s cubic-bezier(.2,.8,.2,1) both !important; }
+@keyframes aeroCardIn{ from{ opacity:0; scale:.9; translate:0 40px; filter:blur(8px); } to{ opacity:1; scale:1; translate:0 0; filter:blur(0); } }
+html:root body #cloud-auth-modal-backdrop .ptc-modal::before{ content:""; position:absolute; inset:-1px; border-radius:inherit; padding:1.5px; pointer-events:none;
+  background:conic-gradient(from var(--aeroAng),transparent 0 62%,#58d9eb 80%,#7c9cff 92%,transparent 100%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0); -webkit-mask-composite:xor;
+  mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0); mask-composite:exclude; animation:aeroAngSpin 7s linear infinite; }
+@keyframes aeroAngSpin{ to{ --aeroAng:360deg; } }
+
+html:root body #cloud-auth-modal-backdrop .aero-kicker{ color:#58d9eb !important; font-size:clamp(9px,1.4vh,10.5px) !important; }
+html:root body #cloud-auth-modal-backdrop h3{ color:#fff !important; font-size:clamp(24px,4.2vh,34px) !important; margin:clamp(6px,1.2vh,12px) 0 clamp(4px,.8vh,8px) !important; text-shadow:0 4px 24px rgba(88,217,235,.25); }
+html:root body #cloud-auth-modal-backdrop #signin-subtext,html:root body #cloud-auth-modal-backdrop #auth-view-register > p,html:root body #cloud-auth-modal-backdrop #auth-view-setpassword > p,html:root body #cloud-auth-modal-backdrop #auth-view-sent > p{ color:#a9c1db !important; margin:0 0 clamp(12px,2.8vh,28px) !important; font-size:clamp(12px,1.7vh,13px) !important; }
+html:root body #cloud-auth-modal-backdrop #auth-view-sent{ text-align:left !important; }
+html:root body #cloud-auth-modal-backdrop .ptc-field label{ color:#9fc0e0 !important; margin-bottom:clamp(5px,1vh,9px) !important; }
+html:root body #cloud-auth-modal-backdrop input[type="email"],html:root body #cloud-auth-modal-backdrop input[type="password"],html:root body #cloud-auth-modal-backdrop input[type="text"]{ height:clamp(42px,6.4vh,52px) !important; background:rgba(255,255,255,.06) !important;
+  border:1px solid rgba(140,200,255,.22) !important; color:#eaf4ff !important; border-radius:12px !important; box-shadow:inset 0 2px 8px rgba(0,0,0,.25); }
+html:root body #cloud-auth-modal-backdrop input::placeholder{ color:rgba(190,215,240,.42) !important; }
+html:root body #cloud-auth-modal-backdrop input:focus{ border-color:#58d9eb !important; background:rgba(255,255,255,.09) !important; box-shadow:0 0 0 4px rgba(88,217,235,.14),0 0 26px rgba(88,217,235,.22) !important; }
+html:root body #cloud-auth-modal-backdrop input:-webkit-autofill{ -webkit-text-fill-color:#eaf4ff; caret-color:#fff; box-shadow:0 0 0 100px #10294b inset !important; }
+html:root body #cloud-auth-modal-backdrop .ptc-eye-toggle{ color:#8fb2d6 !important; top:50% !important; right:8px !important; transform:translateY(-50%) !important; }
+html:root body #cloud-auth-modal-backdrop .ptc-eye-toggle:hover{ color:#fff !important; }
+html:root body #cloud-auth-modal-backdrop a,html:root body #cloud-auth-modal-backdrop #btn-cloud-auth-reset{ color:#7fd8ff !important; }
+html:root body #cloud-auth-modal-backdrop .aero-acct-links a{ color:#93aecb !important; }
+html:root body #cloud-auth-modal-backdrop #auth-view-signin > p:has(> #btn-cloud-auth-reset){ margin:-2px 0 clamp(10px,2.2vh,22px) !important; }
+html:root body #cloud-auth-modal-backdrop .ptc-btn-ghost{ color:#cfe3f8 !important; border-color:rgba(140,200,255,.25) !important; background:transparent !important; }
+html:root body #cloud-auth-modal-backdrop #btn-cloud-auth-signin,html:root body #cloud-auth-modal-backdrop #btn-send-verify-link,html:root body #cloud-auth-modal-backdrop #btn-set-password{ position:relative; overflow:hidden; height:clamp(44px,6.6vh,54px) !important; border:0 !important; color:#fff !important;
+  background:linear-gradient(135deg,#19c3e6 0%,#2864f0 100%) !important; box-shadow:0 12px 30px rgba(40,120,240,.4),inset 0 1px 0 rgba(255,255,255,.3) !important; }
+html:root body #cloud-auth-modal-backdrop #btn-cloud-auth-signin::before,html:root body #cloud-auth-modal-backdrop #btn-send-verify-link::before,html:root body #cloud-auth-modal-backdrop #btn-set-password::before{ content:""; position:absolute; top:0; bottom:0; left:-70%; width:50%;
+  background:linear-gradient(100deg,transparent,rgba(255,255,255,.35),transparent); transform:skewX(-20deg); transition:left .6s ease; pointer-events:none; }
+html:root body #cloud-auth-modal-backdrop #btn-cloud-auth-signin:hover:not(:disabled)::before,html:root body #cloud-auth-modal-backdrop #btn-send-verify-link:hover:not(:disabled)::before,html:root body #cloud-auth-modal-backdrop #btn-set-password:hover:not(:disabled)::before{ left:130%; }
+html:root body #cloud-auth-modal-backdrop #btn-cloud-auth-signin:hover:not(:disabled),html:root body #cloud-auth-modal-backdrop #btn-send-verify-link:hover:not(:disabled),html:root body #cloud-auth-modal-backdrop #btn-set-password:hover:not(:disabled){ background:linear-gradient(135deg,#2ad0f0 0%,#3a74ff 100%) !important; transform:translateY(-2px); }
+html:root body #cloud-auth-modal-backdrop .aero-arrow{ animation:aeroNudge 1.6s ease-in-out infinite; }
+@keyframes aeroNudge{ 50%{ transform:translate(4px,-52%); } }
+html:root body #cloud-auth-modal-backdrop .aero-divider{ color:#7f98b4 !important; margin:clamp(12px,2.4vh,26px) 0 clamp(8px,1.6vh,16px) !important; }
+html:root body #cloud-auth-modal-backdrop .aero-divider::before,html:root body #cloud-auth-modal-backdrop .aero-divider::after{ background:rgba(140,200,255,.16) !important; }
+html:root body #cloud-auth-modal-backdrop #cloud-auth-error:not(:empty),html:root body #cloud-auth-modal-backdrop #reg-error:not(:empty),html:root body #cloud-auth-modal-backdrop #setpw-error:not(:empty){ background:rgba(255,90,90,.12) !important; border-color:rgba(255,120,120,.38) !important; color:#ffb9b9 !important; font-size:12.5px; }
+html:root body #cloud-auth-modal-backdrop #cloud-auth-reset-msg.aero-visible{ background:rgba(38,189,146,.13) !important; border-color:rgba(60,220,170,.4) !important; color:#9af0d3 !important; font-size:12.5px; }
+html:root body #cloud-auth-modal-backdrop #aero-pw-rules{ background:rgba(255,255,255,.05) !important; border-color:rgba(140,200,255,.18) !important; margin-top:8px !important; padding:10px 12px !important; }
+html:root body #cloud-auth-modal-backdrop #aero-pw-rules p{ color:#cfe3f8 !important; margin-bottom:6px !important; }
+html:root body #cloud-auth-modal-backdrop #aero-pw-rules ul{ gap:4px !important; }
+html:root body #cloud-auth-modal-backdrop #aero-pw-rules li{ color:#93aecb !important; font-size:12px !important; }
+html:root body #cloud-auth-modal-backdrop #aero-pw-rules li.ok{ color:#fff !important; }
+html:root body #cloud-auth-modal-backdrop .aero-auth-footer{ margin:clamp(10px,2vh,22px) 0 auto !important; color:#7f98b4 !important; flex:0 0 auto; }
+html:root body #cloud-auth-modal-backdrop strong{ color:#fff; }
+
+/* phones / narrow: single column, globe behind the top, card fills the rest */
+@media (max-width:850px){
+  html:root body #cloud-auth-modal-backdrop .aero-auth-split{ grid-template-columns:1fr !important; grid-template-rows:auto minmax(0,1fr) !important; }
+  html:root body #cloud-auth-modal-backdrop .aero-auth-hero{ height:auto; padding:14px 18px 0 !important; }
+  html:root body #cloud-auth-modal-backdrop .aero-hero-copy{ display:none !important; }
+  html:root body #cloud-auth-modal-backdrop .aero-auth-panel{ padding:10px 14px 14px !important; }
+  html:root body #cloud-auth-modal-backdrop .ptc-modal{ max-width:460px !important; margin:auto !important; }
+  html:root body #cloud-auth-modal-backdrop .aero-auth-footer{ margin:10px 0 0 !important; }
+  html:root body #cloud-auth-modal-backdrop input[type="email"],html:root body #cloud-auth-modal-backdrop input[type="password"],html:root body #cloud-auth-modal-backdrop input[type="text"]{ font-size:16px !important; }
+}
+@media (max-width:850px){ html:root body #cloud-auth-modal-backdrop .aero-scene{ opacity:.5; } }
+@media (max-height:620px){ html:root body #cloud-auth-modal-backdrop .aero-auth-footer{ display:none; } }
+@media (prefers-reduced-motion:reduce){
+  html:root body #cloud-auth-modal-backdrop .ptc-modal,html:root body #cloud-auth-modal-backdrop .ptc-modal::before,html:root body #cloud-auth-modal-backdrop .aero-arrow{ animation:none !important; }
+  html:root body #cloud-auth-modal-backdrop .ptc-modal{ transform:none; }
+}
+</style>
+<script id="aeroops-login-v4-js">
+/* Animated 3D world-map login scene (canvas, no libraries): a thick glass map slab with extruded dot-matrix land, live day/night shading
+   (real UTC clock), glowing flight routes with airliners, and raised airport pins with glass code tags. Pauses while hidden. Auth logic untouched. */
+(function(){
+var bd=document.getElementById('cloud-auth-modal-backdrop');if(!bd)return;
+var cv=document.createElement('canvas');cv.className='aero-scene';cv.setAttribute('aria-hidden','true');bd.insertBefore(cv,bd.firstChild);
+var ctx=cv.getContext('2d');if(!ctx)return;
+var card=bd.querySelector('.ptc-modal');
+var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches;
+var PI=Math.PI,D2R=PI/180;
+var MAP={cols:260,rows:103,lat0:84,lat1:-58,b64:"AAAAAAAAAAAAAwAAP/8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAf///////64AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/////////8AAAGgAA5+AAAPgAAAAAAAAAAAAAAAAAA4f/+P/////wAAA/+AAAAAAAA/wAAAAAAAAAAAAAAAAODM/+P/////8AAAD2AAAAAAAAAcAAAAAAAAAAAAAAAD+R//+A//////gAAAAAAAAD8AAD//AAAAAAAAAAAAAAAH+H3/AAD////wAAAAAAAAPAAA///wAAfsAAAAAAAAAA/gR3v8AAf///4AAAAAAAAHAAD////x4BgAAAAAAAAAAf/8/n/wAH///8AAAAAAAAHADv//////AfwAAAf//////////////////////////////////////////wAP//z/9/+/j//AP///wAAAA//gBAe////////////35///////////////////////wAA/5AAQAAAAAAAAAAAAD//////////////////////4ACHQAA4AAAAAAAAAAAAOf/////////////////////8HgfAAAAAAAAAAAAAAAAAAB////////98n4A/4AD4AAH+//////////////////+AB////////8AKeAH8AAAAAP+f//////////////////wA////////8AH4AAeAAAAAH/n///////////////+f+AAX/9//////AA/EAAgAAAAA/8////////////////DwAAAXwAf////4Af/gAAAAAAwO+P/////////////8ABwAAABsAD/////wD/8AAAAAAeA3X/////////////+AB8AAABgAAf/////A//gAAAAAHgPh/////////////+AA+AAAAAAAD/////+f/+AAAAAH8D3//////////////4APgAAAAAAAv/////n//wAAAAB3n////////////////wBgAAAAAAAB////////8AAAAAT7////////////////8AQAAAAAAAAP///////7AAAAAAh/////////////////AIAAAAAAAAB///////x8AAAAAH////////////////+wAAAAAAAAAAP//////4fAAAAAB/////////////////oAAAAAAAAAAD///////4AAAAAAH///3f4//////////wAAAAAAAAAAA///////4AAAAAAB/7/438f/////////4gAAAAAAAAAAP/////+AAAAAAAf/nf+AfH/////////8eAAAAAAAAAAD//////gAAAAAAH/C4/HD4f////////wEAAAAAAAAAAA//////gAAAAAAB/gjv///H////////8BAAAAAAAAAAAP/////wAAAAAAAfwITn//h///////8sAYAAAAAAAAAAB/////8AAAAAAAH8Acf//8f///////TgMAAAAAAAAAAAP////+AAAAAAAAY/wCP//////////8cPAAAAAAAAAAAB/////gAAAAAAAH/8AYb/////////+GfgAAAAAAAAAAAP////gAAAAAAAD//AAB//////////gfAAAAAAAAAAAAB////wAAAAAAAB//+OAf/////////8CAAAAAAAAAAAAAL///4AAAAAAAAf//7////////////AgAAAAAAAAAAAAB///LAAAAAAAAH//////7////////wAAAAAAAAAAAAAAf/wAwAAAAAAAH//////+f///////8AAAAAAAAAAAAAAC/8AMAAAAAAAD/////7/z///////+AAAAAAAAAAAAAAAX/ABAAAAAAAB/////+/+L///////AAAAAAAAAAAAAAAC/wAEAAAAAAAf/////3//Af/////kAAAAAAAAAAAAAAAH8AfAAAAAAAP/////8//4D/////xAAAAAAAAAAAAAAAA/BgYAAAAAAD//////v/+A//j/9AAAAAAAAAAAQAAAAAPw4DYAAAAAA//////5//AD/wf+QAAAAAAAAAAAAAAAAB/+AvgAAAAAP//////P/gA/4D/kBAAAAAAAAAAAAAAAAH/AAAAAAAAD//////z/wAH8A/8AYAAAAAAAAAAAAAAAAb+AAAAAAAA//////+fwAB8AL/gMAAAAAAAAAAAAAAAAAfwAAAAAAAP//////3wAAPAAf4BgAAAAAAAAAAAAAAAAA8AAAAAAAD///////gAADwAH+AcAAAAAAAAAAAAAAAAAHAeAAAAAA///////wgAA8ABPgLgAAAAAAAAAAAAAAAAAwf/AAAAAH///////4AAHAARwA4AAAAAAAAAAAAAAAAAH//wAAAAA///////+AAB4AEAAGAAAAAAAAAAAAAAAAAAX//AAAAAH///////AAAGABgADwAAAAAAAAAAAAAAAAAA//+AAAAA/9/////wAAAgAMAIIAAAAAAAAAAAAAAAAAAP//4AAAADIP////4AAAAAbgPAAAAAAAAAAAAAAAAAAAD//+AAAAAAAf///8AAAAADYHgAAAAAAAAAAAAAAAAAAB///wAAAAAAH///+AAAAAAeH8CAAAAAAAAAAAAAAAAAA///8AAAAAAB////AAAAAAHh+cgAAAAAAAAAAAAAAAAgP///4AAAAAA////gAAAAAA8fqLgAAAAAAAAAAAAAAAAD////AAAAAAH///wAAAAAAHnzAbgAAAAAAAAAAAAAAAA/////AAAAAA///4AAAAAAB4M5z/BAAAAAAAAAAAAAAAf////8AAAAAP//+AAAAAAAGAKAP4QAAAAAAAAAAAAAAD/////gAAAAB///gAAAAAAAwAAA/ogAAAAAAAAAAAAAA/////4AAAAAf//4AAAAAAAH4AAP4EAAAAAAAAAAAAAAH////+AAAAAH//+AAAAAAAAB9gAzAQAAAAAAAAAAAAAA/////AAAAAA///gAAAAAAAAAQAAYAAAAAAAAAAAAAAAP////gAAAAAP//4AAAAAAAAAAPiAAAAAAAAAAAAAAAAB////wAAAAAH//+BAAAAAAAAAD4wAAAAAAAAAAAAAAAAf///8AAAAAB///wwAAAAAAAAP8OAAAAAAAAAAAAAAAAD////AAAAAA///4+AAAAAAAAH/jgADAAAAAAAAAAAAAAP///wAAAAAP//8PAAAAAAAAD//8AAAMAAAAAAAAAAAAB///4AAAAAB//8DwAAAAAAAA///AAAAAAAAAAAAAAAAAf//+AAAAAAf/+A4AAAAAAAA///4AAAAAAAAAAAAAAAAH///gAAAAAD//weAAAAAAAB////ABAAAAAAAAAAAAAAB///wAAAAAA//8HgAAAAAAA////4AAAAAAAAAAAAAAAAf//AAAAAAAP//BwAAAAAAAP////AAAAAAAAAAAAAAAAH//gAAAAAAB//AIAAAAAAAD////4AAAAAAAAAAAAAAAB//4AAAAAAAf/wAAAAAAAAA////+AAAAAAAAAAAAAAAA//+AAAAAAAH/8AAAAAAAAAP////gAAAAAAAAAAAAAAAP//AAAAAAAA/+AAAAAAAAAB////4AAAAAAAAAAAAAAAD//gAAAAAAAH/AAAAAAAAAAf///+AAAAAAAAAAAAAAAA//wAAAAAAAB/gAAAAAAAAAH+D//AAAAAAAAAAAAAAAAP/8AAAAAAAAfgAAAAAAAAAB+Af/gAAAAAAAAAAAAAAAD/4AAAAAAAAAAAAAAAAAAAAIAB/4AAQAAAAAAAAAAAAB/+AAAAAAAAAAAAAAAAAAAAAAAH+AACAAAAAAAAAAAAAf/gAAAAAAAAAAAAAAAAAAAAAAB/AAA4AAAAAAAAAAAAH/AAAAAAAAAAAAAAAAAAAAAAAAAAAAMAAAAAAAAAAAAD/gAAAAAAAAAAAAAAAAAAAAAAAAoAAPAAAAAAAAAAAAA/wAAAAAAAAAAAAAAAAAAAAAAAAGAADAAAAAAAAAAAAAP4AAAAAAAAAAAAAAAAAAAAAAAABgADgAAAAAAAAAAAAD+AAAAAAAAAAAAAAAAAAAAAAAAAAABwAAAAAAAAAAAAB+AAAAAAAAAAAAAAAAAAAAAAAAAAAAYAAAAAAAAAAAAAP4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAH8AAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAB+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPgwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"};
+var land=[],ocean=[];
+(function(){var bin=atob(MAP.b64),C=MAP.cols,R=MAP.rows;
+ for(var y=0;y<R;y++)for(var x=0;x<C;x++){var i=y*C+x,on=(bin.charCodeAt(i>>3)>>(7-(i&7)))&1,lon=(x+.5)/C*360-180,lat=MAP.lat0-(y+.5)/R*(MAP.lat0-MAP.lat1);
+  var d={u:(x+.5)/C-.5,v:(y+.5)/R-.5,sl:Math.sin(lat*D2R),cl:Math.cos(lat*D2R),lon:lon,k:0};
+  if(on)land.push(d);else if((x+y)%3===0&&lat<76)ocean.push(d);}
+})();
+var W=0,H=0,cx=0,cy=0,MW=0,MH=0,narrow=false;
+function size(){var d=Math.min(window.devicePixelRatio||1,2);W=window.innerWidth;H=window.innerHeight;cv.width=Math.round(W*d);cv.height=Math.round(H*d);ctx.setTransform(d,0,0,d,0,0);
+ narrow=W<=850;var asp=MAP.cols/MAP.rows;
+ if(narrow){MW=W*.96;cx=W*.5;cy=H*.092;}else{MW=Math.min(W*.5,H*.42*asp);cx=W*.29;cy=H*.5;}
+ MH=MW/asp;}
+size();addEventListener('resize',size);
+var tilt=.66,ST=Math.sin(tilt),CT=Math.cos(tilt),F=1,ox=0;
+function setTilt(a){tilt=a;ST=Math.sin(a);CT=Math.cos(a);F=MW*1.7;}
+function P(u,v,h,o){var uu=u*MW,vv=v*MH,y=vv*CT-h*ST,z=vv*ST+h*CT,s=F/(F-z);o=o||{};o.x=cx+ox+uu*s;o.y=cy+y*s;o.s=s;return o;}
+function uv(lon,lat){return[(lon+180)/360-.5,(MAP.lat0-lat)/(MAP.lat0-MAP.lat1)-.5];}
+/* cities: label side 'a' above / 'b' below; hub is the main airport */
+var CITY=[['DAC','DAC · DHAKA',23.81,90.41,'a',1],['CGP','CGP',22.25,91.81,'b',0],['DXB','DXB',25.25,55.36,'a',0],['LHR','LHR',51.47,-.45,'a',0],['SIN','SIN',1.36,103.99,'b',0],['JFK','JFK',40.64,-73.78,'a',0],['NRT','NRT',35.77,140.39,'a',0],['IST','IST',41.26,28.74,'a',0],['SYD','SYD',-33.94,151.18,'b',0],['JED','JED',21.68,39.16,'b',0]].map(function(c){var p=uv(c[3],c[2]);return{n:c[0],t:c[1],u:p[0],v:p[1],side:c[4],hub:c[5]};});
+var ROUTE=[[0,2],[0,3],[0,4],[0,5],[0,6],[0,7],[0,8],[1,9],[2,3],[4,8]].map(function(p,k){return{a:CITY[p[0]],b:CITY[p[1]],off:k*.173,sp:.04+(k%4)*.007};});
+var stars=[];for(var s=0;s<200;s++)stars.push({x:Math.random()*2-1,y:Math.random()*2-1,z:Math.random()*.9+.1,p:Math.random()*6.28,sp:.4+Math.random()*1.4});
+var mx=0,my=0,tx=0,ty=0;
+bd.addEventListener('pointermove',function(e){tx=(e.clientX/W)*2-1;ty=(e.clientY/H)*2-1;},{passive:true});
+bd.addEventListener('pointerleave',function(){tx=0;ty=0;},{passive:true});
+var sunLon=0,sunLat=0,lastSun=-1e9;
+function sun(now){var d=new Date(),y=d.getUTCFullYear(),n=Math.floor((d-Date.UTC(y,0,0))/864e5),h=d.getUTCHours()+d.getUTCMinutes()/60+d.getUTCSeconds()/3600;
+ var dec=-23.44*Math.cos(2*PI*(n+10)/365)*D2R;sunLat=dec/D2R;sunLon=-(h-12)*15;var sd=Math.sin(dec),cd=Math.cos(dec);
+ function cls(a){for(var i=0;i<a.length;i++){var o=a[i],e=o.sl*sd+o.cl*cd*Math.cos((o.lon-sunLon)*D2R);o.k=e>.07?2:e>-.1?1:0;}}
+ cls(land);cls(ocean);lastSun=now;}
+var tmp={x:0,y:0,s:1},tmp2={x:0,y:0,s:1};
+function rects(arr,k,h,alpha,color,size){ctx.globalAlpha=alpha;ctx.fillStyle=color;ctx.beginPath();
+ for(var i=0;i<arr.length;i++){var o=arr[i];if(k>=0&&o.k!==k)continue;P(o.u,o.v,h,tmp);var w=size*tmp.s;ctx.rect(tmp.x-w/2,tmp.y-w*CT/2,w,Math.max(.8,w*CT));}ctx.fill();}
+function quad(a,b,c,d){ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.lineTo(c.x,c.y);ctx.lineTo(d.x,d.y);ctx.closePath();}
+function rr(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.arcTo(x+w,y,x+w,y+r,r);ctx.lineTo(x+w,y+h-r);ctx.arcTo(x+w,y+h,x+w-r,y+h,r);ctx.lineTo(x+r,y+h);ctx.arcTo(x,y+h,x,y+h-r,r);ctx.lineTo(x,y+r);ctx.arcTo(x,y,x+r,y,r);ctx.closePath();}
+function frame(t){
+ ctx.clearRect(0,0,W,H);
+ mx+=(tx-mx)*.06;my+=(ty-my)*.06;
+ bd.style.setProperty('--mx',mx.toFixed(3));bd.style.setProperty('--my',my.toFixed(3));
+ if(t-lastSun>15000)sun(t);
+ setTilt(.66+my*.07+Math.sin(t*.0006)*.012);ox=mx*16;
+ var cell=MW/MAP.cols,TH=MW*.016,i,q;
+ /* stars */
+ for(i=0;i<stars.length;i++){var st=stars[i],px=(st.x*.5+.5)*W-mx*st.z*28,py=(st.y*.5+.5)*H-my*st.z*18,tw=.45+.55*Math.sin(t*.001*st.sp+st.p);
+  ctx.globalAlpha=tw*st.z*.8;ctx.fillStyle='#cfe8ff';ctx.beginPath();ctx.arc(px,py,st.z*1.25,0,6.283);ctx.fill();}
+ ctx.globalAlpha=1;
+ /* glow + soft contact shadow under the slab */
+ var c0=P(0,0,0,{}),gr=Math.max(MW*.62,10),g=ctx.createRadialGradient(c0.x,c0.y,gr*.1,c0.x,c0.y,gr);g.addColorStop(0,'rgba(50,150,255,.2)');g.addColorStop(.6,'rgba(40,110,240,.06)');g.addColorStop(1,'rgba(40,110,240,0)');
+ ctx.fillStyle=g;ctx.beginPath();ctx.ellipse(c0.x,c0.y,gr,gr*.62,0,0,6.283);ctx.fill();
+ var A=P(-.5,-.5,0,{}),B=P(.5,-.5,0,{}),C=P(.5,.5,0,{}),D=P(-.5,.5,0,{}),C2=P(.5,.5,-TH,{}),D2=P(-.5,.5,-TH,{});
+ var sh=P(0,.5,-TH*3.2,{});ctx.fillStyle='rgba(0,0,0,.35)';ctx.filter='blur(14px)';ctx.beginPath();ctx.ellipse(sh.x,sh.y+4,MW*.5*sh.s,MW*.045,0,0,6.283);ctx.fill();ctx.filter='none';
+ /* slab: front edge (thickness) + glass top face */
+ var ef=ctx.createLinearGradient(0,D.y,0,D2.y);ef.addColorStop(0,'rgba(90,200,255,.55)');ef.addColorStop(1,'rgba(10,40,90,.9)');
+ ctx.fillStyle=ef;ctx.beginPath();quad(D,C,C2,D2);ctx.fill();
+ ctx.lineWidth=1;ctx.strokeStyle='rgba(140,225,255,.55)';ctx.beginPath();ctx.moveTo(D2.x,D2.y);ctx.lineTo(C2.x,C2.y);ctx.stroke();
+ var tf=ctx.createLinearGradient(A.x,A.y,C.x,C.y);tf.addColorStop(0,'rgba(18,70,130,.55)');tf.addColorStop(1,'rgba(8,32,70,.62)');
+ ctx.fillStyle=tf;ctx.beginPath();quad(A,B,C,D);ctx.fill();
+ ctx.strokeStyle='rgba(150,230,255,.6)';ctx.lineWidth=1.2;ctx.beginPath();quad(A,B,C,D);ctx.stroke();
+ /* moving glass sheen on the top face */
+ ctx.save();ctx.beginPath();quad(A,B,C,D);ctx.clip();
+ var sx=D.x+(C.x-D.x)*(((t*.00007)%1.6)-.3),sg=ctx.createLinearGradient(sx-90,0,sx+90,0);sg.addColorStop(0,'rgba(255,255,255,0)');sg.addColorStop(.5,'rgba(255,255,255,.1)');sg.addColorStop(1,'rgba(255,255,255,0)');
+ ctx.fillStyle=sg;ctx.fillRect(Math.min(A.x,D.x),Math.min(A.y,B.y),Math.max(B.x,C.x)-Math.min(A.x,D.x),D.y-A.y);ctx.restore();
+ /* graticule */
+ ctx.lineWidth=.6;ctx.strokeStyle='rgba(120,200,255,.12)';ctx.beginPath();
+ for(var lo=-150;lo<=150;lo+=30){var a1=uv(lo,MAP.lat0),b1=uv(lo,MAP.lat1);q=P(a1[0],a1[1],0,tmp);ctx.moveTo(q.x,q.y);q=P(b1[0],b1[1],0,tmp);ctx.lineTo(q.x,q.y);}
+ for(var la=60;la>=-30;la-=30){var l1=uv(-180,la),l2=uv(180,la);q=P(l1[0],l1[1],0,tmp);ctx.moveTo(q.x,q.y);q=P(l2[0],l2[1],0,tmp);ctx.lineTo(q.x,q.y);}
+ ctx.stroke();
+ /* ocean dots, extruded land (dark base layer + lit top layer with live day/night) */
+ rects(ocean,0,0,.07,'#4a8ccc',cell*.5);rects(ocean,1,0,.1,'#4a8ccc',cell*.5);rects(ocean,2,0,.17,'#6fb4e8',cell*.5);
+ rects(land,-1,-TH*.9,.95,'#0b3262',cell*.84);
+ rects(land,0,0,.62,'#3f86c9',cell*.76);rects(land,1,0,.82,'#58c7e8',cell*.8);rects(land,2,0,1,'#86ecfa',cell*.84);
+ ctx.globalAlpha=1;
+ /* subsolar point */
+ var su=uv(sunLon,sunLat);if(su[0]>-.5&&su[0]<.5){var sp=P(su[0],su[1],0,tmp),sg2=ctx.createRadialGradient(sp.x,sp.y,0,sp.x,sp.y,MW*.05);sg2.addColorStop(0,'rgba(255,214,102,.55)');sg2.addColorStop(1,'rgba(255,214,102,0)');ctx.fillStyle=sg2;ctx.beginPath();ctx.arc(sp.x,sp.y,MW*.05,0,6.283);ctx.fill();ctx.fillStyle='#ffd166';ctx.beginPath();ctx.arc(sp.x,sp.y,2.4,0,6.283);ctx.fill();}
+ /* flight routes: faint full path, bright travelled part, glow, airliner + ground shadow */
+ var planes=[];
+ for(var r=0;r<ROUTE.length;r++){var ro=ROUTE[r],dx=ro.b.u-ro.a.u,dy=ro.b.v-ro.a.v,dist=Math.sqrt(dx*dx*MW*MW+dy*dy*MH*MH),H0=Math.min(MW*.2,dist*.3),S=40,pts=[],k;
+  for(k=0;k<=S;k++){var f=k/S;pts.push(P(ro.a.u+dx*f,ro.a.v+dy*f,Math.sin(PI*f)*H0,{}));}
+  var uu=((t*.001*ro.sp+ro.off)%1),idx=Math.min(S-1,Math.floor(uu*S)),fr=uu*S-idx;
+  ctx.lineCap='round';ctx.lineJoin='round';
+  ctx.strokeStyle='rgba(120,220,255,.28)';ctx.lineWidth=1;ctx.setLineDash([3,5]);ctx.beginPath();ctx.moveTo(pts[0].x,pts[0].y);for(k=1;k<=S;k++)ctx.lineTo(pts[k].x,pts[k].y);ctx.stroke();ctx.setLineDash([]);
+  var Ap=pts[idx],Bp=pts[idx+1],ax=Ap.x+(Bp.x-Ap.x)*fr,ay=Ap.y+(Bp.y-Ap.y)*fr,ang=Math.atan2(Bp.y-Ap.y,Bp.x-Ap.x);
+  ctx.strokeStyle='rgba(88,217,235,.16)';ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(pts[0].x,pts[0].y);for(k=1;k<=idx;k++)ctx.lineTo(pts[k].x,pts[k].y);ctx.lineTo(ax,ay);ctx.stroke();
+  ctx.strokeStyle='#8cf0ff';ctx.lineWidth=1.8;ctx.beginPath();ctx.moveTo(pts[0].x,pts[0].y);for(k=1;k<=idx;k++)ctx.lineTo(pts[k].x,pts[k].y);ctx.lineTo(ax,ay);ctx.stroke();
+  var gp=P(ro.a.u+dx*uu,ro.a.v+dy*uu,0,tmp2);planes.push({x:ax,y:ay,a:ang,s:Ap.s,gx:gp.x,gy:gp.y});}
+ for(i=0;i<planes.length;i++){var pl=planes[i];
+  ctx.globalAlpha=.3;ctx.fillStyle='#000';ctx.beginPath();ctx.ellipse(pl.gx,pl.gy,5,2,0,0,6.283);ctx.fill();
+  ctx.globalAlpha=1;ctx.save();ctx.translate(pl.x,pl.y);ctx.rotate(pl.a);var ps=Math.max(.42,Math.min(.68,MW/1100))*(.85+.3*pl.s);ctx.scale(ps,ps);
+  ctx.shadowColor='#7be7ff';ctx.shadowBlur=14;ctx.fillStyle='#ffffff';ctx.strokeStyle='rgba(20,60,110,.9)';ctx.lineWidth=1.2;
+  ctx.beginPath();ctx.moveTo(11,0);ctx.lineTo(8.5,-1.4);ctx.lineTo(2,-1.6);ctx.lineTo(-2,-10);ctx.lineTo(-4.4,-10);ctx.lineTo(-3.4,-1.7);ctx.lineTo(-8.5,-1.5);ctx.lineTo(-10.2,-4.6);ctx.lineTo(-12,-4.6);ctx.lineTo(-11,-1.2);ctx.lineTo(-11,1.2);ctx.lineTo(-12,4.6);ctx.lineTo(-10.2,4.6);ctx.lineTo(-8.5,1.5);ctx.lineTo(-3.4,1.7);ctx.lineTo(-4.4,10);ctx.lineTo(-2,10);ctx.lineTo(2,1.6);ctx.lineTo(8.5,1.4);
+  ctx.closePath();ctx.fill();ctx.shadowBlur=0;ctx.stroke();ctx.restore();}
+ /* airport pins: pulsing base ring, glowing pole, lit head, glass code tag (drawn back-to-front) */
+ var order=CITY.slice().sort(function(a,b){return a.v-b.v;}),PHb=MW*.034,fs=Math.max(9,Math.min(10.5,MW/72));
+ ctx.font='700 '+fs+'px "IBM Plex Mono",ui-monospace,monospace';ctx.textBaseline='middle';
+ for(var c=0;c<order.length;c++){var ci=order[c],ph=PHb*(ci.hub?1.55:1)*(narrow?.7:1),b0=P(ci.u,ci.v,0,{}),hd=P(ci.u,ci.v,ph,{}),pul=(Math.sin(t*.003+c*1.3)+1)/2,col=ci.hub?'#ffd166':'#ffb347';
+  ctx.globalAlpha=.7*(1-pul);ctx.strokeStyle=col;ctx.lineWidth=1.2;ctx.beginPath();ctx.ellipse(b0.x,b0.y,4+pul*13,(4+pul*13)*CT,0,0,6.283);ctx.stroke();
+  ctx.globalAlpha=.9;ctx.fillStyle=col;ctx.beginPath();ctx.ellipse(b0.x,b0.y,3.4,3.4*CT,0,0,6.283);ctx.fill();
+  var pg=ctx.createLinearGradient(0,b0.y,0,hd.y);pg.addColorStop(0,'rgba(255,200,90,.15)');pg.addColorStop(1,'rgba(255,225,150,.95)');
+  ctx.globalAlpha=1;ctx.strokeStyle=pg;ctx.lineWidth=1.6;ctx.beginPath();ctx.moveTo(b0.x,b0.y);ctx.lineTo(hd.x,hd.y);ctx.stroke();
+  var hr=(ci.hub?4.6:3.4),hg=ctx.createRadialGradient(hd.x,hd.y,0,hd.x,hd.y,hr*3.2);hg.addColorStop(0,'rgba(255,214,102,.65)');hg.addColorStop(1,'rgba(255,214,102,0)');
+  ctx.fillStyle=hg;ctx.beginPath();ctx.arc(hd.x,hd.y,hr*3.2,0,6.283);ctx.fill();
+  ctx.fillStyle=col;ctx.beginPath();ctx.arc(hd.x,hd.y,hr,0,6.283);ctx.fill();ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(hd.x,hd.y,hr*.45,0,6.283);ctx.fill();
+  if(!narrow){
+   var tw2=ctx.measureText(ci.t).width,pw=tw2+(ci.hub?24:20),phh=ci.hub?19:16,lx,ly;
+   if(ci.hub){lx=hd.x-pw/2;ly=hd.y-phh-26;}else if(ci.side==='a'){lx=hd.x-pw/2;ly=hd.y-phh-8;}else{lx=b0.x-pw/2;ly=b0.y+9;}
+   ctx.strokeStyle='rgba(255,225,150,.5)';ctx.lineWidth=1;ctx.beginPath();
+   if(ci.hub){ctx.moveTo(hd.x,hd.y-hr);ctx.lineTo(hd.x,ly+phh);}else if(ci.side==='a'){ctx.moveTo(hd.x,hd.y-hr);ctx.lineTo(hd.x,ly+phh);}else{ctx.moveTo(b0.x,b0.y+3);ctx.lineTo(b0.x,ly);}
+   ctx.stroke();
+   ctx.save();ctx.shadowColor='rgba(0,0,0,.45)';ctx.shadowBlur=12;ctx.shadowOffsetY=3;rr(lx,ly,pw,phh,phh/2);
+   var lg=ctx.createLinearGradient(0,ly,0,ly+phh);lg.addColorStop(0,'rgba(34,74,124,.9)');lg.addColorStop(1,'rgba(8,26,52,.92)');ctx.fillStyle=lg;ctx.fill();ctx.restore();
+   rr(lx,ly,pw,phh,phh/2);ctx.strokeStyle=ci.hub?'rgba(255,214,102,.9)':'rgba(150,225,255,.6)';ctx.lineWidth=1;ctx.stroke();
+   ctx.fillStyle=col;ctx.beginPath();ctx.arc(lx+9,ly+phh/2,2.4,0,6.283);ctx.fill();
+   ctx.fillStyle='#fff';ctx.textAlign='left';ctx.fillText(ci.t,lx+15,ly+phh/2+.5);
+  }}
+ ctx.globalAlpha=1;ctx.textBaseline='alphabetic';
+ if(card&&!reduce&&!narrow){card.style.setProperty('--ry',(mx*7).toFixed(2)+'deg');card.style.setProperty('--rx',(-my*5).toFixed(2)+'deg');card.style.setProperty('--fy',(Math.sin(t*.0014)*5).toFixed(2)+'px');}
+ else if(card&&!reduce){card.style.setProperty('--fy',(Math.sin(t*.0014)*3).toFixed(2)+'px');}
+}
+var raf=0,last=0;
+function loop(t){raf=requestAnimationFrame(loop);
+ if(document.hidden||bd.style.display==='none')return;
+ if(t-last<15)return;last=t;frame(t);}
+sun(0);
+if(reduce){frame(4000);}else{raf=requestAnimationFrame(loop);}
+})();
+</script>
+<style id="aeroops-login-v5">
+/* ===== Login v5: airline icon set + live operations board (clock, date, weather) + AI live brief. Presentation only. ===== */
+html:root body #cloud-auth-modal-backdrop .aero-live{ position:absolute; z-index:3; top:clamp(18px,3.4vh,38px); right:clamp(24px,4vw,64px); width:min(560px,calc(100% - 215px - clamp(48px,8vw,128px)));
+  display:flex; flex-direction:column; gap:8px; font-family:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace; color:#eaf4ff;
+  transform:translate3d(calc(var(--mx,0)*-8px),calc(var(--my,0)*-5px),0); transition:transform .25s ease-out; animation:alIn .8s .2s cubic-bezier(.2,.8,.2,1) both; }
+@keyframes alIn{ from{ opacity:0; translate:0 -14px; } to{ opacity:1; translate:0 0; } }
+html:root body #cloud-auth-modal-backdrop .al-row{ display:flex; gap:8px; align-items:stretch; }
+html:root body #cloud-auth-modal-backdrop .al-box{ background:rgba(8,26,52,.55); border:1px solid rgba(130,200,255,.18); border-radius:12px; padding:7px 12px; -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px);
+  box-shadow:0 10px 30px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.07); min-width:0; }
+html:root body #cloud-auth-modal-backdrop .al-clock{ flex:0 0 auto; }
+html:root body #cloud-auth-modal-backdrop .al-lbl{ display:flex; align-items:center; gap:6px; font-size:9px; letter-spacing:.16em; color:#7fa6c9; font-weight:600; text-transform:uppercase; white-space:nowrap; }
+html:root body #cloud-auth-modal-backdrop .al-lbl svg{ width:12px; height:12px; color:#58d9eb; }
+html:root body #cloud-auth-modal-backdrop .al-live{ width:6px; height:6px; border-radius:50%; background:#f5b94a; box-shadow:0 0 0 0 rgba(245,185,74,.6); }
+html:root body #cloud-auth-modal-backdrop .al-live.on{ background:#2fd6a1; animation:alPulse 2s infinite; }
+@keyframes alPulse{ 0%{ box-shadow:0 0 0 0 rgba(47,214,161,.55); } 70%{ box-shadow:0 0 0 7px rgba(47,214,161,0); } 100%{ box-shadow:0 0 0 0 rgba(47,214,161,0); } }
+html:root body #cloud-auth-modal-backdrop .al-time{ display:flex; align-items:center; gap:2px; margin-top:3px; font-size:21px; font-weight:600; letter-spacing:0; }
+html:root body #cloud-auth-modal-backdrop .al-time .fl{ position:relative; display:inline-block; min-width:15px; text-align:center; padding:1px 0; border-radius:4px; background:linear-gradient(180deg,rgba(255,255,255,.1) 0 50%,rgba(255,255,255,.05) 50% 100%); color:#fff; line-height:1.15; perspective:200px; }
+html:root body #cloud-auth-modal-backdrop .al-time .fl::after{ content:""; position:absolute; left:0; right:0; top:50%; height:1px; background:rgba(0,0,0,.45); }
+html:root body #cloud-auth-modal-backdrop .al-time .sep{ min-width:6px; text-align:center; color:#58d9eb; animation:alBlink 1s steps(2,start) infinite; }
+@keyframes alBlink{ to{ opacity:.25; } }
+html:root body #cloud-auth-modal-backdrop .al-time .fl.flip{ animation:alFlip .38s ease-out; }
+@keyframes alFlip{ 0%{ transform:rotateX(-85deg); opacity:.3; } 100%{ transform:rotateX(0); opacity:1; } }
+html:root body #cloud-auth-modal-backdrop .al-date{ margin-top:2px; font-size:10px; letter-spacing:.12em; color:#b9cde2; font-weight:500; white-space:nowrap; }
+html:root body #cloud-auth-modal-backdrop .al-wx{ flex:1 1 0; display:flex; align-items:center; gap:9px; }
+html:root body #cloud-auth-modal-backdrop .al-wx .wi{ flex:0 0 auto; width:30px; height:30px; display:grid; place-items:center; border-radius:9px; background:rgba(88,217,235,.12); color:#7fe6f7; }
+html:root body #cloud-auth-modal-backdrop .al-wx .wi svg{ width:19px; height:19px; }
+html:root body #cloud-auth-modal-backdrop .al-wx{ overflow:hidden; } html:root body #cloud-auth-modal-backdrop .al-wx .wt{ min-width:0; flex:1; overflow:hidden; }
+html:root body #cloud-auth-modal-backdrop .al-wx .wc{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-size:9px; letter-spacing:.16em; color:#7fa6c9; font-weight:600; }
+html:root body #cloud-auth-modal-backdrop .al-wx .wd{ font-size:15px; font-weight:600; color:#fff; white-space:nowrap; }
+html:root body #cloud-auth-modal-backdrop .al-wx .wd{ display:flex; align-items:baseline; gap:5px; min-width:0; } html:root body #cloud-auth-modal-backdrop .al-wx .wd small{ font-size:10px; font-weight:500; color:#a9c1db; margin:0; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+html:root body #cloud-auth-modal-backdrop .al-world{ gap:6px; }
+html:root body #cloud-auth-modal-backdrop .al-w{ flex:1 1 0; display:flex; align-items:center; justify-content:space-between; gap:6px; padding:5px 9px !important; border-radius:10px !important; font-size:11px; }
+html:root body #cloud-auth-modal-backdrop .al-w b{ color:#7fd8ff; font-size:10px; letter-spacing:.12em; font-weight:600; }
+html:root body #cloud-auth-modal-backdrop .al-w span{ color:#fff; font-weight:600; }
+html:root body #cloud-auth-modal-backdrop .al-w svg{ width:11px; height:11px; color:#58d9eb; margin-right:-2px; }
+html:root body #cloud-auth-modal-backdrop .al-ai{ display:flex; align-items:center; gap:10px; padding:7px 12px; background:linear-gradient(90deg,rgba(88,217,235,.14),rgba(124,156,255,.1)); border-color:rgba(124,200,255,.3); }
+html:root body #cloud-auth-modal-backdrop .al-aib{ flex:0 0 auto; width:24px; height:24px; display:grid; place-items:center; border-radius:50%; background:linear-gradient(135deg,#19c3e6,#7c6cff); color:#fff; box-shadow:0 0 16px rgba(88,217,235,.5); animation:alGlow 2.4s ease-in-out infinite; }
+@keyframes alGlow{ 50%{ box-shadow:0 0 26px rgba(124,108,255,.75); } }
+html:root body #cloud-auth-modal-backdrop .al-aib svg{ width:14px; height:14px; }
+html:root body #cloud-auth-modal-backdrop .al-ait{ min-width:0; flex:1; font-size:11.5px; color:#dcecff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-family:'Inter','IBM Plex Sans',system-ui,sans-serif; font-weight:500; }
+html:root body #cloud-auth-modal-backdrop .al-ait::after{ content:""; display:inline-block; width:2px; height:12px; margin-left:3px; vertical-align:-2px; background:#58d9eb; animation:alBlink .9s steps(2,start) infinite; }
+html:root body #cloud-auth-modal-backdrop .al-tag{ flex:0 0 auto; font-size:8.5px; letter-spacing:.16em; font-weight:700; color:#8fb2d6; border:1px solid rgba(140,200,255,.28); border-radius:999px; padding:2px 7px; }
+
+/* airline icon chips under the headline */
+html:root body #cloud-auth-modal-backdrop .al-chips{ display:flex; flex-wrap:wrap; gap:8px; margin-top:clamp(10px,2vh,18px); }
+html:root body #cloud-auth-modal-backdrop .al-chip{ display:inline-flex; align-items:center; gap:7px; padding:6px 11px; border-radius:999px; border:1px solid rgba(140,200,255,.22); background:rgba(255,255,255,.05);
+  -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px); font-size:10.5px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:#cfe3f8; transition:transform .25s,background .25s,border-color .25s; }
+html:root body #cloud-auth-modal-backdrop .al-chip:hover{ transform:translateY(-3px); background:rgba(88,217,235,.12); border-color:rgba(88,217,235,.5); }
+html:root body #cloud-auth-modal-backdrop .al-chip svg{ width:15px; height:15px; color:#58d9eb; }
+html:root body #cloud-auth-modal-backdrop .aero-kicker{ display:flex !important; align-items:center; gap:8px; }
+html:root body #cloud-auth-modal-backdrop .al-kic{ width:15px; height:15px; flex:0 0 auto; animation:alGlide 3.2s ease-in-out infinite; }
+@keyframes alGlide{ 0%,100%{ transform:translate(0,0) rotate(0deg); } 50%{ transform:translate(3px,-2px) rotate(8deg); } }
+html:root body #cloud-auth-modal-backdrop .aero-brandmark svg{ fill:none !important; stroke:currentColor !important; }
+html:root body #cloud-auth-modal-backdrop .aero-live-mini{ display:none; }
+
+@media (max-height:799px){ html:root body #cloud-auth-modal-backdrop .al-chips{ display:none; } }
+@media (max-height:759px){ html:root body #cloud-auth-modal-backdrop .al-world{ display:none; } }
+@media (max-height:600px){ html:root body #cloud-auth-modal-backdrop .al-ai{ display:none; } }
+@media (max-width:1360px){ html:root body #cloud-auth-modal-backdrop .al-wx.cgp{ display:none; } html:root body #cloud-auth-modal-backdrop .al-tag{ display:none; } }
+@media (max-width:850px){
+  html:root body #cloud-auth-modal-backdrop .aero-live{ display:none !important; }
+  html:root body #cloud-auth-modal-backdrop .aero-live-mini{ display:flex; align-items:center; gap:8px; margin-top:8px; font:600 11px 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.06em; color:#cfe3f8; }
+  html:root body #cloud-auth-modal-backdrop .aero-live-mini svg{ width:14px; height:14px; color:#58d9eb; }
+  html:root body #cloud-auth-modal-backdrop .aero-live-mini i{ width:1px; height:12px; background:rgba(140,200,255,.3); }
+}
+@media (prefers-reduced-motion:reduce){ html:root body #cloud-auth-modal-backdrop .aero-live,html:root body #cloud-auth-modal-backdrop .al-time .sep,html:root body #cloud-auth-modal-backdrop .al-time .fl.flip,html:root body #cloud-auth-modal-backdrop .al-aib,html:root body #cloud-auth-modal-backdrop .al-kic,html:root body #cloud-auth-modal-backdrop .al-live.on,html:root body #cloud-auth-modal-backdrop .al-ait::after{ animation:none !important; } }
+</style>
+<script id="aeroops-login-v5-js">
+/* Live board: real device clock (Dhaka + world zones), live weather from Open-Meteo (free, no key, refreshed every 10 min),
+   and an "AeroAI" brief that is generated from that live data and typed out. No credentials are sent anywhere. */
+(function(){
+var bd=document.getElementById('cloud-auth-modal-backdrop'),hero=bd&&bd.querySelector('.aero-auth-hero');if(!hero)return;
+var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches;
+function S(p){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+p+'</svg>';}
+var IC={
+ plane:S('<path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>'),
+ ticket:S('<path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2M13 17v2M13 11v2"/>'),
+ users:S('<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>'),
+ chart:S('<path d="M3 3v18h18M18 17V9M13 17V5M8 17v-3"/>'),
+ bag:S('<path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect x="2" y="6" width="20" height="14" rx="2"/>'),
+ spark:S('<path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9L12 3z"/><path d="M19 15l.7 1.8 1.8.7-1.8.7L19 20l-.7-1.8-1.8-.7 1.8-.7z"/>'),
+ clock:S('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'),
+ sun:S('<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>'),
+ moon:S('<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>'),
+ cloudsun:S('<path d="M12 2v2M4.93 4.93l1.41 1.41M20 12h2M19.07 4.93l-1.41 1.41M15.947 12.65a4 4 0 0 0-5.925-4.128M13 22H7a5 5 0 1 1 4.9-6H13a3 3 0 0 1 0 6Z"/>'),
+ cloud:S('<path d="M17.5 19H9a7 7 0 1 1 6.7-9h1.8a4.5 4.5 0 1 1 0 9z"/>'),
+ rain:S('<path d="M4 14.9A7 7 0 1 1 15.7 8h1.8a4.5 4.5 0 0 1 2.5 8.2"/><path d="M16 14v6M8 14v6M12 16v6"/>'),
+ storm:S('<path d="M6 16.3A7 7 0 1 1 15.7 8h1.8a4.5 4.5 0 0 1 2.5 8.2"/><path d="m13 11-4 6h6l-4 6"/>'),
+ fog:S('<path d="M4 14h16M4 18h12M6 10h12"/>'),
+ snow:S('<path d="M4 14.9A7 7 0 1 1 15.7 8h1.8a4.5 4.5 0 0 1 2.5 8.2"/><path d="M8 15h.01M8 19h.01M12 17h.01M12 21h.01M16 15h.01M16 19h.01"/>')
+};
+function wxInfo(c,day){
+ if(c===0)return{l:'Clear',i:day?IC.sun:IC.moon};
+ if(c===1)return{l:'Mostly clear',i:day?IC.sun:IC.moon};
+ if(c===2)return{l:'Partly cloudy',i:day?IC.cloudsun:IC.cloud};
+ if(c===3)return{l:'Overcast',i:IC.cloud};
+ if(c===45||c===48)return{l:'Fog',i:IC.fog};
+ if(c>=51&&c<=67)return{l:c<=57?'Drizzle':'Rain',i:IC.rain};
+ if(c>=71&&c<=77||c===85||c===86)return{l:'Snow',i:IC.snow};
+ if(c>=80&&c<=82)return{l:'Showers',i:IC.rain};
+ if(c>=95)return{l:'Thunderstorm',i:IC.storm};
+ return{l:'Cloudy',i:IC.cloud};
+}
+var CITY=[{n:'Dhaka',c:'DAC',la:23.81,lo:90.41},{n:'Chattogram',c:'CGP',la:22.25,lo:91.81}];
+var WORLD=[{c:'DXB',z:'Asia/Dubai',n:'Dubai'},{c:'LHR',z:'Europe/London',n:'London'},{c:'SIN',z:'Asia/Singapore',n:'Singapore'},{c:'JFK',z:'America/New_York',n:'New York'}];
+function fmt(z){try{return new Intl.DateTimeFormat('en-GB',{timeZone:z,hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'});}catch(e){return null;}}
+var fDhaka=fmt('Asia/Dhaka');WORLD.forEach(function(w){w.f=fmt(w.z);});
+var fDate;try{fDate=new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Dhaka',weekday:'short',day:'2-digit',month:'short',year:'numeric'});}catch(e){}
+function hms(f,d){try{return f?f.format(d):d.toTimeString().slice(0,8);}catch(e){return d.toTimeString().slice(0,8);}}
+
+/* --- build markup --- */
+var el=document.createElement('aside');el.className='aero-live';el.setAttribute('aria-label','Live operations board');
+el.innerHTML=
+ '<div class="al-row">'+
+  '<div class="al-box al-clock"><div class="al-lbl">'+IC.clock+'Dhaka · UTC+6 <i class="al-live" id="al-live" title="Live"></i></div><div class="al-time" id="al-time" aria-live="off"></div><div class="al-date" id="al-date"></div></div>'+
+  '<div class="al-box al-wx dac" id="al-wx0"></div><div class="al-box al-wx cgp" id="al-wx1"></div>'+
+ '</div>'+
+ '<div class="al-row al-world" id="al-world"></div>'+
+ '<div class="al-box al-ai"><span class="al-aib">'+IC.spark+'</span><span class="al-ait" id="al-ait"></span><span class="al-tag">AERO AI</span></div>';
+hero.appendChild(el);
+var mini=document.createElement('div');mini.className='aero-live-mini';mini.innerHTML=IC.clock+'<span id="al-mt">--:--</span><i></i>'+IC.sun+'<span id="al-mw">--</span>';
+var brand=hero.querySelector('.aero-hero-brand');if(brand&&brand.nextSibling)hero.insertBefore(mini,brand.nextSibling);else hero.appendChild(mini);
+var $=function(id){return document.getElementById(id);};
+var tEl=$('al-time'),dEl=$('al-date'),wEl=$('al-world');
+WORLD.forEach(function(w){var d=document.createElement('div');d.className='al-box al-w';d.innerHTML='<b>'+w.c+'</b><span id="alw-'+w.c+'">--:--</span>';wEl.appendChild(d);});
+/* airline icon chips + icons in brand and kicker */
+var copy=hero.querySelector('.aero-hero-copy');
+if(copy){var ch=document.createElement('div');ch.className='al-chips';ch.innerHTML=[['ticket','Ticketing'],['users','Passengers'],['plane','Routes'],['chart','Insights']].map(function(x){return '<span class="al-chip">'+IC[x[0]]+x[1]+'</span>';}).join('');copy.appendChild(ch);}
+var bm=hero.querySelector('.aero-brandmark');if(bm)bm.innerHTML=IC.plane;
+var kick=bd.querySelector('#auth-view-signin .aero-kicker');if(kick){kick.insertAdjacentHTML('afterbegin',IC.plane.replace('<svg ','<svg class="al-kic" '));}
+/* time-aware greeting (device time) */
+var h3=bd.querySelector('#auth-view-signin h3');
+function greet(){var h=new Date().getHours();return h<5?'Good night':h<12?'Good morning':h<17?'Good afternoon':h<21?'Good evening':'Good night';}
+if(h3){h3.textContent=greet()+'.';setInterval(function(){h3.textContent=greet()+'.';},60000);}
+
+/* --- clock (split-flap digits) --- */
+var prev='';
+function tick(){
+ if(document.hidden||bd.style.display==='none')return;
+ var now=new Date(),s=hms(fDhaka,now);
+ if(s!==prev){
+  if(tEl.children.length!==s.length){tEl.innerHTML='';for(var i=0;i<s.length;i++){var sp=document.createElement('span');sp.className=s[i]===':'?'sep':'fl';sp.textContent=s[i];tEl.appendChild(sp);}}
+  else for(var j=0;j<s.length;j++){if(s[j]!==prev[j]&&s[j]!==':'){var n=tEl.children[j];n.textContent=s[j];if(!reduce){n.classList.remove('flip');void n.offsetWidth;n.classList.add('flip');}}}
+  prev=s;var mt=$('al-mt');if(mt)mt.textContent=s.slice(0,5);
+ }
+ if(fDate){try{dEl.textContent=fDate.format(now).replace(/,/g,'').toUpperCase();}catch(e){}}
+ WORLD.forEach(function(w){var n=$('alw-'+w.c);if(n)n.textContent=hms(w.f,now).slice(0,5);});
+}
+tick();setInterval(tick,1000);
+
+/* --- weather --- */
+var wx=[null,null],live=$('al-live');
+function renderWx(){
+ CITY.forEach(function(c,i){var b=$('al-wx'+i),w=wx[i];
+  if(!b)return;
+  if(!w){b.innerHTML='<span class="wi">'+IC.cloud+'</span><div class="wt"><div class="wc">'+c.c+' · '+c.n.toUpperCase()+'</div><div class="wd">--<small>offline</small></div></div>';return;}
+  var info=wxInfo(w.code,w.day);
+  b.innerHTML='<span class="wi">'+info.i+'</span><div class="wt"><div class="wc">'+c.c+' · '+c.n.toUpperCase()+'</div><div class="wd" title="Wind '+Math.round(w.wind)+' km/h">'+Math.round(w.t)+'°C<small>'+info.l+'</small></div></div>';});
+ var w0=wx[0],mw=$('al-mw');
+ if(w0&&mw){mw.textContent='DAC '+Math.round(w0.t)+'°C '+wxInfo(w0.code,w0.day).l;}
+ else if(mw)mw.textContent='DAC --';
+ if(live){live.classList.toggle('on',!!(wx[0]||wx[1]));live.title=(wx[0]||wx[1])?'Live data':'Offline';}
+}
+renderWx();
+function loadWx(){
+ var ctl=window.AbortController?new AbortController():null,to=setTimeout(function(){if(ctl)ctl.abort();},9000);
+ var url='https://api.open-meteo.com/v1/forecast?latitude='+CITY.map(function(c){return c.la;}).join(',')+'&longitude='+CITY.map(function(c){return c.lo;}).join(',')+'&current=temperature_2m,weather_code,wind_speed_10m,is_day&timezone=auto';
+ fetch(url,ctl?{signal:ctl.signal}:{}).then(function(r){if(!r.ok)throw 0;return r.json();}).then(function(j){
+  clearTimeout(to);var a=Array.isArray(j)?j:[j];
+  wx=CITY.map(function(c,i){var o=a[i]&&a[i].current;return o?{code:o.weather_code,t:o.temperature_2m,wind:o.wind_speed_10m,day:o.is_day===1}:null;});
+  renderWx();setTimeout(loadWx,600000);
+ }).catch(function(){clearTimeout(to);renderWx();setTimeout(loadWx,60000);});
+}
+loadWx();
+
+/* --- AeroAI live brief (generated from the live data above, typed out) --- */
+var ait=$('al-ait'),mi=0;
+function advice(w){return w.code>=95?'thunderstorms, expect possible delays':(w.code>=51&&w.code<=67)||(w.code>=80&&w.code<=82)?'rain, allow extra time':w.wind>=35?'strong winds, monitor flights':'conditions look good for operations';}
+function msgs(){
+ var a=[greet()+'. AeroAI is online and your workspace is ready.'];
+ CITY.forEach(function(c,i){var w=wx[i];if(w)a.push(c.n+': '+Math.round(w.t)+'°C, '+wxInfo(w.code,w.day).l.toLowerCase()+', '+advice(w)+'.');});
+ var n=new Date();a.push('Live times: Dhaka '+hms(fDhaka,n).slice(0,5)+' · Dubai '+hms(WORLD[0].f,n).slice(0,5)+' · London '+hms(WORLD[1].f,n).slice(0,5)+' · Singapore '+hms(WORLD[2].f,n).slice(0,5)+'.');
+ a.push('Sign in with your Access Code to open today\u2019s ticketing and passenger records.');
+ return a;
+}
+function next(){
+ if(document.hidden||bd.style.display==='none'){setTimeout(next,1500);return;}
+ var l=msgs(),t=l[mi%l.length];mi++;
+ if(reduce){ait.textContent=t;setTimeout(next,6000);return;}
+ var k=0;(function step(){k++;ait.textContent=t.slice(0,k);if(k<t.length)setTimeout(step,22);else setTimeout(next,4200);})();
+}
+next();
+})();
+</script>
+<style id="aeroops-login-v6">
+/* ===== Login v6: pinned (sticky) frosted-glass board. Presentation only. ===== */
+html:root body #cloud-auth-modal-backdrop .aero-auth-panel{ position:relative; isolation:isolate; }
+/* soft colour orbs behind the glass so the blur has something to refract */
+html:root body #cloud-auth-modal-backdrop .aero-auth-panel::before,html:root body #cloud-auth-modal-backdrop .aero-auth-panel::after{ content:""; position:absolute; z-index:-1; border-radius:50%; pointer-events:none; filter:blur(36px); }
+html:root body #cloud-auth-modal-backdrop .aero-auth-panel::before{ width:340px; height:340px; right:6%; top:8%; background:radial-gradient(circle,rgba(40,200,240,.5),rgba(40,200,240,0) 68%); animation:glOrbA 14s ease-in-out infinite alternate; }
+html:root body #cloud-auth-modal-backdrop .aero-auth-panel::after{ width:300px; height:300px; left:4%; bottom:6%; background:radial-gradient(circle,rgba(124,108,255,.5),rgba(124,108,255,0) 68%); animation:glOrbB 17s ease-in-out infinite alternate; }
+@keyframes glOrbA{ to{ transform:translate(-50px,70px) scale(1.15); } }
+@keyframes glOrbB{ to{ transform:translate(60px,-60px) scale(1.12); } }
+html:root body #cloud-auth-modal-backdrop .ptc-modal{ position:sticky !important; top:clamp(12px,3vh,32px); align-self:center;
+  background:linear-gradient(145deg,rgba(255,255,255,.17) 0%,rgba(255,255,255,.07) 38%,rgba(110,180,255,.08) 100%) !important;
+  -webkit-backdrop-filter:blur(30px) saturate(190%) brightness(1.1); backdrop-filter:blur(30px) saturate(190%) brightness(1.1);
+  border:1px solid rgba(255,255,255,.26) !important;
+  box-shadow:0 34px 90px rgba(0,8,24,.5),0 2px 0 rgba(255,255,255,.04),inset 0 1px 0 rgba(255,255,255,.5),inset 0 -1px 0 rgba(255,255,255,.08),inset 0 0 70px rgba(120,190,255,.07) !important; }
+/* specular highlight + slow light sweep across the glass */
+html:root body #cloud-auth-modal-backdrop .ptc-modal::after{ content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none;
+  background:radial-gradient(120% 55% at 0% 0%,rgba(255,255,255,.2),rgba(255,255,255,0) 60%),linear-gradient(115deg,rgba(255,255,255,0) 35%,rgba(255,255,255,.12) 50%,rgba(255,255,255,0) 65%);
+  background-size:100% 100%,260% 100%; background-position:0 0,130% 0; animation:glSweep 8s ease-in-out infinite; }
+@keyframes glSweep{ 0%,55%{ background-position:0 0,130% 0; } 100%{ background-position:0 0,-30% 0; } }
+html:root body #cloud-auth-modal-backdrop #auth-view-signin,html:root body #cloud-auth-modal-backdrop #auth-view-register,html:root body #cloud-auth-modal-backdrop #auth-view-sent,html:root body #cloud-auth-modal-backdrop #auth-view-setpassword{ position:relative; z-index:1; }
+html:root body #cloud-auth-modal-backdrop h3{ text-shadow:0 2px 18px rgba(0,20,50,.55); }
+html:root body #cloud-auth-modal-backdrop #signin-subtext,html:root body #cloud-auth-modal-backdrop #auth-view-register > p,html:root body #cloud-auth-modal-backdrop #auth-view-setpassword > p,html:root body #cloud-auth-modal-backdrop #auth-view-sent > p{ color:#d3e3f4 !important; }
+html:root body #cloud-auth-modal-backdrop .ptc-field label{ color:#c4daf0 !important; }
+html:root body #cloud-auth-modal-backdrop input[type="email"],html:root body #cloud-auth-modal-backdrop input[type="password"],html:root body #cloud-auth-modal-backdrop input[type="text"]{ background:rgba(255,255,255,.1) !important; border:1px solid rgba(255,255,255,.26) !important;
+  -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px); box-shadow:inset 0 1px 0 rgba(255,255,255,.18),inset 0 -8px 16px rgba(0,20,60,.18) !important; }
+html:root body #cloud-auth-modal-backdrop input:focus{ background:rgba(255,255,255,.15) !important; }
+html:root body #cloud-auth-modal-backdrop #aero-pw-rules{ background:rgba(255,255,255,.08) !important; border-color:rgba(255,255,255,.2) !important; }
+html:root body #cloud-auth-modal-backdrop .aero-auth-footer{ color:#a9c1db !important; }
+@media (max-width:850px){
+  /* phones: the brand bar stays pinned on top as a frosted strip while the form area scrolls */
+  html:root body #cloud-auth-modal-backdrop .aero-auth-hero{ position:sticky !important; top:0; z-index:5; padding-bottom:10px !important; -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px); background:linear-gradient(180deg,rgba(5,16,34,.55),rgba(5,16,34,0)) !important; }
+  html:root body #cloud-auth-modal-backdrop .ptc-modal{ top:8px; }
+}
+@media (prefers-reduced-motion:reduce){ html:root body #cloud-auth-modal-backdrop .aero-auth-panel::before,html:root body #cloud-auth-modal-backdrop .aero-auth-panel::after,html:root body #cloud-auth-modal-backdrop .ptc-modal::after{ animation:none !important; } }
+</style>
+<style id="aeroops-fit-screen">
+/* ===== Fit to screen: every page scales to the window width, nothing pushes the page sideways. Wide tables keep scrolling inside their own box. ===== */
+html,body{ max-width:100%; overflow-x:hidden; }
+body{ min-width:0; }
+img,svg,video,canvas,iframe{ max-width:100%; }
+.site-shell,.container,.nav-wrap,main,#ptc-root,.ptc-shell,.aero-page,#pwi-root,#aero-pax,#aero-master,#aero-settings,#lb,#aero-dash-top,#wr-intel{ max-width:100%; min-width:0; }
+.container,.nav-wrap{ width:min(100%,1680px); margin-inline:auto; padding-inline:clamp(10px,2.2vw,32px); box-sizing:border-box; }
+.ptc-shell{ width:100%; max-width:min(100%,1680px) !important; }
+#ptc-root{ padding-inline:clamp(8px,1.6vw,24px) !important; box-sizing:border-box; }
+#ptc-root :is(.ptc-card,.ptc-stat-card,.wr-card,.ad-s2,.pwi-card){ min-width:0; max-width:100%; }
+#ptc-root :is(h1,h2,h3,p,td,th,label,span,a){ overflow-wrap:anywhere; }
+table{ max-width:100%; }
+.lb-wrap,.wr-tw,.apv-tw,.sx-tw,.pwi-twrap,.ad-tw{ max-width:100%; overflow-x:auto; -webkit-overflow-scrolling:touch; }
+.nav-links,#ptc-nav,.lb-tabs,.wr-tabs{ max-width:100%; }
+.ptc-modal-backdrop:not(#cloud-auth-modal-backdrop) .ptc-modal{ max-width:min(96vw,520px); max-height:92dvh; }
+@media (max-width:720px){
+  #ptc-root [style*="grid-template-columns"]{ grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr)) !important; }
+  #ptc-root .ptc-hero-toolbar .ptc-global-search-results{ min-width:0; width:calc(100vw - 24px); }
+  .footer-grid{ grid-template-columns:1fr !important; }
+}
+</style>
+
 </body></html>
