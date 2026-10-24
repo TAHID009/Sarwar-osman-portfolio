@@ -13177,9 +13177,12 @@ function moveMaster(){var m=q("#aero-master"),s=q("#aero-settings");if(!m||!s||m
 function accessCard(){var s=q("#aero-settings");if(!s||q("#ao-access"))return;var c=document.createElement("div");c.id="ao-access";c.className="ao-card";
  c.innerHTML="<h3>Access control <span class='ao-soonbadge'>Coming later</span></h3><p>Owner and user permissions are planned. Nothing is enforced yet, and your sign-in works as before.</p>";s.appendChild(c)}
 function recordsBar(){var top=q("#ptc-root .wr-top .wr-ctl");if(!top||q("#ao-hist")||!/Work Record/i.test((q("#ptc-root .wr-top h2")||{}).textContent||""))return;
- var wrap=document.createElement("span");wrap.id="ao-hist";wrap.style.display="inline-flex";wrap.style.gap="8px";
+ var wrap=document.createElement("details");wrap.id="ao-hist";wrap.className="ao-more";
+ var sm=document.createElement("summary");sm.className="wr-btn";sm.textContent="More \u25BE";wrap.appendChild(sm);
+ var mn=document.createElement("div");mn.className="ao-more-menu";wrap.appendChild(mn);
  [["History","logs"],["Pending adjustments","pending"]].forEach(function(p){var b=document.createElement("button");b.type="button";b.className="wr-btn";b.textContent=p[0];
-  b.addEventListener("click",function(){var o=orig(p[1]);if(o)o.click();setTimeout(sync,150)});wrap.appendChild(b)});
+  b.addEventListener("click",function(){wrap.removeAttribute("open");var o=orig(p[1]);if(o)o.click();setTimeout(sync,150)});mn.appendChild(b)});
+ if(!window.__aoMoreClose){window.__aoMoreClose=1;document.addEventListener("click",function(e){var d=document.getElementById("ao-hist");if(d&&d.open&&!d.contains(e.target))d.removeAttribute("open")})}
  top.insertBefore(wrap,top.firstChild)}
 function tick(){if(document.documentElement.getAttribute("data-theme")==="dark")fixDark();buildNav();themeBtn();moveMaster();accessCard();recordsBar()}
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",tick);else tick();
@@ -14123,12 +14126,46 @@ render();
   +'.wh-tabs button:focus-visible{outline:2px solid #2563C9;outline-offset:1px}'
   +'#pwi-root .pwi-subtabs{display:none!important}'
   +'#ptc-root:not([data-pane="entrydesk"]) #wh-bar-main{display:none!important}'
+  +'#wh-bar-main{display:none!important}'
+  +'.wh-sel{display:none;font:inherit;font-size:12.5px;font-weight:700;color:#2563C9;background:#fff;border:1px solid #DCE3EC;border-radius:9px;padding:8px 30px 8px 12px;cursor:pointer}'
+  +'@media(max-width:1499px){.wh-tabs{display:none}.wh-sel{display:inline-block}}'
+  +'.wh-pt{font-size:19px;font-weight:800;color:#0B2545;white-space:nowrap;margin:0}'
+  +'#wh-bar-pwi .wh-slot{flex:1 1 auto;min-width:0;display:flex;align-items:center;gap:10px;justify-content:flex-end}'
+  +'#wh-bar-pwi .wh-slot>*{display:none!important}'
+  +'#wh-bar-pwi[data-k="activity"] .wh-slot>.hm-tools{display:flex!important;flex-wrap:nowrap}'
+  +'#wh-bar-pwi[data-k="dash"] .wh-slot>.dash-rb{display:flex!important;margin:0;flex-wrap:nowrap;align-items:center}'
+  +'.wh-rsel{display:none;font:inherit;font-size:12.5px;font-weight:700;color:#0B2545;background:#fff;border:1px solid #DCE3EC;border-radius:9px;padding:8px 28px 8px 12px;cursor:pointer}'
+  +'@media(max-width:1499px){#wh-bar-pwi .wh-rsel{display:inline-block}#wh-bar-pwi .wh-slot .pwi-seg{display:none}}'
+  +'#wh-bar-pwi .wh-slot .pwi-custom{white-space:nowrap;font-size:12px}#wh-bar-pwi .wh-slot .pwi-custom input{padding:5px 6px;max-width:128px}'
+  +'#wh-bar-pwi .wh-slot #hm-q{min-width:0;width:190px;padding:8px 12px}'
+  +'#wh-bar-pwi .wh-slot .pwi-range-label{white-space:nowrap}'
+  +'#pwi-root .hm-head{display:none!important}'
+  +'#wh-bar-pwi .pwi-sync{font-size:0;line-height:1;padding:6px 9px;max-width:none}#wh-bar-pwi .pwi-sync::first-letter{font-size:13px}'
+  +'#wh-bar-pwi summary,#wh-bar-pwi .pwi-btn,#wh-bar-pwi .wh-pt{white-space:nowrap}'
+  +'#wh-bar-pwi .wh-slot #hm-q{flex:1 1 90px;width:auto;min-width:90px;max-width:200px}'
+  +'#wh-bar-pwi .wh-slot .hm-tools{gap:8px;min-width:0}'
+  +'#wh-bar-pwi.wh-one{min-width:0}'
+  +'#ptc-root select.ptc-method-select-native{position:absolute!important;width:1px!important;max-width:1px!important;height:1px!important;margin:0!important;padding:0!important;border:0!important;overflow:hidden!important;clip-path:inset(50%)!important;left:0!important}'
+  /* every card row must fit the screen: columns may shrink, content wraps instead of overflowing */
+  +'#pwi-root .hm-kpis{grid-template-columns:repeat(5,minmax(0,1fr))}'
+  +'#pwi-root .hm-k{min-width:0;flex-wrap:wrap;padding:12px 10px;gap:8px}#pwi-root .hm-k>*{min-width:0}'
+  +'#pwi-root .hm-kv span{white-space:normal}'
+  +'@media(max-width:1499px){#pwi-root .hm-kr{flex:1 1 100%;margin:0;text-align:left;display:flex;gap:6px;align-items:baseline;flex-wrap:wrap}#pwi-root .hm-kr em{display:inline}}'
+  +'@media(max-width:1100px){#pwi-root .hm-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}}'
+  +'@media(max-width:700px){#pwi-root .hm-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}'
+  +'.wh-slot2{flex:0 0 auto;display:inline-flex;align-items:center}'
+  +'@media(min-width:761px){#ptc-root .wr-top{flex-wrap:nowrap;align-items:center;gap:12px}#ptc-root .wr-top>div:first-child{flex:1 1 0;min-width:0}#ptc-root .wr-top .wr-sub{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin:2px 0 0}#ptc-root .wr-top .wr-ctl{flex:0 0 auto;flex-wrap:nowrap}}'
+  +'.ao-more{position:relative;display:inline-block}.ao-more>summary{list-style:none;cursor:pointer}.ao-more>summary::-webkit-details-marker{display:none}'
+  +'.ao-more-menu{position:absolute;right:0;top:calc(100% + 6px);z-index:60;min-width:210px;display:grid;gap:4px;padding:6px;background:#fff;border:1px solid #DCE3EC;border-radius:10px;box-shadow:0 12px 30px rgba(11,37,69,.18)}'
+  +'.ao-more-menu .wr-btn{width:100%;text-align:left;white-space:nowrap}'
   +'#wh-bar-pwi{margin-top:0}'
-  +'#wh-bar-pwi.wh-one{flex-wrap:nowrap;margin:0 0 8px}'
+  +'#wh-bar-pwi.wh-one{flex-wrap:nowrap;margin:0 0 10px;gap:10px 14px}'
+  +'@media(max-width:760px){#wh-bar-pwi.wh-one{flex-wrap:wrap}#wh-bar-pwi .wh-slot{flex:1 1 100%;order:5;justify-content:flex-start;flex-wrap:wrap}#wh-bar-pwi .wh-slot>.hm-tools,#wh-bar-pwi .wh-slot>.dash-rb{flex-wrap:wrap!important}}'
   +'#wh-bar-pwi.wh-one .pwi-head-r{flex-wrap:nowrap;min-width:0}'
   +'#wh-bar-pwi.wh-one .pwi-sync{overflow:hidden;text-overflow:ellipsis;max-width:260px}'
-  +'#wh-bar-pwi.wh-one .wh-tabs{flex:0 0 auto;margin-left:auto}'
-  +'@media(max-width:700px){#wh-bar-pwi.wh-one{flex-wrap:wrap}#wh-bar-pwi.wh-one .wh-tabs{margin-left:0}}'
+  +'#wh-bar-pwi.wh-one .wh-tabs,#wh-bar-pwi.wh-one .wh-sel{flex:0 0 auto}'
+  +'#wh-bar-pwi.wh-one .pwi-head-r{margin-left:auto}'
+
   +'.wh-note{font-size:11.5px;color:#6B7A8D;margin:8px 0 0}'
   +'.wh-kp.neg .pf-d.up{color:#C0392B}.wh-kp .pf-d.flat{color:#6B7A8D}'
   +'html[data-theme="dark"] .wh-ttl b{color:#E6EDF7}html[data-theme="dark"] .wh-ttl span{color:#9FB0C6}'
@@ -14143,7 +14180,8 @@ render();
      +'<button type="button" role="tab" data-wh="entries" title="Ticketing, reissue, refund and void entries">Entries</button>'
      +'<button type="button" role="tab" data-wh="activity" title="Daily tasks, queries and support work">Activity</button>'
      +'<button type="button" role="tab" data-wh="dash" title="Activity dashboard">Dashboard</button>'
-     +'<button type="button" role="tab" data-wh="perf" title="Performance evaluation">Performance</button></div>';
+     +'<button type="button" role="tab" data-wh="perf" title="Performance evaluation">Performance</button></div>'
+     +'<select class="wh-sel" aria-label="Section" data-whsel="1"><option value="entries">Entries</option><option value="activity">Activity</option><option value="dash">Dashboard</option><option value="perf">Performance</option></select>';
   }
   var bar1=document.createElement('div');bar1.className='wh-bar';bar1.id='wh-bar-main';bar1.innerHTML=barHtml(true);
   var bar2=document.createElement('div');bar2.className='wh-bar';bar2.id='wh-bar-pwi';bar2.innerHTML=barHtml(false);
@@ -14152,7 +14190,38 @@ render();
   if(tabsRow)pwi.insertBefore(bar2,tabsRow);else if(head&&head.nextSibling)pwi.insertBefore(bar2,head.nextSibling);else pwi.insertBefore(bar2,pwi.firstChild);
   /* one single line: [Live status] [Data]  ........  [Entries | Activity | Dashboard | Performance] */
   var headR=head&&head.querySelector('.pwi-head-r');
-  if(headR){bar2.replaceChild(headR,bar2.firstChild);head.style.display='none';bar2.classList.add('wh-one')}
+  if(headR){
+    var pt=document.createElement('b');pt.className='wh-pt';pt.id='wh-pt';pt.textContent='Activity Tracker';
+    var slot=document.createElement('div');slot.className='wh-slot';slot.id='wh-slot';
+    bar2.replaceChild(pt,bar2.firstChild);
+    bar2.insertBefore(slot,pt.nextSibling);
+    bar2.insertBefore(headR,bar2.querySelector('.wh-tabs'));
+    head.style.display='none';bar2.classList.add('wh-one');
+    var tl=pwi.querySelector('.hm-tools'),rb=pwi.querySelector('#pwi-pane-dash .pwi-rangebar');
+    if(tl)slot.appendChild(tl);if(rb){rb.classList.add('dash-rb');slot.appendChild(rb);
+      /* narrow screens: the Today / This Week / … buttons become one dropdown (it clicks the real buttons) */
+      var seg=rb.querySelector('.pwi-seg');
+      if(seg){var rs=document.createElement('select');rs.className='wh-rsel';rs.setAttribute('aria-label','Period');
+        [].forEach.call(seg.querySelectorAll('button'),function(b){var o=document.createElement('option');o.value=b.getAttribute('data-v');o.textContent=b.textContent;rs.appendChild(o)});
+        var upd=function(){var on=seg.querySelector('button.on');if(on)rs.value=on.getAttribute('data-v')};
+        rs.addEventListener('change',function(){var t=seg.querySelector('button[data-v="'+rs.value+'"]');if(t)t.click()});
+        rb.insertBefore(rs,seg);upd();
+        if(window.MutationObserver)new MutationObserver(upd).observe(seg,{attributes:true,subtree:true,attributeFilter:['class']});}
+    }
+    var ps=headR.querySelector('.pwi-sync');if(ps){ps.title=ps.textContent;new MutationObserver(function(){ps.title=ps.textContent}).observe(ps,{childList:true,characterData:true,subtree:true})}
+  }
+  /* Entries: the same tabs (a dropdown when narrow) sit on the Work Record line itself */
+  function entriesBar(){
+    var top=document.querySelector('#ptc-root .wr-top');
+    if(!top||top.querySelector('.wh-slot2')||!/Work Record/i.test((top.querySelector('h2')||{}).textContent||''))return;
+    var ctl=top.querySelector('.wr-ctl');if(!ctl)return;
+    var d=document.createElement('div');d.className='wh-slot2';d.innerHTML=barHtml(false).replace('<span></span>','');
+    d.querySelector('[data-wh="entries"]').classList.add('on');d.querySelector('.wh-sel').value='entries';
+    top.insertBefore(d,ctl);
+  }
+  document.addEventListener('change',function(e){var s=e.target.closest&&e.target.closest('[data-whsel]');if(s){go(s.value)}});
+  if(window.MutationObserver)new MutationObserver(entriesBar).observe(document.body,{childList:true,subtree:true});
+  setInterval(entriesBar,1000);
 
   /* ---------- navigation: reuse the existing handlers by clicking the original buttons ---------- */
   var SUB={activity:'home',dash:'dash',perf:'perf'};
@@ -14181,6 +14250,8 @@ render();
     if(k!==last){
       last=k;
       [].forEach.call(document.querySelectorAll('.wh-tabs button'),function(b){var on=b.getAttribute('data-wh')===k;b.classList.toggle('on',on);b.setAttribute('aria-selected',on?'true':'false')});
+      [].forEach.call(document.querySelectorAll('.wh-sel'),function(s){s.value=k});
+      bar2.setAttribute('data-k',k);var pt2=$('wh-pt');if(pt2)pt2.textContent={activity:'Activity Tracker',dash:'Dashboard',perf:'Performance',entries:'Work Record'}[k]||'';
     }
     if(host.firstChild!==bar1&&bar1.parentNode===host)host.insertBefore(bar1,host.firstChild);
   }
