@@ -20,18 +20,6 @@ document.documentElement.setAttribute("data-ui","v2");window.__aeroUI="v2";
   });
 })();
 </script>
-<style id="aero-auth-boot">
-/* Login board is the first thing in this very large document. Without this gate the browser paints it half-parsed
-   (hero only, empty form panel) and the rest of the page behind it, then repaints. Everything except the board stays
-   hidden until the board's markup is fully parsed (flag set by the inline script right after it). */
-html:not(.aero-auth-ready){background:#0B2545 !important}
-html:not(.aero-auth-ready) body>*:not(#cloud-auth-modal-backdrop){visibility:hidden !important}
-html:not(.aero-auth-ready) #cloud-auth-modal-backdrop{visibility:hidden}
-html:not(.aero-auth-ready) body::before{content:"";position:fixed;left:50%;top:50%;width:30px;height:30px;margin:-15px 0 0 -15px;border:3px solid rgba(255,255,255,.22);border-top-color:#58d9eb;border-radius:50%;animation:aeroBootSpin .7s linear infinite;z-index:6000}
-@keyframes aeroBootSpin{to{transform:rotate(360deg)}}
-@media (prefers-reduced-motion:reduce){html:not(.aero-auth-ready) body::before{animation-duration:2.4s}}
-</style>
-<script>setTimeout(function(){document.documentElement.classList.add("aero-auth-ready")},5000);/* safety net only */</script>
 <title>SARWAR OSMAN | PORTFOLIO</title>
 <meta name="description" content="Internal work record and ticket sales tracker for Md Sarwar Osman Sagar.">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -3563,7 +3551,7 @@ html[data-theme="dark"] #pwi-root .pwi-import textarea{background:#0E1E36;border
 <div class="site-shell">
 <script>
 /* Runs as soon as the login board is parsed: sets the correct sign-in state once (same rules as setupSignInView, which
-   runs much later at the end of the file and previously changed the form after it was already on screen), then reveals the board. */
+   runs much later at the end of the file and previously changed the form after it was already on screen), */
 (function(){
   try{
     var d=document, g=function(x){return d.getElementById(x);}, r=null;
@@ -3574,7 +3562,6 @@ html[data-theme="dark"] #pwi-root .pwi-import textarea{background:#0E1E36;border
       else { f.style.display='block'; t.textContent='Enter your email and Access Code to continue.'; u.style.display='none'; n.style.display='inline'; }
     }
   }catch(e){}
-  document.documentElement.classList.add('aero-auth-ready');
 })();
 </script>
 <header class="header"><div class="container nav-wrap"><div class="nav">
