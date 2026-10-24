@@ -223,6 +223,27 @@
   window.refreshAeroNavLabel = refreshAeroNavLabel;
   refreshAeroNavLabel();
 
+  // Make the Login link open the sign-in screen instantly: aeroops.html is a very large page, so the browser
+  // keeps showing the current page until it has downloaded and parsed it. Warm it up ahead of the click.
+  // (Prerender on hover/press where supported; plain prefetch elsewhere.) Skipped on the AeroOps page itself.
+  if (!/aeroops\.html$/.test(location.pathname)) {
+    try {
+      if (HTMLScriptElement.supports && HTMLScriptElement.supports("speculationrules")) {
+        const sr = document.createElement("script");
+        sr.type = "speculationrules";
+        sr.textContent = JSON.stringify({
+          prefetch: [{ urls: ["aeroops.html"], eagerness: "eager" }],
+          prerender: [{ urls: ["aeroops.html"], eagerness: "moderate" }]
+        });
+        document.head.appendChild(sr);
+      } else {
+        const l = document.createElement("link");
+        l.rel = "prefetch"; l.href = "aeroops.html"; l.as = "document";
+        document.head.appendChild(l);
+      }
+    } catch (e) {}
+  }
+
   // Highlight the current page in the nav
   const currentPage = (location.pathname.split("/").pop() || "index.html");
   document.querySelectorAll(".nav-links a, #mobileLinks a").forEach(a => {
