@@ -14368,4 +14368,183 @@ render();
   weather(); setInterval(weather, 15 * 60 * 1000);
 })();
 </script>
+<!-- ===== Knowledge Hub (multi-GDS library). Self-contained add-on; own Firestore collections kh_*; touches no other module. ===== -->
+<style id="kh-css">
+#aero-kh{display:none;padding:14px 0}#ptc-root.kh-active #aero-kh{display:block}
+#ptc-root.kh-active #lb,#ptc-root.kh-active #ptc-body-grid,#ptc-root.kh-active #pwi-root,#ptc-root.kh-active #aero-master,#ptc-root.kh-active #aero-settings,#ptc-root.kh-active #aero-pax{display:none!important}
+#aero-kh .kh-bar,#aero-kh .kh-fl,#aero-kh .kh-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;align-items:center}
+#aero-kh input,#aero-kh select,#aero-kh textarea,.kh-md input,.kh-md select,.kh-md textarea{font:inherit;font-size:13px;padding:7px 10px;border:1px solid #D0D7E2;border-radius:8px;background:var(--card,#fff);color:var(--ink,#0B2545);max-width:100%}
+#kh-q{flex:1;min-width:200px}
+.kh-btn{font:inherit;font-size:12.5px;font-weight:600;border:0;border-radius:8px;padding:8px 14px;cursor:pointer;background:#EEF2F6;color:#0B2545}.kh-btn.pri{background:#2563EB;color:#fff}.kh-btn.warn{background:#FEF3F2;color:#B42318}.kh-btn:disabled{opacity:.45;cursor:default}
+.kh-tab{font:inherit;font-size:12.5px;font-weight:600;border:1px solid #D0D7E2;background:var(--card,#fff);color:var(--ink-soft,#475467);border-radius:999px;padding:6px 12px;cursor:pointer}.kh-tab.on{background:#0B2545;color:#fff;border-color:#0B2545}.kh-tab.off{opacity:.55;font-style:italic}
+.kh-card{background:var(--card,#fff);border:1px solid #E3E9F0;border-radius:12px;padding:12px 14px;margin-bottom:10px}
+.kh-h{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.kh-h b{font-size:14.5px;color:var(--ink,#0B2545)}
+.kh-b{display:inline-block;color:#fff;font-size:11px;font-weight:700;border-radius:6px;padding:2px 8px;letter-spacing:.03em}.kh-b.sm{font-size:10px;padding:1px 6px}
+.kh-st{font-size:11px;font-weight:700;border-radius:6px;padding:2px 8px;background:#EEF2F6;color:#475467}.kh-published{background:#E7F6EC;color:#067647}.kh-archived{background:#FEF3F2;color:#B42318}
+.kh-meta{font-size:12px;color:var(--muted,#667085);margin:4px 0}.kh-body{font-size:13px;color:var(--ink-soft,#344054);margin:6px 0;max-height:150px;overflow:auto;word-break:break-word}
+.kh-cmd{font-size:12.5px;margin:4px 0;display:flex;gap:6px;align-items:baseline;flex-wrap:wrap}.kh-cmd code{background:#0B2545;color:#E6F4F5;border-radius:6px;padding:2px 7px;font-family:ui-monospace,Consolas,monospace;white-space:pre-wrap;word-break:break-all}
+.kh-gh{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted,#667085);margin:14px 0 6px}
+.kh-empty{text-align:center;padding:34px 14px;border:1px dashed #C7D0DC;border-radius:12px;color:var(--ink-soft,#475467);font-size:13.5px}.kh-empty .kh-btn{margin:8px 4px 0}
+.kh-ov{display:none;position:fixed;inset:0;background:rgba(11,37,69,.55);z-index:99999;align-items:flex-start;justify-content:center;overflow:auto;padding:24px 10px}.kh-ov.on{display:flex}
+.kh-md{background:var(--card,#fff);color:var(--ink,#0B2545);border-radius:14px;width:min(820px,100%);padding:18px 20px}.kh-md h3{margin:0 0 10px}.kh-md label{display:block;font-size:12px;font-weight:700;color:#475467;margin:10px 0 3px}.kh-md input,.kh-md select,.kh-md textarea{width:100%;box-sizing:border-box}.kh-md textarea{min-height:130px}
+.kh-row{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:6px;margin-bottom:6px}.kh-g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.kh-ft{display:flex;gap:8px;justify-content:flex-end;margin-top:14px;flex-wrap:wrap}
+.kh-note{font-size:12.5px;margin:6px 0;padding:8px 10px;border-radius:8px;background:#F0FAFB;color:#0B2545}.kh-note.w{background:#FFFAEB;color:#93370D}.kh-note.e{background:#FEF3F2;color:#B42318}
+.kh-mrow{display:flex;gap:8px;align-items:center;justify-content:space-between;padding:6px 0;border-top:1px solid #EEF2F6;font-size:13px}
+@media(max-width:640px){.kh-row,.kh-g2{grid-template-columns:1fr}}
+</style>
+<script id="kh-js">
+(function(){'use strict';
+var root=document.getElementById('ptc-root'),set=document.getElementById('aero-settings'),nav=document.getElementById('ptc-nav');
+if(!root||!set||!nav)return;
+var P=[],N=[],S={},db=null,uid=null,un=[],seeded=false,imp=null,cmds=[];
+var f={scope:'all',q:'',cat:'',tag:'',src:'',rec:'0',st:'live'};
+var SEED=[['Sabre','SABRE','gds','#0B5FA5',1,['sabre']],['Galileo','GALILEO','gds','#C2410C',1,['galileo','travelport','viewpoint']],['Amadeus','AMADEUS','gds','#2563EB',0,['amadeus']],['General GDS Knowledge','GENERAL','general','#475467',1,[]],['Airline Operations & Reference','AIRLINE','reference','#0E9AA7',1,[]],['My Custom Knowledge','CUSTOM','custom','#7A3FB0',1,[]]];
+function $(i){return document.getElementById(i)}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function rich(s){return esc(s).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\n/g,'<br>')}
+function now(){return new Date().toISOString()}
+function csv(s){return String(s||'').split(',').map(function(x){return x.trim()}).filter(Boolean)}
+function pf(id){return P.filter(function(p){return p.id===id})[0]}
+function uniq(a){return a.filter(function(x,i){return x&&a.indexOf(x)===i}).sort()}
+function say(m,c){var e=$('kh-msg');if(e)e.innerHTML=m?'<div class="kh-note '+(c||'')+'">'+esc(m)+'</div>':''}
+function err(e){console.error(e);say(e&&e.code==='permission-denied'?'Firebase rules block the kh_* collections. Add rules for kh_platforms, kh_notes, kh_documents and kh_settings (owner only), then reload.':'Could not reach Firebase. Nothing was saved.','e')}
+/* ---------- page + nav ---------- */
+var sec=document.createElement('section');sec.id='aero-kh';sec.className='aero-page';sec.setAttribute('aria-label','Knowledge Hub');
+sec.innerHTML='<div class="aset-head"><div style="color:#0E9AA7;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase">Reference Library</div><h2>Knowledge Hub</h2><p>Notes, commands and procedures for every GDS. Each command stays labelled with its own platform.</p></div>'
++'<div class="kh-bar"><input id="kh-q" type="search" placeholder="Search notes, commands, tags, sources"><select id="kh-scope" title="Search scope"></select><button class="kh-btn pri" id="kh-add" type="button">+ Add Note</button><button class="kh-btn" id="kh-imp" type="button">Import Document</button></div>'
++'<div class="kh-fl"><select id="kh-cat"></select><select id="kh-tag"></select><select id="kh-src"></select><select id="kh-rec"><option value="0">Any update date</option><option value="7">Updated: last 7 days</option><option value="30">Last 30 days</option><option value="90">Last 90 days</option></select><select id="kh-st"><option value="live">Draft + Published</option><option value="published">Published</option><option value="draft">Draft</option><option value="archived">Archived</option></select></div>'
++'<div class="kh-tabs" id="kh-tabs"></div><div id="kh-msg"></div><div id="kh-list"></div>';
+set.insertAdjacentElement('afterend',sec);
+var ov=document.createElement('div');ov.className='kh-ov';ov.innerHTML='<div class="kh-md" id="kh-md"></div>';document.body.appendChild(ov);
+ov.addEventListener('mousedown',function(e){if(e.target===ov)close()});document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+function open(h){$('kh-md').innerHTML=h;ov.classList.add('on')}function close(){ov.classList.remove('on')}
+var pb=nav.querySelector('[data-aero="passengers"]'),kb=document.createElement('button');kb.type='button';kb.className='ptc-nav-btn';kb.setAttribute('data-aero','kh');kb.title='Knowledge Hub';
+kb.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5v14zM4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg><span class="aero-lbl">Knowledge Hub</span>';
+nav.insertBefore(kb,pb?pb.nextSibling:nav.firstChild);
+var all=function(){return [].slice.call(nav.querySelectorAll('.ptc-nav-btn'))};
+function mark(){if(!root.classList.contains('kh-active'))return;all().forEach(function(b){b.classList.toggle('active',b===kb)})}
+kb.addEventListener('click',function(){root.classList.remove('set-active','mas-active','pax-active','pwi-active');root.classList.add('kh-active');tick();render();setTimeout(mark,0);try{window.scrollTo({top:0})}catch(e){}});
+all().forEach(function(b){if(b!==kb)b.addEventListener('click',function(){root.classList.remove('kh-active')},true)});
+if(window.MutationObserver)new MutationObserver(mark).observe(root,{attributes:true,attributeFilter:['class','data-pane']});
+var op=window.ptcSetPane;if(typeof op==='function')window.ptcSetPane=function(){root.classList.remove('kh-active');return op.apply(this,arguments)};
+/* ---------- live data (same sign-in gate as other modules; per-user records) ---------- */
+function stop(){un.forEach(function(u){u()});un=[];uid=null;db=null;P=[];N=[];seeded=false;render()}
+function tick(){var u=null;try{u=window.firebase&&firebase.apps&&firebase.apps.length&&firebase.auth().currentUser}catch(e){}
+ if(!u){if(uid)stop();return}if(uid===u.uid)return;uid=u.uid;db=firebase.firestore();
+ un.push(db.collection('kh_platforms').where('ownerUid','==',uid).onSnapshot(function(s){P=[];s.forEach(function(d){var v=d.data();v.id=d.id;P.push(v)});P.sort(function(a,b){return(a.sortOrder||0)-(b.sortOrder||0)});
+  if(!P.length&&!seeded){seeded=true;seed()}render();renderSettings()},err));
+ un.push(db.collection('kh_notes').where('ownerUid','==',uid).onSnapshot(function(s){N=[];s.forEach(function(d){var v=d.data();v.id=d.id;N.push(v)});render()},err));
+ un.push(db.collection('kh_settings').doc(uid).onSnapshot(function(d){S=d.exists?d.data():{};if(S.menuOrder){try{localStorage.setItem('aeroops.menuOrder',JSON.stringify(S.menuOrder))}catch(e){}applyMenu(S.menuOrder)}renderSettings()},function(){}))}
+function seed(){var b=db.batch();SEED.forEach(function(s,i){b.set(db.collection('kh_platforms').doc(),{ownerUid:uid,name:s[0],code:s[1],type:s[2],color:s[3],active:!!s[4],sortOrder:i,keywords:s[5],createdAt:now(),updatedAt:now()})});b.commit().catch(err)}
+setInterval(tick,1500);
+/* ---------- list + search ---------- */
+function hay(n){return n._h||(n._h=[n.title,n.content,n.category,n.subcategory,(n.tags||[]).join(' '),(n.keywords||[]).join(' '),n.source&&n.source.documentName,(n.commands||[]).map(function(c){return[c.syntax,c.description,c.example].join(' ')}).join(' ')].join(' ').toLowerCase())}
+function visible(){var q=f.q.toLowerCase().trim(),cut=+f.rec?Date.now()-f.rec*864e5:0;
+ return N.filter(function(n){if(f.scope!=='all'&&n.platformId!==f.scope)return false;if(f.st==='live'?n.status==='archived':n.status!==f.st)return false;
+  if(f.cat&&n.category!==f.cat)return false;if(f.tag&&(n.tags||[]).indexOf(f.tag)<0)return false;if(f.src&&!(n.source&&n.source.documentName===f.src))return false;
+  if(cut&&new Date(n.updatedAt).getTime()<cut)return false;return!q||hay(n).indexOf(q)>-1})}
+function opts(el,first,vals,cur){el.innerHTML='<option value="">'+first+'</option>'+vals.map(function(v){return'<option'+(v===cur?' selected':'')+'>'+esc(v)+'</option>'}).join('')}
+function render(){if(!$('kh-list'))return;
+ var sc=$('kh-scope');sc.innerHTML='<option value="all">All GDS libraries</option>'+P.map(function(p){return'<option value="'+p.id+'"'+(f.scope===p.id?' selected':'')+'>'+esc(p.name)+(p.active?'':' (inactive)')+'</option>'}).join('');if(f.scope!=='all'&&!pf(f.scope))f.scope='all';sc.value=f.scope;
+ opts($('kh-cat'),'All categories',uniq(N.map(function(n){return n.category})),f.cat);opts($('kh-tag'),'All tags',uniq([].concat.apply([],N.map(function(n){return n.tags||[]}))),f.tag);
+ opts($('kh-src'),'All source documents',uniq(N.map(function(n){return n.source&&n.source.documentName})),f.src);
+ var cnt=function(id){return N.filter(function(n){return n.status!=='archived'&&(id==='all'||n.platformId===id)}).length};
+ $('kh-tabs').innerHTML=[{id:'all',name:'All',active:1}].concat(P).map(function(p){return'<button type="button" class="kh-tab'+(f.scope===p.id?' on':'')+(p.active?'':' off')+'" data-t="'+p.id+'">'+esc(p.name)+' ('+cnt(p.id)+')</button>'}).join('');
+ var L=visible(),h='';
+ if(!uid)h='<div class="kh-empty">Sign in to AeroOps to load your Knowledge Hub.</div>';
+ else if(!L.length){var p=pf(f.scope),anyN=N.some(function(n){return f.scope==='all'||n.platformId===f.scope});
+  h='<div class="kh-empty"><b>'+(anyN?'No notes match these filters.':(p?esc(p.name)+' has no notes yet.':'No notes yet.'))+'</b><br>'+(anyN?'Clear the search or filters to see more.':'Add a note by hand or import a PDF or DOCX document.')+(p&&!p.active?'<br><button class="kh-btn pri" data-a="activate" data-id="'+p.id+'" type="button">Activate '+esc(p.name)+'</button>':'')+'<br><button class="kh-btn pri" data-a="add" type="button">+ Add Note</button><button class="kh-btn" data-a="imp" type="button">Import Document</button></div>'}
+ else{var last='';L.sort(function(a,b){var pa=pf(a.platformId),pb=pf(b.platformId);return((pa&&pa.sortOrder)||0)-((pb&&pb.sortOrder)||0)||String(b.updatedAt).localeCompare(String(a.updatedAt))}).forEach(function(n){
+  if(f.scope==='all'&&n.platformId!==last){last=n.platformId;var g=pf(last);h+='<div class="kh-gh">'+esc(g?g.name:'Unassigned platform')+'</div>'}h+=card(n)})}
+ $('kh-list').innerHTML=h}
+function card(n){var p=pf(n.platformId)||{name:'?',color:'#999',code:'?'},s=n.source||{};
+ return'<div class="kh-card"><div class="kh-h"><span class="kh-b" style="background:'+esc(p.color)+'">'+esc(p.name)+'</span><b>'+esc(n.title)+'</b><span class="kh-st kh-'+esc(n.status)+'">'+esc(n.status)+'</span>'+(n.conflictFlag?'<span class="kh-st" style="background:#FFFAEB;color:#93370D">conflict - review</span>':'')+'</div>'
+ +'<div class="kh-meta">'+[n.category&&esc(n.category)+(n.subcategory?' &rsaquo; '+esc(n.subcategory):''),s.documentName&&'Source: '+esc(s.documentName)+(s.pageRef?', '+esc(s.pageRef):''),'Updated '+esc(String(n.updatedAt||'').slice(0,10)),(n.tags||[]).map(function(t){return'#'+esc(t)}).join(' ')].filter(Boolean).join(' &middot; ')+'</div>'
+ +(n.content?'<div class="kh-body">'+rich(n.content)+'</div>':'')
+ +(n.commands||[]).map(function(c){return'<div class="kh-cmd"><span class="kh-b sm" style="background:'+esc(p.color)+'">'+esc(p.code)+'</span><code>'+esc(c.syntax)+'</code>'+(c.description?'<span>'+esc(c.description)+'</span>':'')+(c.example?'<span class="kh-meta">e.g. '+esc(c.example)+'</span>':'')+'</div>'}).join('')
+ +'<div class="kh-ft" style="justify-content:flex-start"><button class="kh-btn" data-a="edit" data-id="'+n.id+'" type="button">Edit</button><button class="kh-btn" data-a="'+(n.status==='archived'?'restore':'archive')+'" data-id="'+n.id+'" type="button">'+(n.status==='archived'?'Restore':'Archive')+'</button>'+(n.status==='archived'?'<button class="kh-btn warn" data-a="del" data-id="'+n.id+'" type="button">Delete permanently</button>':'')+'</div></div>'}
+sec.addEventListener('input',function(e){if(e.target.id==='kh-q'){f.q=e.target.value;render();var q=$('kh-q');q.focus()}});
+sec.addEventListener('change',function(e){var m={'kh-scope':'scope','kh-cat':'cat','kh-tag':'tag','kh-src':'src','kh-rec':'rec','kh-st':'st'}[e.target.id];if(m){f[m]=e.target.value;render()}});
+sec.addEventListener('click',function(e){var t=e.target.closest('[data-t],[data-a],#kh-add,#kh-imp');if(!t)return;
+ if(t.dataset.t){f.scope=t.dataset.t;render();return}var a=t.dataset.a||(t.id==='kh-add'?'add':'imp'),n=N.filter(function(x){return x.id===t.dataset.id})[0];
+ if(a==='add')edit(null);else if(a==='imp')importUi();else if(a==='edit'&&n)edit(n);
+ else if((a==='archive'||a==='restore')&&n)db.collection('kh_notes').doc(n.id).update({status:a==='archive'?'archived':'draft',updatedAt:now()}).catch(err);
+ else if(a==='del'&&n&&confirm('Permanently delete "'+n.title+'"? This cannot be undone.'))db.collection('kh_notes').doc(n.id).delete().catch(err);
+ else if(a==='activate')db.collection('kh_platforms').doc(t.dataset.id).update({active:true,updatedAt:now()}).catch(err)});
+/* ---------- note editor ---------- */
+function platSel(id,cur){return'<select id="'+id+'">'+P.map(function(p){return'<option value="'+p.id+'"'+(p.id===cur?' selected':'')+'>'+esc(p.name)+(p.active?'':' (inactive)')+'</option>'}).join('')+'</select>'}
+function cmdRows(){return cmds.map(function(c,i){return'<div class="kh-row"><input data-c="syntax" data-i="'+i+'" placeholder="Command (verbatim)" value="'+esc(c.syntax)+'"><input data-c="description" data-i="'+i+'" placeholder="What it does" value="'+esc(c.description)+'"><input data-c="example" data-i="'+i+'" placeholder="Example" value="'+esc(c.example)+'"><button class="kh-btn warn" data-rm="'+i+'" type="button">x</button></div>'}).join('')}
+function edit(n){if(!db){say('Sign in first.','e');return}if(!P.length){say('Platforms are still loading. Try again in a moment.','w');return}
+ n=n||{};var s=n.source||{};cmds=(n.commands||[]).map(function(c){return Object.assign({exceptions:''},c)});var def=n.platformId||(f.scope!=='all'?f.scope:P[0].id);
+ open('<h3>'+(n.id?'Edit note':'New note')+'</h3><div class="kh-g2"><div><label>GDS / Platform</label>'+platSel('kn-p',def)+'</div><div><label>Status</label><select id="kn-s"><option value="draft">Draft</option><option value="published">Published</option><option value="archived">Archived</option></select></div>'
+ +'<div><label>Category</label><input id="kn-c" list="kn-cl" value="'+esc(n.category)+'"><datalist id="kn-cl">'+uniq(N.map(function(x){return x.category})).map(function(c){return'<option value="'+esc(c)+'">'}).join('')+'</datalist></div><div><label>Subcategory</label><input id="kn-sc" value="'+esc(n.subcategory)+'"></div></div>'
+ +'<label>Title</label><input id="kn-t" value="'+esc(n.title)+'"><label>Content (use **bold**; line breaks are kept)</label><textarea id="kn-b">'+esc(n.content)+'</textarea>'
+ +'<label>Commands (optional, stored for the platform selected above)</label><div id="kn-cm">'+cmdRows()+'</div><button class="kh-btn" id="kn-ac" type="button">+ Add command</button>'
+ +'<div class="kh-g2"><div><label>Tags (comma separated)</label><input id="kn-tg" value="'+esc((n.tags||[]).join(', '))+'"></div><div><label>Search keywords</label><input id="kn-k" value="'+esc((n.keywords||[]).join(', '))+'"></div><div><label>Source document</label><input id="kn-sd" value="'+esc(s.documentName)+'"></div><div><label>Page / section reference</label><input id="kn-sp" value="'+esc(s.pageRef)+'"></div></div>'
+ +'<div class="kh-ft"><button class="kh-btn" id="kn-x" type="button">Cancel</button><button class="kh-btn pri" id="kn-ok" type="button">Save note</button></div>');
+ $('kn-s').value=n.status||'draft';$('kn-x').onclick=close;
+ $('kn-ac').onclick=function(){grab();cmds.push({syntax:'',description:'',example:'',exceptions:''});$('kn-cm').innerHTML=cmdRows()};
+ $('kn-cm').onclick=function(e){var r=e.target.getAttribute('data-rm');if(r!=null){grab();cmds.splice(+r,1);$('kn-cm').innerHTML=cmdRows()}};
+ $('kn-ok').onclick=function(){grab();var t=$('kn-t').value.trim();if(!t){alert('Please enter a title.');return}var pid=$('kn-p').value,p=pf(pid),st=now();
+  var o={ownerUid:uid,platformId:pid,title:t,content:$('kn-b').value,category:$('kn-c').value.trim(),subcategory:$('kn-sc').value.trim(),status:$('kn-s').value,tags:csv($('kn-tg').value),keywords:csv($('kn-k').value),
+   commands:cmds.filter(function(c){return c.syntax.trim()}).map(function(c){return{syntax:c.syntax,description:c.description,example:c.example,exceptions:c.exceptions||'',platformId:pid}}),
+   source:{documentName:$('kn-sd').value.trim(),pageRef:$('kn-sp').value.trim(),documentId:(n.source&&n.source.documentId)||''},updatedAt:st};
+  if(!n.id)o.createdAt=st;var ref=n.id?db.collection('kh_notes').doc(n.id):db.collection('kh_notes').doc();
+  var w=ref.set(o,{merge:true});if(p&&!p.active)w=w.then(function(){return db.collection('kh_platforms').doc(pid).update({active:true,updatedAt:st})});w.then(close).catch(err)}}
+function grab(){[].forEach.call(document.querySelectorAll('#kn-cm input'),function(i){cmds[+i.dataset.i][i.dataset.c]=i.value})}
+/* ---------- document import ---------- */
+function loadJs(src,ok,test){if(test()){ok();return}var s=document.createElement('script');s.src=src;s.onload=ok;s.onerror=function(){say('Could not load the document reader (offline or blocked).','e')};document.head.appendChild(s)}
+function pdfText(buf){return new Promise(function(res){loadJs('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js',function(){window.pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+ window.pdfjsLib.getDocument({data:buf}).promise.then(function(pdf){var out=[],i=1;(function nx(){if(i>pdf.numPages)return res(out);pdf.getPage(i).then(function(pg){return pg.getTextContent()}).then(function(tc){var L={};tc.items.forEach(function(it){var y=Math.round(it.transform[5]/3);(L[y]=L[y]||[]).push(it)});
+  var tx=Object.keys(L).sort(function(a,b){return b-a}).map(function(k){var r=L[k].sort(function(a,b){return a.transform[4]-b.transform[4]}),s='',pe=null;r.forEach(function(it){if(pe!==null&&it.transform[4]-pe>2&&!/^\s/.test(it.str)&&!/\s$/.test(s))s+=' ';s+=it.str;pe=it.transform[4]+(it.width||0)});return s}).join('\n');out.push({n:i,text:tx});i++;nx()})})()})},function(){return!!window.pdfjsLib})})}
+function docxText(buf){return new Promise(function(res){loadJs('https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js',function(){window.mammoth.extractRawText({arrayBuffer:buf}).then(function(r){res([{n:1,text:r.value}])})},function(){return!!window.mammoth})})}
+function cmdsOf(t){var seen={};return t.split('\n').map(function(s){return s.trim()}).filter(function(s){if(seen[s]||s.length<3||s.length>90||/[a-z]/.test(s)||!/[0-9*\u00a5\u00a4\u00a7\/]/.test(s)||!/[A-Z]/.test(s))return false;seen[s]=1;return true}).slice(0,40).map(function(s){return{syntax:s,description:'',example:'',exceptions:''}})}
+function mk(title,text,ref){return{title:String(title).trim().slice(0,90)||'Untitled',text:text,ref:ref,commands:cmdsOf(text),keep:true}}
+function segment(d){var o=[];if(d.type==='pdf')d.pages.forEach(function(p){var t=p.text.trim();if(t.length>20)o.push(mk(t.split('\n')[0],t,'Page '+p.n))});
+ else{var cur=null;d.pages[0].text.split(/\n{2,}/).forEach(function(b){b=b.trim();if(!b)return;var h=b.length<70&&b.indexOf('\n')<0&&!/[.:;,]$/.test(b);if(h||!cur){if(cur)o.push(cur);cur=mk(b.split('\n')[0],h?'':b,'Section: '+b.split('\n')[0].slice(0,60))}else{cur.text+=(cur.text?'\n':'')+b;cur.commands=cmdsOf(cur.text)}});if(cur)o.push(cur);o=o.filter(function(c){return c.text.trim().length>15})}return o}
+function detect(d){var t=(d.name+' '+d.pages.map(function(p){return p.text}).join(' ')).toLowerCase(),sc=P.map(function(p){var s=0;(p.keywords||[]).forEach(function(k){k=k.toLowerCase();if(k)s+=t.split(k).length-1});return{id:p.id,s:s}}).sort(function(a,b){return b.s-a.s});
+ return sc.length&&sc[0].s>=3&&sc[0].s>=3*(sc[1]?sc[1].s:0)?sc[0].id:''}
+function nrm(s){return String(s||'').toLowerCase().replace(/\s+/g,' ').trim()}
+function jac(a,b){var x=nrm(a).split(' '),y=nrm(b).split(' '),i=0,m={};x.forEach(function(w){m[w]=1});y.forEach(function(w){if(m[w])i++});return i/Math.max(1,x.length+y.length-i)}
+function dupOf(c,pid){var r='';N.forEach(function(n){if(n.platformId!==pid||r==='exact')return;if(nrm(n.content)===nrm(c.text))r='exact';else{var j=jac(n.content,c.text);if(j>=.8)r=r||'near';else if(nrm(n.title)===nrm(c.title)&&nrm(n.title))r=r||'conflict'}});return r}
+function importUi(){if(!db||!P.length){say('Sign in first.','e');return}imp={docs:[],c:[]};
+ open('<h3>Import documents</h3><p class="kh-meta">PDF or DOCX. Text is read in your browser. Nothing is published until you review it; extracted notes arrive as Draft or Published as you choose.</p><input type="file" id="ki-f" accept=".pdf,.docx" multiple><div id="ki-r"></div><div class="kh-ft"><button class="kh-btn" id="ki-x" type="button">Cancel</button><button class="kh-btn pri" id="ki-ok" type="button" disabled>Save selected notes</button></div>');
+ $('ki-x').onclick=close;$('ki-f').onchange=function(){var fs=[].slice.call(this.files),r=$('ki-r');r.innerHTML='<div class="kh-note">Reading '+fs.length+' file(s)...</div>';var jobs=fs.map(function(fl){var ty=/\.pdf$/i.test(fl.name)?'pdf':'docx';return fl.arrayBuffer().then(function(b){return(ty==='pdf'?pdfText(b):docxText(b))}).then(function(pg){var d={name:fl.name,type:ty,pages:pg};d.pid=detect(d);d.auto=!!d.pid;d.cs=segment(d);return d})});
+  Promise.all(jobs).then(function(ds){imp.docs=ds;review()}).catch(function(e){console.error(e);r.innerHTML='<div class="kh-note e">Could not read one of the files.</div>'})};
+ $('ki-ok').onclick=saveImport;$('ki-r').addEventListener('change',function(e){var t=e.target;if(t.dataset.dp!=null){imp.docs[+t.dataset.dp].pid=t.value;imp.docs[+t.dataset.dp].auto=false;review()}else if(t.dataset.k){var p=t.dataset.k.split('.');imp.docs[+p[0]].cs[+p[1]].keep=t.checked;gate()}})}
+function review(){var h='';imp.docs.forEach(function(d,i){var pl=d.pid&&pf(d.pid);h+='<div class="kh-card"><b>'+esc(d.name)+'</b> <span class="kh-meta">'+d.cs.length+' candidate note(s)</span><label>Platform for this document'+(d.auto?' (detected from content - please confirm)':d.pid?'':' (could not be identified confidently - please select)')+'</label><select data-dp="'+i+'"><option value="">Select platform...</option>'+P.map(function(p){return'<option value="'+p.id+'"'+(p.id===d.pid?' selected':'')+'>'+esc(p.name)+'</option>'}).join('')+'</select>';
+  if(!d.cs.length)h+='<div class="kh-note w">No readable text found (scanned pages or images need OCR).</div>';
+  d.cs.forEach(function(c,j){c.dup=d.pid?dupOf(c,d.pid):'';if(c.dup==='exact'&&c._u!==1){c.keep=false;c._u=1}h+='<div class="kh-mrow"><label style="margin:0"><input type="checkbox" data-k="'+i+'.'+j+'"'+(c.keep?' checked':'')+'> '+esc(c.title)+' <span class="kh-meta">'+esc(c.ref)+(c.commands.length?' &middot; '+c.commands.length+' command(s)':'')+'</span></label>'+(c.dup?'<span class="kh-st" style="background:#FFFAEB;color:#93370D">'+({exact:'exact duplicate - skipped',near:'near duplicate',conflict:'conflicts with existing note'}[c.dup])+'</span>':'')+'</div>'});h+='</div>'});
+ h+='<label>Save as</label><select id="ki-st"><option value="draft">Draft</option><option value="published">Published</option></select>';$('ki-r').innerHTML=h;gate()}
+function gate(){var ok=imp.docs.every(function(d){return!d.cs.some(function(c){return c.keep})||d.pid})&&imp.docs.some(function(d){return d.cs.some(function(c){return c.keep})});$('ki-ok').disabled=!ok}
+function saveImport(){var st=$('ki-st').value,t=now(),ops=[],bid='b'+Date.now();
+ imp.docs.forEach(function(d){var ks=d.cs.filter(function(c){return c.keep});if(!ks.length)return;var dr=db.collection('kh_documents').doc();ops.push([dr,{ownerUid:uid,fileName:d.name,type:d.type,detectedPlatformId:d.auto?d.pid:'',confirmedPlatformId:d.pid,pageCount:d.pages.length,noteCount:ks.length,importBatchId:bid,importedAt:t}]);
+  ks.forEach(function(c){ops.push([db.collection('kh_notes').doc(),{ownerUid:uid,platformId:d.pid,title:c.title,content:c.text,category:'',subcategory:'',status:st,tags:[],keywords:[],conflictFlag:c.dup==='conflict',importBatchId:bid,
+   commands:c.commands.map(function(x){return Object.assign({platformId:d.pid},x)}),source:{documentId:dr.id,documentName:d.name,pageRef:c.ref},createdAt:t,updatedAt:t}])})});
+ var chunks=[];for(var i=0;i<ops.length;i+=400)chunks.push(ops.slice(i,i+400));$('ki-ok').disabled=true;
+ Promise.all(chunks.map(function(ch){var b=db.batch();ch.forEach(function(o){b.set(o[0],o[1])});return b.commit()})).then(function(){close();say('Imported '+ops.filter(function(o){return o[1].title}).length+' note(s).')}).catch(function(e){err(e);$('ki-ok').disabled=false})}
+/* ---------- Settings: menu customization + platforms ---------- */
+var card=document.createElement('div');card.className='aset-card';card.id='kh-set';set.insertBefore(card,set.lastElementChild);
+function mkey(b){return b.getAttribute('data-aero')||b.id}
+function mainBtns(){return [].slice.call(nav.children).filter(function(b){return b.classList&&b.classList.contains('ptc-nav-btn')&&!b.classList.contains('aero-sub')})}
+function applyMenu(keys){var bs=mainBtns(),m={};bs.forEach(function(b){m[mkey(b)]=b});var ord=keys.filter(function(k){return m[k]});bs.forEach(function(b){if(ord.indexOf(mkey(b))<0)ord.push(mkey(b))});
+ ord.forEach(function(k){var b=m[k],subs=[],s=b.nextElementSibling;while(s&&s.classList.contains('aero-sub')){subs.push(s);s=s.nextElementSibling}nav.appendChild(b);subs.forEach(function(x){nav.appendChild(x)})})}
+function saveOrder(keys){applyMenu(keys);try{localStorage.setItem('aeroops.menuOrder',JSON.stringify(keys))}catch(e){}if(db)db.collection('kh_settings').doc(uid).set({ownerUid:uid,menuOrder:keys,updatedAt:now()},{merge:true}).catch(err);renderSettings()}
+function renderSettings(){var bs=mainBtns(),h='<h3>Menu Customization</h3><p class="aset-note">Reorder the sidebar. The order is saved to your account and is independent of Knowledge Hub content.</p>';
+ bs.forEach(function(b,i){var l=(b.querySelector('.aero-lbl')||b).textContent.trim()||mkey(b);h+='<div class="kh-mrow"><span>'+esc(l)+'</span><span><button class="kh-btn" data-mv="'+i+'.-1" type="button"'+(i?'':' disabled')+'>Move Up</button> <button class="kh-btn" data-mv="'+i+'.1" type="button"'+(i<bs.length-1?'':' disabled')+'>Move Down</button></span></div>'});
+ h+='<div class="aset-btns" style="margin-top:8px"><button class="kh-btn" data-mv="reset" type="button">Reset menu order</button></div><h3 style="margin-top:16px">Knowledge Hub platforms</h3><p class="aset-note">Add a GDS or reference library any time; it appears in filters, import and the note editor. Keywords help import detect the platform.</p>';
+ P.forEach(function(p){h+='<div class="kh-mrow"><span><span class="kh-b sm" style="background:'+esc(p.color)+'">'+esc(p.code)+'</span> '+esc(p.name)+' <span class="kh-meta">'+esc((p.keywords||[]).join(', '))+'</span></span><button class="kh-btn" data-pa="'+p.id+'" type="button">'+(p.active?'Deactivate':'Activate')+'</button></div>'});
+ h+='<div class="kh-row" style="margin-top:8px"><input id="kp-n" placeholder="Platform name"><input id="kp-c" placeholder="Short code"><input id="kp-k" placeholder="Detection keywords, comma separated"><button class="kh-btn pri" id="kp-a" type="button">Add</button></div>';
+ card.innerHTML='<h3 style="display:none"></h3>'+h}
+card.addEventListener('click',function(e){var t=e.target;
+ if(t.dataset.mv==='reset'){var d=[].slice.call(nav.children);try{localStorage.removeItem('aeroops.menuOrder')}catch(x){}if(db)db.collection('kh_settings').doc(uid).set({menuOrder:[]},{merge:true}).catch(err);say('');alert('Menu order reset. Reload the page to see the original order.');return}
+ if(t.dataset.mv){var p=t.dataset.mv.split('.'),i=+p[0],j=i+(+p[1]),k=mainBtns().map(mkey),x=k[i];k[i]=k[j];k[j]=x;saveOrder(k)}
+ else if(t.dataset.pa){if(!db)return;var pl=pf(t.dataset.pa);db.collection('kh_platforms').doc(pl.id).update({active:!pl.active,updatedAt:now()}).catch(err)}
+ else if(t.id==='kp-a'){var n=$('kp-n').value.trim();if(!n||!db)return;if(P.some(function(p){return nrm(p.name)===nrm(n)})){alert('That platform already exists.');return}
+  db.collection('kh_platforms').add({ownerUid:uid,name:n,code:($('kp-c').value.trim()||n).toUpperCase().slice(0,12),type:'gds',color:'#'+((Math.random()*0x666666|0)+0x222222).toString(16).padStart(6,'0'),active:true,sortOrder:P.length,keywords:csv($('kp-k').value||n),createdAt:now(),updatedAt:now()}).catch(err)}});
+try{var ls=JSON.parse(localStorage.getItem('aeroops.menuOrder')||'null');if(ls&&ls.length){applyMenu(ls);setTimeout(function(){applyMenu(ls)},2500)}}catch(e){}
+renderSettings();render();
+})();
+</script>
+
 </body></html>
