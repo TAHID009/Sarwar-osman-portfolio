@@ -14390,6 +14390,7 @@ render();
 .kh-row{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:6px;margin-bottom:6px}.kh-g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.kh-ft{display:flex;gap:8px;justify-content:flex-end;margin-top:14px;flex-wrap:wrap}
 .kh-note{font-size:12.5px;margin:6px 0;padding:8px 10px;border-radius:8px;background:#F0FAFB;color:#0B2545}.kh-note.w{background:#FFFAEB;color:#93370D}.kh-note.e{background:#FEF3F2;color:#B42318}
 .kh-mrow{display:flex;gap:8px;align-items:center;justify-content:space-between;padding:6px 0;border-top:1px solid #EEF2F6;font-size:13px}
+#kh-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:12px;align-items:start}#kh-list .kh-card{margin:0}#kh-list .kh-empty{grid-column:1/-1}.kh-ttl{font-size:15px;font-weight:700;margin:6px 0 2px;cursor:pointer;color:var(--ink,#0B2545)}.kh-ttl:hover{text-decoration:underline}.kh-star{margin-left:auto;border:0;background:none;font-size:18px;cursor:pointer;color:#F59E0B}.kh-ver{background:#E7F6EC;color:#067647}.kh-unv{background:#FFFAEB;color:#93370D}.kh-card details{margin:6px 0;font-size:13px}.kh-card summary{cursor:pointer;font-weight:600}.kh-card ol{margin:6px 0 0 18px;padding:0}.kh-mrow[draggable=true]{cursor:grab}
 @media(max-width:640px){.kh-row,.kh-g2{grid-template-columns:1fr}}
 </style>
 <script id="kh-js">
@@ -14397,8 +14398,9 @@ render();
 var root=document.getElementById('ptc-root'),set=document.getElementById('aero-settings'),nav=document.getElementById('ptc-nav');
 if(!root||!set||!nav)return;
 var P=[],N=[],S={},db=null,uid=null,un=[],seeded=false,imp=null,cmds=[];
-var f={scope:'all',q:'',cat:'',tag:'',src:'',rec:'0',st:'live'};
+var f={scope:'all',q:'',cat:'',tag:'',src:'',rec:'0',st:'live',nav:'all',sort:'upd',vf:'',view:'comp',n:24};
 var SEED=[['Sabre','SABRE','gds','#0B5FA5',1,['sabre']],['Galileo','GALILEO','gds','#C2410C',1,['galileo','travelport','viewpoint']],['Amadeus','AMADEUS','gds','#2563EB',0,['amadeus']],['General GDS Knowledge','GENERAL','general','#475467',1,[]],['Airline Operations & Reference','AIRLINE','reference','#0E9AA7',1,[]],['My Custom Knowledge','CUSTOM','custom','#7A3FB0',1,[]]];
+var CATS=['Commands & Formats','Passenger Formats','Booking & PNR','Ticketing','Reissue & Refund','Fare Rules & Calculations','Queue & Schedule','Ancillary Services','Manuals & Procedures'];
 function $(i){return document.getElementById(i)}
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
 function rich(s){return esc(s).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\n/g,'<br>')}
@@ -14412,8 +14414,8 @@ function err(e){console.error(e);say(e&&e.code==='permission-denied'?'Firebase r
 var sec=document.createElement('section');sec.id='aero-kh';sec.className='aero-page';sec.setAttribute('aria-label','Knowledge Hub');
 sec.innerHTML='<div class="aset-head"><div style="color:#0E9AA7;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase">Reference Library</div><h2>Knowledge Hub</h2><p>Notes, commands and procedures for every GDS. Each command stays labelled with its own platform.</p></div>'
 +'<div class="kh-bar"><input id="kh-q" type="search" placeholder="Search notes, commands, tags, sources"><select id="kh-scope" title="Search scope"></select><button class="kh-btn pri" id="kh-add" type="button">+ Add Note</button><button class="kh-btn" id="kh-imp" type="button">Import Document</button></div>'
-+'<div class="kh-fl"><select id="kh-cat"></select><select id="kh-tag"></select><select id="kh-src"></select><select id="kh-rec"><option value="0">Any update date</option><option value="7">Updated: last 7 days</option><option value="30">Last 30 days</option><option value="90">Last 90 days</option></select><select id="kh-st"><option value="live">Draft + Published</option><option value="published">Published</option><option value="draft">Draft</option><option value="archived">Archived</option></select></div>'
-+'<div class="kh-tabs" id="kh-tabs"></div><div id="kh-msg"></div><div id="kh-list"></div>';
++'<div class="kh-fl"><select id="kh-cat"></select><select id="kh-tag"></select><select id="kh-src"></select><select id="kh-rec"><option value="0">Any update date</option><option value="7">Updated: last 7 days</option><option value="30">Last 30 days</option><option value="90">Last 90 days</option></select><select id="kh-sort"><option value="upd">Sort: recently updated</option><option value="created">Newest created</option><option value="title">Title A-Z</option><option value="plat">Platform</option></select><select id="kh-vf"><option value="">Verified + unverified</option><option value="v">Verified only</option><option value="u">Unverified only</option></select><button class="kh-btn" id="kh-view" type="button">Expanded view</button><select id="kh-st"><option value="live">Draft + Published</option><option value="published">Published</option><option value="draft">Draft</option><option value="archived">Archived</option></select></div>'
++'<div class="kh-tabs" id="kh-nav"></div><div class="kh-tabs" id="kh-tabs"></div><div id="kh-msg"></div><div id="kh-list"></div>';
 set.insertAdjacentElement('afterend',sec);
 var ov=document.createElement('div');ov.className='kh-ov';ov.innerHTML='<div class="kh-md" id="kh-md"></div>';document.body.appendChild(ov);
 ov.addEventListener('mousedown',function(e){if(e.target===ov)close()});document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
@@ -14438,11 +14440,11 @@ function tick(){var u=null;try{u=window.firebase&&firebase.apps&&firebase.apps.l
 function seed(){var b=db.batch();SEED.forEach(function(s,i){b.set(db.collection('kh_platforms').doc(),{ownerUid:uid,name:s[0],code:s[1],type:s[2],color:s[3],active:!!s[4],sortOrder:i,keywords:s[5],createdAt:now(),updatedAt:now()})});b.commit().catch(err)}
 setInterval(tick,1500);
 /* ---------- list + search ---------- */
-function hay(n){return n._h||(n._h=[n.title,n.content,n.category,n.subcategory,(n.tags||[]).join(' '),(n.keywords||[]).join(' '),n.source&&n.source.documentName,(n.commands||[]).map(function(c){return[c.syntax,c.description,c.example].join(' ')}).join(' ')].join(' ').toLowerCase())}
+function hay(n){return n._h||(n._h=[n.title,n.content,n.example,n.warning,(n.steps||[]).join(' '),n.category,n.subcategory,(n.tags||[]).join(' '),(n.keywords||[]).join(' '),n.source&&n.source.documentName,(n.commands||[]).map(function(c){return[c.syntax,c.description,c.example].join(' ')}).join(' ')].join(' ').toLowerCase())}
 function visible(){var q=f.q.toLowerCase().trim(),cut=+f.rec?Date.now()-f.rec*864e5:0;
  return N.filter(function(n){if(f.scope!=='all'&&n.platformId!==f.scope)return false;if(f.st==='live'?n.status==='archived':n.status!==f.st)return false;
   if(f.cat&&n.category!==f.cat)return false;if(f.tag&&(n.tags||[]).indexOf(f.tag)<0)return false;if(f.src&&!(n.source&&n.source.documentName===f.src))return false;
-  if(cut&&new Date(n.updatedAt).getTime()<cut)return false;return!q||hay(n).indexOf(q)>-1})}
+  if(cut&&new Date(n.updatedAt).getTime()<cut)return false;if(f.vf&&(f.vf==='v')!==!!n.verified)return false;if(f.nav==='fav'&&!n.favorite)return false;if(f.nav==='recent'&&Date.now()-new Date(n.updatedAt)>30*864e5)return false;if(f.nav==='cmd'&&!(n.commands||[]).length)return false;if(f.nav.indexOf('c:')===0&&n.category!==f.nav.slice(2))return false;return!q||hay(n).indexOf(q)>-1})}
 function opts(el,first,vals,cur){el.innerHTML='<option value="">'+first+'</option>'+vals.map(function(v){return'<option'+(v===cur?' selected':'')+'>'+esc(v)+'</option>'}).join('')}
 function render(){if(!$('kh-list'))return;
  var sc=$('kh-scope');sc.innerHTML='<option value="all">All GDS libraries</option>'+P.map(function(p){return'<option value="'+p.id+'"'+(f.scope===p.id?' selected':'')+'>'+esc(p.name)+(p.active?'':' (inactive)')+'</option>'}).join('');if(f.scope!=='all'&&!pf(f.scope))f.scope='all';sc.value=f.scope;
@@ -14450,35 +14452,51 @@ function render(){if(!$('kh-list'))return;
  opts($('kh-src'),'All source documents',uniq(N.map(function(n){return n.source&&n.source.documentName})),f.src);
  var cnt=function(id){return N.filter(function(n){return n.status!=='archived'&&(id==='all'||n.platformId===id)}).length};
  $('kh-tabs').innerHTML=[{id:'all',name:'All',active:1}].concat(P).map(function(p){return'<button type="button" class="kh-tab'+(f.scope===p.id?' on':'')+(p.active?'':' off')+'" data-t="'+p.id+'">'+esc(p.name)+' ('+cnt(p.id)+')</button>'}).join('');
- var L=visible(),h='';
+ var nv=[['all','All Knowledge'],['cmd','Commands & Formats']].concat(CATS.slice(1).map(function(c){return['c:'+c,c]}),[['recent','Recently Updated'],['fav','Favorites']],uniq(N.map(function(n){return n.category})).filter(function(c){return CATS.indexOf(c)<0}).map(function(c){return['c:'+c,c]}));
+ $('kh-nav').innerHTML=nv.map(function(x){return'<button type="button" class="kh-tab'+(f.nav===x[0]?' on':'')+'" data-n="'+esc(x[0])+'">'+esc(x[1])+'</button>'}).join('');
+ $('kh-sort').value=f.sort;$('kh-vf').value=f.vf;$('kh-view').textContent=f.view==='exp'?'Compact view':'Expanded view';
+ var L=visible().sort(function(a,b){if(f.sort==='title')return String(a.title).localeCompare(b.title);if(f.sort==='created')return String(b.createdAt).localeCompare(String(a.createdAt));if(f.sort==='plat'){var x=pf(a.platformId),y=pf(b.platformId);var d=((x&&x.sortOrder)||0)-((y&&y.sortOrder)||0);if(d)return d}return String(b.updatedAt).localeCompare(String(a.updatedAt))}),h='';
  if(!uid)h='<div class="kh-empty">Sign in to AeroOps to load your Knowledge Hub.</div>';
  else if(!L.length){var p=pf(f.scope),anyN=N.some(function(n){return f.scope==='all'||n.platformId===f.scope});
-  h='<div class="kh-empty"><b>'+(anyN?'No notes match these filters.':(p?esc(p.name)+' has no notes yet.':'No notes yet.'))+'</b><br>'+(anyN?'Clear the search or filters to see more.':'Add a note by hand or import a PDF or DOCX document.')+(p&&!p.active?'<br><button class="kh-btn pri" data-a="activate" data-id="'+p.id+'" type="button">Activate '+esc(p.name)+'</button>':'')+'<br><button class="kh-btn pri" data-a="add" type="button">+ Add Note</button><button class="kh-btn" data-a="imp" type="button">Import Document</button></div>'}
- else{var last='';L.sort(function(a,b){var pa=pf(a.platformId),pb=pf(b.platformId);return((pa&&pa.sortOrder)||0)-((pb&&pb.sortOrder)||0)||String(b.updatedAt).localeCompare(String(a.updatedAt))}).forEach(function(n){
-  if(f.scope==='all'&&n.platformId!==last){last=n.platformId;var g=pf(last);h+='<div class="kh-gh">'+esc(g?g.name:'Unassigned platform')+'</div>'}h+=card(n)})}
+  h='<div class="kh-empty"><b>'+(anyN?'No cards match these filters.':(p?esc(p.name)+' has no cards yet.':'No knowledge cards yet.'))+'</b><br>'+(anyN?'Clear the search or filters to see more.':'Add a card by hand or import a PDF or DOCX document.')+(p&&!p.active?'<br><button class="kh-btn pri" data-a="activate" data-id="'+p.id+'" type="button">Activate '+esc(p.name)+'</button>':'')+'<br><button class="kh-btn pri" data-a="add" type="button">+ Add Note</button><button class="kh-btn" data-a="imp" type="button">Import Document</button></div>'}
+ else{h=L.slice(0,f.n).map(function(n){return cardH(n)}).join('');if(L.length>f.n)h+='<div style="grid-column:1/-1;text-align:center"><button class="kh-btn" id="kh-more" type="button">Show more ('+(L.length-f.n)+' remaining)</button></div>'}
  $('kh-list').innerHTML=h}
-function card(n){var p=pf(n.platformId)||{name:'?',color:'#999',code:'?'},s=n.source||{};
- return'<div class="kh-card"><div class="kh-h"><span class="kh-b" style="background:'+esc(p.color)+'">'+esc(p.name)+'</span><b>'+esc(n.title)+'</b><span class="kh-st kh-'+esc(n.status)+'">'+esc(n.status)+'</span>'+(n.conflictFlag?'<span class="kh-st" style="background:#FFFAEB;color:#93370D">conflict - review</span>':'')+'</div>'
- +'<div class="kh-meta">'+[n.category&&esc(n.category)+(n.subcategory?' &rsaquo; '+esc(n.subcategory):''),s.documentName&&'Source: '+esc(s.documentName)+(s.pageRef?', '+esc(s.pageRef):''),'Updated '+esc(String(n.updatedAt||'').slice(0,10)),(n.tags||[]).map(function(t){return'#'+esc(t)}).join(' ')].filter(Boolean).join(' &middot; ')+'</div>'
- +(n.content?'<div class="kh-body">'+rich(n.content)+'</div>':'')
- +(n.commands||[]).map(function(c){return'<div class="kh-cmd"><span class="kh-b sm" style="background:'+esc(p.color)+'">'+esc(p.code)+'</span><code>'+esc(c.syntax)+'</code>'+(c.description?'<span>'+esc(c.description)+'</span>':'')+(c.example?'<span class="kh-meta">e.g. '+esc(c.example)+'</span>':'')+'</div>'}).join('')
- +'<div class="kh-ft" style="justify-content:flex-start"><button class="kh-btn" data-a="edit" data-id="'+n.id+'" type="button">Edit</button><button class="kh-btn" data-a="'+(n.status==='archived'?'restore':'archive')+'" data-id="'+n.id+'" type="button">'+(n.status==='archived'?'Restore':'Archive')+'</button>'+(n.status==='archived'?'<button class="kh-btn warn" data-a="del" data-id="'+n.id+'" type="button">Delete permanently</button>':'')+'</div></div>'}
-sec.addEventListener('input',function(e){if(e.target.id==='kh-q'){f.q=e.target.value;render();var q=$('kh-q');q.focus()}});
-sec.addEventListener('change',function(e){var m={'kh-scope':'scope','kh-cat':'cat','kh-tag':'tag','kh-src':'src','kh-rec':'rec','kh-st':'st'}[e.target.id];if(m){f[m]=e.target.value;render()}});
-sec.addEventListener('click',function(e){var t=e.target.closest('[data-t],[data-a],#kh-add,#kh-imp');if(!t)return;
- if(t.dataset.t){f.scope=t.dataset.t;render();return}var a=t.dataset.a||(t.id==='kh-add'?'add':'imp'),n=N.filter(function(x){return x.id===t.dataset.id})[0];
- if(a==='add')edit(null);else if(a==='imp')importUi();else if(a==='edit'&&n)edit(n);
- else if((a==='archive'||a==='restore')&&n)db.collection('kh_notes').doc(n.id).update({status:a==='archive'?'archived':'draft',updatedAt:now()}).catch(err);
- else if(a==='del'&&n&&confirm('Permanently delete "'+n.title+'"? This cannot be undone.'))db.collection('kh_notes').doc(n.id).delete().catch(err);
- else if(a==='activate')db.collection('kh_platforms').doc(t.dataset.id).update({active:true,updatedAt:now()}).catch(err)});
+function cardH(n,full){var p=pf(n.platformId)||{name:'?',color:'#999',code:'?'},s=n.source||{},ex=full||f.view==='exp',cs=n.commands||[],st=n.steps||[],id=' data-id="'+n.id+'"';
+ return'<div class="kh-card"><div class="kh-h"><span class="kh-b" style="background:'+esc(p.color)+'">'+esc(p.name)+'</span><span class="kh-st '+(n.verified?'kh-ver':'kh-unv')+'">'+(n.verified?'Verified':'Unverified')+'</span><span class="kh-st kh-'+esc(n.status)+'">'+esc(n.status)+'</span>'+(n.conflictFlag?'<span class="kh-st kh-unv">conflict - review</span>':'')+'<button class="kh-star" data-a="fav"'+id+' type="button" title="Favorite" aria-label="Toggle favorite">'+(n.favorite?'\u2605':'\u2606')+'</button></div>'
+ +'<div class="kh-ttl" data-a="open"'+id+'>'+esc(n.title)+'</div>'
+ +'<div class="kh-meta">'+[n.category&&esc(n.category)+(n.subcategory?' &rsaquo; '+esc(n.subcategory):''),s.documentName&&'Source: '+esc(s.documentName)+(s.pageRef?', '+esc(s.pageRef):''),'Created '+esc(String(n.createdAt||'').slice(0,10))+' &middot; Updated '+esc(String(n.updatedAt||'').slice(0,10)),(n.tags||[]).map(function(t){return'#'+esc(t)}).join(' ')].filter(Boolean).join(' &middot; ')+'</div>'
+ +(ex&&n.content?'<div class="kh-body">'+rich(n.content)+'</div>':'')
+ +(ex?cs:cs.slice(0,1)).map(function(c,i){return'<div class="kh-cmd"><span class="kh-b sm" style="background:'+esc(p.color)+'">'+esc(p.code)+'</span><code>'+esc(c.syntax)+'</code><button class="kh-btn" data-cp="'+n.id+'.'+i+'" type="button">Copy</button>'+(ex&&c.description?'<span>'+esc(c.description)+'</span>':'')+(ex&&c.example?'<span class="kh-meta">e.g. '+esc(c.example)+'</span>':'')+'</div>'}).join('')
+ +(ex&&n.example?'<div class="kh-meta"><b>Example</b></div><div class="kh-cmd"><code>'+esc(n.example)+'</code></div>':'')
+ +(ex&&n.warning?'<div class="kh-note w"><b>Warning:</b> '+rich(n.warning)+'</div>':'')
+ +(ex&&st.length?'<details'+(full?' open':'')+'><summary>Procedure ('+st.length+' steps)</summary><ol>'+st.map(function(x){return'<li>'+esc(x)+'</li>'}).join('')+'</ol></details>':'')
+ +'<div class="kh-ft" style="justify-content:flex-start">'+(full?'<button class="kh-btn" data-a="close" type="button">Close</button>':'<button class="kh-btn" data-a="open"'+id+' type="button">Open</button>')+'<button class="kh-btn" data-a="edit"'+id+' type="button">Edit</button><button class="kh-btn" data-a="dup"'+id+' type="button">Duplicate</button>'+(full?'':'<button class="kh-btn" data-a="ver"'+id+' type="button">'+(n.verified?'Mark unverified':'Mark verified')+'</button><button class="kh-btn" data-a="'+(n.status==='archived'?'restore':'archive')+'"'+id+' type="button">'+(n.status==='archived'?'Restore':'Archive')+'</button><button class="kh-btn warn" data-a="del"'+id+' type="button">Delete</button>')+'</div></div>'}
+function detail(n){open(cardH(n,true))}
+function upd(n,o){return db.collection('kh_notes').doc(n.id).update(o).catch(err)}
+function act(t){var a=t.dataset.a,n=N.filter(function(x){return x.id===t.dataset.id})[0];
+ if(t.dataset.cp){var q=t.dataset.cp.split('.'),m=N.filter(function(x){return x.id===q[0]})[0],c=m&&m.commands[+q[1]];if(c&&navigator.clipboard)navigator.clipboard.writeText(c.syntax).then(function(){t.textContent='Copied';setTimeout(function(){t.textContent='Copy'},1200)});return}
+ if(a==='add')edit(null);else if(a==='imp')importUi();else if(a==='close')close();
+ else if(a==='activate')db.collection('kh_platforms').doc(t.dataset.id).update({active:true,updatedAt:now()}).catch(err);
+ else if(!n)return;else if(a==='open')detail(n);else if(a==='edit')edit(n);
+ else if(a==='dup'){var o=Object.assign({},n);delete o.id;delete o._h;o.title=n.title+' (copy)';o.status='draft';o.verified=false;o.favorite=false;o.createdAt=o.updatedAt=now();db.collection('kh_notes').add(o).then(close).catch(err)}
+ else if(a==='fav')upd(n,{favorite:!n.favorite});else if(a==='ver')upd(n,{verified:!n.verified,updatedAt:now()});
+ else if(a==='archive'||a==='restore')upd(n,{status:a==='archive'?'archived':'draft',updatedAt:now()});
+ else if(a==='del'&&confirm('Delete "'+n.title+'" permanently? This cannot be undone.'))db.collection('kh_notes').doc(n.id).delete().catch(err)}
+sec.addEventListener('input',function(e){if(e.target.id==='kh-q'){f.q=e.target.value;f.n=24;render()}});
+sec.addEventListener('change',function(e){var m={'kh-scope':'scope','kh-cat':'cat','kh-tag':'tag','kh-src':'src','kh-rec':'rec','kh-st':'st','kh-sort':'sort','kh-vf':'vf'}[e.target.id];if(m){f[m]=e.target.value;f.n=24;render()}});
+sec.addEventListener('click',function(e){var t=e.target.closest('[data-t],[data-n],[data-a],[data-cp],#kh-add,#kh-imp,#kh-view,#kh-more');if(!t)return;
+ if(t.dataset.t){f.scope=t.dataset.t;f.n=24;render()}else if(t.dataset.n){f.nav=t.dataset.n;f.n=24;render()}
+ else if(t.id==='kh-view'){f.view=f.view==='exp'?'comp':'exp';render()}else if(t.id==='kh-more'){f.n+=24;render()}
+ else{if(t.id==='kh-add')t.dataset.a='add';else if(t.id==='kh-imp')t.dataset.a='imp';act(t)}});
+ov.addEventListener('click',function(e){var t=e.target.closest('[data-a],[data-cp]');if(t)act(t)});
 /* ---------- note editor ---------- */
 function platSel(id,cur){return'<select id="'+id+'">'+P.map(function(p){return'<option value="'+p.id+'"'+(p.id===cur?' selected':'')+'>'+esc(p.name)+(p.active?'':' (inactive)')+'</option>'}).join('')+'</select>'}
 function cmdRows(){return cmds.map(function(c,i){return'<div class="kh-row"><input data-c="syntax" data-i="'+i+'" placeholder="Command (verbatim)" value="'+esc(c.syntax)+'"><input data-c="description" data-i="'+i+'" placeholder="What it does" value="'+esc(c.description)+'"><input data-c="example" data-i="'+i+'" placeholder="Example" value="'+esc(c.example)+'"><button class="kh-btn warn" data-rm="'+i+'" type="button">x</button></div>'}).join('')}
 function edit(n){if(!db){say('Sign in first.','e');return}if(!P.length){say('Platforms are still loading. Try again in a moment.','w');return}
  n=n||{};var s=n.source||{};cmds=(n.commands||[]).map(function(c){return Object.assign({exceptions:''},c)});var def=n.platformId||(f.scope!=='all'?f.scope:P[0].id);
  open('<h3>'+(n.id?'Edit note':'New note')+'</h3><div class="kh-g2"><div><label>GDS / Platform</label>'+platSel('kn-p',def)+'</div><div><label>Status</label><select id="kn-s"><option value="draft">Draft</option><option value="published">Published</option><option value="archived">Archived</option></select></div>'
- +'<div><label>Category</label><input id="kn-c" list="kn-cl" value="'+esc(n.category)+'"><datalist id="kn-cl">'+uniq(N.map(function(x){return x.category})).map(function(c){return'<option value="'+esc(c)+'">'}).join('')+'</datalist></div><div><label>Subcategory</label><input id="kn-sc" value="'+esc(n.subcategory)+'"></div></div>'
- +'<label>Title</label><input id="kn-t" value="'+esc(n.title)+'"><label>Content (use **bold**; line breaks are kept)</label><textarea id="kn-b">'+esc(n.content)+'</textarea>'
+ +'<div><label>Category</label><input id="kn-c" list="kn-cl" value="'+esc(n.category)+'"><datalist id="kn-cl">'+uniq(CATS.slice(1).concat(N.map(function(x){return x.category}))).map(function(c){return'<option value="'+esc(c)+'">'}).join('')+'</datalist></div><div><label>Subcategory</label><input id="kn-sc" value="'+esc(n.subcategory)+'"></div></div>'
+ +'<label>Title</label><input id="kn-t" value="'+esc(n.title)+'"><label>Explanation (use **bold**; line breaks are kept)</label><textarea id="kn-b">'+esc(n.content)+'</textarea><label>Practical example</label><textarea id="kn-ex" style="min-height:60px">'+esc(n.example)+'</textarea><label>Step-by-step procedure (one step per line)</label><textarea id="kn-st2" style="min-height:80px">'+esc((n.steps||[]).join('\n'))+'</textarea><label>Important notes / warnings</label><textarea id="kn-w" style="min-height:60px">'+esc(n.warning)+'</textarea><label style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="kn-v" style="width:auto"'+(n.verified?' checked':'')+'> Verified against an official source</label>'
  +'<label>Commands (optional, stored for the platform selected above)</label><div id="kn-cm">'+cmdRows()+'</div><button class="kh-btn" id="kn-ac" type="button">+ Add command</button>'
  +'<div class="kh-g2"><div><label>Tags (comma separated)</label><input id="kn-tg" value="'+esc((n.tags||[]).join(', '))+'"></div><div><label>Search keywords</label><input id="kn-k" value="'+esc((n.keywords||[]).join(', '))+'"></div><div><label>Source document</label><input id="kn-sd" value="'+esc(s.documentName)+'"></div><div><label>Page / section reference</label><input id="kn-sp" value="'+esc(s.pageRef)+'"></div></div>'
  +'<div class="kh-ft"><button class="kh-btn" id="kn-x" type="button">Cancel</button><button class="kh-btn pri" id="kn-ok" type="button">Save note</button></div>');
@@ -14486,7 +14504,7 @@ function edit(n){if(!db){say('Sign in first.','e');return}if(!P.length){say('Pla
  $('kn-ac').onclick=function(){grab();cmds.push({syntax:'',description:'',example:'',exceptions:''});$('kn-cm').innerHTML=cmdRows()};
  $('kn-cm').onclick=function(e){var r=e.target.getAttribute('data-rm');if(r!=null){grab();cmds.splice(+r,1);$('kn-cm').innerHTML=cmdRows()}};
  $('kn-ok').onclick=function(){grab();var t=$('kn-t').value.trim();if(!t){alert('Please enter a title.');return}var pid=$('kn-p').value,p=pf(pid),st=now();
-  var o={ownerUid:uid,platformId:pid,title:t,content:$('kn-b').value,category:$('kn-c').value.trim(),subcategory:$('kn-sc').value.trim(),status:$('kn-s').value,tags:csv($('kn-tg').value),keywords:csv($('kn-k').value),
+  var o={ownerUid:uid,platformId:pid,title:t,content:$('kn-b').value,category:$('kn-c').value.trim(),subcategory:$('kn-sc').value.trim(),example:$('kn-ex').value,steps:$('kn-st2').value.split('\n').map(function(x){return x.trim()}).filter(Boolean),warning:$('kn-w').value,verified:$('kn-v').checked,favorite:!!n.favorite,status:$('kn-s').value,tags:csv($('kn-tg').value),keywords:csv($('kn-k').value),
    commands:cmds.filter(function(c){return c.syntax.trim()}).map(function(c){return{syntax:c.syntax,description:c.description,example:c.example,exceptions:c.exceptions||'',platformId:pid}}),
    source:{documentName:$('kn-sd').value.trim(),pageRef:$('kn-sp').value.trim(),documentId:(n.source&&n.source.documentId)||''},updatedAt:st};
   if(!n.id)o.createdAt=st;var ref=n.id?db.collection('kh_notes').doc(n.id):db.collection('kh_notes').doc();
@@ -14519,7 +14537,7 @@ function review(){var h='';imp.docs.forEach(function(d,i){var pl=d.pid&&pf(d.pid
 function gate(){var ok=imp.docs.every(function(d){return!d.cs.some(function(c){return c.keep})||d.pid})&&imp.docs.some(function(d){return d.cs.some(function(c){return c.keep})});$('ki-ok').disabled=!ok}
 function saveImport(){var st=$('ki-st').value,t=now(),ops=[],bid='b'+Date.now();
  imp.docs.forEach(function(d){var ks=d.cs.filter(function(c){return c.keep});if(!ks.length)return;var dr=db.collection('kh_documents').doc();ops.push([dr,{ownerUid:uid,fileName:d.name,type:d.type,detectedPlatformId:d.auto?d.pid:'',confirmedPlatformId:d.pid,pageCount:d.pages.length,noteCount:ks.length,importBatchId:bid,importedAt:t}]);
-  ks.forEach(function(c){ops.push([db.collection('kh_notes').doc(),{ownerUid:uid,platformId:d.pid,title:c.title,content:c.text,category:'',subcategory:'',status:st,tags:[],keywords:[],conflictFlag:c.dup==='conflict',importBatchId:bid,
+  ks.forEach(function(c){ops.push([db.collection('kh_notes').doc(),{ownerUid:uid,platformId:d.pid,title:c.title,content:c.text,category:'',subcategory:'',status:st,tags:[],keywords:[],conflictFlag:c.dup==='conflict',verified:false,favorite:false,importBatchId:bid,
    commands:c.commands.map(function(x){return Object.assign({platformId:d.pid},x)}),source:{documentId:dr.id,documentName:d.name,pageRef:c.ref},createdAt:t,updatedAt:t}])})});
  var chunks=[];for(var i=0;i<ops.length;i+=400)chunks.push(ops.slice(i,i+400));$('ki-ok').disabled=true;
  Promise.all(chunks.map(function(ch){var b=db.batch();ch.forEach(function(o){b.set(o[0],o[1])});return b.commit()})).then(function(){close();say('Imported '+ops.filter(function(o){return o[1].title}).length+' note(s).')}).catch(function(e){err(e);$('ki-ok').disabled=false})}
@@ -14530,8 +14548,8 @@ function mainBtns(){return [].slice.call(nav.children).filter(function(b){return
 function applyMenu(keys){var bs=mainBtns(),m={};bs.forEach(function(b){m[mkey(b)]=b});var ord=keys.filter(function(k){return m[k]});bs.forEach(function(b){if(ord.indexOf(mkey(b))<0)ord.push(mkey(b))});
  ord.forEach(function(k){var b=m[k],subs=[],s=b.nextElementSibling;while(s&&s.classList.contains('aero-sub')){subs.push(s);s=s.nextElementSibling}nav.appendChild(b);subs.forEach(function(x){nav.appendChild(x)})})}
 function saveOrder(keys){applyMenu(keys);try{localStorage.setItem('aeroops.menuOrder',JSON.stringify(keys))}catch(e){}if(db)db.collection('kh_settings').doc(uid).set({ownerUid:uid,menuOrder:keys,updatedAt:now()},{merge:true}).catch(err);renderSettings()}
-function renderSettings(){var bs=mainBtns(),h='<h3>Menu Customization</h3><p class="aset-note">Reorder the sidebar. The order is saved to your account and is independent of Knowledge Hub content.</p>';
- bs.forEach(function(b,i){var l=(b.querySelector('.aero-lbl')||b).textContent.trim()||mkey(b);h+='<div class="kh-mrow"><span>'+esc(l)+'</span><span><button class="kh-btn" data-mv="'+i+'.-1" type="button"'+(i?'':' disabled')+'>Move Up</button> <button class="kh-btn" data-mv="'+i+'.1" type="button"'+(i<bs.length-1?'':' disabled')+'>Move Down</button></span></div>'});
+function renderSettings(){var bs=mainBtns(),h='<h3>Customize Menu Order</h3><p class="aset-note">Drag rows, or use Move Up / Move Down, to reorder the sidebar. The order is saved to your account and is independent of Knowledge Hub content.</p>';
+ bs.forEach(function(b,i){var l=(b.querySelector('.aero-lbl')||b).textContent.trim()||mkey(b);h+='<div class="kh-mrow" draggable="true" data-di="'+i+'"><span>&#8942;&#8942; '+esc(l)+'</span><span><button class="kh-btn" data-mv="'+i+'.-1" type="button"'+(i?'':' disabled')+'>Move Up</button> <button class="kh-btn" data-mv="'+i+'.1" type="button"'+(i<bs.length-1?'':' disabled')+'>Move Down</button></span></div>'});
  h+='<div class="aset-btns" style="margin-top:8px"><button class="kh-btn" data-mv="reset" type="button">Reset menu order</button></div><h3 style="margin-top:16px">Knowledge Hub platforms</h3><p class="aset-note">Add a GDS or reference library any time; it appears in filters, import and the note editor. Keywords help import detect the platform.</p>';
  P.forEach(function(p){h+='<div class="kh-mrow"><span><span class="kh-b sm" style="background:'+esc(p.color)+'">'+esc(p.code)+'</span> '+esc(p.name)+' <span class="kh-meta">'+esc((p.keywords||[]).join(', '))+'</span></span><button class="kh-btn" data-pa="'+p.id+'" type="button">'+(p.active?'Deactivate':'Activate')+'</button></div>'});
  h+='<div class="kh-row" style="margin-top:8px"><input id="kp-n" placeholder="Platform name"><input id="kp-c" placeholder="Short code"><input id="kp-k" placeholder="Detection keywords, comma separated"><button class="kh-btn pri" id="kp-a" type="button">Add</button></div>';
@@ -14542,6 +14560,9 @@ card.addEventListener('click',function(e){var t=e.target;
  else if(t.dataset.pa){if(!db)return;var pl=pf(t.dataset.pa);db.collection('kh_platforms').doc(pl.id).update({active:!pl.active,updatedAt:now()}).catch(err)}
  else if(t.id==='kp-a'){var n=$('kp-n').value.trim();if(!n||!db)return;if(P.some(function(p){return nrm(p.name)===nrm(n)})){alert('That platform already exists.');return}
   db.collection('kh_platforms').add({ownerUid:uid,name:n,code:($('kp-c').value.trim()||n).toUpperCase().slice(0,12),type:'gds',color:'#'+((Math.random()*0x666666|0)+0x222222).toString(16).padStart(6,'0'),active:true,sortOrder:P.length,keywords:csv($('kp-k').value||n),createdAt:now(),updatedAt:now()}).catch(err)}});
+var dg=-1;card.addEventListener('dragstart',function(e){var r=e.target.closest&&e.target.closest('[data-di]');if(r){dg=+r.dataset.di;try{e.dataTransfer.setData('text/plain','x')}catch(x){}}});
+card.addEventListener('dragover',function(e){if(dg>-1)e.preventDefault()});
+card.addEventListener('drop',function(e){var r=e.target.closest('[data-di]');if(!r||dg<0)return;e.preventDefault();var k=mainBtns().map(mkey),m=k.splice(dg,1)[0];k.splice(+r.dataset.di,0,m);dg=-1;saveOrder(k)});
 try{var ls=JSON.parse(localStorage.getItem('aeroops.menuOrder')||'null');if(ls&&ls.length){applyMenu(ls);setTimeout(function(){applyMenu(ls)},2500)}}catch(e){}
 renderSettings();render();
 })();
