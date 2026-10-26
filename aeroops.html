@@ -14752,11 +14752,12 @@ function addFiles(files){if(!STORAGE_ON)return;var errs=[];files.forEach(functio
 function edit(n){if(!db){say('Sign in first.','e');return}if(!P.length){say('Platforms are still loading. Try again in a moment.','w');return}
  n=n||{};var isNew=!n.id,s=n.source||{};tagsE=(n.tags||[]).slice();exA=atts(n).slice();pend=[];rmv=[];saving=false;
  var cp=pf(n.platformId)||(n.platformCode&&P.filter(function(p){return p.code===n.platformCode})[0])||P.filter(function(p){return p.code.toLowerCase()===f.chip||p.name.toLowerCase().indexOf(f.chip)===0})[0]||P[0],def=cp.id;
- var cmdText=(n.commands||[]).map(function(c){return c.syntax}).join('\n');
+ var cmdRows=(n.commands||[]).map(function(c){return{syntax:c.syntax||'',description:c.description||'',example:c.example||'',exceptions:c.exceptions||''}});if(!cmdRows.length)cmdRows.push({syntax:'',description:'',example:'',exceptions:''});
+ function cmdUi(foc){var h=cmdRows.map(function(r,i){return'<div class="kh-row" style="grid-template-columns:1fr 1.4fr auto"><input class="khx-mono" data-cs="'+i+'" spellcheck="false" placeholder="Command  e.g. TRF" aria-label="Command" value="'+esc(r.syntax)+'"><input data-cw="'+i+'" maxlength="300" placeholder="Why / purpose of this command" aria-label="Why or purpose of this command" value="'+esc(r.description)+'"><button type="button" class="kh-btn" data-cr="'+i+'" aria-label="Remove command" title="Remove">&times;</button></div>'}).join('');var el=$('kn-cl2');if(!el)return;el.innerHTML=h;if(foc){var q=el.querySelectorAll('[data-cs]');if(q.length)q[q.length-1].focus()}}
  open('<h3>'+(isNew?'New note':'Edit note')+'</h3><p class="kh-meta">Enter a title and a command or description. Everything else is optional.</p>'
  +'<label for="kn-t">Title</label><input id="kn-t" maxlength="200" placeholder="e.g. Ticket Refund" value="'+esc(n.title)+'">'
  +'<div class="kh-g2"><div><label for="kn-p">GDS / Platform</label>'+platSel(def)+'</div><div><label for="kn-c">Category <span class="kh-meta">(auto if empty)</span></label><input id="kn-c" list="kn-cl" placeholder="e.g. Refund" value="'+esc(n.category)+'"><datalist id="kn-cl">'+uniq(CATS2.concat(N.map(function(x){return x.category}))).map(function(c){return'<option value="'+esc(c)+'">'}).join('')+'</datalist></div></div>'
- +'<label for="kn-cmd">Command <span class="kh-meta">one per line, exactly as typed in the GDS</span></label><textarea id="kn-cmd" class="khx-mono" spellcheck="false" placeholder="TRF&#10;RETF&#10;RFND">'+esc(cmdText)+'</textarea>'
+ +'<label>Commands <span class="kh-meta">exactly as typed in the GDS, with why it is used</span></label><div id="kn-cl2"></div><button type="button" class="kh-btn" id="kn-ca">+ Add command</button>'
  +'<label for="kn-desc">Description</label><textarea id="kn-desc" style="min-height:70px" placeholder="What this command or procedure does">'+esc(n.description||'')+'</textarea>'
  +'<label for="kn-tgi">Tags <span class="kh-meta">(press Enter or comma)</span></label><div class="khx-tg"><span id="kn-tg"></span><input id="kn-tgi" placeholder="Add tag" maxlength="30"></div>'
  +'<div id="kn-mb" hidden style="display:none!important">'
@@ -14771,18 +14772,21 @@ function edit(n){if(!db){say('Sign in first.','e');return}if(!P.length){say('Pla
  +'<div'+(STORAGE_ON?'':' hidden')+'><label>Attachments &amp; screenshots</label><div class="khx-drop" id="kn-dz"><button class="kh-btn" id="kn-pick" type="button">'+svg('clip',15)+' Choose files</button> <span class="kh-meta">or drop / paste screenshots here. PNG, JPG, WEBP, GIF, PDF, DOCX, XLSX, TXT up to '+fsz(MAXB)+' each, max '+MAXF+' files.</span><input type="file" id="kn-f" multiple hidden accept=".png,.jpg,.jpeg,.webp,.gif,.pdf,.docx,.xlsx,.txt"></div><div id="kn-al"></div></div>'
  +(STORAGE_ON?'':'<div class="kh-meta">File uploads are switched off because Firebase Storage is not enabled (free plan).</div>')
  +'<div class="kh-note e" id="kn-er" hidden></div><div class="kh-meta" id="kn-pg" role="status"></div><div class="kh-ft"><button class="kh-btn" id="kn-x" type="button">Cancel</button><button class="kh-btn pri" id="kn-ok" type="button">Save note</button></div>');
- $('kn-s').value=n.status||'published';$('kn-vis').value=vis(n);$('kn-rs').value=n.reviewStatus==='verified'?'':(n.reviewStatus||'');tagUi();attUi();
+ $('kn-s').value=n.status||'published';$('kn-vis').value=vis(n);$('kn-rs').value=n.reviewStatus==='verified'?'':(n.reviewStatus||'');tagUi();attUi();cmdUi();
  function vh(){var blk=$('kn-vis').value==='team'&&!isStaff();$('kn-v').disabled=blk;if(blk)$('kn-v').checked=false;$('kn-vh').textContent=blk?'Team notes can only be marked verified by admin or manager accounts. Set visibility to Private to self-verify.':($('kn-vis').value==='team'?'Team notes are readable by every signed-in AeroOps user.':'')}
  vh();$('kn-vis').onchange=vh;
  var md=$('kh-md');
  function formErr(m){var e=$('kn-er');if(e){e.textContent=m||'';e.hidden=!m}}
- md.onclick=function(e){var t=e.target.closest('[data-te],[data-tr],[data-ar],[data-pr],#kn-x,#kn-ok,#kn-pick,#kn-mt');if(!t)return;
+ md.onclick=function(e){var t=e.target.closest('[data-te],[data-tr],[data-ar],[data-pr],#kn-x,#kn-ok,#kn-pick,#kn-mt,#kn-ca,[data-cr]');if(!t)return;
+  if(t.id==='kn-ca'){cmdRows.push({syntax:'',description:'',example:'',exceptions:''});cmdUi(true);return}
+  if(t.dataset.cr!=null){cmdRows.splice(+t.dataset.cr,1);if(!cmdRows.length)cmdRows.push({syntax:'',description:'',example:'',exceptions:''});cmdUi();return}
   if(t.id==='kn-mt'){var mb=$('kn-mb'),op=mb.hidden;mb.hidden=!op;t.setAttribute('aria-expanded',op?'true':'false');return}
   if(t.id==='kn-x'){close();return}if(t.id==='kn-ok'){save();return}if(t.id==='kn-pick'){$('kn-f').click();return}
   if(t.dataset.te!=null){var i=+t.dataset.te,v=tagsE[i];tagsE.splice(i,1);tagUi();$('kn-tgi').value=v;$('kn-tgi').focus()}
   else if(t.dataset.tr!=null){tagsE.splice(+t.dataset.tr,1);tagUi()}
   else if(t.dataset.ar!=null){rmv.push(exA.splice(+t.dataset.ar,1)[0]);attUi()}
   else if(t.dataset.pr!=null){pend.splice(+t.dataset.pr,1);attUi()}};
+ md.oninput=function(e){var t=e.target;if(t.dataset&&t.dataset.cs!=null)cmdRows[+t.dataset.cs].syntax=t.value;else if(t.dataset&&t.dataset.cw!=null)cmdRows[+t.dataset.cw].description=t.value};
  $('kn-tgi').onkeydown=function(e){if(e.key==='Enter'||e.key===','){e.preventDefault();addTag(this.value);this.value=''}else if(e.key==='Backspace'&&!this.value&&tagsE.length){tagsE.pop();tagUi()}};
  $('kn-tgi').onblur=function(){if(this.value.trim()){addTag(this.value);this.value=''}};
  if(STORAGE_ON){$('kn-f').onchange=function(){addFiles([].slice.call(this.files));this.value=''};
@@ -14795,7 +14799,7 @@ function edit(n){if(!db){say('Sign in first.','e');return}if(!P.length){say('Pla
     var task=sg.ref(path).put(it.f,{contentType:it.t,customMetadata:{noteId:nid,uploadedBy:uid}});
     task.on('state_changed',function(sn){onPct(Math.round((sent+sn.bytesTransferred)/total*100))},function(er){delFiles(out);rej(er)},function(){var a={id:aid,name:it.f.name,path:path,type:it.t,size:it.f.size,kind:/^image\//.test(it.t)?'image':'file',uploadedBy:uid,uploadedAt:now()};out.push(a);onDone(a);sent+=it.f.size;i++;next()})})()})})}
  function save(){if(saving)return;addTag($('kn-tgi').value);$('kn-tgi').value='';formErr('');
-  var t=$('kn-t').value.trim(),desc=$('kn-desc').value.trim(),lines=$('kn-cmd').value.split('\n').map(function(x){return x.trim()}).filter(Boolean);
+  var t=$('kn-t').value.trim(),desc=$('kn-desc').value.trim(),crows=cmdRows.map(function(r){return{syntax:String(r.syntax).trim(),description:String(r.description).trim(),example:r.example,exceptions:r.exceptions}}).filter(function(r){return r.syntax}),lines=crows.map(function(r){return r.syntax});
   if(!t){formErr('Please enter a title.');return}
   if(!lines.length&&!desc){formErr('Please add a command or a description.');return}
   var pid=$('kn-p').value,p=pf(pid),st=now(),vs=$('kn-vis').value,ver=$('kn-v').checked;
@@ -14808,7 +14812,7 @@ function edit(n){if(!db){say('Sign in first.','e');return}if(!P.length){say('Pla
   uploadAll(nid,owner,function(a){done.push(a)},function(pc){$('kn-pg').textContent='Uploading attachments... '+pc+'%'}).then(function(newA){
    var o={ownerUid:owner,platformId:pid,platformName:p?p.name:'',platformCode:p?p.code:'',platformColor:p?p.color:'',title:t,description:desc.slice(0,1000),purpose:$('kn-pu').value.trim(),content:$('kn-b').value,category:cat,subcategory:$('kn-sc').value.trim(),example:$('kn-ex').value,
     steps:$('kn-st2').value.split('\n').map(function(x){return x.trim()}).filter(Boolean),warning:$('kn-w').value,verified:ver,reviewStatus:ver?'verified':$('kn-rs').value,verifiedBy:ver?((n.verified&&n.verifiedBy)||me()):null,status:$('kn-s').value,visibility:vs,tags:tg,keywords:csv($('kn-k').value),
-    commands:lines.map(function(sx){var q=old[sx]||{};return{syntax:sx,description:q.description||'',example:q.example||'',exceptions:q.exceptions||'',platformId:pid}}),
+    commands:crows.map(function(r){return{syntax:r.syntax,description:r.description,example:r.example||'',exceptions:r.exceptions||'',platformId:pid}}),
     source:{documentName:$('kn-sd').value.trim(),pageRef:$('kn-sp').value.trim(),documentId:(n.source&&n.source.documentId)||''},attachments:exA.concat(newA),updatedAt:st,updatedBy:me()};
    if(isNew){o.createdAt=st;o.createdBy=me();o.favorite=false}
    var ch=isNew?[]:diffNote(n,o);$('kn-pg').textContent='Saving...';
