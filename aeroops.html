@@ -14484,7 +14484,8 @@ render();
 .khx-f .khx-chp{background:#fff;color:var(--kb);border:1px solid var(--kbd)}.khx-f .khx-ic svg{color:#64748B}
 .khx-ib.cpy{display:inline-flex;gap:5px;align-items:center;font-size:12px;font-weight:600;border:1px solid #C9D6EA;background:#fff;padding:4px 9px}
 .khx-ol{list-style:none;counter-reset:s;margin:0 0 0 26px;padding:0}.khx-ol li{counter-increment:s;display:flex;gap:10px;margin:7px 0}.khx-ol li:before{content:counter(s);flex:none;width:22px;height:22px;border-radius:50%;background:#DCE8FB;color:#1D4ED8;font-size:12px;font-weight:700;display:grid;place-items:center}
-.khx-more{margin:12px 0;border:1px solid #E3E9F0;border-radius:10px;padding:4px 12px 10px}.khx-more>summary{cursor:pointer;font-weight:700;color:#1D4ED8;padding:8px 0}
+.khx-more{margin:12px 0;border:1px solid #E3E9F0;border-radius:10px;padding:4px 12px 10px}.khx-mt{display:flex;align-items:center;gap:6px;width:100%;background:none;border:0;font:inherit;font-size:14px;font-weight:700;color:#1D4ED8;padding:8px 0;cursor:pointer;text-align:left}.khx-mt svg{transition:transform .15s}.khx-mt[aria-expanded=true] svg{transform:rotate(90deg)}
+.kh-md{background:#fff!important}.kh-md [hidden]{display:none!important}
 textarea.khx-mono,#kn-cmd{font-family:'IBM Plex Mono',ui-monospace,Consolas,monospace;min-height:84px}
 @media(max-width:640px){.khx-hero{padding:16px}.khx-plane{display:none}.khx-toolbar{align-items:stretch}.khx-hero .khx-add{width:100%}}
 </style>
@@ -14758,7 +14759,7 @@ function edit(n){if(!db){say('Sign in first.','e');return}if(!P.length){say('Pla
  +'<label for="kn-cmd">Command <span class="kh-meta">one per line, exactly as typed in the GDS</span></label><textarea id="kn-cmd" class="khx-mono" spellcheck="false" placeholder="TRF&#10;RETF&#10;RFND">'+esc(cmdText)+'</textarea>'
  +'<label for="kn-desc">Description</label><textarea id="kn-desc" style="min-height:70px" placeholder="What this command or procedure does">'+esc(n.description||'')+'</textarea>'
  +'<label for="kn-tgi">Tags <span class="kh-meta">(press Enter or comma)</span></label><div class="khx-tg"><span id="kn-tg"></span><input id="kn-tgi" placeholder="Add tag" maxlength="30"></div>'
- +'<details class="khx-more"><summary>More details (optional)</summary>'
+ +'<div class="khx-more"><button type="button" class="khx-mt" id="kn-mt" aria-expanded="false" aria-controls="kn-mb">'+svg('chev',14)+' More details (optional)</button><div id="kn-mb" hidden>'
  +'<div class="kh-g2"><div><label for="kn-sc">Subcategory</label><input id="kn-sc" value="'+esc(n.subcategory)+'"></div><div><label for="kn-s">Status</label><select id="kn-s"><option value="published">Published</option><option value="draft">Draft</option><option value="archived">Archived</option></select></div>'
  +'<div><label for="kn-vis">Visibility</label><select id="kn-vis"><option value="private">Private (only me)</option><option value="team">Team</option></select></div><div><label for="kn-rs">Review status</label><select id="kn-rs"><option value="">User-authored</option><option value="extracted">Extracted from Source (not yet reviewed)</option><option value="needs_review">Needs Review</option></select></div></div>'
  +'<label for="kn-pu">Purpose</label><textarea id="kn-pu" style="min-height:56px">'+esc(n.purpose)+'</textarea>'
@@ -14768,14 +14769,15 @@ function edit(n){if(!db){say('Sign in first.','e');return}if(!P.length){say('Pla
  +'<div class="kh-g2"><div><label for="kn-k">Search keywords (comma separated)</label><input id="kn-k" value="'+esc((n.keywords||[]).join(', '))+'"></div><div><label for="kn-sd">Source document</label><input id="kn-sd" value="'+esc(s.documentName)+'"></div><div><label for="kn-sp">Page / section reference</label><input id="kn-sp" value="'+esc(s.pageRef)+'"></div></div>'
  +'<div'+(STORAGE_ON?'':' hidden')+'><label>Attachments &amp; screenshots</label><div class="khx-drop" id="kn-dz"><button class="kh-btn" id="kn-pick" type="button">'+svg('clip',15)+' Choose files</button> <span class="kh-meta">or drop / paste screenshots here. PNG, JPG, WEBP, GIF, PDF, DOCX, XLSX, TXT up to '+fsz(MAXB)+' each, max '+MAXF+' files.</span><input type="file" id="kn-f" multiple hidden accept=".png,.jpg,.jpeg,.webp,.gif,.pdf,.docx,.xlsx,.txt"></div><div id="kn-al"></div></div>'
  +(STORAGE_ON?'':'<div class="kh-meta">File uploads are switched off because Firebase Storage is not enabled (free plan).</div>')
- +'</details>'
+ +'</div></div>'
  +'<div class="kh-note e" id="kn-er" hidden></div><div class="kh-meta" id="kn-pg" role="status"></div><div class="kh-ft"><button class="kh-btn" id="kn-x" type="button">Cancel</button><button class="kh-btn pri" id="kn-ok" type="button">Save note</button></div>');
  $('kn-s').value=n.status||'published';$('kn-vis').value=vis(n);$('kn-rs').value=n.reviewStatus==='verified'?'':(n.reviewStatus||'');tagUi();attUi();
  function vh(){var blk=$('kn-vis').value==='team'&&!isStaff();$('kn-v').disabled=blk;if(blk)$('kn-v').checked=false;$('kn-vh').textContent=blk?'Team notes can only be marked verified by admin or manager accounts. Set visibility to Private to self-verify.':($('kn-vis').value==='team'?'Team notes are readable by every signed-in AeroOps user.':'')}
  vh();$('kn-vis').onchange=vh;
  var md=$('kh-md');
  function formErr(m){var e=$('kn-er');if(e){e.textContent=m||'';e.hidden=!m}}
- md.onclick=function(e){var t=e.target.closest('[data-te],[data-tr],[data-ar],[data-pr],#kn-x,#kn-ok,#kn-pick');if(!t)return;
+ md.onclick=function(e){var t=e.target.closest('[data-te],[data-tr],[data-ar],[data-pr],#kn-x,#kn-ok,#kn-pick,#kn-mt');if(!t)return;
+  if(t.id==='kn-mt'){var mb=$('kn-mb'),op=mb.hidden;mb.hidden=!op;t.setAttribute('aria-expanded',op?'true':'false');return}
   if(t.id==='kn-x'){close();return}if(t.id==='kn-ok'){save();return}if(t.id==='kn-pick'){$('kn-f').click();return}
   if(t.dataset.te!=null){var i=+t.dataset.te,v=tagsE[i];tagsE.splice(i,1);tagUi();$('kn-tgi').value=v;$('kn-tgi').focus()}
   else if(t.dataset.tr!=null){tagsE.splice(+t.dataset.tr,1);tagUi()}
