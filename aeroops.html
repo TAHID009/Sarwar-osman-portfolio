@@ -14574,7 +14574,7 @@ sec.innerHTML='<div class="khx-hero"><div class="khx-hl"><span class="khx-logo">
 +'<div class="khx-wrap" id="khx-wrap"><div class="khx-main"><div class="khx-bar"><label class="khx-search">'+svg('search',20)+'<input id="kh-q" type="search" placeholder="Search notes" aria-label="Search Knowledge Hub" autocomplete="off"><button type="button" id="kh-clr" aria-label="Clear search" hidden>'+svg('x',13)+'</button></label></div>'
 +'<div class="khx-toolbar"><div class="khx-chips" role="group" aria-label="Filter notes"><button type="button" class="khx-chip" data-chip="all">'+svg('grid',15)+' All</button><button type="button" class="khx-chip" data-chip="sabre">'+icoH('SABRE')+' Sabre</button><button type="button" class="khx-chip" data-chip="galileo">'+icoH('GALILEO')+' Galileo</button><button type="button" class="khx-chip" data-chip="amadeus">'+icoH('AMADEUS')+' Amadeus</button><button type="button" class="khx-chip" data-chip="procedures">'+icoH('PROCEDURES')+' Procedures</button><button type="button" class="khx-chip" data-chip="updates">'+icoH('UPDATES')+' Updates</button><button type="button" class="khx-chip" data-chip="mine"><span class="khx-star">'+svg('star',16)+'</span> My Notes</button><button type="button" class="khx-chip ghost" id="kh-more-f" aria-expanded="false">More filters</button></div><div class="khx-tr2"><select id="kh-sort" aria-label="Sort notes"><option value="upd">Last Updated</option><option value="created">Recently Created</option><option value="title">Alphabetical</option><option value="pos">My Order</option></select><div class="khx-seg" role="group" aria-label="Layout"><button type="button" data-lay="grid" aria-label="Grid view" title="Grid view">'+svg('grid',20)+'</button><button type="button" data-lay="list" aria-label="List view" title="List view">'+svg('list',20)+'</button></div></div></div>'
 +'<div class="khx-adv" id="kh-adv" hidden><select id="kh-scope" aria-label="Platform"></select><select id="kh-cat" aria-label="Category"></select><select id="kh-tag" aria-label="Tag"></select><select id="kh-src" aria-label="Source document"></select><select id="kh-rec" aria-label="Updated within"><option value="0">Any update date</option><option value="7">Updated: last 7 days</option><option value="30">Last 30 days</option><option value="90">Last 90 days</option></select><select id="kh-vf" aria-label="Verification"><option value="">Verified + unverified</option><option value="v">Verified only</option><option value="u">Unverified only</option><option value="r">Needs review</option></select><select id="kh-st" aria-label="Status"><option value="live">Draft + Published</option><option value="published">Published</option><option value="draft">Draft</option><option value="archived">Archived</option></select><button class="kh-btn" id="kh-imp" data-a="imp" type="button">Import Document</button></div>'
-+'<div id="kh-msg" role="status" aria-live="polite"></div><div class="khx-nrow"><span class="khx-count" id="kh-cnt"></span><span class="khx-pgr" id="kh-pgr"></span></div><div id="kh-list" class="khx-grid"></div></div><aside class="khx-panel" id="khx-panel" aria-label="Note details" hidden></aside></div>';
++'<div id="kh-msg" role="status" aria-live="polite"></div><div class="khp-bulk" id="kh-bulk" role="toolbar" aria-label="Bulk actions" hidden></div><div class="khx-nrow"><span class="khx-count" id="kh-cnt"></span><span class="khx-pgr" id="kh-pgr"></span></div><div id="kh-list" class="khx-grid"></div></div><aside class="khx-panel" id="khx-panel" aria-label="Note details" hidden></aside></div>';
 function ok(m){say(m);clearTimeout(okT);okT=setTimeout(function(){var e=$('kh-msg');if(e&&e.textContent===m)say('')},4500)}
 function col(c){return/^#[0-9a-fA-F]{3,8}$/.test(c||'')?c:'#475467'}
 function me(){var u=null;try{u=firebase.auth().currentUser}catch(e){}return{uid:u?u.uid:(uid||''),name:u?(u.displayName||u.email||u.uid):''}}
@@ -14644,8 +14644,8 @@ function skel(){var h='';for(var i=0;i<6;i++)h+='<div class="khx-sk"><i></i><i><
 function cardH(n){var t=theme(n),pl=pill(n),a=atts(n),tg=n.tags||[],fav=isFav(n),cs=(n.commands||[]).map(function(c){return c.syntax}).filter(Boolean),pv=(cs.length?cs:String(n.example||'').split('\n').filter(Boolean)).slice(0,3),
  desc=n.description||n.purpose||n.content||'',alt=!pv.length?String(n.purpose||n.content||'').split('\n')[0].slice(0,110):'';
  var pm=f.sort==='pos'?POSMAP[n.id]:null,pc=pm?'<span class="khx-pos"><b title="Position">'+pm.i+'</b><button type="button" data-a="mvup" data-id="'+n.id+'" aria-label="Move earlier" title="Move earlier"'+(pm.i===1?' disabled':'')+'>&#9650;</button><button type="button" data-a="mvdn" data-id="'+n.id+'" aria-label="Move later" title="Move later"'+(pm.i===pm.t?' disabled':'')+'>&#9660;</button></span>':'';
- return'<article class="khx-card'+(sel===n.id?' sel':'')+'"'+(pm?' draggable="true" data-drag="'+n.id+'"':'')+' tabindex="0" data-a="open" data-id="'+n.id+'" aria-label="'+esc(n.title)+'" style=""--kb:'+t[0]+';--kbg:'+t[1]+';--kbd:'+t[2]+'">'
- +'<div class="khx-r1">'+pc+badgeH(n)+(pl?'<span class="khx-pill '+pl[1]+'">'+pl[0]+'</span>':'')
+ return'<article class="khx-card'+(sel===n.id?' sel':'')+(CK[n.id]?' chk':'')+'"'+(pm?' draggable="true" data-drag="'+n.id+'"':'')+' tabindex="0" data-a="open" data-id="'+n.id+'" aria-label="'+esc(n.title)+'" style=""--kb:'+t[0]+';--kbg:'+t[1]+';--kbd:'+t[2]+'">'
+ +'<div class="khx-r1"><input type="checkbox" class="khp-ck" data-a="pick" data-id="'+n.id+'"'+(CK[n.id]?' checked':'')+' title="Select this note" aria-label="Select '+esc(n.title)+'">'+pc+badgeH(n)+(pl?'<span class="khx-pill '+pl[1]+'">'+pl[0]+'</span>':'')
  +'<button type="button" class="khx-bmk'+(fav?' on':'')+'" data-a="fav" data-id="'+n.id+'" aria-pressed="'+fav+'" aria-label="'+(fav?'Remove bookmark':'Bookmark note')+'">'+svg('star',20,fav?'currentColor':'none')+'</button></div>'
  +'<h3 class="khx-t">'+esc(n.title)+'</h3>'+(desc?'<p class="khx-d">'+esc(desc)+'</p>':'')
  +(pv.length?'<pre class="khx-cmd">'+pv.map(function(x){return'<span class="khx-pr">&gt;</span> '+esc(x)}).join('\n')+'</pre>':(alt?'<div class="khx-cmd alt">'+esc(alt)+'</div>':''))
@@ -14714,8 +14714,29 @@ function del(n){if(!confirm('Delete "'+n.title+'" permanently? Its attachments a
  var fl=atts(n).slice(),oid=n.ownerUid;db.collection('kh_notes').doc(n.id).delete().then(function(){
   if(fl.length)delFiles(fl);db.collection('kh_notes').doc(n.id).collection('history').where('ownerUid','==',uid).get().then(function(s){var b=db.batch();s.forEach(function(d){b.delete(d.ref)});return b.commit()}).catch(function(){});
   sel=null;ok('Note deleted.');render()}).catch(err)}
+/* ---- multi-select + bulk delete ---- */
+var CK={};
+function ckIds(){return Object.keys(CK).filter(function(k){return CK[k]})}
+function bulk(){var b=$('kh-bulk');if(!b)return;var ids={};N.forEach(function(n){ids[n.id]=1});Object.keys(CK).forEach(function(k){if(!ids[k])delete CK[k]});
+ var L=sorted(visible()),c=ckIds(),vis=L.filter(function(n){return CK[n.id]}).length;
+ if(!L.length){b.hidden=true;b.innerHTML='';return}b.hidden=false;
+ b.innerHTML='<label class="khp-all"><input type="checkbox" id="kh-all" data-a="pickall" aria-label="Select all notes"> Select all ('+L.length+')</label>'
+ +(c.length?'<span class="khp-n" aria-live="polite">'+c.length+' selected</span><button type="button" class="kh-btn warn khp-del" data-a="delsel">'+svg('x',14)+' Delete selected</button><button type="button" class="kh-btn" data-a="clrsel">Clear</button>':'<span class="khp-hint">Tick notes to delete several at once</span>');
+ var a=$('kh-all');if(a){a.checked=vis>0&&vis===L.length;a.indeterminate=vis>0&&vis<L.length}
+ [].forEach.call(sec.querySelectorAll('.khp-ck'),function(x){x.checked=!!CK[x.dataset.id];var cd=x.closest('.khx-card');if(cd)cd.classList.toggle('chk',!!CK[x.dataset.id])})}
+function delMany(){var L=ckIds().map(function(id){return N.filter(function(x){return x.id===id})[0]}).filter(Boolean),can=L.filter(canEdit),skip=L.length-can.length;
+ if(!can.length){say('You can only delete notes you own (or team notes if you are a manager).','w');return}
+ if(!confirm('Delete '+can.length+' note'+(can.length===1?'':'s')+' permanently? Their attachments and history will also be removed. This cannot be undone.'+(skip?'\n\n'+skip+' selected note(s) belong to someone else and will be skipped.':'')))return;
+ var ch=[],i;for(i=0;i<can.length;i+=400)ch.push(can.slice(i,i+400));
+ ch.reduce(function(pr,part){return pr.then(function(){var bt=db.batch();part.forEach(function(n){bt.delete(db.collection('kh_notes').doc(n.id))});return bt.commit().then(function(){part.forEach(function(n){var fl=atts(n).slice();if(fl.length)delFiles(fl);db.collection('kh_notes').doc(n.id).collection('history').where('ownerUid','==',uid).get().then(function(s){var hb=db.batch();s.forEach(function(d){hb.delete(d.ref)});return hb.commit()}).catch(function(){})})})})},Promise.resolve())
+ .then(function(){can.forEach(function(n){delete CK[n.id];if(sel===n.id)sel=null});ok('Deleted '+can.length+' note'+(can.length===1?'':'s')+'.'+(skip?' '+skip+' skipped (not yours).':''));render()}).catch(err)}
+var _rend=render;render=function(){_rend.apply(this,arguments);bulk()};
 function act(t){var a=t.dataset.a,n=cur();
  if(t.dataset.id){var m=N.filter(function(x){return x.id===t.dataset.id})[0];if(m)n=m}
+ if(a==='pick'){CK[t.dataset.id]=t.checked;return bulk()}
+ if(a==='pickall'){sorted(visible()).forEach(function(x){CK[x.id]=t.checked});return bulk()}
+ if(a==='clrsel'){CK={};return bulk()}
+ if(a==='delsel')return delMany();
  if(a==='mvup'||a==='mvdn')return moveCard(t.dataset.id,a==='mvup'?-1:1);
  if(a==='add')return edit(null);if(a==='imp')return importUi();
  if(a==='reset'){f.q='';f.chip='all';f.scope='';f.cat='';f.tag='';f.src='';f.rec='0';f.vf='';f.st='live';f.pg=0;$('kh-q').value='';return render()}
@@ -15129,6 +15150,121 @@ card.addEventListener('drop',function(e){var r=e.target.closest('[data-di]');if(
 try{var ls=JSON.parse(localStorage.getItem('aeroops.menuOrder')||'null');if(ls&&ls.length){applyMenu(ls);setTimeout(function(){applyMenu(ls)},2500)}}catch(e){}
 renderSettings();render();
 })();
+</script>
+
+
+<!-- ===== AeroOps UI polish: icons, tooltips, upload pipeline (presentation only; no data/logic touched) ===== -->
+<style id="kh-ui-pro">
+/* ---- Sidebar: consistent outline icons, clear active state ---- */
+#ptc-root #ptc-nav .ptc-nav-btn svg{width:20px;height:20px;flex:none;stroke-width:1.75}
+#ptc-root #ptc-nav .ptc-nav-btn{min-height:42px;position:relative}
+#ptc-root #ptc-nav .ptc-nav-btn:hover{background:rgba(255,255,255,.07);color:#fff}
+#ptc-root #ptc-nav .ptc-nav-btn.active{background:#1D4ED8;color:#fff}
+#ptc-root #ptc-nav .ptc-nav-btn:focus-visible{outline:2px solid #93C5FD;outline-offset:-2px}
+/* ---- Cards: clean white, platform colour as accent ---- */
+#aero-kh .khx-card{background:#fff;border:1px solid #E3E9F0;border-left:4px solid var(--kb);box-shadow:0 1px 2px rgba(16,24,40,.04)}
+#aero-kh .khx-card:hover{border-color:#C9D6EA;border-left-color:var(--kb);box-shadow:0 8px 22px rgba(16,24,40,.09)}
+#aero-kh .khx-card.sel{border-color:var(--kb);box-shadow:0 0 0 2px var(--kb)}
+#aero-kh .khx-cmd{background:#F4F7FC;border-color:#E3E9F0}
+#aero-kh .khx-chip{min-height:38px}
+#aero-kh .khx-ib,#aero-kh .khx-bmk,#aero-kh .khx-seg button{min-width:34px;min-height:34px}
+#aero-kh :focus-visible,.kh-ov :focus-visible{outline:2px solid #2563EB;outline-offset:2px}
+.khx-ib svg,.khx-bmk svg{transition:transform .12s}.khx-ib:hover svg{transform:scale(1.08)}
+.khx-ib.del:hover,.khx-ib[data-a=del]:hover{background:#FEF3F2;color:#B42318}
+/* ---- Upload + pipeline strip ---- */
+.khp-up{display:grid;grid-template-columns:minmax(220px,300px) 1fr;gap:16px;background:#fff;border:1px solid #E3E9F0;border-radius:16px;padding:16px;margin:0 0 14px;box-shadow:0 1px 3px rgba(16,24,40,.05)}
+.khp-dz{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-align:center;border:2px dashed #9DB6E6;border-radius:14px;background:#F5F9FF;color:#1D4ED8;padding:16px 12px;cursor:pointer;font:inherit;transition:background .15s,border-color .15s}
+.khp-dz:hover,.khp-dz.over{background:#E6F0FF;border-color:#2563EB}
+.khp-dz b{font-size:15px;color:#0B2545}.khp-dz small{font-size:12px;color:#64748B}
+.khp-ft{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap;justify-content:center}.khp-ft i{font-style:normal;font-size:10.5px;font-weight:700;border-radius:5px;padding:2px 7px;background:#fff;border:1px solid #D5DEEA;color:#475467}
+.khp-pl h4{margin:0 0 10px;font-size:14px;color:#0B2545}
+.khp-steps{display:flex;align-items:flex-start;gap:6px;list-style:none;margin:0;padding:0}
+.khp-s{flex:1;min-width:0;text-align:center;position:relative}
+.khp-s .ic{width:44px;height:44px;margin:0 auto 6px;border-radius:50%;display:grid;place-items:center;background:#EEF3FB;color:#2563EB;border:2px solid transparent}
+.khp-s b{display:block;font-size:12.5px;color:#0B2545;line-height:1.25}.khp-s span.d{display:block;font-size:11.5px;color:#64748B;line-height:1.3;margin-top:2px}
+.khp-s:not(:last-child):after{content:"";position:absolute;top:21px;left:calc(50% + 28px);right:calc(-50% + 28px);border-top:2px dashed #C9D6EA}
+.khp-s.done .ic{background:#E7F6EC;color:#067647}.khp-s.act .ic{background:#fff;border-color:#2563EB;box-shadow:0 0 0 4px rgba(37,99,235,.15)}
+.khp-s.act .ic svg{animation:khpspin 1.4s linear infinite}.khp-s.act.still .ic svg{animation:none}
+@keyframes khpspin{50%{opacity:.45}}
+.kh-md .khp-steps{margin:8px 0 14px;padding:12px;background:#F5F9FF;border:1px solid #DCE8FB;border-radius:12px}
+.kh-md .khp-s .d{display:none}.kh-md .khp-s .ic{width:34px;height:34px}.kh-md .khp-s:not(:last-child):after{top:16px;left:calc(50% + 22px);right:calc(-50% + 22px)}
+
+/* ---- multi-select / bulk delete ---- */
+.khp-ck{appearance:none;-webkit-appearance:none;flex:none;width:20px;height:20px;margin:0;border:2px solid #98A2B3;border-radius:6px;background:#fff;cursor:pointer;display:inline-grid;place-content:center;padding:0!important;transition:background .12s,border-color .12s}
+.khp-ck:hover{border-color:#2563EB}.khp-ck:checked,.khp-ck:indeterminate{background:#2563EB;border-color:#2563EB}
+.khp-ck:checked:after{content:"";width:9px;height:5px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg) translate(1px,-1px)}
+.khx-card.chk{background:#F5F9FF;box-shadow:0 0 0 2px #2563EB}
+.khp-bulk{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:#fff;border:1px solid #E3E9F0;border-radius:12px;padding:8px 14px;margin:0 0 10px}.khp-bulk[hidden]{display:none}
+.khp-all{display:inline-flex;align-items:center;gap:9px;font-size:13.5px;font-weight:600;color:#0B2545;cursor:pointer}
+.khp-all input{appearance:none;-webkit-appearance:none;width:20px;height:20px;margin:0;border:2px solid #98A2B3;border-radius:6px;background:#fff;cursor:pointer;display:inline-grid;place-content:center;padding:0!important}
+.khp-all input:checked,.khp-all input:indeterminate{background:#2563EB;border-color:#2563EB}
+.khp-all input:checked:after{content:"";width:9px;height:5px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg) translate(1px,-1px)}
+.khp-all input:indeterminate:after{content:"";width:10px;height:2px;background:#fff;border-radius:1px}
+.khp-n{font-size:13px;font-weight:700;color:#1D4ED8}.khp-hint{font-size:12.5px;color:#64748B}
+.khp-del{display:inline-flex;align-items:center;gap:6px;min-height:36px}.khp-bulk .kh-btn{min-height:36px}
+.khp-ck:focus-visible,.khp-all input:focus-visible{outline:2px solid #2563EB;outline-offset:2px}
+@media(max-width:900px){.khp-up{grid-template-columns:1fr}}
+@media(max-width:560px){.khp-pl .khp-steps{display:grid;grid-template-columns:1fr 1fr;gap:12px}.khp-pl .khp-s:after{display:none}.khp-steps .khp-s .d{display:none}}
+@media(prefers-reduced-motion:reduce){.khp-s.act .ic svg{animation:none}.khx-ib svg{transition:none}}
+</style>
+<script id="kh-ui-pro-js">
+(function(){'use strict';
+function I(p){return '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+p+'</svg>'}
+/* Outline icon set (24px grid, 1.75 stroke) */
+var IC={
+home:'<rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2M9 13l2 2 4-4"/>',
+pwi:'<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>',
+sales:'<path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>',
+logs:'<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M8 7h8M8 11h6"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/>',
+pending:'<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 8v4l3 2"/>',
+reports:'<rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/>',
+passengers:'<path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M21 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/>',
+master:'<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/>',
+settings:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>',
+kh:'<path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2zM22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/>',
+up:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>',
+file:'<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M12 18v-6M9.5 14.5 12 12l2.5 2.5"/>',
+scan:'<path d="M4 7V5a1 1 0 0 1 1-1h2M17 4h2a1 1 0 0 1 1 1v2M20 17v2a1 1 0 0 1-1 1h-2M7 20H5a1 1 0 0 1-1-1v-2M8 9h8M8 12h8M8 15h5"/>',
+ai:'<path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9zM19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"/>',
+ok:'<circle cx="12" cy="12" r="9"/><path d="M8 12.5l3 3 5-6"/>'};
+var LBL={home:'Work Record',pwi:'Activity Tracker',sales:'Revenue Desk',logs:'Log Book',pending:'Pending adjustments (refund follow-up)',reports:'Dashboard and analytics',passengers:'Passenger Information',master:'Master Data and cloud sync',settings:'Settings',kh:'Knowledge Hub'};
+function nav(){var n=document.getElementById('ptc-nav');if(!n)return;
+ [].forEach.call(n.querySelectorAll('.ptc-nav-btn[data-aero]'),function(b){var k=b.getAttribute('data-aero');if(!IC[k]||b.getAttribute('data-ico')===k)return;
+  var s=b.querySelector('svg');if(s){s.setAttribute('viewBox','0 0 24 24');s.setAttribute('stroke-width','1.75');s.removeAttribute('fill');s.setAttribute('fill','none');s.innerHTML=IC[k];s.removeAttribute('width');s.removeAttribute('height')}
+  b.setAttribute('data-ico',k);b.title=LBL[k]||b.title;b.setAttribute('aria-label',(b.querySelector('.aero-lbl')||b).textContent.trim()||LBL[k])})}
+/* Tooltips + accessible names for icon-only buttons */
+var TIP={add:'Add new note',imp:'Import document',fav:'Add or remove favorite',edit:'Edit',del:'Delete',dup:'Duplicate',archive:'Archive',hist:'Version history',open:'Open original document',closep:'Close details',lb:'View image',lbx:'Close',lbp:'Previous image',lbn:'Next image',mvup:'Move up',mvdn:'Move down',ver:'Mark verified',restore:'Restore',reset:'Reset'};
+function tips(root){[].forEach.call(root.querySelectorAll('button,a[role=button],a.khx-ib'),function(b){
+ if(b.title)return;var t=b.getAttribute('aria-label')||TIP[b.getAttribute('data-a')]||(b.textContent||'').trim().slice(0,40);
+ if(t){b.title=t;if(!b.getAttribute('aria-label')&&!(b.textContent||'').trim())b.setAttribute('aria-label',t)}})}
+/* Upload strip */
+function strip(){var m=document.querySelector('#aero-kh .khx-main');if(!m||m.querySelector('.khp-up'))return false;
+ var st=[['file','1. Uploaded','Stored in your browser session'],['scan','2. Text / OCR','Extract text & images'],['ai','3. AI organizes','Detect platform & topics'],['ok','4. Knowledge cards','Reviewed & searchable']];
+ var d=document.createElement('section');d.className='khp-up';d.setAttribute('aria-label','Upload documents');
+ d.innerHTML='<button type="button" class="khp-dz" id="khp-dz" title="Upload documents: click to browse or drop files here" aria-label="Upload documents">'+I(IC.up).replace('width="22" height="22"','width="40" height="40"')+'<b>Upload Documents</b><small>Drag &amp; drop files or click to browse</small><span class="khp-ft"><i>PDF</i><i>DOCX</i></span></button>'
+ +'<div class="khp-pl"><h4>Document processing pipeline</h4><ol class="khp-steps">'+st.map(function(s){return '<li class="khp-s"><div class="ic">'+I(IC[s[0]])+'</div><b>'+s[1]+'</b><span class="d">'+s[2]+'</span></li>'}).join('')+'</ol></div>';
+ m.insertBefore(d,m.firstChild);
+ var z=d.querySelector('#khp-dz');
+ function go(files){var b=document.getElementById('kh-imp');if(!b)return;b.click();if(!files||!files.length)return;
+  setTimeout(function(){var fi=document.getElementById('ki-fi');if(!fi)return;try{var dt=new DataTransfer();[].forEach.call(files,function(f){dt.items.add(f)});fi.files=dt.files;if(fi.onchange)fi.onchange.call(fi)}catch(e){}},80)}
+ z.addEventListener('click',function(){go()});
+ ['dragenter','dragover'].forEach(function(e){z.addEventListener(e,function(ev){ev.preventDefault();z.classList.add('over')})});
+ ['dragleave','drop'].forEach(function(e){z.addEventListener(e,function(ev){ev.preventDefault();z.classList.remove('over')})});
+ z.addEventListener('drop',function(ev){go(ev.dataTransfer&&ev.dataTransfer.files)});
+ return true}
+/* Live pipeline status inside the import dialog (read from what the dialog is showing) */
+function pipe(md){var h=md.querySelector('h3');if(!h||md.querySelector('.khp-steps'))return;var t=h.textContent,txt=md.textContent,n=-1;
+ if(/Import documents/i.test(t)){var busy=/Analyzing\.\.\./.test(txt),has=md.querySelectorAll('#ki-fl .kh-mrow').length;n=busy?2:has?1:0}
+ else if(/Review extracted/i.test(t)||/Compare/i.test(t))n=3;else if(/Import (complete|done|finished)|Imported/i.test(t)||md.querySelector('[data-ia=again]'))n=4;
+ if(n<0)return;var L=[['file','Uploaded'],['scan','Text / OCR'],['ai','AI organizes'],['ok','Knowledge cards']];
+ var o=document.createElement('ol');o.className='khp-steps';o.setAttribute('aria-label','Processing progress');
+ o.innerHTML=L.map(function(s,i){var c=i<n?'done':i===n?'act':'';if(n===0&&i===0||n===3&&i===3)c+=' still';return '<li class="khp-s '+c+'"'+(i===n?' aria-current="step"':'')+'><div class="ic">'+I(i<n?IC.ok:IC[s[0]])+'</div><b>'+s[1]+'</b></li>'}).join('');
+ h.insertAdjacentElement('afterend',o)}
+function run(){nav();var a=document.getElementById('aero-kh'),md=document.getElementById('kh-md');strip();if(a)tips(a);if(md){tips(md);pipe(md)}tips(document.getElementById('ptc-root')||document.body)}
+var t=0;function sched(){clearTimeout(t);t=setTimeout(run,60)}
+if(window.MutationObserver){var mo=new MutationObserver(sched);
+ [document.getElementById('aero-kh'),document.getElementById('kh-md'),document.getElementById('ptc-nav')].forEach(function(e){if(e)mo.observe(e,{childList:true,subtree:true})})}
+run();setTimeout(run,800);setTimeout(run,2500)})();
 </script>
 
 </body></html>
