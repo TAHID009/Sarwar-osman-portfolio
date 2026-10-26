@@ -14451,6 +14451,22 @@ render();
 @media(max-width:1099px){.khx-wrap.open{grid-template-columns:minmax(0,1fr)}.khx-panel{position:fixed;top:0;right:0;bottom:0;width:min(440px,100%);max-height:none;border-radius:16px 0 0 16px;z-index:9999;box-shadow:-12px 0 40px rgba(11,37,69,.35)}}
 @media(max-width:640px){.khx-panel{width:100%;border-radius:0}.khx-hl h2{font-size:22px}.khx-grid{grid-template-columns:1fr}.khx-bar{gap:8px}#aero-kh .khx-add{width:100%}.khx-pt{font-size:21px}}
 </style>
+
+<style id="kh-css3">
+.kh-md.wide{width:min(1080px,100%)}
+.khi-sum{background:#EEF3FB;border-radius:10px;padding:10px 12px;font-size:13.5px;margin:6px 0}
+.khi-doc{border:1px solid #E3E9F0;border-radius:10px;padding:8px 12px;margin:8px 0}
+.khi-bar{display:flex;gap:8px;margin:10px 0}
+.khi-it{border:1px solid #D9E2EE;border-radius:12px;padding:12px;margin:10px 0;background:#fff}.khi-it.off{opacity:.62}
+.khi-h{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.khi-t{font-size:15px;color:#0B2545}.khi-ck0{display:inline-flex}
+.khi-b{font-size:11.5px;font-weight:700;border-radius:999px;padding:3px 10px;background:#E8F0FC;color:#1D4ED8}.khi-b.g{background:#EEF0F3;color:#475467}.khi-b.w{background:#FEF0C7;color:#93370D}.khi-b.ok{background:#E4F3D4;color:#3B7A1A}.khi-b.e{background:#FEE4E2;color:#B42318}
+.khi-cm{background:#F4F7FC;border-radius:8px;padding:8px 10px;margin:8px 0;font-size:13px}.khi-cm code{font:500 13px/1.5 'IBM Plex Mono',ui-monospace,Consolas,monospace;white-space:pre-wrap;word-break:break-all;color:#0B2545}.khi-cm code.ex{color:#475467}
+.khi-p{font-size:13px;color:#475467;margin:6px 0}.khi-fl{font-size:12.5px;color:#93370D;background:#FFFAEB;border-radius:8px;padding:6px 10px;margin:6px 0}
+.khi-ac{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.khi-ck{display:flex;gap:6px;align-items:center;font-size:13px;margin:6px 0}.khi-ck input{width:auto}
+.khi-ed{border-top:1px dashed #C9D4E3;margin-top:10px;padding-top:6px}
+.khi-cmp{border-collapse:collapse;width:100%;font-size:13px}.khi-cmp th,.khi-cmp td{border:1px solid #E3E9F0;padding:6px 8px;vertical-align:top;text-align:left}.khi-cmp th{background:#F4F7FC;width:110px}.khi-cmp ul{margin:0;padding-left:16px}
+.khx-pill.nr{background:#FEF0C7;color:#93370D}
+</style>
 <script id="kh-js">
 (function(){'use strict';
 var root=document.getElementById('ptc-root'),set=document.getElementById('aero-settings'),nav=document.getElementById('ptc-nav');
@@ -14473,7 +14489,7 @@ var sec=document.createElement('section');sec.id='aero-kh';sec.className='aero-p
 set.insertAdjacentElement('afterend',sec);
 var ov=document.createElement('div');ov.className='kh-ov';ov.innerHTML='<div class="kh-md" id="kh-md"></div>';document.body.appendChild(ov);
 ov.addEventListener('mousedown',function(e){if(e.target===ov)close()});document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
-function open(h){$('kh-md').innerHTML=h;ov.classList.add('on')}function close(){ov.classList.remove('on')}
+function open(h){$('kh-md').className='kh-md';$('kh-md').innerHTML=h;ov.classList.add('on')}function close(){ov.classList.remove('on')}
 var pb=nav.querySelector('[data-aero="passengers"]'),kb=document.createElement('button');kb.type='button';kb.className='ptc-nav-btn';kb.setAttribute('data-aero','kh');kb.title='Knowledge Hub';
 kb.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5v14zM4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg><span class="aero-lbl">Knowledge Hub</span>';
 nav.insertBefore(kb,pb?pb.nextSibling:nav.firstChild);
@@ -14495,6 +14511,7 @@ function tick(){var u=null;try{u=window.firebase&&firebase.apps&&firebase.apps.l
  un.push(db.collection('kh_settings').doc(uid).onSnapshot(function(d){S=d.exists?d.data():{};if(S.menuOrder){try{localStorage.setItem('aeroops.menuOrder',JSON.stringify(S.menuOrder))}catch(e){}applyMenu(S.menuOrder)}renderSettings();render()},function(){}))}
 function seed(){var b=db.batch();SEED.forEach(function(s,i){b.set(db.collection('kh_platforms').doc(),{ownerUid:uid,name:s[0],code:s[1],type:s[2],color:s[3],active:!!s[4],sortOrder:i,keywords:s[5],createdAt:now(),updatedAt:now()})});b.commit().catch(err)}
 setInterval(tick,1500);
+var STORAGE_ON=false; /* Free (Spark) plan has no Cloud Storage. Set to true only after you enable Firebase Storage and publish storage.rules. */
 /* ---------- Knowledge Hub v2: list, detail panel, editor, attachments, history ---------- */
 var ROLE='',NO={},NT={},sel=null,loaded=false,URLS={},HIST={},histOpen=false,sdkP=null,exA=[],pend=[],rmv=[],tagsE=[],lbN=0,saving=false,okT=0,srchT=0;
 var THEME={SABRE:['#E11D2E','#FDEEEE','#F5C6C8'],GALILEO:['#2563EB','#EBF3FE','#C7DCF9'],AMADEUS:['#EA6A0A','#FEF4E4','#F8DCAE'],GENERAL:['#7C3AED','#F5F0FE','#DCCFF9'],AIRLINE:['#0E9AA7','#E8F7F8','#BFE4E7'],CUSTOM:['#16A34A','#ECF8F0','#C2E7CF']};
@@ -14527,7 +14544,7 @@ sec.innerHTML='<div class="khx-head"><div class="khx-hl"><span class="khx-logo">
 +'<div class="khx-wrap" id="khx-wrap"><div class="khx-main"><div class="khx-bar"><label class="khx-search">'+svg('search',20)+'<input id="kh-q" type="search" placeholder="Search title, description, command, platform, category or tag" aria-label="Search Knowledge Hub" autocomplete="off"><button type="button" id="kh-clr" aria-label="Clear search" hidden>'+svg('x',13)+'</button></label>'
 +'<select id="kh-sort" aria-label="Sort notes"><option value="upd">Last Updated</option><option value="created">Recently Created</option><option value="title">Alphabetical</option></select><div class="khx-seg" role="group" aria-label="Layout"><button type="button" data-lay="grid" aria-label="Grid view" title="Grid view">'+svg('grid',20)+'</button><button type="button" data-lay="list" aria-label="List view" title="List view">'+svg('list',20)+'</button></div></div>'
 +'<div class="khx-chips" role="group" aria-label="Filter notes"><button type="button" class="khx-chip" data-chip="all">All</button><button type="button" class="khx-chip" data-chip="sabre">Sabre</button><button type="button" class="khx-chip" data-chip="galileo">Galileo</button><button type="button" class="khx-chip" data-chip="amadeus">Amadeus</button><button type="button" class="khx-chip" data-chip="procedures">Procedures</button><button type="button" class="khx-chip" data-chip="updates">Updates</button><button type="button" class="khx-chip" data-chip="mine">My Notes</button><button type="button" class="khx-chip ghost" id="kh-more-f" aria-expanded="false">More filters</button></div>'
-+'<div class="khx-adv" id="kh-adv" hidden><select id="kh-scope" aria-label="Platform"></select><select id="kh-cat" aria-label="Category"></select><select id="kh-tag" aria-label="Tag"></select><select id="kh-src" aria-label="Source document"></select><select id="kh-rec" aria-label="Updated within"><option value="0">Any update date</option><option value="7">Updated: last 7 days</option><option value="30">Last 30 days</option><option value="90">Last 90 days</option></select><select id="kh-vf" aria-label="Verification"><option value="">Verified + unverified</option><option value="v">Verified only</option><option value="u">Unverified only</option></select><select id="kh-st" aria-label="Status"><option value="live">Draft + Published</option><option value="published">Published</option><option value="draft">Draft</option><option value="archived">Archived</option></select><button class="kh-btn" id="kh-imp" data-a="imp" type="button">Import Document</button></div>'
++'<div class="khx-adv" id="kh-adv" hidden><select id="kh-scope" aria-label="Platform"></select><select id="kh-cat" aria-label="Category"></select><select id="kh-tag" aria-label="Tag"></select><select id="kh-src" aria-label="Source document"></select><select id="kh-rec" aria-label="Updated within"><option value="0">Any update date</option><option value="7">Updated: last 7 days</option><option value="30">Last 30 days</option><option value="90">Last 90 days</option></select><select id="kh-vf" aria-label="Verification"><option value="">Verified + unverified</option><option value="v">Verified only</option><option value="u">Unverified only</option><option value=\"r\">Needs review</option></select><select id="kh-st" aria-label="Status"><option value="live">Draft + Published</option><option value="published">Published</option><option value="draft">Draft</option><option value="archived">Archived</option></select><button class="kh-btn" id="kh-imp" data-a="imp" type="button">Import Document</button></div>'
 +'<div id="kh-msg" role="status" aria-live="polite"></div><div class="khx-count" id="kh-cnt"></div><div id="kh-list" class="khx-grid"></div></div><aside class="khx-panel" id="khx-panel" aria-label="Note details" hidden></aside></div>';
 function ok(m){say(m);clearTimeout(okT);okT=setTimeout(function(){var e=$('kh-msg');if(e&&e.textContent===m)say('')},4500)}
 function col(c){return/^#[0-9a-fA-F]{3,8}$/.test(c||'')?c:'#475467'}
@@ -14542,7 +14559,7 @@ function fmt(s){var d=new Date(s);return isNaN(d)?'':d.toLocaleDateString('en-GB
 function fmtT(s){var d=new Date(s);return isNaN(d)?'':d.toLocaleString('en-GB',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})}
 function plat(n){var p=pf(n.platformId);return p?{name:p.name,code:p.code,color:p.color}:{name:n.platformName||'General',code:n.platformCode||'GENERAL',color:n.platformColor||'#475467'}}
 function theme(n){var p=plat(n),t=THEME[String(p.code).toUpperCase()];if(!t){var nm=String(p.name).toLowerCase();Object.keys(THEME).forEach(function(k){if(!t&&nm.indexOf(k.toLowerCase())===0)t=THEME[k]})}return t||[col(p.color),'#F5F7FA','#DDE3EC']}
-function pill(n){var t=Date.now(),c=new Date(n.createdAt).getTime(),u=new Date(n.updatedAt).getTime();if(n.status==='archived')return['Archived','arc'];if(n.status==='draft')return['Draft','dr'];if(t-c<7*864e5)return['New','new'];if(t-u<30*864e5&&u-c>6e4)return['Updated','upd'];return null}
+function pill(n){var t=Date.now(),c=new Date(n.createdAt).getTime(),u=new Date(n.updatedAt).getTime();if(n.status==='archived')return['Archived','arc'];if(n.status==='draft')return['Draft','dr'];if(n.reviewStatus==='needs_review'&&!n.verified)return['Needs Review','nr'];if(t-c<7*864e5)return['New','new'];if(t-u<30*864e5&&u-c>6e4)return['Updated','upd'];return null}
 function isFav(n){return n.ownerUid===uid?!!n.favorite:(S.bookmarks||[]).indexOf(n.id)>-1}
 function cur(){return sel&&N.filter(function(x){return x.id===sel})[0]}
 function merge(){var m={};Object.keys(NT).forEach(function(k){m[k]=NT[k]});Object.keys(NO).forEach(function(k){m[k]=NO[k]});N=Object.keys(m).map(function(k){return m[k]})}
@@ -14560,7 +14577,7 @@ function visible(){var q=f.q.toLowerCase().trim(),terms=q?q.split(/\s+/):[],cut=
   if(f.cat&&n.category!==f.cat)return false;if(f.tag&&(n.tags||[]).indexOf(f.tag)<0)return false;
   if(f.src&&!(n.source&&n.source.documentName===f.src))return false;
   if(cut&&new Date(n.updatedAt).getTime()<cut)return false;
-  if(f.vf&&(f.vf==='v')!==!!n.verified)return false;
+  if(f.vf==='r'){if(n.reviewStatus!=='needs_review'||n.verified)return false}else if(f.vf&&(f.vf==='v')!==!!n.verified)return false;
   if(terms.length){var h=hay(n)+' '+plat(n).name.toLowerCase()+' '+String(plat(n).code).toLowerCase();for(var i=0;i<terms.length;i++)if(h.indexOf(terms[i])<0)return false}
   return true})}
 function sorted(L){return L.sort(function(a,b){if(f.sort==='title')return String(a.title).localeCompare(String(b.title));if(f.sort==='created')return String(b.createdAt||'').localeCompare(String(a.createdAt||''));return String(b.updatedAt||'').localeCompare(String(a.updatedAt||''))})}
@@ -14620,7 +14637,7 @@ function panel(){var el=$('khx-panel'),w=$('khx-wrap'),n=cur();
  var h='<div class="khx-ph" style="--kb:'+t[0]+'"><span class="khx-plat">'+esc(p.name)+'</span><span class="khx-date">'+esc(fmt(n.updatedAt||n.createdAt))+'</span>'+(pl?'<span class="khx-pill '+pl[1]+'">'+pl[0]+'</span>':'')
  +'<span class="khx-sp"></span><button type="button" class="khx-ib'+(fav?' on':'')+'" data-a="fav" aria-pressed="'+fav+'" aria-label="'+(fav?'Remove bookmark':'Bookmark note')+'">'+svg('bm',20,fav?'currentColor':'none')+'</button><button type="button" class="khx-ib" data-a="closep" aria-label="Close details">'+svg('x',20)+'</button></div><div class="khx-pb">'
  +'<h2 class="khx-pt">'+esc(n.title)+'</h2>'+((n.description||n.purpose)?'<p class="khx-pd">'+esc(n.description||'')+'</p>':'')
- +(n.verified?'<div class="khx-tr ok">'+svg('shield',16)+'<span>Verified operational guidance'+(n.source&&n.source.documentName?' &middot; Source: '+esc(n.source.documentName)+(n.source.pageRef?', '+esc(n.source.pageRef):''):'')+'</span></div>':'<div class="khx-tr">'+svg('warn',16)+'<span>User-authored reference, not verified. Confirm commands against your GDS or airline rules before use.</span></div>')
+ +trustH(n)
  +(own?'':'<div class="khx-tr info"><span>Shared with the team by '+esc((n.createdBy&&n.createdBy.name)||'a colleague')+(ce?'':' (read-only)')+'</span></div>')
  +'<div class="khx-meta2">'+(vis(n)==='team'?'Team visible':'Private')+(n.category?' &middot; '+esc(n.category)+(n.subcategory?' &rsaquo; '+esc(n.subcategory):''):'')+'</div>';
  if(cs.length||n.example){h+='<div class="khx-box"><div class="khx-bh"><b>Command / Format</b>'+(cs.length?'<button type="button" class="khx-ib sm" data-cp="all" aria-label="Copy all commands" title="Copy all commands">'+svg('copy',17)+'</button>':'')+'</div>'
@@ -14633,7 +14650,7 @@ function panel(){var el=$('khx-panel'),w=$('khx-wrap'),n=cur();
  if(ims.length)h+=secH('img','Screenshots / Reference','<div class="khx-ths">'+ims.slice(0,3).map(function(x,i){return'<button type="button" class="khx-th" data-a="lb" data-i="'+i+'" aria-label="Preview '+esc(x.name)+'"><img alt="'+esc(x.name)+'" data-path="'+esc(x.path)+'">'+(i===2&&ims.length>3?'<span class="khx-more">+'+(ims.length-3)+'</span>':'')+'</button>'}).join('')+'</div>');
  if(fs.length)h+=secH('clip','Attachments',fs.map(function(x){return'<div class="khx-at"><span class="khx-fi'+(/pdf/i.test(x.type)?' pdf':'')+'">'+esc((x.name.split('.').pop()||'file').slice(0,4).toUpperCase())+'</span><div class="khx-an"><b>'+esc(x.name)+'</b><span>'+fsz(x.size)+'</span></div><a class="khx-ib" data-path="'+esc(x.path)+'" target="_blank" rel="noopener" aria-label="Open '+esc(x.name)+'" title="Open">'+svg('ext',17)+'</a></div>'}).join(''));
  if((n.tags||[]).length)h+=secH('tag','Tags','<div class="khx-tags">'+n.tags.map(function(x){return'<button type="button" class="khx-chp" data-tag="'+esc(x)+'" title="Filter by this tag">'+esc(x)+'</button>'}).join('')+'</div>');
- h+='<div class="khx-meta2">Created '+esc(fmtT(n.createdAt))+(n.createdBy&&n.createdBy.name?' by '+esc(n.createdBy.name):'')+'<br>Updated '+esc(fmtT(n.updatedAt))+(n.updatedBy&&n.updatedBy.name?' by '+esc(n.updatedBy.name):'')+'</div>';
+ h+=srcH(n)+'<div class="khx-meta2">Created '+esc(fmtT(n.createdAt))+(n.createdBy&&n.createdBy.name?' by '+esc(n.createdBy.name):'')+'<br>Updated '+esc(fmtT(n.updatedAt))+(n.updatedBy&&n.updatedBy.name?' by '+esc(n.updatedBy.name):'')+'</div>';
  if(histOpen){var H=HIST[n.id];h+='<section class="khx-s"><h4>'+svg('hist',18)+'<span>Update history</span></h4>'+(H==null?'<p class="kh-meta">Loading history...</p>':H==='err'?'<p class="kh-meta">History is unavailable (check Firestore rules).</p>':!H.length?'<p class="kh-meta">No history entries yet.</p>':'<ul class="khx-hl2">'+H.map(function(x){return'<li><b>'+esc(x.action)+'</b> &middot; '+esc(x.byName||'Unknown')+'<br><span>'+esc(fmtT(x.at))+(x.summary?' &mdash; '+esc(x.summary):'')+'</span></li>'}).join('')+'</ul>')+'</section>'}
  h+='</div><div class="khx-pf">'+(ce?'<div class="khx-ac"><button type="button" class="kh-btn" data-a="dup">Duplicate</button><button type="button" class="kh-btn" data-a="ver">'+(n.verified?'Unverify':'Verify')+'</button>'+(n.status==='archived'?'<button type="button" class="kh-btn" data-a="restore">Restore</button>':'<button type="button" class="kh-btn" data-a="archive">Archive</button>')+'<button type="button" class="kh-btn warn" data-a="del">Delete</button></div>':'')
  +'<div class="khx-fr"><button type="button" class="khx-hb" data-a="hist" aria-expanded="'+histOpen+'">'+svg('hist',18)+'<span>Update History</span>'+svg('chev',14)+'</button>'+(ce?'<button type="button" class="kh-btn pri khx-eb" data-a="edit">'+svg('edit',16)+' Edit Note</button>':'<button type="button" class="kh-btn pri khx-eb" data-a="dup">Duplicate to my notes</button>')+'</div></div>';
@@ -14668,9 +14685,9 @@ function act(t){var a=t.dataset.a,n=cur();
  if(!n)return;
  if(a==='open'){if(sel!==n.id){sel=n.id;histOpen=false}render()}
  else if(a==='fav')favT(n);else if(a==='edit'){if(canEdit(n))edit(n)}else if(a==='dup')dup(n);
- else if(a==='lb')lb(+t.dataset.i||0);
+ else if(a==='lb')lb(+t.dataset.i||0);else if(a==='src')openSrc(n);
  else if(a==='ver'){if(!canEdit(n))return;var nv=!n.verified;if(nv&&vis(n)==='team'&&!isStaff()){say('Only admin or manager accounts can verify team notes.','w');return}
-  upd(n,{verified:nv,updatedAt:now(),updatedBy:me()},nv?'verified':'unverified',nv?'Marked as verified':'Verification removed')}
+  upd(n,{verified:nv,reviewStatus:nv?'verified':(n.extraction?'extracted':''),verifiedBy:nv?me():null,verifiedAt:nv?now():null,updatedAt:now(),updatedBy:me()},nv?'verified':'unverified',nv?'Marked as verified':'Verification removed')}
  else if(a==='archive'){if(canEdit(n)&&confirm('Archive "'+n.title+'"? You can restore it later from More filters > Archived.'))upd(n,{status:'archived',updatedAt:now(),updatedBy:me()},'archived','Note archived').then(function(){ok('Note archived.')})}
  else if(a==='restore'){if(canEdit(n))upd(n,{status:'draft',updatedAt:now(),updatedBy:me()},'restored','Restored as draft').then(function(){ok('Note restored as a draft.')})}
  else if(a==='del'){if(canEdit(n))del(n)}}
@@ -14699,7 +14716,7 @@ function attUi(errs){var h='';
  pend.forEach(function(x,i){h+='<div class="kh-mrow"><span>'+svg(/^image\//.test(x.t)?'img':'doc',15)+' '+esc(x.f.name)+' <span class="kh-meta">'+fsz(x.f.size)+' &middot; uploads when you save</span></span><button type="button" class="kh-btn warn" data-pr="'+i+'">Remove</button></div>'});
  (errs||[]).forEach(function(m){h+='<div class="kh-note w">'+esc(m)+'</div>'});
  $('kn-al').innerHTML=h||'<div class="kh-meta">No attachments yet.</div>'}
-function addFiles(files){var errs=[];files.forEach(function(file){var t=ftype(file);
+function addFiles(files){if(!STORAGE_ON)return;var errs=[];files.forEach(function(file){var t=ftype(file);
  if(!t){errs.push(file.name+': unsupported type. Allowed: PNG, JPG, WEBP, GIF, PDF, DOCX, XLSX, TXT.');return}
  if(file.size>MAXB){errs.push(file.name+': larger than '+fsz(MAXB)+'.');return}if(!file.size){errs.push(file.name+': file is empty.');return}
  if(exA.length+pend.length>=MAXF){errs.push('Limit of '+MAXF+' attachments per note reached.');return}
@@ -14712,13 +14729,13 @@ function edit(n){if(!db){say('Sign in first.','e');return}if(!P.length){say('Pla
  +'<div><label for="kn-vis">Visibility</label><select id="kn-vis"><option value="private">Private (only me)</option><option value="team">Team (all signed-in AeroOps users can read)</option></select></div><div></div></div>'
  +'<label for="kn-t">Title</label><input id="kn-t" maxlength="200" value="'+esc(n.title)+'"><label for="kn-desc">Short description</label><input id="kn-desc" maxlength="300" value="'+esc(n.description)+'"><label for="kn-pu">Purpose</label><textarea id="kn-pu" style="min-height:56px">'+esc(n.purpose)+'</textarea>'
  +'<label for="kn-b">Explanation (use **bold**; line breaks are kept)</label><textarea id="kn-b">'+esc(n.content)+'</textarea><label for="kn-ex">Practical example</label><textarea id="kn-ex" style="min-height:60px">'+esc(n.example)+'</textarea><label for="kn-st2">Step-by-step procedure (one step per line)</label><textarea id="kn-st2" style="min-height:80px">'+esc((n.steps||[]).join('\n'))+'</textarea><label for="kn-w">Important notes / warnings</label><textarea id="kn-w" style="min-height:60px">'+esc(n.warning)+'</textarea>'
- +'<label style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="kn-v" style="width:auto"'+(n.verified?' checked':'')+'> Verified against an official source</label><div class="kh-meta" id="kn-vh"></div>'
+ +'<label for="kn-rs">Review status</label><select id="kn-rs"><option value="">User-authored</option><option value="extracted">Extracted from Source (not yet reviewed)</option><option value="needs_review">Needs Review</option></select><label style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="kn-v" style="width:auto"'+(n.verified?' checked':'')+'> Verified against an official source</label><div class="kh-meta" id="kn-vh"></div>'
  +'<label>Commands (reference only, stored for the platform selected above)</label><div id="kn-cm">'+cmdRows()+'</div><button class="kh-btn" id="kn-ac" type="button">+ Add command</button>'
  +'<label for="kn-tgi">Tags (press Enter or comma to add, click a tag to edit)</label><div class="khx-tg"><span id="kn-tg"></span><input id="kn-tgi" placeholder="Add tag" maxlength="30"></div>'
  +'<div class="kh-g2"><div><label for="kn-k">Search keywords (comma separated)</label><input id="kn-k" value="'+esc((n.keywords||[]).join(', '))+'"></div><div><label for="kn-sd">Source document</label><input id="kn-sd" value="'+esc(s.documentName)+'"></div><div><label for="kn-sp">Page / section reference</label><input id="kn-sp" value="'+esc(s.pageRef)+'"></div></div>'
- +'<label>Attachments &amp; screenshots</label><div class="khx-drop" id="kn-dz"><button class="kh-btn" id="kn-pick" type="button">'+svg('clip',15)+' Choose files</button> <span class="kh-meta">or drop / paste screenshots here. PNG, JPG, WEBP, GIF, PDF, DOCX, XLSX, TXT up to '+fsz(MAXB)+' each, max '+MAXF+' files.</span><input type="file" id="kn-f" multiple hidden accept=".png,.jpg,.jpeg,.webp,.gif,.pdf,.docx,.xlsx,.txt"></div><div id="kn-al"></div>'
+ +'<div'+(STORAGE_ON?'':' hidden')+'><label>Attachments &amp; screenshots</label><div class="khx-drop" id="kn-dz"><button class="kh-btn" id="kn-pick" type="button">'+svg('clip',15)+' Choose files</button> <span class="kh-meta">or drop / paste screenshots here. PNG, JPG, WEBP, GIF, PDF, DOCX, XLSX, TXT up to '+fsz(MAXB)+' each, max '+MAXF+' files.</span><input type="file" id="kn-f" multiple hidden accept=".png,.jpg,.jpeg,.webp,.gif,.pdf,.docx,.xlsx,.txt"></div><div id="kn-al"></div></div>'+(STORAGE_ON?'':'<div class="kh-meta">File uploads are switched off because Firebase Storage is not enabled (free plan). Notes, commands, search and document import still work.</div>')
  +'<div class="kh-note e" id="kn-er" hidden></div><div class="kh-meta" id="kn-pg" role="status"></div><div class="kh-ft"><button class="kh-btn" id="kn-x" type="button">Cancel</button><button class="kh-btn pri" id="kn-ok" type="button">Save note</button></div>');
- $('kn-s').value=n.status||'draft';$('kn-vis').value=vis(n);tagUi();attUi();
+ $('kn-s').value=n.status||'draft';$('kn-rs').value=n.reviewStatus==='verified'?'':(n.reviewStatus||'');$('kn-vis').value=vis(n);tagUi();attUi();
  function vh(){var blk=$('kn-vis').value==='team'&&!isStaff();$('kn-v').disabled=blk;if(blk)$('kn-v').checked=false;$('kn-vh').textContent=blk?'Team notes can only be marked verified by admin or manager accounts. Set visibility to Private to self-verify.':($('kn-vis').value==='team'?'Team notes are readable by every signed-in AeroOps user.':'')}
  vh();$('kn-vis').onchange=vh;
  var md=$('kh-md');
@@ -14750,7 +14767,7 @@ function edit(n){if(!db){say('Sign in first.','e');return}if(!P.length){say('Pla
   saving=true;$('kn-ok').disabled=true;$('kn-pg').textContent=pend.length?'Uploading attachments...':'Saving...';
   uploadAll(nid,owner,function(a){done.push(a)},function(pc){$('kn-pg').textContent='Uploading attachments... '+pc+'%'}).then(function(newA){
    var o={ownerUid:owner,platformId:pid,platformName:p?p.name:'',platformCode:p?p.code:'',platformColor:p?p.color:'',title:t,description:$('kn-desc').value.trim(),purpose:$('kn-pu').value.trim(),content:$('kn-b').value,category:$('kn-c').value.trim(),subcategory:$('kn-sc').value.trim(),example:$('kn-ex').value,
-    steps:$('kn-st2').value.split('\n').map(function(x){return x.trim()}).filter(Boolean),warning:$('kn-w').value,verified:ver,status:$('kn-s').value,visibility:vs,tags:tagsE.slice(),keywords:csv($('kn-k').value),
+    steps:$('kn-st2').value.split('\n').map(function(x){return x.trim()}).filter(Boolean),warning:$('kn-w').value,verified:ver,reviewStatus:ver?'verified':$('kn-rs').value,verifiedBy:ver?((n.verified&&n.verifiedBy)||me()):null,status:$('kn-s').value,visibility:vs,tags:tagsE.slice(),keywords:csv($('kn-k').value),
     commands:cmds.filter(function(c){return c.syntax.trim()}).map(function(c){return{syntax:c.syntax,description:c.description,example:c.example,exceptions:c.exceptions||'',platformId:pid}}),
     source:{documentName:$('kn-sd').value.trim(),pageRef:$('kn-sp').value.trim(),documentId:(n.source&&n.source.documentId)||''},attachments:exA.concat(newA),updatedAt:st,updatedBy:me()};
    if(isNew){o.createdAt=st;o.createdBy=me();o.favorite=false}
@@ -14760,37 +14777,274 @@ function edit(n){if(!db){say('Sign in first.','e');return}if(!P.length){say('Pla
     if(rmv.length)delFiles(rmv);saving=false;close();sel=nid;histOpen=false;HIST[nid]=null;ok(isNew?'Note created.':'Note saved.');render()},function(e){delFiles(done);throw e})
   }).catch(function(e){saving=false;console.error(e);var b=$('kn-ok');if(b)b.disabled=false;var pg=$('kn-pg');if(pg)pg.textContent='';
    var c=e&&e.code||'';formErr(c==='permission-denied'?'Firestore rules blocked this save. Deploy the Knowledge Hub rules (see firestore.knowledge-hub.rules).':c==='storage/unauthorized'?'Storage rules blocked the upload. Deploy storage.knowledge-hub.rules, or check the file type and size.':c==='storage/canceled'?'Upload was cancelled.':(e&&e.message)||'Could not save. Nothing was changed.')})}}
-/* ---------- document import ---------- */
-function loadJs(src,ok,test){if(test()){ok();return}var s=document.createElement('script');s.src=src;s.onload=ok;s.onerror=function(){say('Could not load the document reader (offline or blocked).','e')};document.head.appendChild(s)}
-function pdfText(buf){return new Promise(function(res){loadJs('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js',function(){window.pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
- window.pdfjsLib.getDocument({data:buf}).promise.then(function(pdf){var out=[],i=1;(function nx(){if(i>pdf.numPages)return res(out);pdf.getPage(i).then(function(pg){return pg.getTextContent()}).then(function(tc){var L={};tc.items.forEach(function(it){var y=Math.round(it.transform[5]/3);(L[y]=L[y]||[]).push(it)});
-  var tx=Object.keys(L).sort(function(a,b){return b-a}).map(function(k){var r=L[k].sort(function(a,b){return a.transform[4]-b.transform[4]}),s='',pe=null;r.forEach(function(it){if(pe!==null&&it.transform[4]-pe>2&&!/^\s/.test(it.str)&&!/\s$/.test(s))s+=' ';s+=it.str;pe=it.transform[4]+(it.width||0)});return s}).join('\n');out.push({n:i,text:tx});i++;nx()})})()})},function(){return!!window.pdfjsLib})})}
-function docxText(buf){return new Promise(function(res){loadJs('https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js',function(){window.mammoth.extractRawText({arrayBuffer:buf}).then(function(r){res([{n:1,text:r.value}])})},function(){return!!window.mammoth})})}
-function cmdsOf(t){var seen={};return t.split('\n').map(function(s){return s.trim()}).filter(function(s){if(seen[s]||s.length<3||s.length>90||/[a-z]/.test(s)||!/[0-9*\u00a5\u00a4\u00a7\/]/.test(s)||!/[A-Z]/.test(s))return false;seen[s]=1;return true}).slice(0,40).map(function(s){return{syntax:s,description:'',example:'',exceptions:''}})}
-function mk(title,text,ref){return{title:String(title).trim().slice(0,90)||'Untitled',text:text,ref:ref,commands:cmdsOf(text),keep:true}}
-function segment(d){var o=[];if(d.type==='pdf')d.pages.forEach(function(p){var t=p.text.trim();if(t.length>20)o.push(mk(t.split('\n')[0],t,'Page '+p.n))});
- else{var cur=null;d.pages[0].text.split(/\n{2,}/).forEach(function(b){b=b.trim();if(!b)return;var h=b.length<70&&b.indexOf('\n')<0&&!/[.:;,]$/.test(b);if(h||!cur){if(cur)o.push(cur);cur=mk(b.split('\n')[0],h?'':b,'Section: '+b.split('\n')[0].slice(0,60))}else{cur.text+=(cur.text?'\n':'')+b;cur.commands=cmdsOf(cur.text)}});if(cur)o.push(cur);o=o.filter(function(c){return c.text.trim().length>15})}return o}
-function detect(d){var t=(d.name+' '+d.pages.map(function(p){return p.text}).join(' ')).toLowerCase(),sc=P.map(function(p){var s=0;(p.keywords||[]).forEach(function(k){k=k.toLowerCase();if(k)s+=t.split(k).length-1});return{id:p.id,s:s}}).sort(function(a,b){return b.s-a.s});
- return sc.length&&sc[0].s>=3&&sc[0].s>=3*(sc[1]?sc[1].s:0)?sc[0].id:''}
+
+/* ---------- Automatic knowledge extraction (PDF / DOCX, optional OCR) ---------- */
+var PARSE_MAX=31457280,imp=null;
+var BUILTIN_KW={sabre:['sabre','red 360','red app'],galileo:['galileo','travelport','viewpoint','smartpoint','apollo'],amadeus:['amadeus','altea']};
+var CATMAP=[['PNR',/\bpnr\b|record locator|retriev|booking file/g],['Ticketing',/ticket|\betr\b|issuance/g],['Refund',/refund/g],['Reissue',/reissue|re-issue|exchange|revalidat/g],['Void',/\bvoid/g],['Fare',/fare rule|fare basis|penalt|fare calc|fare quote/g],['Schedule Change',/schedule change|reschedul|flight change|retim/g],['Name Correction',/name (change|correction)|correct(ing)? (the )?name/g],['Seat Assignment',/seat (assign|map|select)|seating/g],['Update',/\bupdate[sd]?\b|bulletin|circular/g]];
+var STOPW=/^(NOTE|NOTES|WARNING|CAUTION|IMPORTANT|EXAMPLE|EXAMPLES|FORMAT|FORMATS|COMMAND|COMMANDS|TABLE OF CONTENTS|CONTENTS|PAGE|CHAPTER|SECTION|FIGURE|TABLE|APPENDIX|INTRODUCTION|OVERVIEW|PURPOSE|PROCEDURE|PROCEDURES|STEP|STEPS|SUMMARY|INDEX|REVISION|CONFIDENTIAL|DRAFT|COPYRIGHT|DESCRIPTION)\b/;
+var WARNRX=/^(note|nb|warning|caution|important|attention|penalty|penalties|restriction|restrictions|exception|exceptions|remark)s?\b\s*[:\-\u2013.]|^(do not|never|must not)\b/i;
+var STEPRX=/^\s*(?:step\s*)?\d{1,2}\s*[.)\]:]\s+\S|^\s*step\s*\d{1,2}\b\s*[-\u2013:]?\s*\S/i,STEPPFX=/^\s*(?:step\s*)?\d{1,2}\s*[.)\]:\-\u2013]?\s*/i;
+var CMDLAB=/^(commands?|formats?|syntax|entry|entries|input|usage|command format|command\/format)\s*[:\-\u2013]\s*(.*)$/i,EXLAB=/^(examples?|e\.g\.|sample entry|sample)\s*[:\-\u2013]?\s*(.*)$/i;
 function nrm(s){return String(s||'').toLowerCase().replace(/\s+/g,' ').trim()}
+function nrmC(s){return String(s||'').replace(/\s+/g,'').toUpperCase()}
 function jac(a,b){var x=nrm(a).split(' '),y=nrm(b).split(' '),i=0,m={};x.forEach(function(w){m[w]=1});y.forEach(function(w){if(m[w])i++});return i/Math.max(1,x.length+y.length-i)}
-function dupOf(c,pid){var r='';N.forEach(function(n){if(n.platformId!==pid||r==='exact')return;if(nrm(n.content)===nrm(c.text))r='exact';else{var j=jac(n.content,c.text);if(j>=.8)r=r||'near';else if(nrm(n.title)===nrm(c.title)&&nrm(n.title))r=r||'conflict'}});return r}
-function importUi(){if(!db||!P.length){say('Sign in first.','e');return}imp={docs:[],c:[]};
- open('<h3>Import documents</h3><p class="kh-meta">PDF or DOCX. Text is read in your browser. Nothing is published until you review it; extracted notes arrive as Draft or Published as you choose.</p><input type="file" id="ki-f" accept=".pdf,.docx" multiple><div id="ki-r"></div><div class="kh-ft"><button class="kh-btn" id="ki-x" type="button">Cancel</button><button class="kh-btn pri" id="ki-ok" type="button" disabled>Save selected notes</button></div>');
- $('ki-x').onclick=close;$('ki-f').onchange=function(){var fs=[].slice.call(this.files),r=$('ki-r');r.innerHTML='<div class="kh-note">Reading '+fs.length+' file(s)...</div>';var jobs=fs.map(function(fl){var ty=/\.pdf$/i.test(fl.name)?'pdf':'docx';return fl.arrayBuffer().then(function(b){return(ty==='pdf'?pdfText(b):docxText(b))}).then(function(pg){var d={name:fl.name,type:ty,pages:pg};d.pid=detect(d);d.auto=!!d.pid;d.cs=segment(d);return d})});
-  Promise.all(jobs).then(function(ds){imp.docs=ds;review()}).catch(function(e){console.error(e);r.innerHTML='<div class="kh-note e">Could not read one of the files.</div>'})};
- $('ki-ok').onclick=saveImport;$('ki-r').addEventListener('change',function(e){var t=e.target;if(t.dataset.dp!=null){imp.docs[+t.dataset.dp].pid=t.value;imp.docs[+t.dataset.dp].auto=false;review()}else if(t.dataset.k){var p=t.dataset.k.split('.');imp.docs[+p[0]].cs[+p[1]].keep=t.checked;gate()}})}
-function review(){var h='';imp.docs.forEach(function(d,i){var pl=d.pid&&pf(d.pid);h+='<div class="kh-card"><b>'+esc(d.name)+'</b> <span class="kh-meta">'+d.cs.length+' candidate note(s)</span><label>Platform for this document'+(d.auto?' (detected from content - please confirm)':d.pid?'':' (could not be identified confidently - please select)')+'</label><select data-dp="'+i+'"><option value="">Select platform...</option>'+P.map(function(p){return'<option value="'+p.id+'"'+(p.id===d.pid?' selected':'')+'>'+esc(p.name)+'</option>'}).join('')+'</select>';
-  if(!d.cs.length)h+='<div class="kh-note w">No readable text found (scanned pages or images need OCR).</div>';
-  d.cs.forEach(function(c,j){c.dup=d.pid?dupOf(c,d.pid):'';if(c.dup==='exact'&&c._u!==1){c.keep=false;c._u=1}h+='<div class="kh-mrow"><label style="margin:0"><input type="checkbox" data-k="'+i+'.'+j+'"'+(c.keep?' checked':'')+'> '+esc(c.title)+' <span class="kh-meta">'+esc(c.ref)+(c.commands.length?' &middot; '+c.commands.length+' command(s)':'')+'</span></label>'+(c.dup?'<span class="kh-st" style="background:#FFFAEB;color:#93370D">'+({exact:'exact duplicate - skipped',near:'near duplicate',conflict:'conflicts with existing note'}[c.dup])+'</span>':'')+'</div>'});h+='</div>'});
- h+='<label>Save as</label><select id="ki-st"><option value="draft">Draft</option><option value="published">Published</option></select>';$('ki-r').innerHTML=h;gate()}
-function gate(){var ok=imp.docs.every(function(d){return!d.cs.some(function(c){return c.keep})||d.pid})&&imp.docs.some(function(d){return d.cs.some(function(c){return c.keep})});$('ki-ok').disabled=!ok}
-function saveImport(){var st=$('ki-st').value,t=now(),ops=[],bid='b'+Date.now();
- imp.docs.forEach(function(d){var ks=d.cs.filter(function(c){return c.keep});if(!ks.length)return;var dr=db.collection('kh_documents').doc();ops.push([dr,{ownerUid:uid,fileName:d.name,type:d.type,detectedPlatformId:d.auto?d.pid:'',confirmedPlatformId:d.pid,pageCount:d.pages.length,noteCount:ks.length,importBatchId:bid,importedAt:t}]);
-  ks.forEach(function(c){ops.push([db.collection('kh_notes').doc(),{ownerUid:uid,platformId:d.pid,platformName:(pf(d.pid)||{}).name||'',platformCode:(pf(d.pid)||{}).code||'',platformColor:(pf(d.pid)||{}).color||'',visibility:'private',createdBy:me(),updatedBy:me(),title:c.title,content:c.text,category:'',subcategory:'',status:st,tags:[],keywords:[],conflictFlag:c.dup==='conflict',verified:false,favorite:false,importBatchId:bid,
-   commands:c.commands.map(function(x){return Object.assign({platformId:d.pid},x)}),source:{documentId:dr.id,documentName:d.name,pageRef:c.ref},createdAt:t,updatedAt:t}])})});
- var chunks=[];for(var i=0;i<ops.length;i+=400)chunks.push(ops.slice(i,i+400));$('ki-ok').disabled=true;
- Promise.all(chunks.map(function(ch){var b=db.batch();ch.forEach(function(o){b.set(o[0],o[1])});return b.commit()})).then(function(){close();say('Imported '+ops.filter(function(o){return o[1].title}).length+' note(s).')}).catch(function(e){err(e);$('ki-ok').disabled=false})}
+function readBuf(file){return file.arrayBuffer?file.arrayBuffer():new Promise(function(res,rej){var r=new FileReader();r.onload=function(){res(r.result)};r.onerror=function(){rej(new Error('The file could not be read from disk.'))};r.readAsArrayBuffer(file)})}
+function loadLib(src,test,name){return new Promise(function(res,rej){if(test())return res();var s=document.createElement('script');s.src=src;s.onload=function(){test()?res():rej(new Error(name+' loaded but is not available.'))};s.onerror=function(){rej(new Error('Could not load '+name+' (offline or blocked). Check your connection and retry.'))};document.head.appendChild(s)})}
+function libPdf(){return loadLib('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js',function(){return!!window.pdfjsLib},'the PDF reader').then(function(){try{window.pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'}catch(e){}})}
+function libDocx(){return loadLib('https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js',function(){return!!window.mammoth},'the DOCX reader')}
+function libOcr(){return loadLib('https://cdn.jsdelivr.net/npm/tesseract.js@5.1.0/dist/tesseract.min.js',function(){return!!window.Tesseract},'the OCR engine')}
+/* ---- command recognition: context-based scoring, never rewrites text ---- */
+function cmdScore(t,x){x=x||{};t=String(t).trim();if(t.length<2||t.length>120)return-9;var s=0,low=/[a-z]/.test(t);
+ if(STOPW.test(t.toUpperCase())&&!/[\/*\u00a5\u00a7\d]/.test(t))return-9;
+ if(/[.!?]$/.test(t)&&/\s/.test(t)&&low)s-=4;
+ if(!low)s+=2;else s-=2;
+ if(/[\/*\u00a5\u00a7\-]/.test(t)&&/[A-Z0-9]/.test(t))s+=1;
+ if(/\d/.test(t)&&/[A-Z]/.test(t))s+=1;
+ if(x.mono)s+=3;if(x.label)s+=3;if(x.table)s+=2;if(x.code)s+=3;
+ if(t.split(/\s+/).length>8)s-=2;
+ if(/^\d{1,2}[.)]\s/.test(t))s-=5;
+ if(/^[A-Z]{4,}(\s+[A-Z]{3,})+$/.test(t))s-=3;
+ return s}
+function splitDesc(t){var m=t.match(/^(\S.*?\S)\s+[-\u2013\u2014:]\s+(\S.*)$/);if(m&&cmdScore(m[1])>=2&&/[a-z]{3,}/.test(m[2]))return[m[1],m[2]];return[t,'']}
+/* ---- readers ---- */
+function groupLines(tc){var st=tc.styles||{},its=tc.items.filter(function(i){return i.str!=null&&i.transform}).map(function(i){var fam=(st[i.fontName]&&st[i.fontName].fontFamily)||'';return{s:i.str,x:i.transform[4],y:i.transform[5],w:i.width||0,h:Math.abs(i.transform[3])||i.height||0,m:/mono|courier|consolas|menlo|lucida console|typewriter/i.test(fam+' '+(i.fontName||''))}});
+ its.sort(function(a,b){return b.y-a.y||a.x-b.x});var lines=[],cur=null;
+ its.forEach(function(it){if(!it.s&&!it.w)return;if(!cur||Math.abs(it.y-cur.y)>Math.max(2,.5*Math.max(it.h,cur.h))){cur={y:it.y,h:it.h,its:[]};lines.push(cur)}cur.its.push(it)});
+ return lines.map(function(ln){ln.its.sort(function(a,b){return a.x-b.x});var t='',pe=null;ln.its.forEach(function(it){if(pe!==null&&it.x-pe>Math.max(1,it.h*.15)&&!/\s$/.test(t)&&!/^\s/.test(it.s))t+=' ';t+=it.s;pe=it.x+it.w});
+  var ne=ln.its.filter(function(i){return i.s.trim()}),mo=ne.filter(function(i){return i.m}).length>ne.length/2;
+  return{t:t.trim(),h:Math.max.apply(null,ln.its.map(function(i){return i.h})),mono:mo}}).filter(function(l){return l.t})}
+async function readPdf(d){await libPdf();var buf=await readBuf(d.file),pdf;
+ try{pdf=await window.pdfjsLib.getDocument({data:new Uint8Array(buf)}).promise}catch(e){throw new Error('PDF could not be opened: '+((e&&e.message)||e)+(/password/i.test(String(e&&e.message))?' (password-protected PDFs are not supported).':''))}
+ var pages=[],all=[],scanned=[],worker=null,ocrPages=[],ocrFail='';
+ for(var i=1;i<=pdf.numPages;i++){d.msg='Reading page '+i+' of '+pdf.numPages;updFile(d.i);var pg=await pdf.getPage(i),tc=await pg.getTextContent(),ls=groupLines(tc),chars=ls.reduce(function(a,l){return a+l.t.length},0),oc=false;
+  if(chars<15){scanned.push(i);
+   if(imp.opt.ocr){try{if(!worker){d.msg='Loading OCR engine...';updFile(d.i);await libOcr();worker=await window.Tesseract.createWorker('eng')}
+     d.msg='OCR page '+i+' of '+pdf.numPages;updFile(d.i);var vp=pg.getViewport({scale:2}),cv=document.createElement('canvas');cv.width=vp.width;cv.height=vp.height;await pg.render({canvasContext:cv.getContext('2d'),viewport:vp}).promise;
+     var rr=await worker.recognize(cv);ls=String(rr.data.text||'').split('\n').map(function(t){return{t:t.trim(),h:0,mono:false}}).filter(function(l){return l.t});oc=true;ocrPages.push(i)}catch(e){ocrFail=(e&&e.message)||String(e);ls=[]}}
+   else ls=[]}
+  ls.forEach(function(l){l.page=i;l.ocr=oc;l.kind='p';all.push(l)});pages.push({n:i,chars:chars,ocr:oc})}
+ if(worker){try{await worker.terminate()}catch(e){}}
+ var hs=all.filter(function(l){return!l.ocr&&l.h>0}).map(function(l){return l.h}).sort(function(a,b){return a-b}),med=hs.length?hs[Math.floor(hs.length/2)]:0;
+ all.forEach(function(l){if(med&&!l.mono&&!l.ocr&&l.h>=med*1.15&&l.t.length<=80&&l.t.length>=2)l.kind='h'});
+ d.pdfDoc=pdf;
+ return{lines:all,pages:pages,method:ocrPages.length?'Text layer + OCR (pages '+ocrPages.join(', ')+')':'Text layer',scanned:scanned,ocrPages:ocrPages,ocrFail:ocrFail,msgs:[]}}
+async function readDocx(d){await libDocx();var buf=await readBuf(d.file),r;
+ try{r=await window.mammoth.convertToHtml({arrayBuffer:buf},{styleMap:["p[style-name='Code'] => pre:fresh","p[style-name='Source Code'] => pre:fresh","p[style-name='Command'] => pre:fresh","p[style-name='HTML Preformatted'] => pre:fresh"]})}
+ catch(e){throw new Error('DOCX could not be opened: '+((e&&e.message)||e))}
+ var doc=new DOMParser().parseFromString('<!doctype html><body>'+r.value+'</body>','text/html'),lines=[],imgs=0;
+ function tx(el){return(el.textContent||'').replace(/\s+/g,' ').trim()}
+ [].forEach.call(doc.body.children,function(el){var tg=el.tagName;
+  if(/^H[1-6]$/.test(tg)){var t=tx(el);if(t)lines.push({t:t,page:1,kind:'h'})}
+  else if(tg==='P'){var t2=tx(el),im=el.querySelector('img');
+   if(im&&/^data:image\//.test(im.getAttribute('src')||'')&&imgs<12&&(im.getAttribute('src').length<2800000)){imgs++;lines.push({t:'',page:1,kind:'img',src:im.getAttribute('src')})}
+   if(!t2)return;var st=el.firstElementChild;
+   if(el.children.length===1&&st&&st.tagName==='STRONG'&&tx(st)===t2&&t2.length<=80)lines.push({t:t2,page:1,kind:'h'});else lines.push({t:t2,page:1,kind:'p'})}
+  else if(tg==='PRE'){String(el.textContent).split('\n').forEach(function(x){x=x.replace(/\s+$/,'');if(x.trim())lines.push({t:x.trim(),page:1,kind:'code'})})}
+  else if(tg==='OL'||tg==='UL'){[].forEach.call(el.querySelectorAll('li'),function(li){var t3=tx(li);if(t3)lines.push({t:t3,page:1,kind:'li',ord:tg==='OL'})})}
+  else if(tg==='TABLE'){[].forEach.call(el.querySelectorAll('tr'),function(tr){var cols=[].map.call(tr.children,function(c){return tx(c)});if(cols.some(Boolean))lines.push({t:cols.join(' | '),page:1,kind:'row',cols:cols})})}});
+ return{lines:lines,pages:[{n:1,chars:lines.length}],method:'DOCX structure (headings, lists, tables)',scanned:[],ocrPages:[],ocrFail:'',msgs:(r.messages||[]).map(function(m){return m.message}).slice(0,5)}}
+/* ---- extraction ---- */
+function parseSec(sec){var o={cmds:[],steps:[],warn:[],prose:[],flags:[],pages:{},imgs:[],ocr:false,hdr:null,skippedProse:0},ls=sec.lines,mode='',last=null,prevProse='',prevCmd=false,seen={};
+ var confident=ls.some(function(l){return l.kind!=='row'&&l.kind!=='img'&&cmdScore(l.t,{mono:l.mono,code:l.kind==='code'})>=3})||ls.some(function(l){return l.kind==='row'});
+ function addCmd(t,sc,srcl){var sp=splitDesc(t),k=nrmC(sp[0]);if(seen[k])return;seen[k]=1;
+  var c={syntax:sp[0],description:sp[1]||'',example:'',exceptions:'',sc:sc};
+  if(!c.description&&prevProse&&/:$/.test(prevProse)){c.description=prevProse.replace(/:$/,'');o.prose.pop()}
+  if(sc===2)o.flags.push('Uncertain command (low confidence): "'+sp[0]+'"');
+  if(/[\ufffd\u0000-\u0008]/.test(sp[0]))o.flags.push('Possible extraction error in command: "'+sp[0].replace(/[^\x20-\x7e\u00a5\u00a7]/g,'?')+'"');
+  if(sp[0].length>100)o.flags.push('Unusually long command, check line breaks: "'+sp[0].slice(0,40)+'..."');
+  o.cmds.push(c);last=c;prevCmd=true}
+ function addEx(t){if(last){last.example=last.example?last.example+'\n'+t:t}else{o.prose.push('Example: '+t);o.flags.push('Example "'+t+'" has no preceding command')}}
+ ls.forEach(function(l){var t=l.t.trim();if(l.kind==='img'){o.imgs.push(l.src);return}if(!t)return;o.pages[l.page]=1;if(l.ocr)o.ocr=true;
+  if(l.kind==='row'){var cols=l.cols;
+   if(!o.hdr&&cols.length>=2&&cols.some(function(c){return/^(command|entry|format|syntax|code|entry format)s?$/i.test(c.trim())})){o.hdr={c:cols.findIndex(function(c){return/command|entry|format|syntax|code/i.test(c)}),d:cols.findIndex(function(c){return/descr|purpose|meaning|use|function|explan|remark/i.test(c)}),e:cols.findIndex(function(c){return/example|sample/i.test(c)})};return}
+   var ci=o.hdr?o.hdr.c:0,sx=(cols[ci]||'').trim(),score=cmdScore(sx,{table:true});
+   if(sx&&(o.hdr?score>=0:score>=3)){var de=o.hdr&&o.hdr.d>=0?cols[o.hdr.d]:cols.filter(function(c,i){return i!==ci}).join(' ');addCmd(sx,Math.max(score,3),l);if(last&&!last.description)last.description=(de||'').trim();if(o.hdr&&o.hdr.e>=0&&cols[o.hdr.e])last.example=cols[o.hdr.e].trim();prevProse='';return}
+   o.prose.push(cols.join(' | '));return}
+  if(WARNRX.test(t)){o.warn.push(t);mode='';prevCmd=false;return}
+  if(l.kind==='li'&&l.ord||STEPRX.test(t)&&l.kind!=='code'){o.steps.push(t.replace(STEPPFX,'').trim());mode='';prevCmd=false;return}
+  var m=t.match(CMDLAB);if(m){mode='cmd';if(m[2]&&m[2].trim())addCmd(m[2].trim(),cmdScore(m[2],{label:true,mono:l.mono}),l);return}
+  m=t.match(EXLAB);if(m&&!/^e\.g\.$/i.test(t.split(/\s/)[0]+'x')){mode='ex';if(m[2]&&m[2].trim())addEx(m[2].trim());return}
+  var sc=cmdScore(t,{mono:l.mono,code:l.kind==='code',label:!!mode});
+  if(mode==='ex'&&sc>=2){addEx(t);return}
+  if(sc>=3||(mode&&sc>=2)){addCmd(t,sc>=3?sc:2,l);return}
+  if(sc===2&&confident&&l.kind!=='li'){addCmd(t,2,l);return}
+  mode='';
+  if(prevCmd&&last&&!last.description&&t.length<=220&&l.kind!=='h'){last.description=t;prevCmd=false;prevProse='';return}
+  prevCmd=false;o.prose.push(t);prevProse=t});
+ return o}
+function detectPlat(text){var tl=text.toLowerCase(),best=null;P.forEach(function(p){var kws=[p.name.toLowerCase(),String(p.code).toLowerCase()].concat((p.keywords||[]).map(function(k){return String(k).toLowerCase()}),BUILTIN_KW[String(p.code).toLowerCase()]||[],BUILTIN_KW[p.name.toLowerCase().split(' ')[0]]||[]);
+ var s=0;kws.forEach(function(k){if(k&&k.length>=4)s+=tl.split(k).length-1});if(s&&(!best||s>best.s))best={id:p.id,s:s}});return best}
+function detectCats(text){var tl=text.toLowerCase(),r=[];CATMAP.forEach(function(c){var m=tl.match(c[1]);if(m)r.push([c[0],m.length])});r.sort(function(a,b){return b[1]-a[1]});return r.map(function(x){return x[0]})}
+function pageRef(pg,heading,isDocx){var ks=Object.keys(pg).map(Number).sort(function(a,b){return a-b});if(isDocx||!ks.length)return heading?'Section: '+heading:'';return ks.length>1?'Pages '+ks[0]+'-'+ks[ks.length-1]:'Page '+ks[0]}
+function extractDoc(d){var doc=d.doc,isDocx=d.ext==='docx',secs=[],cur={heading:'',page:1,lines:[]};secs.push(cur);
+ doc.lines.forEach(function(l){if(l.kind==='h'){cur={heading:l.t,page:l.page,lines:[]};secs.push(cur)}else cur.lines.push(l)});
+ var docText=doc.lines.map(function(l){return l.t}).join(' ').slice(0,60000),docPlat=detectPlat(d.name+' '+docText),out=[],skipped=0;
+ secs.forEach(function(sec){var o=parseSec(sec);if(!o.cmds.length&&!o.steps.length){if(o.prose.length&&sec.heading)skipped++;return}
+  var text=sec.heading+' '+o.prose.join(' ')+' '+o.cmds.map(function(c){return c.description}).join(' ')+' '+o.steps.join(' '),sp=detectPlat(text),flagsBase=o.flags.slice();
+  var pl=sp&&sp.s>=1?sp:(docPlat&&docPlat.s>=3?docPlat:null),cats=detectCats(text);
+  var pr=o.prose.join('\n'),ref=pageRef(o.pages,sec.heading,isDocx);
+  function mk(title,cmds,prose,flags){var purpose=prose.slice(0,2).join(' ').slice(0,400),content=prose.slice(2).join('\n'),fl=flags.slice(),cat=cats[0]||(o.steps.length?'Procedure':'');
+   if(!pl)fl.push('Platform not detected: choose Sabre, Galileo, Amadeus or General.');if(!cat)fl.push('Category not detected.');
+   cmds.forEach(function(c){if(!c.description&&!purpose)fl.push('No explanation found for "'+c.syntax+'"')});
+   if(o.ocr)fl.push('Text was recognised by OCR: check every character of every command.');
+   var tags=cats.slice();if(o.steps.length&&tags.indexOf('Procedure')<0)tags.push('Procedure');if(cats.indexOf('Fare')>-1)tags.push('Fare Rules');
+   return{di:d.i,title:String(title).trim().slice(0,120)||'Untitled',pid:pl?pl.id:'',category:cat,tags:tags,commands:cmds.map(function(c){return{syntax:c.syntax,description:c.description,example:c.example,exceptions:c.exceptions||''}}),purpose:purpose,content:content,steps:o.steps.slice(),warnings:o.warn.slice(),
+    flags:fl,pageRef:ref,heading:sec.heading,pages:Object.keys(o.pages).map(Number),imgs:o.imgs.slice(0,6),method:o.ocr?'ocr':(isDocx?'docx':'text'),keep:true,reviewed:false,edit:false,dec:'new',dup:null,img:false}}
+  var many=o.cmds.length>8&&!o.steps.length;
+  if(many)o.cmds.forEach(function(c){out.push(mk(c.description?c.description.slice(0,80):'Command: '+c.syntax,[c],c.description?[c.description]:[],flagsBase.filter(function(f2){return f2.indexOf('"'+c.syntax+'"')>-1}).concat(o.warn.length?[]:[])))});
+  else out.push(mk(sec.heading||(o.cmds[0]?'Command: '+o.cmds[0].syntax:'Procedure from '+d.name),o.cmds,o.prose.slice(),flagsBase))});
+ d.skipped=skipped;return out}
+function findDup(c){var best=null,rank={exact:4,near:3,command:2,title:1},cn=c.commands.map(function(x){return nrmC(x.syntax)}).filter(Boolean),pp=pf(c.pid),code=pp?pp.code:'';
+ N.forEach(function(n){var np=plat(n);if(c.pid&&String(np.code)!==String(code))return;var en=(n.commands||[]).map(function(x){return nrmC(x.syntax)}),o2=cn.filter(function(x){return en.indexOf(x)>-1}).length,
+  ta=[c.purpose,c.content,c.steps.join(' ')].join(' '),tb=[n.purpose,n.content,(n.steps||[]).join(' ')].join(' '),j=ta.trim()&&tb.trim()?jac(ta,tb):0,kind='';
+  if(cn.length&&o2===cn.length&&(j>=.6||!ta.trim()))kind='exact';else if(j>=.8)kind='near';else if(o2>0)kind='command';else if(nrm(n.title)&&nrm(n.title)===nrm(c.title))kind='title';
+  if(kind&&(!best||rank[kind]>rank[best.kind]))best={kind:kind,note:n,overlap:o2,sim:Math.round(j*100)}});return best}
+function buildCands(only){var keep=only==null?[]:imp.cs.filter(function(c){return c.di!==only}),add=[];
+ imp.docs.forEach(function(d,i){if(d.state!=='ok'||(only!=null&&i!==only))return;add=add.concat(extractDoc(d))});
+ var seen={};keep.concat(add).forEach(function(c){var k=c.pid+'|'+(c.commands[0]?nrmC(c.commands[0].syntax):'t:'+nrm(c.title));
+  if(c.commands[0]&&seen[k]&&c.flags.every(function(f2){return f2.indexOf('also extracted')<0}))c.flags.push('Same command is also extracted from '+seen[k]+'.');if(!seen[k])seen[k]=imp.docs[c.di].name+(c.pageRef?' ('+c.pageRef+')':'')});
+ add.forEach(function(c){c.dup=findDup(c);if(c.dup)c.dec=c.dup.kind==='exact'?'skip':'ask';if(c.dec==='skip')c.keep=false});
+ imp.cs=keep.concat(add)}
+function status(c){return c.flags.length&&!c.reviewed?'needs_review':'extracted'}
+function eligible(c){return c.keep&&c.dec!=='skip'&&c.dec!=='ask'&&c.title.trim()&&(c.commands.length||c.steps.length)}
+/* ---- UI ---- */
+function updFile(i){var e=$('ki-f'+i),d=imp&&imp.docs[i];if(e&&d)e.textContent=d.msg||''}
+function importUi(){if(!db||!P.length){say('Sign in first.','e');return}
+ imp={docs:[],cs:[],step:'pick',cur:null,busy:false,opt:{ocr:false,orig:STORAGE_ON,img:false,st:'draft',vis:'private'},res:null};open('');var md=$('kh-md');
+ md.onclick=impClick;md.oninput=impInput;md.onchange=impChange;md.ondragover=function(e){var z=e.target.closest&&e.target.closest('#ki-dz');if(z){e.preventDefault();z.classList.add('on')}};md.ondragleave=function(e){var z=$('ki-dz');if(z)z.classList.remove('on')};
+ md.ondrop=function(e){if(e.target.closest&&e.target.closest('#ki-dz')){e.preventDefault();addDocs([].slice.call(e.dataTransfer.files||[]))}};md.onpaste=null;draw()}
+function addDocs(files){var errs=[];files.forEach(function(f2){var ext=(f2.name.split('.').pop()||'').toLowerCase();
+ if(ext==='doc'){errs.push(f2.name+': legacy .doc files cannot be read in the browser. Open it in Word, choose Save As > Word Document (.docx), then upload that file.');return}
+ if(ext!=='pdf'&&ext!=='docx'){errs.push(f2.name+': unsupported file type. Use PDF or DOCX.');return}
+ if(f2.type&&!/pdf|openxmlformats|octet-stream|zip/i.test(f2.type)){errs.push(f2.name+': file content type "'+f2.type+'" does not match a PDF or DOCX.');return}
+ if(!f2.size){errs.push(f2.name+': file is empty.');return}if(f2.size>PARSE_MAX){errs.push(f2.name+': larger than '+fsz(PARSE_MAX)+'.');return}
+ if(imp.docs.some(function(d){return d.name===f2.name&&d.size===f2.size}))return;imp.docs.push({file:f2,name:f2.name,ext:ext,size:f2.size,state:'queued',msg:'Ready',i:imp.docs.length})});imp.errs=errs;imp.step='pick';draw()}
+function pickH(){var o=imp.opt;return'<h3>Import documents</h3><p class="kh-meta">PDF and DOCX files, several at once. Files are read in your browser; nothing is saved until you review and approve it. Extracted commands are stored as reference text only and are never executed or marked verified.</p>'
+ +'<div class="khx-drop" id="ki-dz"><button class="kh-btn" data-ia="pick" type="button">'+svg('clip',15)+' Choose PDF / DOCX files</button> <span class="kh-meta">or drop them here. Up to '+fsz(PARSE_MAX)+' each. Legacy .doc: save as .docx first.</span><input type="file" id="ki-fi" multiple hidden accept=".pdf,.docx"></div>'
+ +(imp.errs&&imp.errs.length?imp.errs.map(function(m){return'<div class="kh-note w">'+esc(m)+'</div>'}).join(''):'')
+ +'<div id="ki-fl">'+imp.docs.map(function(d,i){return'<div class="kh-mrow"><span>'+svg('doc',15)+' <b>'+esc(d.name)+'</b> <span class="kh-meta">'+fsz(d.size)+'</span></span><span><span class="kh-meta" id="ki-f'+i+'">'+esc(d.msg)+'</span> '+(imp.busy?'':'<button class="kh-btn warn" data-ia="rm" data-i="'+i+'" type="button">Remove</button>')+'</span></div>'}).join('')+'</div>'
+ +'<div class="kh-g2" style="margin-top:10px"><div><label for="ki-st">Save approved cards as</label><select id="ki-st" data-o="st"><option value="draft"'+(o.st==='draft'?' selected':'')+'>Draft</option><option value="published"'+(o.st==='published'?' selected':'')+'>Published</option></select></div><div><label for="ki-vis">Visibility</label><select id="ki-vis" data-o="vis"><option value="private"'+(o.vis==='private'?' selected':'')+'>Private (only me)</option><option value="team"'+(o.vis==='team'?' selected':'')+'>Team</option></select></div></div>'
+ +(STORAGE_ON?'<label class="khi-ck"><input type="checkbox" data-o="orig"'+(o.orig?' checked':'')+'> Keep the original file in Firebase Storage for source tracing (max '+fsz(MAXB)+')</label>'
+ +'<label class="khi-ck"><input type="checkbox" data-o="img"'+(o.img?' checked':'')+'> Attach reference images (PDF: snapshot of the source page; DOCX: embedded pictures)</label>':'<div class="kh-meta" style="margin:6px 0">Original files and reference images are not stored (Firebase Storage is off on the free plan). The source filename and page are still saved with every card.</div>')
+ +'<label class="khi-ck"><input type="checkbox" data-o="ocr"'+(o.ocr?' checked':'')+'> Use OCR for scanned PDF pages (free open-source engine, downloads on first use, slower; text may need careful review)</label>'
+ +'<div class="kh-ft"><button class="kh-btn" data-ia="cancel" type="button">Cancel</button><button class="kh-btn pri" data-ia="go" type="button"'+(imp.docs.length&&!imp.busy?'':' disabled')+'>'+(imp.busy?'Analyzing...':'Analyze '+imp.docs.length+' file'+(imp.docs.length===1?'':'s'))+'</button></div>'}
+function platOpts(cur){return'<option value="">Not detected</option>'+P.map(function(p){return'<option value="'+p.id+'"'+(p.id===cur?' selected':'')+'>'+esc(p.name)+'</option>'}).join('')}
+function dupLabel(k){return{exact:'Same commands and similar text',near:'Very similar text',command:'Same command(s)',title:'Same title'}[k]||k}
+function itemH(c,i){var d=imp.docs[c.di],st=status(c),pp=pf(c.pid),el=eligible(c),cm=c.commands;
+ var h='<div class="khi-it'+(el?'':' off')+'"><div class="khi-h"><label class="khi-ck0"><input type="checkbox" data-k="'+i+'"'+(c.keep?' checked':'')+' aria-label="Include this card"></label><b class="khi-t">'+esc(c.title)+'</b><span class="khi-b">'+esc(pp?pp.name:'Platform?')+'</span>'+(c.category?'<span class="khi-b g">'+esc(c.category)+'</span>':'')+'<span class="khi-b '+(st==='needs_review'?'w':'ok')+'">'+(st==='needs_review'?'Needs Review':'Extracted from Source')+'</span>'+(c.dup?'<span class="khi-b e">Possible duplicate</span>':'')+'</div>'
+ +'<div class="kh-meta">'+esc(d.name)+(c.pageRef?' &middot; '+esc(c.pageRef):'')+(c.heading&&c.pageRef.indexOf('Section')<0?' &middot; Section: '+esc(c.heading):'')+(c.method==='ocr'?' &middot; OCR':'')+'</div>';
+ if(cm.length)h+='<div class="khi-cm">'+cm.slice(0,c.open?99:5).map(function(x){return'<div><code>'+esc(x.syntax)+'</code>'+(x.description?' <span class="kh-meta">'+esc(x.description)+'</span>':'')+(x.example?'<div><code class="ex">'+esc(x.example)+'</code></div>':'')+'</div>'}).join('')+(cm.length>5&&!c.open?'<div class="kh-meta">+'+(cm.length-5)+' more command(s) (open Edit to see all)</div>':'')+'</div>';
+ if(c.purpose)h+='<div class="khi-p">'+esc(c.purpose.slice(0,c.open?999:220))+'</div>';
+ if(c.steps.length)h+='<div class="kh-meta">'+c.steps.length+' procedure step'+(c.steps.length===1?'':'s')+'</div>';
+ if(c.warnings.length)h+='<div class="kh-note w"><b>Warnings found in source:</b> '+esc(c.warnings.slice(0,3).join(' / '))+(c.warnings.length>3?' ...':'')+'</div>';
+ if(c.flags.length&&!c.reviewed)h+='<div class="khi-fl">'+c.flags.slice(0,6).map(function(f2){return'<div>&#9888; '+esc(f2)+'</div>'}).join('')+(c.flags.length>6?'<div>+'+(c.flags.length-6)+' more</div>':'')+'</div>';
+ if(c.dup){var can=canEdit(c.dup.note);h+='<div class="kh-note e"><b>Possible duplicate:</b> "'+esc(c.dup.note.title)+'" ('+esc(dupLabel(c.dup.kind))+(c.dup.sim?', '+c.dup.sim+'% text match':'')+'). Decision needed: <select data-dd="'+i+'"><option value="ask"'+(c.dec==='ask'?' selected':'')+'>Choose...</option><option value="new"'+(c.dec==='new'?' selected':'')+'>Keep separate (import as new)</option>'+(can?'<option value="merge"'+(c.dec==='merge'?' selected':'')+'>Merge into existing</option><option value="replace"'+(c.dec==='replace'?' selected':'')+'>Replace existing</option>':'')+'<option value="skip"'+(c.dec==='skip'?' selected':'')+'>Skip this item</option></select> <button class="kh-btn" data-ia="cmp" data-i="'+i+'" type="button">Compare</button></div>'}
+ if(imp.opt.img&&(c.imgs.length||imp.docs[c.di].ext==='pdf'))h+='<label class="khi-ck"><input type="checkbox" data-im="'+i+'"'+(c.img?' checked':'')+'> Attach '+(c.imgs.length?c.imgs.length+' embedded image(s)':'snapshot of source page')+'</label>';
+ h+='<div class="khi-ac"><button class="kh-btn" data-ia="edit" data-i="'+i+'" type="button">'+(c.edit?'Close editor':'Edit')+'</button><button class="kh-btn" data-ia="skip" data-i="'+i+'" type="button">'+(c.keep?'Skip':'Include')+'</button>'+(c.flags.length&&!c.reviewed?'<button class="kh-btn" data-ia="rev" data-i="'+i+'" type="button" title="Confirm you checked this card against the source">Mark flags reviewed</button>':'')+'</div>';
+ if(c.edit)h+=editH(c,i);return h+'</div>'}
+function editH(c,i){return'<div class="khi-ed"><div class="kh-g2"><div><label>Title</label><input data-f="title" data-i="'+i+'" value="'+esc(c.title)+'"></div><div><label>Platform</label><select data-f="pid" data-i="'+i+'">'+platOpts(c.pid)+'</select></div><div><label>Category</label><input data-f="category" data-i="'+i+'" list="kn-cl" value="'+esc(c.category)+'"></div><div><label>Tags (comma separated)</label><input data-f="tags" data-i="'+i+'" value="'+esc(c.tags.join(', '))+'"></div></div>'
+ +'<label>Commands (exact text from the source, correct only real extraction errors)</label>'+c.commands.map(function(x,j){return'<div class="kh-row"><input data-cm="'+i+'.'+j+'.syntax" placeholder="Command" value="'+esc(x.syntax)+'"><input data-cm="'+i+'.'+j+'.description" placeholder="What it does" value="'+esc(x.description)+'"><input data-cm="'+i+'.'+j+'.example" placeholder="Example" value="'+esc(x.example)+'"><button class="kh-btn warn" data-ia="cmrm" data-i="'+i+'" data-j="'+j+'" type="button" aria-label="Remove command">x</button></div>'}).join('')+'<button class="kh-btn" data-ia="cmadd" data-i="'+i+'" type="button">+ Add command</button>'
+ +'<label>Purpose</label><textarea data-f="purpose" data-i="'+i+'" style="min-height:50px">'+esc(c.purpose)+'</textarea><label>Explanation</label><textarea data-f="content" data-i="'+i+'" style="min-height:60px">'+esc(c.content)+'</textarea><label>Procedure steps (one per line)</label><textarea data-f="steps" data-i="'+i+'" style="min-height:70px">'+esc(c.steps.join('\n'))+'</textarea><label>Warnings and notes (one per line)</label><textarea data-f="warnings" data-i="'+i+'" style="min-height:50px">'+esc(c.warnings.join('\n'))+'</textarea></div>'}
+function counts(){var cc=imp.cs.reduce(function(a,c){return a+c.commands.length},0),pr=imp.cs.filter(function(c){return c.steps.length}).length,nr=imp.cs.filter(function(c){return status(c)==='needs_review'}).length,du=imp.cs.filter(function(c){return c.dup}).length,ask=imp.cs.filter(function(c){return c.dup&&c.dec==='ask'&&c.keep}).length,sel=imp.cs.filter(eligible).length;return{cc:cc,pr:pr,nr:nr,du:du,ask:ask,sel:sel}}
+function upCount(){var e=$('ki-cnt');if(!e)return;var k=counts();e.textContent='Import '+k.sel+' selected';var b=$('ki-imp');if(b)b.disabled=!k.sel||imp.busy}
+function reviewH(){var k=counts(),h='<h3>Review extracted knowledge</h3><div class="khi-sum"><b>'+imp.cs.length+'</b> cards &middot; <b>'+k.cc+'</b> commands &middot; <b>'+k.pr+'</b> with procedures &middot; <b>'+k.nr+'</b> need review &middot; <b>'+k.du+'</b> possible duplicate'+(k.du===1?'':'s')+(k.ask?' ('+k.ask+' need a decision)':'')+'</div><p class="kh-meta">Review each card against the source. Cards are never marked verified by import. Nothing has been saved yet.</p>';
+ imp.docs.forEach(function(d,i){h+='<div class="khi-doc"><b>'+esc(d.name)+'</b> <span class="kh-meta">'+(d.state==='ok'?esc(d.doc.method)+' &middot; '+d.doc.pages.length+' page'+(d.doc.pages.length===1?'':'s')+' &middot; '+imp.cs.filter(function(c){return c.di===i}).length+' card(s)'+(d.skipped?' &middot; '+d.skipped+' text-only section(s) without commands skipped':''):'')+'</span>';
+  if(d.state==='err')h+='<div class="kh-note e"><b>This file could not be processed.</b> '+esc(d.err)+'<div class="khi-ac"><button class="kh-btn" data-ia="retry" data-i="'+i+'" type="button">Retry</button><button class="kh-btn" data-ia="manual" type="button">Enter notes manually</button></div></div>';
+  else{var dc=d.doc;if(dc.scanned.length&&!dc.ocrPages.length)h+='<div class="kh-note w">Pages '+esc(dc.scanned.join(', '))+' have no text layer (scanned images). '+(imp.opt.ocr?'OCR could not read them'+(dc.ocrFail?': '+esc(dc.ocrFail):'')+'.':'Enable OCR in the previous step and retry, or enter those notes manually.')+'<div class="khi-ac"><button class="kh-btn" data-ia="retry" data-i="'+i+'" type="button">Retry</button></div></div>';
+   if(dc.ocrPages.length)h+='<div class="kh-note w">OCR was used on pages '+esc(dc.ocrPages.join(', '))+'. OCR can misread characters, so check those commands carefully.</div>';
+   dc.msgs.forEach(function(m){h+='<div class="kh-note">'+esc(m)+'</div>'});
+   if(!imp.cs.some(function(c){return c.di===i})&&!dc.scanned.length)h+='<div class="kh-note w">No commands or procedures were detected. The file may contain only explanatory text. You can add notes manually.<div class="khi-ac"><button class="kh-btn" data-ia="manual" type="button">Enter notes manually</button></div></div>'}
+  h+='</div>'});
+ h+='<div class="khi-bar"><button class="kh-btn" data-ia="all" type="button">Select all eligible</button><button class="kh-btn" data-ia="none" type="button">Select none</button></div>';
+ imp.cs.forEach(function(c,i){h+=itemH(c,i)});
+ return h+'<div class="kh-ft"><button class="kh-btn" data-ia="back" type="button">Back</button><button class="kh-btn" data-ia="cancel" type="button">Cancel</button><button class="kh-btn pri" id="ki-imp" data-ia="imp" type="button"'+(k.sel&&!imp.busy?'':' disabled')+'><span id="ki-cnt">Import '+k.sel+' selected</span></button></div>'+(imp.busy?'<div class="kh-meta" id="ki-pg" role="status">'+esc(imp.pg||'Working...')+'</div>':'<div class="kh-meta" id="ki-pg" role="status"></div>')}
+function listC(a){return a&&a.length?'<ul>'+a.map(function(x){return'<li>'+esc(x)+'</li>'}).join('')+'</ul>':'<span class="kh-meta">none</span>'}
+function compareH(){var c=imp.cs[imp.cur],n=c.dup.note,pp=pf(c.pid),np=plat(n),can=canEdit(n);
+ function row(l,a,b){return'<tr><th>'+l+'</th><td>'+a+'</td><td>'+b+'</td></tr>'}
+ var cl=function(a){return a&&a.length?'<ul>'+a.map(function(x){return'<li><code>'+esc(x.syntax)+'</code>'+(x.description?' <span class="kh-meta">'+esc(x.description)+'</span>':'')+'</li>'}).join('')+'</ul>':'<span class="kh-meta">none</span>'};
+ return'<h3>Compare with existing entry</h3><p class="kh-meta">Match: '+esc(dupLabel(c.dup.kind))+(c.dup.sim?', '+c.dup.sim+'% text match':'')+'. Nothing is overwritten unless you choose Merge or Replace.</p><div style="overflow:auto"><table class="khi-cmp"><tr><th></th><th>From document ('+esc(imp.docs[c.di].name)+(c.pageRef?', '+esc(c.pageRef):'')+')</th><th>Existing entry'+(n.verified?' (verified)':'')+'</th></tr>'
+ +row('Title',esc(c.title),esc(n.title))+row('Platform',esc(pp?pp.name:'?'),esc(np.name))+row('Category',esc(c.category),esc(n.category||''))+row('Commands',cl(c.commands),cl(n.commands))+row('Purpose',esc(c.purpose),esc(n.purpose||n.description||''))+row('Steps',listC(c.steps),listC(n.steps))+row('Warnings',listC(c.warnings),esc(n.warning||''))+row('Tags',esc(c.tags.join(', ')),esc((n.tags||[]).join(', ')))+'</table></div>'
+ +(can?'':'<div class="kh-note w">You can read this entry but not edit it, so Merge and Replace are unavailable.</div>')
+ +'<div class="kh-ft"><button class="kh-btn" data-ia="back" type="button">Back</button><button class="kh-btn" data-ia="dec" data-v="skip" type="button">Skip item</button><button class="kh-btn" data-ia="dec" data-v="new" type="button">Keep both</button>'+(can?'<button class="kh-btn" data-ia="dec" data-v="merge" type="button">Merge into existing</button><button class="kh-btn warn" data-ia="dec" data-v="replace" type="button">Replace existing</button>':'')+'</div>'}
+function doneH(){var r=imp.res;return'<h3>Import finished</h3><div class="khi-sum"><b>'+r.created+'</b> new card(s) &middot; <b>'+r.merged+'</b> merged &middot; <b>'+r.replaced+'</b> replaced &middot; <b>'+r.skipped+'</b> not imported</div>'+r.warn.map(function(m){return'<div class="kh-note w">'+esc(m)+'</div>'}).join('')+r.fail.map(function(m){return'<div class="kh-note e">'+esc(m)+'</div>'}).join('')+'<p class="kh-meta">Imported cards are searchable now. They are saved as '+(imp.opt.st==='draft'?'drafts':'published')+', marked Extracted from Source or Needs Review, and are not verified.</p><div class="kh-ft"><button class="kh-btn" data-ia="again" type="button">Import more files</button><button class="kh-btn pri" data-ia="show" type="button">Show imported cards</button></div>'}
+function draw(){if(!imp)return;var sc=ov.scrollTop,h=imp.step==='pick'?pickH():imp.step==='review'?reviewH():imp.step==='compare'?compareH():doneH();var md=$('kh-md');md.innerHTML=h;md.classList.add('wide');ov.classList.add('on');ov.scrollTop=sc;var fi=$('ki-fi');if(fi)fi.onchange=function(){addDocs([].slice.call(this.files));this.value=''}}
+async function runDoc(i){var d=imp.docs[i];d.state='reading';d.msg='Reading...';d.err='';updFile(i);try{d.doc=d.ext==='pdf'?await readPdf(d):await readDocx(d);d.state='ok';d.msg='Done'}catch(e){console.error(e);d.state='err';d.err=(e&&e.message)||String(e);d.msg='Failed'}updFile(i)}
+async function analyze(){imp.busy=true;draw();for(var i=0;i<imp.docs.length;i++){if(imp.docs[i].state!=='ok')await runDoc(i)}imp.busy=false;buildCands();imp.step='review';draw()}
+function impChange(e){var t=e.target;if(t.dataset.o){var o=imp.opt;o[t.dataset.o]=t.type==='checkbox'?t.checked:t.value;return}
+ if(t.dataset.k!=null){imp.cs[+t.dataset.k].keep=t.checked;draw()}
+ else if(t.dataset.im!=null){imp.cs[+t.dataset.im].img=t.checked}
+ else if(t.dataset.dd!=null){var c=imp.cs[+t.dataset.dd];c.dec=t.value;c.keep=t.value!=='skip'?true:false;draw()}
+ else if(t.dataset.f==='pid'){imp.cs[+t.dataset.i].pid=t.value;var c2=imp.cs[+t.dataset.i];c2.dup=findDup(c2);c2.flags=c2.flags.filter(function(x){return x.indexOf('Platform not detected')<0});if(!t.value)c2.flags.push('Platform not detected: choose Sabre, Galileo, Amadeus or General.');draw()}}
+function impInput(e){var t=e.target;if(t.dataset.f&&t.dataset.f!=='pid'){var c=imp.cs[+t.dataset.i],f2=t.dataset.f,v=t.value;
+ if(f2==='tags')c.tags=csv(v);else if(f2==='steps'||f2==='warnings')c[f2]=v.split('\n').map(function(x){return x.trim()}).filter(Boolean);else c[f2]=v;upCount()}
+ else if(t.dataset.cm){var p=t.dataset.cm.split('.');imp.cs[+p[0]].commands[+p[1]][p[2]]=t.value;upCount()}}
+function impClick(e){var t=e.target.closest('[data-ia]');if(!t||!imp)return;var a=t.dataset.ia,i=+t.dataset.i,c=imp.cs[i];
+ if(a==='pick'){$('ki-fi').click()}else if(a==='cancel'){imp=null;close()}else if(a==='go'){analyze()}
+ else if(a==='rm'){imp.docs.splice(i,1);imp.docs.forEach(function(d,k){d.i=k});draw()}
+ else if(a==='back'){imp.step=imp.step==='compare'?'review':'pick';draw()}
+ else if(a==='retry'){imp.busy=true;runDoc(i).then(function(){imp.busy=false;buildCands(i);draw()})}
+ else if(a==='manual'){imp=null;close();edit(null)}
+ else if(a==='all'){imp.cs.forEach(function(x){if(x.dec!=='ask'&&x.dec!=='skip')x.keep=true});draw()}
+ else if(a==='none'){imp.cs.forEach(function(x){x.keep=false});draw()}
+ else if(a==='edit'){c.edit=!c.edit;c.open=c.edit;draw()}
+ else if(a==='skip'){c.keep=!c.keep;draw()}
+ else if(a==='rev'){c.reviewed=true;draw()}
+ else if(a==='cmp'){imp.cur=i;imp.step='compare';draw()}
+ else if(a==='dec'){var x=imp.cs[imp.cur];x.dec=t.dataset.v;x.keep=x.dec!=='skip';imp.step='review';draw()}
+ else if(a==='cmadd'){c.commands.push({syntax:'',description:'',example:'',exceptions:''});draw()}
+ else if(a==='cmrm'){c.commands.splice(+t.dataset.j,1);draw()}
+ else if(a==='imp'){doImport()}
+ else if(a==='again'){imp.docs=[];imp.cs=[];imp.step='pick';imp.res=null;draw()}
+ else if(a==='show'){var dn=imp.res.firstDoc;imp=null;close();f.q='';f.chip='all';f.src=dn||'';f.adv=!!dn;f.st='live';f.n=24;if($('kh-q'))$('kh-q').value='';render()}}
+/* ---- saving ---- */
+function putFile(path,blob,type){return new Promise(function(res,rej){stg(function(e,s){if(e)return rej(e);s.ref(path).put(blob,{contentType:type,customMetadata:{uploadedBy:uid}}).then(function(){res()},rej)})})}
+function dataUrlBlob(u){var m=u.match(/^data:([^;]+);base64,(.*)$/);if(!m)return null;var b=atob(m[2]),a=new Uint8Array(b.length);for(var i=0;i<b.length;i++)a[i]=b.charCodeAt(i);return{blob:new Blob([a],{type:m[1]}),type:m[1]}}
+async function pageSnap(d,pn){var pg=await d.pdfDoc.getPage(pn),vp=pg.getViewport({scale:1.3}),cv=document.createElement('canvas');cv.width=vp.width;cv.height=vp.height;await pg.render({canvasContext:cv.getContext('2d'),viewport:vp}).promise;
+ return await new Promise(function(res){cv.toBlob(function(b){res(b)},'image/png')})}
+function safeN(s){return String(s).replace(/[^\w.\-]+/g,'_').slice(-80)}
+function mergeInto(n,c,srcInfo){var cmds=(n.commands||[]).slice(),have=cmds.map(function(x){return nrmC(x.syntax)});c.commands.forEach(function(x){if(x.syntax.trim()&&have.indexOf(nrmC(x.syntax))<0)cmds.push({syntax:x.syntax,description:x.description,example:x.example,exceptions:x.exceptions||'',platformId:n.platformId||''})});
+ var steps=(n.steps||[]).slice(),hs=steps.map(nrm);c.steps.forEach(function(s){if(hs.indexOf(nrm(s))<0)steps.push(s)});var tags=(n.tags||[]).slice();c.tags.forEach(function(t){if(tags.indexOf(t)<0)tags.push(t)});
+ var w=String(n.warning||'');c.warnings.forEach(function(x){if(nrm(w).indexOf(nrm(x))<0)w+=(w?'\n':'')+x});var ex=(n.extraSources||[]).slice();ex.push(srcInfo);
+ return{commands:cmds,steps:steps,tags:tags,warning:w,purpose:n.purpose||c.purpose,extraSources:ex,verified:false,verifiedBy:null,reviewStatus:'needs_review',updatedAt:now(),updatedBy:me()}}
+async function doImport(){var items=imp.cs.map(function(c,i){return{c:c,i:i}}).filter(function(x){return eligible(x.c)});if(!items.length)return;
+ imp.busy=true;var res={created:0,merged:0,replaced:0,skipped:imp.cs.length-items.length,warn:[],fail:[],firstDoc:''};function pg(m){imp.pg=m;var e=$('ki-pg');if(e)e.textContent=m;upCount()}
+ pg('Saving...');var bid='b'+Date.now(),dm={},ops=[],hist=[],t0=now(),stt=imp.opt.st,vs=imp.opt.vis;
+ try{
+  for(var di=0;di<imp.docs.length;di++){var its=items.filter(function(x){return x.c.di===di});if(!its.length)continue;var d=imp.docs[di],dr=db.collection('kh_documents').doc(),sp='';
+   if(imp.opt.orig&&STORAGE_ON){var ty=ftype(d.file);if(d.file.size>MAXB)res.warn.push('"'+d.name+'" is larger than '+fsz(MAXB)+', so the original file was not stored. Source filename and page are still recorded.');
+    else if(!ty)res.warn.push('"'+d.name+'": file type not accepted for storage; original not stored.');
+    else{pg('Uploading original: '+d.name);try{sp='kh/'+uid+'/src_'+dr.id+'/'+dr.id+'_'+safeN(d.name);await putFile(sp,d.file,ty)}catch(e){sp='';res.warn.push('Original file "'+d.name+'" could not be stored ('+((e&&(e.code||e.message))||'error')+'). Cards were still imported with source filename and page.')}}}
+   dm[di]={id:dr.id,path:sp};if(!res.firstDoc)res.firstDoc=d.name;
+   ops.push(function(b){b.set(dr,{ownerUid:uid,fileName:d.name,type:d.ext,size:d.size,storagePath:sp,pageCount:d.doc.pages.length,method:d.doc.method,importBatchId:bid,cardCount:its.length,createdAt:t0,createdBy:me()})})}
+  for(var k=0;k<items.length;k++){var c=items[k].c,dd=imp.docs[c.di],pp=pf(c.pid),src={documentId:dm[c.di].id,documentName:dd.name,pageRef:c.pageRef,section:c.heading||''},rs=status(c),ex={method:c.method,status:rs,flags:c.flags.slice(0,20),importBatchId:bid,extractedAt:t0};
+   if(c.dec==='merge'||c.dec==='replace'){var n=c.dup.note;
+    if(c.dec==='merge'){var mo=mergeInto(n,c,src);ops.push((function(id,o){return function(b){b.update(db.collection('kh_notes').doc(id),o)}})(n.id,mo));hist.push([n.id,n.ownerUid,'merged','Merged from '+dd.name+(c.pageRef?' ('+c.pageRef+')':'')]);res.merged++}
+    else{var ro={platformId:pp?pp.id:n.platformId,platformName:pp?pp.name:n.platformName||'',platformCode:pp?pp.code:n.platformCode||'',platformColor:pp?pp.color:n.platformColor||'',title:c.title,description:(c.purpose||'').slice(0,160),purpose:c.purpose,content:c.content,category:c.category,tags:c.tags,commands:c.commands.filter(function(x){return x.syntax.trim()}).map(function(x){return{syntax:x.syntax,description:x.description,example:x.example,exceptions:x.exceptions||'',platformId:pp?pp.id:''}}),steps:c.steps,warning:c.warnings.join('\n'),source:src,extraction:ex,reviewStatus:rs,verified:false,verifiedBy:null,updatedAt:now(),updatedBy:me()};
+     ops.push((function(id,o){return function(b){b.update(db.collection('kh_notes').doc(id),o)}})(n.id,ro));hist.push([n.id,n.ownerUid,'replaced','Replaced from '+dd.name+(c.pageRef?' ('+c.pageRef+')':'')]);res.replaced++}
+    continue}
+   var ref=db.collection('kh_notes').doc(),atl=[];
+   if(STORAGE_ON&&imp.opt.img&&c.img){try{pg('Attaching reference images: '+c.title);var blobs=[];
+     if(c.imgs.length)c.imgs.forEach(function(u,q){var r=dataUrlBlob(u);if(r&&r.blob.size<=MAXB&&/^image\/(png|jpeg|gif|webp)$/.test(r.type))blobs.push({b:r.blob,t:r.type,n:'figure-'+(q+1)+'.'+r.type.split('/')[1].replace('jpeg','jpg')})});
+     else if(dd.ext==='pdf'&&dd.pdfDoc&&c.pages[0]){var sb=await pageSnap(dd,c.pages[0]);if(sb&&sb.size<=MAXB)blobs.push({b:sb,t:'image/png',n:'page-'+c.pages[0]+'.png'})}
+     for(var q=0;q<blobs.length;q++){var aid=Math.random().toString(36).slice(2,10)+Date.now().toString(36),path='kh/'+uid+'/'+ref.id+'/'+aid+'_'+blobs[q].n;await putFile(path,blobs[q].b,blobs[q].t);atl.push({id:aid,name:blobs[q].n,path:path,type:blobs[q].t,size:blobs[q].b.size,kind:'image',uploadedBy:uid,uploadedAt:now()})}}
+    catch(e){res.warn.push('Reference images for "'+c.title+'" were not attached ('+((e&&(e.code||e.message))||'error')+').')}}
+   var o2={ownerUid:uid,platformId:pp?pp.id:'',platformName:pp?pp.name:'',platformCode:pp?pp.code:'',platformColor:pp?pp.color:'',title:c.title,description:(c.purpose||'').slice(0,160),purpose:c.purpose,content:c.content,category:c.category,subcategory:'',example:'',steps:c.steps,warning:c.warnings.join('\n'),verified:false,favorite:false,status:stt,visibility:vs,reviewStatus:rs,tags:c.tags,keywords:[],
+    commands:c.commands.filter(function(x){return x.syntax.trim()}).map(function(x){return{syntax:x.syntax,description:x.description,example:x.example,exceptions:x.exceptions||'',platformId:pp?pp.id:''}}),source:src,extraction:ex,importBatchId:bid,attachments:atl,createdAt:now(),createdBy:me(),updatedAt:now(),updatedBy:me()};
+   ops.push((function(r,o){return function(b){b.set(r,o)}})(ref,o2));hist.push([ref.id,uid,'created','Imported from '+dd.name+(c.pageRef?' ('+c.pageRef+')':'')+' ['+rs+']']);res.created++}
+  pg('Writing cards...');for(var z=0;z<ops.length;z+=400){var b=db.batch();ops.slice(z,z+400).forEach(function(fn){fn(b)});await b.commit()}
+  hist.forEach(function(h){logHist(h[0],h[1],h[2],h[3])});
+  imp.docs.forEach(function(d){d.pdfDoc=null});imp.res=res;imp.step='done';imp.busy=false;draw();ok('Imported '+(res.created+res.merged+res.replaced)+' card(s).');render()
+ }catch(e){console.error(e);imp.busy=false;var c2=e&&e.code||'';res.fail.push(c2==='permission-denied'?'Firestore rules blocked the import. Deploy the Knowledge Hub rules (firestore.knowledge-hub.rules). Nothing was saved.':((e&&e.message)||'Import failed.')+' Nothing was saved to your knowledge base unless shown above.');imp.res=res;imp.step='done';draw()}}
+async function openSrc(n){var s=n.source||{};if(!s.documentId)return;try{var d=await db.collection('kh_documents').doc(s.documentId).get();if(!d.exists||!d.data().storagePath){say('The original file was not stored for this card.','w');return}
+ url(d.data().storagePath,function(e,u){if(e){say('Original file unavailable: '+((e.code||e.message)||'error'),'w');return}window.open(u,'_blank','noopener')})}catch(e){say('The original file is only available to the person who imported it.','w')}}
+function trustH(n){var rs=n.reviewStatus,ex=n.extraction||{};
+ if(n.verified)return'<div class="khx-tr ok">'+svg('shield',16)+'<span>Verified'+(n.verifiedBy&&n.verifiedBy.name?' by '+esc(n.verifiedBy.name):'')+(n.source&&n.source.documentName?' &middot; Source: '+esc(n.source.documentName)+(n.source.pageRef?', '+esc(n.source.pageRef):''):'')+'</span></div>';
+ if(rs==='needs_review')return'<div class="khx-tr">'+svg('warn',16)+'<span><b>Needs Review.</b> Extracted automatically from a document and not checked by a person.'+((ex.flags||[]).length?'<br>'+ex.flags.slice(0,4).map(function(x){return'&bull; '+esc(x)}).join('<br>'):'')+'</span></div>';
+ if(rs==='extracted')return'<div class="khx-tr">'+svg('warn',16)+'<span><b>Extracted from Source.</b> Not verified. Confirm against the original document and your GDS rules before use.</span></div>';
+ return'<div class="khx-tr">'+svg('warn',16)+'<span>User-authored reference, not verified. Confirm commands against your GDS or airline rules before use.</span></div>'}
+function srcH(n){var s=n.source||{},ex=n.extraSources||[];if(!s.documentName&&!ex.length)return'';return'<section class="khx-s"><h4>'+svg('doc',18)+'<span>Source</span></h4><div class="khx-tx">'+(s.documentName?esc(s.documentName)+(s.pageRef?' &middot; '+esc(s.pageRef):'')+(s.section&&String(s.pageRef).indexOf('Section')<0?' &middot; '+esc(s.section):''):'')+ex.map(function(x){return'<br>Also: '+esc(x.documentName)+(x.pageRef?' &middot; '+esc(x.pageRef):'')}).join('')+'</div>'+(s.documentId?'<div style="margin:6px 0 0 26px"><button type="button" class="kh-btn" data-a="src">Open original file</button></div>':'')+'</section>'}
+
 /* ---------- Settings: menu customization + platforms ---------- */
 var card=document.createElement('div');card.className='aset-card';card.id='kh-set';set.insertBefore(card,set.lastElementChild);
 function mkey(b){return b.getAttribute('data-aero')||b.id}
