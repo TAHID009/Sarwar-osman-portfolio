@@ -1697,7 +1697,7 @@ document.documentElement.setAttribute("data-ui","v2");window.__aeroUI="v2";
   /* Transaction Type now sits at the top of the Entry Desk form (light background) */
   #ptc-card .ptc-header-txntype{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin:0 0 10px; padding-bottom:10px; border-bottom:1px solid var(--line); }
   #ptc-card .ptc-header-control-label{ color:var(--ink-soft); margin:0; }
-  #ptc-card .ptc-header-txntype .ptc-txn-tabs{ grid-template-columns:repeat(4, auto); gap:6px; margin:0; }
+  #ptc-card .ptc-header-txntype .ptc-txn-tabs{ grid-template-columns:repeat(5, auto); gap:6px; margin:0; }
   #ptc-card .ptc-header-txntype .ptc-txn-tab{ background:#fff; border-color:var(--line); color:var(--ink-soft); padding:6px 12px; font-size:12px; border-radius:8px; }
   #ptc-card .ptc-header-txntype .ptc-txn-tab:hover{ border-color:var(--txn-color, var(--accent)); color:var(--txn-color, var(--accent)); background:color-mix(in srgb, var(--txn-color, var(--accent)) 8%, #fff); }
   #ptc-card .ptc-header-txntype .ptc-txn-tab.ptc-txn-tab-active{ background:var(--txn-color, var(--accent)); border-color:var(--txn-color, var(--accent)); color:#fff; box-shadow:none; }
@@ -3420,7 +3420,45 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
 html[data-theme="dark"] #pwi-root .pwi-import{background:#12243F;border-color:#2C4F86}
 html[data-theme="dark"] #pwi-root .pwi-import label{color:#E6EEF9}
 html[data-theme="dark"] #pwi-root .pwi-import textarea{background:#0E1E36;border-color:#2C4F86;color:#E6EEF9}
-</style></head><body>
+</style>
+<style id="aero-patch-css">
+/* ---- Booking type ---- */
+.lb-ty-Booking svg{ color:#7C5CC4; }
+.lb-b-bk{ background:#EFEAFB; color:#5B3FA8; }
+/* ---- Dashboard: fit the screen (no sideways scroll, fluid cards, compact on short screens) ---- */
+#view-dashboard, #aero-dash-top{ min-width:0; max-width:100%; box-sizing:border-box; }
+#aero-dash-top{ overflow-x:hidden; }
+#aero-dash-top *{ min-width:0; }
+#aero-dash-top img, #aero-dash-top svg, #aero-dash-top canvas{ max-width:100%; }
+#aero-dash-top .ad-k5{ grid-template-columns:repeat(auto-fit,minmax(min(168px,100%),1fr)); gap:10px; margin-bottom:10px; }
+@media(min-width:1180px){ #aero-dash-top .ad-k5{ grid-template-columns:repeat(5,minmax(0,1fr)); } }
+#aero-dash-top .ad-k{ padding:10px 12px; gap:10px; }
+#aero-dash-top .ad-k>i{ width:36px; height:36px; }
+#aero-dash-top .ad-k b{ font-size:clamp(18px,1.7vw,24px); overflow:hidden; text-overflow:ellipsis; }
+#aero-dash-top .ad-s2{ padding:12px 14px; margin-bottom:10px; }
+#aero-dash-top .ad-sh{ margin-bottom:8px; }
+#aero-dash-top .ad-na{ grid-template-columns:repeat(auto-fit,minmax(min(170px,100%),1fr)); gap:8px; }
+#aero-dash-top .ad-wr{ grid-template-columns:repeat(auto-fit,minmax(min(120px,100%),1fr)); gap:8px; }
+#aero-dash-top .ad-wi{ grid-template-columns:minmax(0,1.6fr) minmax(0,1fr); gap:14px; }
+#aero-dash-top .ad-rv{ grid-template-columns:repeat(auto-fit,minmax(min(150px,100%),1fr)); gap:8px; }
+#aero-dash-top .ad-rv b{ white-space:normal; overflow-wrap:anywhere; font-size:clamp(15px,1.4vw,19px); }
+#aero-dash-top .ad-grid{ grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr)); }
+#aero-dash-top .ad-tw{ overflow-x:auto; max-width:100%; }
+#aero-dash-top .ad-tb{ min-width:0; width:100%; table-layout:auto; }
+#aero-dash-top .ad-tb th, #aero-dash-top .ad-tb td{ padding:7px 8px; }
+#aero-dash-top .ad-tb td{ white-space:normal; overflow-wrap:anywhere; }
+#aero-dash-top .ad-top{ margin-bottom:10px; }
+@media(min-width:981px){ #aero-dash-top{ margin-top:-30px; } }
+@media(max-height:820px) and (min-width:981px){
+  #aero-dash-top h2{ font-size:19px; }
+  #aero-dash-top .ad-title{ margin-bottom:8px; }
+  #aero-dash-top .ad-k{ padding:8px 10px; }
+  #aero-dash-top .ad-s2{ padding:10px 12px; margin-bottom:8px; }
+}
+@media(max-width:980px){ #aero-dash-top .ad-wi{ grid-template-columns:1fr; } }
+@media(max-width:560px){ #aero-dash-top .ad-k5{ grid-template-columns:repeat(2,minmax(0,1fr)); } #aero-dash-top .ad-k{ flex-direction:row; padding:9px; } #aero-dash-top .ad-k>i{ display:none; } }
+</style>
+</head><body>
     <div class="ptc-modal-backdrop" id="cloud-auth-modal-backdrop" style="display:flex; z-index:5000;">
       <div class="aero-auth-split">
         <div class="aero-auth-hero">
@@ -3756,7 +3794,7 @@ html[data-theme="dark"] #pwi-root .pwi-import textarea{background:#0E1E36;border
       <div class="lb-filters">
         <label class="lb-d">From <input type="date" id="lb-from"></label>
         <label class="lb-d">To <input type="date" id="lb-to"></label>
-        <select id="lb-type" aria-label="Transaction type"><option value="">All types</option><option>Ticketing</option><option>Reissue</option><option>Refund</option><option>Void</option></select>
+        <select id="lb-type" aria-label="Transaction type"><option value="">All types</option><option>Ticketing</option><option>Booking</option><option>Reissue</option><option>Refund</option><option>Void</option></select>
         <select id="lb-status" aria-label="Status"></select>
         <button type="button" class="lb-clear" id="lb-clear">Clear filters</button>
         <span id="lb-count" aria-live="polite"></span>
@@ -3887,12 +3925,14 @@ html[data-theme="dark"] #pwi-root .pwi-import textarea{background:#0E1E36;border
           <select id="f-type" class="ptc-method-select-native" aria-hidden="true" tabindex="-1">
             <option value="" disabled selected>Select Type</option>
             <option value="Ticketing">Ticketing</option>
+            <option value="Booking">Booking</option>
             <option value="Reissue">Reissue</option>
             <option value="Refund">Refund</option>
             <option value="Void">Void</option>
           </select>
           <div class="ptc-txn-tabs" id="f-type-tabs" role="group" aria-label="Transaction type">
             <button type="button" class="ptc-txn-tab" data-type="Ticketing" style="--txn-color:#2E6F95;">Ticketing</button>
+            <button type="button" class="ptc-txn-tab" data-type="Booking" style="--txn-color:#7C5CC4;">Booking</button>
             <button type="button" class="ptc-txn-tab" data-type="Reissue" style="--txn-color:#C97F1E;">Reissue</button>
             <button type="button" class="ptc-txn-tab" data-type="Refund" style="--txn-color:#B4453B;">Refund</button>
             <button type="button" class="ptc-txn-tab" data-type="Void" style="--txn-color:#6B7280;">Void</button>
@@ -4006,10 +4046,10 @@ html[data-theme="dark"] #pwi-root .pwi-import textarea{background:#0E1E36;border
         <div class="ptc-section-label" style="--sec-color:#2E6F95;"><span class="aero-v1-only">✈️ </span>Ticketing Details</div>
         <div class="ptc-row">
           <div class="ptc-field">
-            <label for="f-newtkt-t-input">Ticket Number(s) <span class="ptc-required">*</span></label>
+            <label for="f-newtkt-t-input">Ticket Number(s) <span style="font-weight:400;color:var(--muted);font-size:11px;">(optional)</span></label>
             <div class="ptc-tkt-chip-input" id="f-newtkt-t-wrap">
               <div class="ptc-tkt-chips" id="f-newtkt-t-chips"></div>
-              <input type="text" id="f-newtkt-t-input" class="mono" inputmode="numeric" maxlength="13" placeholder="13-digit ticket number, press Enter to add" />
+              <input type="text" id="f-newtkt-t-input" class="mono" inputmode="numeric" maxlength="13" placeholder="13-digit ticket number (optional) — press Enter to add" />
             </div>
             <div class="ptc-field-hint" id="f-newtkt-t-hint"></div>
             <input type="hidden" id="f-newtkt-t" />
@@ -4106,24 +4146,56 @@ html[data-theme="dark"] #pwi-root .pwi-import textarea{background:#0E1E36;border
         </div>
       </div>
 
+      <!-- ===== BOOKING FIELDS (no ticket number, gross payment only) ===== -->
+      <div id="section-Booking" style="display:none;">
+        <div class="ptc-section-label" style="--sec-color:#7C5CC4;"><span class="aero-v1-only">📌 </span>Booking Details</div>
+        <div class="ptc-row">
+          <div class="ptc-field">
+            <label for="f-sector-b">Sector / Route</label>
+            <input type="text" id="f-sector-b" class="mono" />
+          </div>
+          <div></div>
+        </div>
+        <div class="ptc-row">
+          <div class="ptc-field">
+            <label for="f-basefare-b">Base Fare <span class="ptc-required">*</span></label>
+            <input type="number" step="0.01" min="0" id="f-basefare-b" class="mono ptc-bk-calc" placeholder="0.00" />
+          </div>
+          <div class="ptc-field">
+            <label for="f-taxfare-b">Tax</label>
+            <input type="number" step="0.01" min="0" id="f-taxfare-b" class="mono ptc-bk-calc" placeholder="0.00" />
+          </div>
+        </div>
+        <div class="ptc-row">
+          <div class="ptc-field">
+            <label for="f-gross-b">Gross Payment (auto)</label>
+            <input type="text" id="f-gross-b" class="mono" placeholder="0.00" readonly style="background:#F3F5F8; font-weight:700;" title="Base Fare + Tax" />
+          </div>
+          <div class="ptc-field">
+            <label for="f-net-b">Net Payable Amount</label>
+            <input type="number" step="0.01" min="0" id="f-net-b" class="mono" placeholder="0.00" title="Fills with the Gross Payment automatically. Type a different amount if the net payable is different." />
+          </div>
+        </div>
+      </div>
+
       <!-- ===== REISSUE FIELDS ===== -->
       <div id="section-Reissue" style="display:none;">
         <div class="ptc-section-label" style="--sec-color:#C97F1E;"><span class="aero-v1-only">🔄 </span>Reissue Details</div>
         <div class="ptc-row">
           <div class="ptc-field">
-            <label for="f-oldtkt-r-input">Old Ticket Number(s) <span class="ptc-required">*</span></label>
+            <label for="f-oldtkt-r-input">Old Ticket Number(s) <span style="font-weight:400;color:var(--muted);font-size:11px;">(optional)</span></label>
             <div class="ptc-tkt-chip-input" id="f-oldtkt-r-wrap">
               <div class="ptc-tkt-chips" id="f-oldtkt-r-chips"></div>
-              <input type="text" id="f-oldtkt-r-input" class="mono" inputmode="numeric" placeholder="13-digit ticket number, press Enter to add" />
+              <input type="text" id="f-oldtkt-r-input" class="mono" inputmode="numeric" placeholder="13-digit ticket number (optional) — press Enter to add" />
             </div>
             <div class="ptc-field-hint" id="f-oldtkt-r-hint"></div>
             <input type="hidden" id="f-oldtkt-r" />
           </div>
           <div class="ptc-field">
-            <label for="f-newtkt-r-input">New Ticket Number(s) <span class="ptc-required">*</span></label>
+            <label for="f-newtkt-r-input">New Ticket Number(s) <span style="font-weight:400;color:var(--muted);font-size:11px;">(optional)</span></label>
             <div class="ptc-tkt-chip-input" id="f-newtkt-r-wrap">
               <div class="ptc-tkt-chips" id="f-newtkt-r-chips"></div>
-              <input type="text" id="f-newtkt-r-input" class="mono" inputmode="numeric" placeholder="13-digit ticket number, press Enter to add" />
+              <input type="text" id="f-newtkt-r-input" class="mono" inputmode="numeric" placeholder="13-digit ticket number (optional) — press Enter to add" />
             </div>
             <div class="ptc-field-hint" id="f-newtkt-r-hint"></div>
             <input type="hidden" id="f-newtkt-r" />
@@ -4167,10 +4239,10 @@ html[data-theme="dark"] #pwi-root .pwi-import textarea{background:#0E1E36;border
 
         <div class="ptc-row">
           <div class="ptc-field">
-            <label for="f-oldtkt-f-input">Ticket Number(s) <span class="ptc-required">*</span></label>
+            <label for="f-oldtkt-f-input">Ticket Number(s) <span style="font-weight:400;color:var(--muted);font-size:11px;">(optional)</span></label>
             <div class="ptc-tkt-chip-input" id="f-oldtkt-f-wrap">
               <div class="ptc-tkt-chips" id="f-oldtkt-f-chips"></div>
-              <input type="text" id="f-oldtkt-f-input" class="mono" inputmode="numeric" placeholder="13-digit ticket number, press Enter to add" />
+              <input type="text" id="f-oldtkt-f-input" class="mono" inputmode="numeric" placeholder="13-digit ticket number (optional) — press Enter to add" />
             </div>
             <div class="ptc-field-hint" id="f-oldtkt-f-hint"></div>
             <input type="hidden" id="f-oldtkt-f" />
@@ -4612,10 +4684,10 @@ html[data-theme="dark"] #pwi-root .pwi-import textarea{background:#0E1E36;border
         </div>
         <div class="ptc-row">
           <div class="ptc-field">
-            <label for="s-tkt-input">Ticket Number(s) <span class="ptc-required">*</span></label>
+            <label for="s-tkt-input">Ticket Number(s) <span style="font-weight:400;color:var(--muted);font-size:11px;">(optional)</span></label>
             <div class="ptc-tkt-chip-input" id="s-tkt-wrap">
               <div class="ptc-tkt-chips" id="s-tkt-chips"></div>
-              <input type="text" id="s-tkt-input" class="mono" inputmode="numeric" maxlength="13" placeholder="13-digit ticket number, press Enter to add" />
+              <input type="text" id="s-tkt-input" class="mono" inputmode="numeric" maxlength="13" placeholder="13-digit ticket number (optional) — press Enter to add" />
             </div>
             <div class="ptc-field-hint" id="s-tkt-hint"></div>
             <input type="hidden" id="s-tkt" />
@@ -5090,11 +5162,12 @@ A.onChange(A.fillForm);
   const root = document.getElementById('ptc-root');
   const typeMeta = {
     Ticketing: { color: 'var(--booking)', soft: 'var(--booking-soft)' },
+    Booking: { color: '#7C5CC4', soft: '#EFEAFB' },
     Reissue: { color: 'var(--reissue)', soft: 'var(--reissue-soft)' },
     Refund:  { color: 'var(--refund)',  soft: 'var(--refund-soft)' },
     Void:    { color: 'var(--void)',    soft: 'var(--void-soft)' },
   };
-  const tagColor = { Ticketing:'#2E6F95', Reissue:'#C97F1E', Refund:'#B4453B', Void:'#6B7280' };
+  const tagColor = { Ticketing:'#2E6F95', Booking:'#7C5CC4', Reissue:'#C97F1E', Refund:'#B4453B', Void:'#6B7280' };
 
   const $ = (id) => document.getElementById(id);
 
@@ -5151,7 +5224,7 @@ A.onChange(A.fillForm);
     const hint = $(hintId);
     if(!rawInput || !chipsWrap || !hidden) return null;
     const MAX_TICKETS_PER_PNR = 9;
-    const basePlaceholder = rawInput.getAttribute('placeholder') || '13-digit ticket number, press Enter to add';
+    const basePlaceholder = rawInput.getAttribute('placeholder') || '13-digit ticket number (optional) — press Enter to add';
 
     function getTickets(){
       return hidden.value ? hidden.value.split(',').filter(Boolean) : [];
@@ -5397,6 +5470,7 @@ A.onChange(A.fillForm);
   const COMMON_FIELDS = ['date','pnrGds','pnrAirline','pname','pnum','ptype','platform','airline'];
   const SHEET_DEFS = [
     { name:'Ticketing', fields: COMMON_FIELDS.concat(['newTkt','sector','baseFare','taxFare','airlineTicketPrice','discount','discountAmount','discountPct','totalFare','payStatus','paidAmount','dueAmount','dueDate','dueRef','dueStatus','note']) },
+    { name:'Booking', fields: COMMON_FIELDS.concat(['sector','baseFare','taxFare','airlineTicketPrice','totalFare','note']) },
     { name:'Reissue', fields: COMMON_FIELDS.concat(['oldTkt','newTkt','sector','code','fareDiff','airlineCharge','svc','totalCollection','note']) },
     { name:'Refund', fields: COMMON_FIELDS.concat(['oldTkt','refundType','refTotalFare','usedSegmentFare','usedSegmentTax','refTotalTax','refNonRefundTax','airlineCharge','commissionAdj','refundableFare','refundableTax','airlineRefund','svcApplied','svc','refundCharge','taxRefund','refundStatus','adjustmentGiven','adjustmentAmount','note']) },
     { name:'Void', fields: COMMON_FIELDS.concat(['oldTkt','airlineCharge','svc','refundCharge','note']) },
@@ -5431,10 +5505,10 @@ A.onChange(A.fillForm);
       [],
       ['Transaction Type', 'Count', 'Total Value']
     ];
-    const types = ['Ticketing','Reissue','Refund','Void'];
+    const types = ['Ticketing','Booking','Reissue','Refund','Void'];
     types.forEach(t => {
       const subset = list.filter(e => e.txn === t);
-      const total = subset.reduce((sum, e) => sum + entryValue(e), 0);
+      const total = subset.reduce((sum, e) => sum + (t === 'Booking' ? (parseFloat(e.totalFare) || 0) : entryValue(e)), 0);
       rows.push([t, subset.length, Number(total.toFixed(2))]);
     });
     rows.push([]);
@@ -6915,6 +6989,7 @@ A.onChange(A.fillForm);
   const typeSelect = $('f-type');
   const sections = {
     Ticketing: $('section-Ticketing'),
+    Booking: $('section-Booking'),
     Reissue: $('section-Reissue'),
     Refund: $('section-Refund'),
     Void: $('section-Refund'),
@@ -6952,6 +7027,7 @@ A.onChange(A.fillForm);
   function showSection(type){
     Object.values(sections).forEach(s => { if(s) s.style.display = 'none'; });
     if(type === 'Ticketing'){ sections.Ticketing.style.display = 'block'; }
+    else if(type === 'Booking'){ sections.Booking.style.display = 'block'; }
     else if(type === 'Reissue'){ sections.Reissue.style.display = 'block'; }
     else if(type === 'Refund' || type === 'Void'){
       sections.Refund.style.display = 'block';
@@ -7270,6 +7346,20 @@ A.onChange(A.fillForm);
   });
   recalcTicketingFare();
 
+  // ---- Booking: Gross Payment = Base Fare + Tax. Net Payable follows Gross until it is typed over. ----
+  let bookingNetTouched = false;
+  function recalcBooking(){
+    const g = $('f-gross-b'); if(!g) return;
+    const base = parseFloat($('f-basefare-b').value) || 0;
+    const tax = parseFloat($('f-taxfare-b').value) || 0;
+    const gross = base + tax;
+    g.value = gross > 0 ? gross.toFixed(2) : '';
+    if(!bookingNetTouched) $('f-net-b').value = gross > 0 ? gross.toFixed(2) : '';
+  }
+  function resetBooking(){ bookingNetTouched = false; recalcBooking(); }
+  document.querySelectorAll('.ptc-bk-calc').forEach(el => el.addEventListener('input', recalcBooking));
+  if($('f-net-b')) $('f-net-b').addEventListener('input', () => { bookingNetTouched = $('f-net-b').value !== ''; });
+
   // ---- Reissue total collection auto-calculation: Fare Diff + Airline Charge + Service Charge ----
   function recalcReissueTotal(){
     const fareDiff = parseFloat($('f-faredif-r').value) || 0;
@@ -7470,6 +7560,15 @@ A.onChange(A.fillForm);
         base.dueRef = val('f-dueref-t');
         base.dueStatus = $('f-duestat-t').value === 'PAID' ? 'PAID' : 'PENDING';
       }
+    } else if(type === 'Booking'){
+      // Booking: no ticket number. Only Base Fare, Tax, Gross Payment and Net Payable are kept.
+      base.sector = val('f-sector-b');
+      base.baseFare = num('f-basefare-b');
+      base.taxFare = num('f-taxfare-b');
+      base.airlineTicketPrice = parseFloat($('f-gross-b').value) || 0;   // Gross Payment
+      const netRaw = $('f-net-b').value;
+      base.totalFare = netRaw === '' ? base.airlineTicketPrice : (parseFloat(netRaw) || 0);   // Net Payable
+      base.discount = 0; base.discountAmount = 0;
     } else if(type === 'Reissue'){
       base.oldTkt = val('f-oldtkt-r');
       base.newTkt = val('f-newtkt-r');
@@ -7562,9 +7661,13 @@ A.onChange(A.fillForm);
       if(list.length > 9) return `${label.replace(/ number$/, '')} — a PNR can have at most 9 ticket numbers.`;
       return null;
     };
+    if(entry.txn === 'Booking'){
+      if(entry.baseFare === '' || isNaN(entry.baseFare) || entry.baseFare <= 0) return 'Please enter the Base Fare.';
+      if((entry.taxFare !== '' && entry.taxFare < 0)) return 'Tax cannot be negative.';
+      if(entry.totalFare < 0) return 'Net Payable cannot be negative.';
+    }
     if(entry.txn === 'Ticketing'){
       if(!entry.sector) return 'Please enter the sector / route.';
-      if(!entry.newTkt) return 'Please add at least one 13-digit ticket number.';
       const err = badTktList(entry.newTkt, 'Ticket number');
       if(err) return err;
       if((entry.discountAmount || 0) < 0) return 'Discount amount cannot be negative.';
@@ -7578,16 +7681,13 @@ A.onChange(A.fillForm);
       }
     }
     if(entry.txn === 'Reissue'){
-      if(!entry.oldTkt) return 'Please add at least one old ticket number.';
       const errOld = badTktList(entry.oldTkt, 'Old ticket number');
       if(errOld) return errOld;
-      if(!entry.newTkt) return 'Please add at least one new ticket number.';
       const errNew = badTktList(entry.newTkt, 'New ticket number');
       if(errNew) return errNew;
       if(!entry.sector) return 'Please enter the reissue sector.';
     }
     if(entry.txn === 'Refund' || entry.txn === 'Void'){
-      if(!entry.oldTkt) return 'Please add at least one ticket number.';
       const err = badTktList(entry.oldTkt, 'Ticket number');
       if(err) return err;
     }
@@ -7833,6 +7933,7 @@ A.onChange(A.fillForm);
     try{ if(window.aeroCo) window.aeroCo.resetForm(); }catch(err){}
     ['f-pnr-gds','f-pnr-air','f-pname','f-pnum','f-note','f-platform-other','f-airline-other',
      'f-newtkt-t','f-sector-t','f-basefare-t','f-taxfare-t','f-discamt-t','f-discpct-t','f-atp-t',
+     'f-sector-b','f-basefare-b','f-taxfare-b','f-gross-b','f-net-b',
      'f-paidamt-t','f-dueamt-t','f-duedate-t','f-dueref-t',
      'f-oldtkt-r','f-newtkt-r','f-sector-r','f-code-r','f-faredif-r','f-airline-r','f-svc-r',
      'f-oldtkt-f','f-airline-f','f-svc-f','f-charge-f','f-tax-f','f-adjamt-f',
@@ -7867,6 +7968,7 @@ A.onChange(A.fillForm);
     if($('f-duestat-t')) $('f-duestat-t').value = 'PENDING';
     recalcTicketingFare();
     syncPartialPay();
+    if(typeof resetBooking === 'function') resetBooking();
     if(typeof recalcReissueTotal === 'function') recalcReissueTotal();
     if(typeof applyRefundTypeFields === 'function') applyRefundTypeFields();
     if(typeof recalcRefund === 'function') recalcRefund();
@@ -7929,7 +8031,14 @@ A.onChange(A.fillForm);
     setSelectOrOther('f-airline', 'f-airline-other', e.airline);
     setVal('f-note', e.note);
 
-    if(e.txn === 'Ticketing'){
+    if(e.txn === 'Booking'){
+      setVal('f-sector-b', e.sector);
+      setVal('f-basefare-b', e.baseFare);
+      setVal('f-taxfare-b', e.taxFare);
+      bookingNetTouched = false; recalcBooking();
+      const savedNet = parseFloat(e.totalFare);
+      if(!isNaN(savedNet)){ $('f-net-b').value = savedNet.toFixed(2); bookingNetTouched = Math.abs(savedNet - (parseFloat($('f-gross-b').value) || 0)) > 0.004; }
+    } else if(e.txn === 'Ticketing'){
       if(entryNewTktChips) entryNewTktChips.setTickets(e.newTkt ? e.newTkt.toString().split(',').filter(Boolean) : []);
       else setVal('f-newtkt-t', e.newTkt);
       setVal('f-sector-t', e.sector);
@@ -8551,7 +8660,12 @@ A.onChange(A.fillForm);
       ['Platform', e.platform],
       ['Airline', e.airline],
     ];
-    if(e.txn === 'Ticketing'){
+    if(e.txn === 'Booking'){
+      f.push(
+        ['Sector', e.sector], ['Base Fare', fmtMoney(e.baseFare)], ['Tax', fmtMoney(e.taxFare)],
+        ['Gross Payment', fmtMoney(e.airlineTicketPrice)], ['Net Payable Amount', fmtMoney(e.totalFare)]
+      );
+    } else if(e.txn === 'Ticketing'){
       f.push(
         ['Ticket No.', fmtTicketList(e.newTkt)], ['Sector', e.sector],
         ['Discount Amount', fmtMoney(discountAmountOf(e))],
@@ -8735,7 +8849,9 @@ A.onChange(A.fillForm);
       const color = tagColor[e.txn] || '#6B7280';
       const fields = detailFields(e);
       let chartHtml = '';
-      if(e.txn === 'Ticketing'){
+      if(e.txn === 'Booking'){
+        chartHtml = fareChartHtml(e.baseFare, e.taxFare, 'Gross Payment');
+      } else if(e.txn === 'Ticketing'){
         chartHtml = fareChartHtml(e.baseFare, e.taxFare, 'Total Fare');
       } else if(e.txn === 'Refund' && e.refundType !== 'TAX_ONLY'){
         // refTotalFare stores the ORIGINAL ticket's fare + tax combined, not the base
@@ -9306,7 +9422,6 @@ A.onChange(A.fillForm);
     if(!sale.pnrAirline) return 'Please enter the Airline PNR.';
     if(!sale.airline) return 'Please enter the Airline.';
     if(!sale.sector) return 'Please enter the sector / route.';
-    if(!sale.tkt) return 'Please add at least one 13-digit ticket number.';
     const badTkt = sale.tkt.toString().split(',').filter(Boolean).find(t => !/^\d{13}$/.test(t));
     if(badTkt) return `Ticket number "${badTkt}" is not a valid 13-digit ticket number.`;
     if(sale.tkt.toString().split(',').filter(Boolean).length > 9) return 'A PNR can have at most 9 ticket numbers.';
@@ -9878,7 +9993,7 @@ A.onChange(A.fillForm);
       return new Date(iso).toLocaleDateString();
     }
 
-    const OPS_ICON = { Ticketing:'🎫', Reissue:'🔄', Refund:'💸', Void:'🚫', Sale:'💰', search:'🔍', import:'📄' };
+    const OPS_ICON = { Booking:'📌', Ticketing:'🎫', Reissue:'🔄', Refund:'💸', Void:'🚫', Sale:'💰', search:'🔍', import:'📄' };
 
     function buildMergedOps(){
       const txnItems = (typeof entries !== 'undefined' ? entries : []).map(e => ({
@@ -10078,7 +10193,9 @@ A.onChange(A.fillForm);
     function entryPreviewHtml(e){
       const color = tagColor[e.txn] || '#6B7280';
       let chartHtml = '';
-      if(e.txn === 'Ticketing'){
+      if(e.txn === 'Booking'){
+        chartHtml = fareChartHtml(e.baseFare, e.taxFare, 'Gross Payment');
+      } else if(e.txn === 'Ticketing'){
         chartHtml = fareChartHtml(e.baseFare, e.taxFare, 'Total Fare');
       } else if(e.txn === 'Refund' && e.refundType !== 'TAX_ONLY'){
         const refundTax = parseFloat(e.refTotalTax) || 0;
@@ -10189,7 +10306,7 @@ A.onChange(A.fillForm);
         html += '<div class="ptc-global-search-group-label">Entries Log</div>';
         html += entryMatches.slice(0, 6).map(({idx, e}) => `
           <div class="ptc-global-search-item" data-kind="entry" data-idx="${idx}">
-            <div class="ptc-global-search-item-icon">${{Ticketing:'🎫',Reissue:'🔄',Refund:'💸',Void:'🚫'}[e.txn] || '•'}</div>
+            <div class="ptc-global-search-item-icon">${{Ticketing:'🎫',Booking:'📌',Reissue:'🔄',Refund:'💸',Void:'🚫'}[e.txn] || '•'}</div>
             <div class="ptc-global-search-item-main">
               <div class="ptc-global-search-item-title">${e.pname || 'Unnamed'} — ${e.txn}</div>
               <div class="ptc-global-search-item-meta">${[e.pnrGds, e.sector].filter(Boolean).join(' · ')}</div>
@@ -10470,7 +10587,7 @@ A.onChange(A.fillForm);
   // ---- Compact Entry Log (built from the same rows the existing table renders) ----
   function ptcAmount(e){
     let v = null;
-    if(e.txn === 'Ticketing') v = e.totalFare;
+    if(e.txn === 'Ticketing' || e.txn === 'Booking') v = e.totalFare;
     else if(e.txn === 'Reissue') v = e.totalCollection;
     else if(e.txn === 'Refund') v = e.refundCharge;
     v = parseFloat(v);
@@ -10545,9 +10662,10 @@ A.onChange(A.fillForm);
   ['ptc-search-meta','btn-search-clear','ptc-search-results','sales-search-meta','btn-sales-search-clear','sales-search-results'].forEach(id => { const el = $(id); if(el) $('lb-details').appendChild(el); });
   const lb = { from:'', to:'', type:'', status:'', limit:50, sig:'', tab:'', stSig:'' };
   const lbSys = [{ t:new Date(), m:'Session started' }];
-  const LB_STAT = ['Ticketed','Reissued','Refunded','Voided','Pending Adj.','Refund Pending'];
+  const LB_STAT = ['Ticketed','Booked','Reissued','Refunded','Voided','Pending Adj.','Refund Pending'];
   const LB_IC = {
     Ticketing:'<path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>',
+    Booking:'<path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>',
     Reissue:'<path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/>',
     Refund:'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>',
     Void:'<circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/>',
@@ -10557,6 +10675,7 @@ A.onChange(A.fillForm);
   const lbSales = () => ptcPane === 'saleslog' || ptcPane === 'salesdesk';
   function lbStatus(e){
     if(e.txn === 'Ticketing') return ['Ticketed','ok'];
+    if(e.txn === 'Booking') return ['Booked','bk'];
     if(e.txn === 'Reissue') return ['Reissued','re'];
     if(e.txn === 'Void') return ['Voided','vd'];
     if(e.txn === 'Refund'){
@@ -11119,6 +11238,28 @@ A.onChange(A.fillForm);
   var SOURCES = ['WhatsApp','Support','Email','Phone','Internal','Other'];
   var TYPES = {'Ticketing':['New Ticket Issue','Partial Ticket Issue','Reissue','Refund','Partial Refund','New Booking','Flight Availability','Fare Check','Fare Update','Ticket Copy','Others'],'Reissue':['Reissue Charge Checking','Partial Reissue Calculation','Others'],'Refund/Void':['Refund Charge Checking','Partial Refund Calculation','Void','Others'],'Others':['Seat Selection','Name Update','MAAS','Food','Wheelchair','Segment HK','Baggage Update/Check','Others']};
   var CATS = Object.keys(TYPES);
+  /* Task types typed manually under "Others" are added to that category's list automatically.
+     They are read back from saved activities, so they also show up on every device. */
+  function typesFor(cat){
+    var base = TYPES[cat]; if(!base) return base;
+    var extra = [], seen = {};
+    base.forEach(function(v){ seen[v.toLowerCase()] = 1; });
+    (typeof acts !== 'undefined' ? acts : []).forEach(function(a){
+      if(a.category !== cat) return;
+      var v = (a.taskType === 'Others' ? a.customType : a.taskType) || '';
+      v = String(v).trim();
+      if(v && !seen[v.toLowerCase()]){ seen[v.toLowerCase()] = 1; extra.push(v); }
+    });
+    extra.sort(function(x, y){ return x.localeCompare(y); });
+    var l = base.filter(function(v){ return v !== 'Others'; }).concat(extra);
+    if(base.indexOf('Others') > -1) l.push('Others');
+    return l;
+  }
+  function canonType(cat, text){
+    var t = String(text || '').trim().slice(0, 40), low = t.toLowerCase(), l = typesFor(cat) || [], i;
+    for(i = 0; i < l.length; i++){ if(l[i] !== 'Others' && l[i].toLowerCase() === low) return l[i]; }
+    return t;
+  }
   var LEGACY = ['Fare Query','Availability','Booking Support','Hotel','Fare Rule / Policy','Problem Solving','Cancellation','Other','Fare & Availability','Refund','Cancellation & Void','Passenger Services','Flight Information','After-Sales Support'];   /* old records keep their category; the form no longer offers these */
   var ALLCATS = CATS.concat(LEGACY);
   var STATUSES = ['Solved','Resolved','Pending','Follow-up'];
@@ -11370,8 +11511,8 @@ A.onChange(A.fillForm);
     $('pwi-keep').checked = !!settings.keep;
     renderTypes(); syncChips(); updatePreview();
   }
-  function renderTypes(){ var l = TYPES[form.category]; $('pwi-type').innerHTML = l ? l.map(function(v){ return chip('taskType', v); }).join('') : '<span class="pwi-sub">Choose a category first</span>'; syncChips(); }
-  function fillMType(cat, val){ var l = (TYPES[cat] || []).slice(); if(val && l.indexOf(val) < 0) l.push(val); $('pwi-m-type').innerHTML = '<option value="">Not set</option>' + l.map(function(v){ return '<option>'+esc(v)+'</option>'; }).join(''); $('pwi-m-type').value = val || ''; }
+  function renderTypes(){ var l = typesFor(form.category); $('pwi-type').innerHTML = l ? l.map(function(v){ return chip('taskType', v); }).join('') : '<span class="pwi-sub">Choose a category first</span>'; syncChips(); }
+  function fillMType(cat, val){ var l = (typesFor(cat) || []).slice(); if(val && l.indexOf(val) < 0) l.push(val); $('pwi-m-type').innerHTML = '<option value="">Not set</option>' + l.map(function(v){ return '<option>'+esc(v)+'</option>'; }).join(''); $('pwi-m-type').value = val || ''; }
   function syncChips(){
     pwi.querySelectorAll('[data-act="pick"]').forEach(function(b){
       b.setAttribute('aria-pressed', form[b.dataset.g] === b.dataset.v ? 'true' : 'false');
@@ -11468,7 +11609,7 @@ A.onChange(A.fillForm);
     var u = curUser();
     var a = {id:uid(), date:form.date || todayISO(), time:form.time || nowTime(), source:form.source, company:canonCompany(co), companyId:(window.aeroWs ? aeroWs.active().id : ''),
              category:form.category, status:form.status, kind:form.kind, effort:form.effort, note:$('pwi-note').value.trim().slice(0,500),
-             created:nowISO(), updated:nowISO(), taskType:form.taskType, customType:form.taskType === 'Others' ? custom.slice(0,60) : '', importText:'',
+             created:nowISO(), updated:nowISO(), taskType:(form.taskType === 'Others' ? canonType(form.category, custom) : form.taskType), customType:'', importText:'',
              userId:u.userId, userEmail:u.userEmail, userName:u.userName,
              ref:$('pwi-ref').value.trim().toUpperCase().slice(0,30), reopened:0, hist:[]};
     a.hist.push({s:a.status, at:a.created});
@@ -11561,7 +11702,7 @@ A.onChange(A.fillForm);
     var mt = $('pwi-m-type').value, mc = $('pwi-m-custom').value.trim();
     if(mt === 'Others' && !mc){ toast('Enter a custom task type.'); $('pwi-m-custom').focus(); return; }
     a.date = d; a.time = $('pwi-m-time').value || a.time; a.source = $('pwi-m-source').value; a.company = canonCompany(co);
-    a.category = $('pwi-m-cat').value; a.taskType = mt; a.customType = mt === 'Others' ? mc.slice(0,60) : ''; a.ref = $('pwi-m-ref').value.trim().toUpperCase().slice(0,30); trackStatus(a, $('pwi-m-status').value); a.kind = $('pwi-m-kind').value; a.effort = $('pwi-m-effort').value;
+    a.category = $('pwi-m-cat').value; a.taskType = (mt === 'Others' ? canonType(a.category, mc) : mt); a.customType = ''; a.ref = $('pwi-m-ref').value.trim().toUpperCase().slice(0,30); trackStatus(a, $('pwi-m-status').value); a.kind = $('pwi-m-kind').value; a.effort = $('pwi-m-effort').value;
     a.note = $('pwi-m-note').value.trim().slice(0,500); a.updated = nowISO();
     sortActs(); cloudPut(a); closeEdit(); renderAll(); toast('Changes saved.');
   }
@@ -12243,7 +12384,7 @@ A.onChange(A.fillForm);
     var s = $('hm-src'); if(!s) return;
     if(!s.options.length){ s.innerHTML = '<option value="">Select source</option>' + SOURCES.map(opt).join(''); $('hm-cat').innerHTML = '<option value="">Select category</option>' + CATS.map(opt).join(''); $('hm-out').innerHTML = STATUSES.map(opt).join(''); $('hm-eff').innerHTML = '<option value="">Not set</option>' + EFFORTS.map(opt).join(''); }
     s.value = form.source; $('hm-cat').value = form.category; $('hm-out').value = form.status; $('hm-eff').value = form.effort;
-    var l = TYPES[form.category] || []; $('hm-typ').innerHTML = '<option value="">' + (l.length ? 'Select type' : 'Select category first') + '</option>' + l.map(opt).join(''); $('hm-typ').value = form.taskType;
+    var l = typesFor(form.category) || []; $('hm-typ').innerHTML = '<option value="">' + (l.length ? 'Select type' : 'Select category first') + '</option>' + l.map(opt).join(''); $('hm-typ').value = form.taskType;
     var n = $('pwi-note'), c = $('hm-cnt'); if(n && c) c.textContent = n.value.length + '/500';
     var cw = $('pwi-custom-wrap'); if(cw){ var showC = form.taskType === 'Others'; cw.hidden = !showC; $('pwi-custom-type').required = showC; if(!showC) $('pwi-custom-type').value = ''; }
   }
@@ -12557,15 +12698,15 @@ var $=function(i){return document.getElementById(i)};
 var D=function(){return window.aeroData},E=function(){return D().entries()||[]};
 var num=function(v){return parseFloat(v)||0};
 var esc=function(t){return String(t==null?'':t).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
-var TY=['Ticketing','Reissue','Refund','Void'],TC={Ticketing:'#2563EB',Reissue:'#F59E0B',Refund:'#EF4444',Void:'#475569'};
+var TY=['Ticketing','Booking','Reissue','Refund','Void'],TC={Ticketing:'#2563EB',Booking:'#7C5CC4',Reissue:'#F59E0B',Refund:'#EF4444',Void:'#475569'};
 var fm=function(n){return Math.round(n).toLocaleString('en-US')},bdt=function(n){return 'BDT '+fm(n)};
 function iso(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function addD(d,n){var x=new Date(d);x.setDate(x.getDate()+n);return x}
 function pd(s){return new Date(+s.slice(0,4),+s.slice(5,7)-1,+s.slice(8,10))}
 function fmtD(s){if(!s)return '';var d=pd(s);return isNaN(d)?s:d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})}
 function val(e){return e.txn==='Ticketing'?num(e.totalFare):e.txn==='Reissue'?num(e.totalCollection):e.txn==='Refund'?num(e.refundCharge):0}
-function status(e){if(e.txn==='Ticketing')return'Ticketed';if(e.txn==='Reissue')return'Reissued';if(e.txn==='Void')return'Voided';if(e.txn==='Refund'){if(e.refundStatus==='PENDING')return'Refund Pending';return e.adjustmentGiven==='YES'?'Refunded':'Pending Adj.'}return'—'}
-var SC={'Ticketed':'#2563EB','Reissued':'#B7791F','Refunded':'#16875A','Pending Adj.':'#C2410C','Refund Pending':'#C2410C','Voided':'#475569'};
+function status(e){if(e.txn==='Ticketing')return'Ticketed';if(e.txn==='Booking')return'Booked';if(e.txn==='Reissue')return'Reissued';if(e.txn==='Void')return'Voided';if(e.txn==='Refund'){if(e.refundStatus==='PENDING')return'Refund Pending';return e.adjustmentGiven==='YES'?'Refunded':'Pending Adj.'}return'—'}
+var SC={'Ticketed':'#2563EB','Booked':'#7C5CC4','Reissued':'#B7791F','Refunded':'#16875A','Pending Adj.':'#C2410C','Refund Pending':'#C2410C','Voided':'#475569'};
 function list(v){return String(v||'').split(',').map(function(x){return x.trim()}).filter(Boolean)}
 function names(e){return String(e.pname||'').split(/[,;\n]+/).map(function(x){return x.trim()}).filter(Boolean)}
 function tkts(e){return list(e.txn==='Ticketing'||e.txn==='Reissue'?e.newTkt:e.oldTkt)}
@@ -12625,7 +12766,7 @@ function donut(s){var tot=s.n;if(!tot)return EMPTY;var Rr=46,C=2*Math.PI*Rr,off=
  return'<div style="display:flex;gap:18px;align-items:center;flex-wrap:wrap"><svg viewBox="0 0 140 140" style="width:150px"><circle r="46" cx="70" cy="70" fill="none" stroke="#EEF2F7" stroke-width="20"/>'+a+'<text x="70" y="68" text-anchor="middle" style="font-size:22px;font-weight:800;fill:#0F2742">'+tot+'</text><text x="70" y="84" text-anchor="middle">Total</text></svg><div class="wr-ps" style="flex:1;min-width:150px">'+TY.map(function(t){return'<div><span><i style="display:inline-block;width:9px;height:9px;border-radius:50%;background:'+TC[t]+';margin-right:6px"></i>'+t+'</span><b>'+s.by[t]+' ('+Math.round(s.by[t]*100/tot)+'%)</b></div>'}).join('')+'</div></div>'}
 /* ---- tables ---- */
 var DS={tab:'recent',q:'',type:'',st:'',limit:10,view:'timeline'};try{var _lv=localStorage.getItem('aeroops.lbview');if(_lv==='table'||_lv==='timeline')DS.view=_lv}catch(x){}
-function amt(e){if(e.txn==='Void')return'—';var v=val(e);return e.txn==='Refund'?'-'+fm(Math.abs(v)):fm(v)}
+function amt(e){if(e.txn==='Void')return'—';if(e.txn==='Booking')return fm(num(e.totalFare));var v=val(e);return e.txn==='Refund'?'-'+fm(Math.abs(v)):fm(v)}
 function tkCell(e){var t=tkts(e);return t.length?esc(t[0])+(t.length>1?' <small>+'+(t.length-1)+'</small>':''):'—'}
 function pxCell(e){var n=names(e);return n.length?esc(n[0])+(n.length>1?' <small>+'+(n.length-1)+'</small>':''):'—'}
 function recTable(l,opt){opt=opt||{};if(!l.length)return EMPTY;var lim=opt.limit?l.slice(0,opt.limit):l;
@@ -12641,7 +12782,7 @@ var dash=document.createElement('div');dash.id='wr-dash';dash.className='wr';bod
 function recentBlock(l){var f=filt(sorted(l),DS);return DS.view==='table'?recTable(f,{limit:DS.limit}):lbkTimeline(f,DS.limit)}
 /* Log Book: one list for Work Record, shown as a day-grouped Timeline or as the dense Table (switch in the card header).
    Both views use the same period + search/type/status filters. Rows open the existing Record Details. */
-var LBK_IC={Ticketing:'\u2708',Reissue:'\u27F3',Refund:'\u21BA',Void:'\u2298'};
+var LBK_IC={Ticketing:'\u2708',Booking:'\u25C6',Reissue:'\u27F3',Refund:'\u21BA',Void:'\u2298'};
 var LBK_CP='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg>';
 function lbkPend(e){var t=status(e);return t==='Pending Adj.'||t==='Refund Pending'}
 function lbkDay(ds){var t=new Date();if(ds===iso(t))return'Today';if(ds===iso(addD(t,-1)))return'Yesterday';var d=pd(ds);return isNaN(d)?(ds||'No date'):d.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'})}
@@ -12685,7 +12826,7 @@ function dueRows(e){var d=D().dueInfo&&D().dueInfo(e);if(!d)return'';return frow
 function frow(l,v){return v===''||v===undefined||v===null?'':'<div><span>'+l+'</span><b>'+(typeof v==='number'?fm(v):esc(v))+'</b></div>'}
 function openDetail(i){var e=E()[i];if(!e)return;closeDetail();var st=status(e),n=names(e),t=tkts(e),m=Math.max(n.length,t.length),pr='';
  for(var k=0;k<m;k++)pr+='<tr><td>'+(k+1)+'</td><td>'+esc(n[k]||'—')+'</td><td class="mono">'+esc(t[k]||'—')+'</td></tr>';
- var fin='';if(e.txn==='Ticketing')fin=frow('Base fare',num(e.baseFare))+frow('Tax',num(e.taxFare))+frow('Total fare',num(e.airlineTicketPrice))+frow('Discount',num(e.discountAmount))+frow('Payable (client pays)',num(e.totalFare))+dueRows(e);
+ var fin='';if(e.txn==='Booking')fin=frow('Base fare',num(e.baseFare))+frow('Tax',num(e.taxFare))+frow('Gross payment',num(e.airlineTicketPrice))+frow('Net payable',num(e.totalFare));else if(e.txn==='Ticketing')fin=frow('Base fare',num(e.baseFare))+frow('Tax',num(e.taxFare))+frow('Total fare',num(e.airlineTicketPrice))+frow('Discount',num(e.discountAmount))+frow('Payable (client pays)',num(e.totalFare))+dueRows(e);
  else if(e.txn==='Reissue')fin=frow('Fare difference',num(e.fareDiff))+frow('Airline charge',num(e.airlineCharge))+frow('Service charge',num(e.svc))+frow('Total collection',num(e.totalCollection));
  else if(e.txn==='Refund')fin=frow('Refund type',e.refundType)+frow('Refundable fare',num(e.refundableFare))+frow('Refundable tax',num(e.refundableTax))+frow('Airline fee',num(e.airlineCharge))+frow('Commission adj.',num(e.commissionAdj))+frow('Airline refund',num(e.airlineRefund))+frow('Service charge',num(e.svc))+frow('Client refund',num(e.refundCharge))+frow('Adjustment given',e.adjustmentGiven)+(e.adjustmentGiven==='YES'?frow('Adjustment amount',num(e.adjustmentAmount)):'');
  else fin=frow('Airline charge',num(e.airlineCharge))+frow('Service charge',num(e.svc))+frow('Charge',num(e.refundCharge));
