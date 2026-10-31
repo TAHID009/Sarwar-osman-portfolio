@@ -15408,4 +15408,130 @@ if(window.MutationObserver){var mo=new MutationObserver(sched);
 run();setTimeout(run,800);setTimeout(run,2500)})();
 </script>
 
+
+<style id="aero-premium-ui">
+/* AeroOps premium icons + button colors — presentation only. Additive: no IDs, handlers, data or logic touched. */
+:root{--ao-blue:#1D4ED8;--ao-blue-h:#1E40AF;--ao-teal:#0F766E;--ao-teal-h:#115E59;--ao-em:#059669;--ao-em-h:#047857;--ao-amber:#F59E0B;--ao-amber-h:#D98A06;--ao-ind:#4F46E5;--ao-ind-h:#4338CA}
+/* icons: one outline style, 1.8 stroke, round caps */
+html body #ptc-root svg[fill="none"][stroke]{stroke-width:1.8!important;stroke-linecap:round!important;stroke-linejoin:round!important}
+html body #ptc-root #ptc-nav .ptc-nav-btn svg,html body #ptc-root .ptc-side-logs-btn svg{width:18px;height:18px;flex:none}
+html body #ptc-root .ptc-stat-icon{width:38px;height:38px;border-radius:10px}
+html body #ptc-root .ptc-stat-icon svg{width:20px;height:20px}
+html body #ptc-root #ptc-today .ptc-stat-card:nth-child(4n+2):not(.aero-total) .ptc-stat-icon:not(.ptc-stat-green){background:#FEF3C7;color:#B45309}
+html body #ptc-root #ptc-today .ptc-stat-card:nth-child(4n+3):not(.aero-total) .ptc-stat-icon:not(.ptc-stat-green){background:#E0E7FF;color:#4F46E5}
+.aoe{display:inline-block;width:1.15em;height:1.15em;vertical-align:-.2em;margin-right:.3em;overflow:hidden;white-space:nowrap;text-indent:200%;background:currentColor;-webkit-mask:var(--aoi) center/contain no-repeat;mask:var(--aoi) center/contain no-repeat}
+.aoi-only .aoe{margin:0}.aol-wx-ic .aoe{width:30px;height:30px;margin:0}
+/* buttons: shared shape */
+html:not(#a):not(#b) body [data-aoui]{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:34px;padding:0 14px;border:1px solid transparent;border-radius:8px;font-family:inherit;font-size:13px;font-weight:600;line-height:1.2;letter-spacing:0;text-transform:none;background-image:none;box-shadow:none;filter:none;cursor:pointer;white-space:nowrap;transition:background-color .15s,border-color .15s,color .15s,box-shadow .15s}
+html:not(#a):not(#b) body [data-aoui] svg{width:16px;height:16px;flex:none}
+html:not(#a):not(#b) body [data-aoui].sm,html:not(#a):not(#b) body [data-aoui].ptc-search-edit,html:not(#a):not(#b) body [data-aoui].ptc-search-del,html:not(#a):not(#b) body [data-aoui].ptc-sales-edit,html:not(#a):not(#b) body [data-aoui].ptc-sales-del{min-height:30px;padding:0 10px;font-size:12px}
+html:not(#a):not(#b) body [data-aoui].aoi-only{width:34px;padding:0}html:not(#a):not(#b) body [data-aoui].aoi-only svg{width:18px;height:18px}
+html:not(#a):not(#b) body [data-aoui].sm.aoi-only{width:30px}
+html:not(#a):not(#b) body [data-aoui]:active:not(:disabled){transform:translateY(.5px)}
+html:not(#a):not(#b) body [data-aoui]:focus-visible{outline:none;box-shadow:0 0 0 2px #fff,0 0 0 4px #2563EB}
+html:not(#a):not(#b) body [data-aoui]:disabled,html:not(#a):not(#b) body [data-aoui][aria-disabled="true"]{opacity:.5;cursor:not-allowed;transform:none}
+/* buttons: semantic tones */
+html:not(#a):not(#b) body [data-aoui][data-aoui][data-aoui][data-tone="primary"]{background:var(--ao-blue)!important;border-color:var(--ao-blue)!important;color:#fff!important}
+html:not(#a):not(#b) body [data-aoui][data-aoui][data-aoui][data-tone="primary"]:hover:not(:disabled){background:var(--ao-blue-h)!important;border-color:var(--ao-blue-h)!important}
+html:not(#a):not(#b) body [data-aoui][data-aoui][data-aoui][data-tone="edit"]{background:#fff!important;border-color:#93B4F5!important;color:var(--ao-blue)!important}
+html:not(#a):not(#b) body [data-aoui][data-aoui][data-aoui][data-tone="edit"]:hover:not(:disabled){background:#EFF6FF!important;border-color:var(--ao-blue)!important}
+html:not(#a):not(#b) body [data-aoui][data-aoui][data-aoui][data-tone="success"]{background:var(--ao-em)!important;border-color:var(--ao-em)!important;color:#fff!important}
+html:not(#a):not(#b) body [data-aoui][data-aoui][data-aoui][data-tone="success"]:hover:not(:disabled){background:var(--ao-em-h)!important;border-color:var(--ao-em-h)!important}
+html:not(#a):not(#b) body [data-aoui][data-aoui][data-aoui][data-tone="warning"]{background:var(--ao-amber)!important;border-color:var(--ao-amber)!important;color:#2B1A00!important}
+html:not(#a):not(#b) body [data-aoui][data-aoui][data-aoui][data-tone="warning"]:hover:not(:disabled){background:var(--ao-amber-h)!important;border-color:var(--ao-amber-h)!important}
+html:not(#a):not(#b) body [data-aoui][data-aoui][data-aoui][data-tone="danger"]{background:#FEF2F2!important;border-color:#FECACA!important;color:#B91C1C!important}
+html:not(#a):not(#b) body [data-aoui][data-aoui][data-aoui][data-tone="danger"]:hover:not(:disabled){background:#FEE2E2!important;border-color:#F87171!important}
+html:not(#a):not(#b) body [data-aoui][data-aoui][data-aoui][data-tone="secondary"]{background:#fff!important;border-color:#CBD5E1!important;color:#334155!important}
+html:not(#a):not(#b) body [data-aoui][data-aoui][data-aoui][data-tone="secondary"]:hover:not(:disabled){background:#F1F5F9!important;border-color:#94A3B8!important}
+html:not(#a):not(#b) body [data-aoui][data-aoui][data-aoui][data-tone="export"]{background:var(--ao-ind)!important;border-color:var(--ao-ind)!important;color:#fff!important}
+html:not(#a):not(#b) body [data-aoui][data-aoui][data-aoui][data-tone="export"]:hover:not(:disabled){background:var(--ao-ind-h)!important;border-color:var(--ao-ind-h)!important}
+html:not(#a):not(#b) body [data-aoui][data-aoui][data-aoui][data-tone="info"]{background:var(--ao-teal)!important;border-color:var(--ao-teal)!important;color:#fff!important}
+html:not(#a):not(#b) body [data-aoui][data-aoui][data-aoui][data-tone="info"]:hover:not(:disabled){background:var(--ao-teal-h)!important;border-color:var(--ao-teal-h)!important}
+@media (prefers-reduced-motion:reduce){html:not(#a):not(#b) body [data-aoui]{transition:none}}
+</style>
+<script id="aero-premium-ui-js">
+/* AeroOps premium UI enhancer — presentation only. Adds data-tone/title/aria-label to buttons and wraps emoji in
+   icon spans (text content is unchanged). No existing id, handler, data, Firebase or business logic is read or changed. */
+(function(){try{
+var P={receipt:'<path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M14 8H8M16 12H8M13 16H8"/>',
+cash:'<rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/>',
+ticket:'<path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2M13 17v2M13 11v2"/>',
+chart:'<path d="M3 3v18h18M18 17V9M13 17V5M8 17v-3"/>',
+warn:'<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4M12 17h.01"/>',
+x:'<path d="M18 6 6 18M6 6l12 12"/>',check:'<path d="M20 6 9 17l-5-5"/>',
+ok:'<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/>',
+plane:'<path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>',
+undo:'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>',
+edit:'<path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/>',
+pin:'<path d="M12 17v5M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z"/>',
+sync:'<path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/>',
+list:'<rect width="8" height="4" x="8" y="2" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2M12 11h4M12 16h4M8 11h.01M8 16h.01"/>',
+search:'<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',ban:'<circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/>',
+cloud:'<path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>',
+rain:'<path d="M4 14.9A7 7 0 1 1 15.7 8h1.8a4.5 4.5 0 0 1 2.5 8.2"/><path d="M16 14v6M8 14v6M12 16v6"/>',
+sun:'<path d="M12 2v2M4.93 4.93l1.41 1.41M20 12h2M19.07 4.93l-1.41 1.41M15.947 12.65a4 4 0 0 0-5.925-4.128M13 22H7a5 5 0 1 1 4.9-6H13a3 3 0 0 1 0 6Z"/>',
+snow:'<path d="M4 14.9A7 7 0 1 1 15.7 8h1.8a4.5 4.5 0 0 1 2.5 8.2"/><path d="M8 15h.01M8 19h.01M12 17h.01M12 21h.01M16 15h.01M16 19h.01"/>',
+storm:'<path d="M6 16.326A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 .5 8.973"/><path d="m13 12-3 5h4l-3 5"/>',
+moon:'<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>',
+fog:'<path d="M4 14.9A7 7 0 1 1 15.7 8h1.8a4.5 4.5 0 0 1 2.5 8.2"/><path d="M16 17H7M17 21H9"/>',
+clock:'<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',
+trash:'<path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6"/>',
+phone:'<rect width="14" height="20" x="5" y="2" rx="2"/><path d="M12 18h.01"/>',
+mail:'<rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>',
+home:'<path d="M3 9.5 12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="M9 21V12h6v9"/>',
+cog:'<path d="M20 7h-9M14 17H5"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/>',
+scale:'<path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10M12 3v18M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/>',
+rocket:'<path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/>',
+bank:'<path d="M3 22h18M6 18v-7M10 18v-7M14 18v-7M18 18v-7M12 2l9 5H3z"/>',
+card:'<rect width="20" height="14" x="2" y="5" rx="2"/><path d="M2 10h20"/>',
+folder:'<path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/>',
+user:'<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+file:'<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4M10 9H8M16 13H8M16 17H8"/>',
+menu:'<path d="M4 6h16M4 12h16M4 18h16"/>'};
+var E={'🧾':'receipt','💰':'cash','💵':'cash','🎫':'ticket','📊':'chart','⚠':'warn','✕':'x','✓':'check','✅':'ok','✈':'plane','💸':'undo','✏':'edit','📌':'pin','🔄':'sync','📋':'list','🔍':'search','🔎':'search','🚫':'ban','☁':'cloud','🌧':'rain','🌤':'sun','🌦':'sun','🌨':'snow','⛈':'storm','🌙':'moon','🌫':'fog','🕒':'clock','🗑':'trash','📱':'phone','📩':'mail','🏠':'home','⚙':'cog','⚖':'scale','🚀':'rocket','🏦':'bank','💳':'card','🗂':'folder','👤':'user','📄':'file','☰':'menu'};
+var css='';for(var k in P){css+='.aoe[data-i="'+k+'"]{--aoi:url("data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+P[k]+'</svg>')+'")}'}
+var st=document.createElement('style');st.id='aero-premium-icons';st.textContent=css;document.head.appendChild(st);
+var src='('+Object.keys(E).join('|')+')\uFE0F?',RT=new RegExp(src),RG=new RegExp(src,'g');
+var SKIP='svg,script,style,textarea,option,select,title,.aoe,[contenteditable="true"]';
+function wrapText(n){var p=n.parentNode;if(!p||!RT.test(n.nodeValue)||(p.closest&&p.closest(SKIP)))return;
+ var v=n.nodeValue,f=document.createDocumentFragment(),i=0,m;RG.lastIndex=0;
+ while((m=RG.exec(v))){if(m.index>i)f.appendChild(document.createTextNode(v.slice(i,m.index)));
+  var s=document.createElement('span');s.className='aoe';s.setAttribute('aria-hidden','true');s.setAttribute('data-i',E[m[1]]);s.textContent=m[0];f.appendChild(s);i=m.index+m[0].length}
+ if(i<v.length)f.appendChild(document.createTextNode(v.slice(i)));p.replaceChild(f,n)}
+var BS='.ptc-btn,.kh-btn,.pwi-btn,.wr-btn,.px-btn,.ao-btn,.aset-dl,.khx-ib,.sx-go,.lb-clear';
+function tone(b){var c=' '+b.className+' ',t=(b.textContent||'').trim().toLowerCase(),
+ s=t+' '+(b.id||'').toLowerCase()+' '+(b.getAttribute('title')||'').toLowerCase()+' '+(b.getAttribute('aria-label')||'').toLowerCase();
+ var pri=/ ptc-btn-primary | pri | ao-btn--primary /.test(c);
+ if(/ del | ptc-sales-del | ptc-search-del /.test(c)||/delet|remov|trash|discard|\bcancel|erase|wipe/.test(s))return'danger';
+ if(/\bback\b|close|\bskip|later|dismiss|collapse|expand|clear|disconnect|\bmore\b|reconnect/.test(s))return'secondary';
+ if(/export|download|backup|excel|\.xlsx|\bpdf\b|csv|print/.test(s)||/ aset-dl /.test(c))return'export';
+ if(/complete|confirm|approve|\bdone\b|mark as|finish|verified/.test(s))return'success';
+ if(/ warn | ptc-adj-btn /.test(c)||/pending|retry|warning/.test(s))return'warning';
+ if(pri)return'primary';
+ if(/\bedit\b|update|rename|modify/.test(s)||/-edit /.test(c))return'edit';
+ if(/\bview\b|\bopen\b|details|preview|\bshow\b|search|\bfind\b/.test(s))return'info';
+ if(/\badd\b|\bnew\b|save|submit|create|import|set up|setup|send|continue|publish|generate|upload|apply/.test(s))return'primary';
+ return'secondary'}
+var NM={danger:'Delete',edit:'Edit',info:'View',export:'Download',success:'Confirm',primary:'Add',secondary:'Close',warning:'Pending'};
+function btn(b){if(b.hasAttribute('data-aoui')||(b.closest&&b.closest('#cloud-auth-modal-backdrop')))return;
+ var t=tone(b);b.setAttribute('data-aoui','');b.setAttribute('data-tone',t);
+ var tx=(b.textContent||'').replace(/\s/g,'');
+ if(tx.length<=2&&(b.querySelector('svg')||tx.length)){b.classList.add('aoi-only');
+  if(!b.getAttribute('title')){var c=b.className,n=/more/.test(c)?'More actions':(/ptc-search-adj|adj/.test(c)?'Adjustment':NM[t]);
+   if(/edit/.test(c))n='Edit';b.setAttribute('title',n)}
+  if(!b.getAttribute('aria-label'))b.setAttribute('aria-label',b.getAttribute('title'))}}
+function nav(r){var a=r.querySelectorAll?r.querySelectorAll('#ptc-nav .ptc-nav-btn:not([title])'):[];
+ for(var i=0;i<a.length;i++){var l=a[i].querySelector('.aero-lbl');if(l)a[i].setAttribute('title',l.textContent.trim())}}
+function scan(r){if(r.nodeType===3){wrapText(r);return}if(r.nodeType!==1||(r.closest&&r.closest('.aoe')))return;
+ if(r.matches&&r.matches(BS))btn(r);var a=r.querySelectorAll(BS);for(var i=0;i<a.length;i++)btn(a[i]);nav(r);
+ var w=document.createTreeWalker(r,4,null),x,L=[];while((x=w.nextNode()))if(RT.test(x.nodeValue))L.push(x);
+ for(i=0;i<L.length;i++)wrapText(L[i])}
+var q=[],tm=0;
+function flush(){tm=0;var a=q;q=[];for(var i=0;i<a.length;i++){try{if(a[i].isConnected)scan(a[i])}catch(e){}}}
+scan(document.body);
+new MutationObserver(function(ms){for(var i=0;i<ms.length;i++)for(var j=0;j<ms[i].addedNodes.length;j++){var n=ms[i].addedNodes[j];
+ if(n.nodeType===1&&n.classList.contains('aoe'))continue;q.push(n)}
+ if(!tm)tm=setTimeout(flush,80)}).observe(document.body,{childList:true,subtree:true});
+}catch(e){}})();
+</script>
 </body></html>
