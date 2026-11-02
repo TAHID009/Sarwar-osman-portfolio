@@ -10662,7 +10662,7 @@ A.onChange(A.fillForm);
   ['ptc-search-meta','btn-search-clear','ptc-search-results','sales-search-meta','btn-sales-search-clear','sales-search-results'].forEach(id => { const el = $(id); if(el) $('lb-details').appendChild(el); });
   const lb = { from:'', to:'', type:'', status:'', limit:50, sig:'', tab:'', stSig:'' };
   const lbSys = [{ t:new Date(), m:'Session started' }];
-  const LB_STAT = ['Ticketed','Booked','Reissued','Refunded','Voided','Pending Adj.','Refund Pending'];
+  const LB_STAT = ['Ticketed','Booked','Cancelled','Reissued','Refunded','Voided','Pending Adj.','Refund Pending'];
   const LB_IC = {
     Ticketing:'<path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>',
     Booking:'<path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>',
@@ -10675,7 +10675,7 @@ A.onChange(A.fillForm);
   const lbSales = () => ptcPane === 'saleslog' || ptcPane === 'salesdesk';
   function lbStatus(e){
     if(e.txn === 'Ticketing') return ['Ticketed','ok'];
-    if(e.txn === 'Booking') return ['Booked','bk'];
+    if(e.txn === 'Booking') return e.bookingStatus === 'CANCELLED' ? ['Cancelled','vd'] : ['Booked','bk'];
     if(e.txn === 'Reissue') return ['Reissued','re'];
     if(e.txn === 'Void') return ['Voided','vd'];
     if(e.txn === 'Refund'){
@@ -11206,7 +11206,16 @@ A.onChange(A.fillForm);
   window.aeroData = { entries:function(){ return entries; }, sales:function(){ return salesEntries; },
     pending:function(){ return entries.filter(function(e){ return lbStatus(e)[0] === 'Pending Adj.'; }); },
     dueInfo:dueInfo, dueList:dueList, dueLabel:dueLabel, dueColor:dueColor, editEntry:function(i){ startEdit(i); },
-    build:buildWorkbook, earn:entryEarnings };
+    build:buildWorkbook, earn:entryEarnings,
+    setBookingCancelled:function(i, flag){
+      const e = entries[i]; if(!e || e.txn !== 'Booking') return false;
+      e.bookingStatus = flag ? 'CANCELLED' : ''; e.cancelledAt = flag ? new Date().toISOString() : ''; e.editedAt = new Date().toISOString();
+      if(isCloudConnected() && e._id){
+        cloudDb.collection(CLOUD_COLLECTION).doc(e._id).set(trimForCloud(e))
+          .then(() => toast(flag ? 'Booking cancelled — synced to the cloud' : 'Booking reopened — synced to the cloud'))
+          .catch(err => { console.error(err); toast('Cloud update failed — check your connection.'); });
+      } else { persist(); writeToConnectedFile(); toast(flag ? 'Booking cancelled' : 'Booking reopened'); }
+      render(); return true; } };
 
 })();
 </script>
@@ -12705,8 +12714,8 @@ function addD(d,n){var x=new Date(d);x.setDate(x.getDate()+n);return x}
 function pd(s){return new Date(+s.slice(0,4),+s.slice(5,7)-1,+s.slice(8,10))}
 function fmtD(s){if(!s)return '';var d=pd(s);return isNaN(d)?s:d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})}
 function val(e){return e.txn==='Ticketing'?num(e.totalFare):e.txn==='Reissue'?num(e.totalCollection):e.txn==='Refund'?num(e.refundCharge):0}
-function status(e){if(e.txn==='Ticketing')return'Ticketed';if(e.txn==='Booking')return'Booked';if(e.txn==='Reissue')return'Reissued';if(e.txn==='Void')return'Voided';if(e.txn==='Refund'){if(e.refundStatus==='PENDING')return'Refund Pending';return e.adjustmentGiven==='YES'?'Refunded':'Pending Adj.'}return'—'}
-var SC={'Ticketed':'#2563EB','Booked':'#7C5CC4','Reissued':'#B7791F','Refunded':'#16875A','Pending Adj.':'#C2410C','Refund Pending':'#C2410C','Voided':'#475569'};
+function status(e){if(e.txn==='Ticketing')return'Ticketed';if(e.txn==='Booking')return e.bookingStatus==='CANCELLED'?'Cancelled':'Booked';if(e.txn==='Reissue')return'Reissued';if(e.txn==='Void')return'Voided';if(e.txn==='Refund'){if(e.refundStatus==='PENDING')return'Refund Pending';return e.adjustmentGiven==='YES'?'Refunded':'Pending Adj.'}return'—'}
+var SC={'Ticketed':'#2563EB','Booked':'#7C5CC4','Cancelled':'#B42318','Reissued':'#B7791F','Refunded':'#16875A','Pending Adj.':'#C2410C','Refund Pending':'#C2410C','Voided':'#475569'};
 function list(v){return String(v||'').split(',').map(function(x){return x.trim()}).filter(Boolean)}
 function names(e){return String(e.pname||'').split(/[,;\n]+/).map(function(x){return x.trim()}).filter(Boolean)}
 function tkts(e){return list(e.txn==='Ticketing'||e.txn==='Reissue'?e.newTkt:e.oldTkt)}
@@ -15602,6 +15611,7 @@ build(parse(desc.get.call(el)));
 #bki-pend .bki-r{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:6px 0;border-top:1px solid #EFE9FA;font-size:12.5px}
 #bki-pend .bki-r b{font-family:ui-monospace,monospace}#bki-pend .bki-m{color:#667085}
 #bki-pend .bki-r .bki-w{color:#B45309;font-weight:700}
+.bki-cx{font:inherit;font-size:11.5px;font-weight:700;border:1px solid #F3B8B2;border-radius:7px;padding:4px 10px;cursor:pointer;background:#fff;color:#B42318}.bki-cx:hover{background:#FEF3F2}
 .bki-go{margin-left:auto;font:inherit;font-size:11.5px;font-weight:700;border:0;border-radius:7px;padding:5px 11px;cursor:pointer;background:#16875A;color:#fff}
 .bki-go:hover{filter:brightness(.92)}
 #bki-ov{position:fixed;inset:0;z-index:100001;background:rgba(11,37,69,.55);display:grid;place-items:center;padding:16px}
@@ -15618,10 +15628,10 @@ build(parse(desc.get.call(el)));
 var $=function(i){return document.getElementById(i)};
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
 function E(){try{return window.aeroData.entries()||[]}catch(e){return[]}}
-function booked(){var o=[];E().forEach(function(e,i){if(e&&e.txn==='Booking')o.push({e:e,i:i})});return o}
+function booked(){var o=[];E().forEach(function(e,i){if(e&&e.txn==='Booking'&&e.bookingStatus!=='CANCELLED')o.push({e:e,i:i})});return o}
 function toast(m){var d=document.createElement('div');d.textContent=m;d.style.cssText='position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#0B2545;color:#fff;padding:9px 16px;border-radius:10px;font-size:13px;z-index:100002';document.body.appendChild(d);setTimeout(function(){d.remove()},3500)}
 function setv(id,v){var el=$(id);if(!el)return;el.value=v==null?'':v;el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}))}
-function issue(i){var e=E()[i];if(!e||e.txn!=='Booking')return;
+function issue(i){var e=E()[i];if(!e||e.txn!=='Booking'||e.bookingStatus==='CANCELLED')return;
  var btn=document.querySelector('.ptc-edit[data-idx="'+i+'"]');if(!btn)return toast('Could not open this booking. Use Edit instead.');
  var keep={sector:e.sector,base:e.baseFare,tax:e.taxFare,pnr:e.pnrGds||e.pname||''};
  btn.click();                                                    /* opens the record in the popup form */
@@ -15639,11 +15649,19 @@ function paint(){var dash=$('wr-dash');if(!dash||!dash.parentNode)return;if(pane
  var b=booked(),s=b.map(function(x){return(x.e._id||x.i)+'|'+x.e.pnrGds+'|'+x.e.pname+'|'+x.e.sector}).join('~');if(s===sig)return;sig=s;
  if(!b.length){panel.hidden=true;panel.innerHTML='';return}panel.hidden=false;
  panel.innerHTML='<details open><summary>✈ Booked — awaiting ticket ('+b.length+')</summary>'+b.slice(0,15).map(function(x){var e=x.e,a=age(e),old=a&&a!=='today'&&a!=='1d ago';
-  return'<div class="bki-r"><b>'+esc(e.pnrGds||'—')+'</b><span>'+esc(String(e.pname||'—').split(/[,;\n]+/).map(function(z){return z.trim()}).filter(Boolean).join(', '))+'</span><span class="bki-m">'+esc(e.sector||'')+'</span><span class="'+(old?'bki-w':'bki-m')+'">'+esc(a)+'</span><button type="button" class="bki-go" data-bki="'+x.i+'">✓ Mark Issued</button></div>'}).join('')+(b.length>15?'<div class="bki-m" style="padding-top:6px">+ '+(b.length-15)+' more — open a record and use Mark Issued.</div>':'')+'</details>'}
+  return'<div class="bki-r"><b>'+esc(e.pnrGds||'—')+'</b><span>'+esc(String(e.pname||'—').split(/[,;\n]+/).map(function(z){return z.trim()}).filter(Boolean).join(', '))+'</span><span class="bki-m">'+esc(e.sector||'')+'</span><span class="'+(old?'bki-w':'bki-m')+'">'+esc(a)+'</span><button type="button" class="bki-go" data-bki="'+x.i+'">✓ Mark Issued</button><button type="button" class="bki-cx" data-bkc="'+x.i+'">✕ Cancel</button></div>'}).join('')+(b.length>15?'<div class="bki-m" style="padding-top:6px">+ '+(b.length-15)+' more — open a record and use Mark Issued.</div>':'')+'</details>'}
 setInterval(paint,1500);paint();
 /* ---- 2) "Mark Issued" inside Record Details ---- */
 new MutationObserver(function(){var d=$('wr-detail-back');if(!d||d.querySelector('[data-bki]'))return;var ed=d.querySelector('[data-act="dedit"]');if(!ed)return;var i=+ed.getAttribute('data-i'),e=E()[i];if(!e||e.txn!=='Booking')return;
- var b=document.createElement('button');b.type='button';b.setAttribute('data-bki',i);b.textContent='✓ Mark Issued';b.style.cssText='background:#16875A;color:#fff;border-color:#16875A';ed.parentNode.insertBefore(b,ed)}).observe(document.body,{childList:true});
+ function mk(a,txt,css){var b=document.createElement('button');b.type='button';b.setAttribute(a,i);b.textContent=txt;b.style.cssText=css;ed.parentNode.insertBefore(b,ed)}
+ if(e.bookingStatus==='CANCELLED')mk('data-bkr','↩ Reopen booking','background:#fff;color:#4B2E9A;border-color:#C9B8F0');
+ else{mk('data-bki','✓ Mark Issued','background:#16875A;color:#fff;border-color:#16875A');mk('data-bkc','✕ Cancel booking','background:#fff;color:#B42318;border-color:#F3B8B2')}}).observe(document.body,{childList:true});
+function confirmBox(h,p,yes,fn){var o=document.createElement('div');o.id='bki-ov';o.innerHTML='<div class="bki-md" role="dialog" aria-modal="true"><h3>'+h+'</h3><p>'+p+'</p><div class="bki-b"><button type="button" data-n>Keep it</button><button type="button" class="y" style="background:#B42318;border-color:#B42318" data-y>'+yes+'</button></div></div>';document.body.appendChild(o);o.addEventListener('click',function(e){if(e.target.hasAttribute('data-y')){o.remove();fn()}else if(e.target.hasAttribute('data-n')||e.target===o)o.remove()})}
+function closeDet(){var c=document.querySelector('#wr-detail-back [data-act="dclose"]');if(c)c.click()}
+document.addEventListener('click',function(ev){var x=ev.target.closest&&ev.target.closest('[data-bkc],[data-bkr]');if(!x)return;ev.preventDefault();ev.stopPropagation();
+ var i=+(x.getAttribute('data-bkc')||x.getAttribute('data-bkr')),e=E()[i];if(!e)return;
+ if(x.hasAttribute('data-bkr')){closeDet();window.aeroData.setBookingCancelled(i,false);sig='';return}
+ confirmBox('Cancel this booking?','PNR <b>'+esc(e.pnrGds||'—')+'</b> will be marked <b>Cancelled</b> and removed from the awaiting-ticket list. The record stays in your history, and you can reopen it later.','Yes, cancel booking',function(){closeDet();window.aeroData.setBookingCancelled(i,true);sig=''})},true);
 document.addEventListener('click',function(ev){var b=ev.target.closest&&ev.target.closest('[data-bki]');if(!b)return;ev.preventDefault();ev.stopPropagation();var i=+b.getAttribute('data-bki'),c=document.querySelector('#wr-detail-back [data-act="dclose"]');if(c)c.click();issue(i)},true);
 /* ---- 3) New Ticketing record for a PNR that is still "Booked" -> offer to convert that booking ---- */
 var asked={};
