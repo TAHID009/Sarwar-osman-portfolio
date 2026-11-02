@@ -15596,6 +15596,65 @@ addB.addEventListener('click',function(){var r=raw();if(r.length>=MAX)return;r.p
 build(parse(desc.get.call(el)));
 })();
 </script>
+<style id="bki-css">
+#bki-pend{margin:0 0 12px;border:1px solid #E4D9F7;border-left:4px solid #7C5CC4;border-radius:10px;background:#FBF9FF;padding:8px 12px}
+#bki-pend summary{cursor:pointer;font-weight:700;font-size:13px;color:#4B2E9A}
+#bki-pend .bki-r{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:6px 0;border-top:1px solid #EFE9FA;font-size:12.5px}
+#bki-pend .bki-r b{font-family:ui-monospace,monospace}#bki-pend .bki-m{color:#667085}
+#bki-pend .bki-r .bki-w{color:#B45309;font-weight:700}
+.bki-go{margin-left:auto;font:inherit;font-size:11.5px;font-weight:700;border:0;border-radius:7px;padding:5px 11px;cursor:pointer;background:#16875A;color:#fff}
+.bki-go:hover{filter:brightness(.92)}
+#bki-ov{position:fixed;inset:0;z-index:100001;background:rgba(11,37,69,.55);display:grid;place-items:center;padding:16px}
+#bki-ov .bki-md{background:#fff;color:#0B2545;border-radius:14px;max-width:420px;width:100%;padding:18px 20px;box-shadow:0 12px 40px rgba(0,0,0,.3)}
+#bki-ov h3{margin:0 0 6px;font-size:16px}#bki-ov p{margin:0 0 14px;font-size:13px;color:#475467}
+#bki-ov .bki-b{display:flex;gap:8px;justify-content:flex-end}
+#bki-ov button{font:inherit;font-size:12.5px;font-weight:700;border-radius:8px;padding:7px 14px;cursor:pointer;border:1px solid #CFDAEA;background:#fff;color:#0B2545}
+#bki-ov button.y{background:#16875A;border-color:#16875A;color:#fff}
+</style>
+<script id="bki-js">
+/* Booked PNR -> Issued. Reuses the existing edit form, so validation, duplicate-ticket checks and cloud save all apply.
+   Saving converts the same record from Booking to Ticketing (status Booked -> Ticketed); no duplicate record is created. */
+(function(){'use strict';
+var $=function(i){return document.getElementById(i)};
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function E(){try{return window.aeroData.entries()||[]}catch(e){return[]}}
+function booked(){var o=[];E().forEach(function(e,i){if(e&&e.txn==='Booking')o.push({e:e,i:i})});return o}
+function toast(m){var d=document.createElement('div');d.textContent=m;d.style.cssText='position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#0B2545;color:#fff;padding:9px 16px;border-radius:10px;font-size:13px;z-index:100002';document.body.appendChild(d);setTimeout(function(){d.remove()},3500)}
+function setv(id,v){var el=$(id);if(!el)return;el.value=v==null?'':v;el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}))}
+function issue(i){var e=E()[i];if(!e||e.txn!=='Booking')return;
+ var btn=document.querySelector('.ptc-edit[data-idx="'+i+'"]');if(!btn)return toast('Could not open this booking. Use Edit instead.');
+ var keep={sector:e.sector,base:e.baseFare,tax:e.taxFare,pnr:e.pnrGds||e.pname||''};
+ btn.click();                                                    /* opens the record in the popup form */
+ var tab=document.querySelector('#f-type-tabs .ptc-txn-tab[data-type="Ticketing"]');if(tab)tab.click();
+ setv('f-sector-t',keep.sector);setv('f-basefare-t',keep.base);setv('f-taxfare-t',keep.tax);
+ var bt=$('ptc-editing-banner-text');if(bt)bt.textContent='Booking '+keep.pnr+' → ISSUED: enter the 13-digit ticket number(s), confirm the fare, then click "Save as Issued".';
+ var tt=$('wr-form-title');if(tt)tt.textContent='Issue Ticket — update ticket number & fare';
+ var ab=$('btn-add');if(ab)ab.textContent='Save as Issued';
+ setTimeout(function(){var f=$('f-newtkt-t-input')||$('f-newtkt-t');if(f&&f.focus)f.focus()},120)}
+window.aeroIssueBooking=issue;
+/* ---- 1) "Booked — awaiting ticket" panel on the Work Record dashboard ---- */
+var panel=document.createElement('div');panel.id='bki-pend';panel.hidden=true;var sig='';
+function age(e){var t=Date.parse(e.date||'');if(isNaN(t))return'';var d=Math.floor((Date.now()-t)/864e5);return d<=0?'today':d+'d ago'}
+function paint(){var dash=$('wr-dash');if(!dash||!dash.parentNode)return;if(panel.parentNode!==dash.parentNode)dash.parentNode.insertBefore(panel,dash);
+ var b=booked(),s=b.map(function(x){return(x.e._id||x.i)+'|'+x.e.pnrGds+'|'+x.e.pname+'|'+x.e.sector}).join('~');if(s===sig)return;sig=s;
+ if(!b.length){panel.hidden=true;panel.innerHTML='';return}panel.hidden=false;
+ panel.innerHTML='<details open><summary>✈ Booked — awaiting ticket ('+b.length+')</summary>'+b.slice(0,15).map(function(x){var e=x.e,a=age(e),old=a&&a!=='today'&&a!=='1d ago';
+  return'<div class="bki-r"><b>'+esc(e.pnrGds||'—')+'</b><span>'+esc(String(e.pname||'—').split(/[,;\n]+/).map(function(z){return z.trim()}).filter(Boolean).join(', '))+'</span><span class="bki-m">'+esc(e.sector||'')+'</span><span class="'+(old?'bki-w':'bki-m')+'">'+esc(a)+'</span><button type="button" class="bki-go" data-bki="'+x.i+'">✓ Mark Issued</button></div>'}).join('')+(b.length>15?'<div class="bki-m" style="padding-top:6px">+ '+(b.length-15)+' more — open a record and use Mark Issued.</div>':'')+'</details>'}
+setInterval(paint,1500);paint();
+/* ---- 2) "Mark Issued" inside Record Details ---- */
+new MutationObserver(function(){var d=$('wr-detail-back');if(!d||d.querySelector('[data-bki]'))return;var ed=d.querySelector('[data-act="dedit"]');if(!ed)return;var i=+ed.getAttribute('data-i'),e=E()[i];if(!e||e.txn!=='Booking')return;
+ var b=document.createElement('button');b.type='button';b.setAttribute('data-bki',i);b.textContent='✓ Mark Issued';b.style.cssText='background:#16875A;color:#fff;border-color:#16875A';ed.parentNode.insertBefore(b,ed)}).observe(document.body,{childList:true});
+document.addEventListener('click',function(ev){var b=ev.target.closest&&ev.target.closest('[data-bki]');if(!b)return;ev.preventDefault();ev.stopPropagation();var i=+b.getAttribute('data-bki'),c=document.querySelector('#wr-detail-back [data-act="dclose"]');if(c)c.click();issue(i)},true);
+/* ---- 3) New Ticketing record for a PNR that is still "Booked" -> offer to convert that booking ---- */
+var asked={};
+function ask(x,pnr){var o=document.createElement('div');o.id='bki-ov';o.innerHTML='<div class="bki-md" role="dialog" aria-modal="true"><h3>This PNR is already booked</h3><p>PNR <b>'+esc(pnr)+'</b> has a <b>Booked</b> record'+(x.e.pname?' ('+esc(String(x.e.pname).slice(0,60))+')':'')+'. Mark that booking as <b>Issued</b> and add the ticket number &amp; fare to it? This avoids a duplicate record.</p><div class="bki-b"><button type="button" data-n>No, new ticket record</button><button type="button" class="y" data-y>Yes, mark Issued</button></div></div>';
+ document.body.appendChild(o);o.addEventListener('click',function(e){if(e.target.hasAttribute('data-y')){o.remove();issue(x.i)}else if(e.target.hasAttribute('data-n')||e.target===o){o.remove()}})}
+function check(){var card=$('ptc-card'),ty=$('f-type'),pn=$('f-pnr-gds');if(!card||!ty||!pn||card.classList.contains('ptc-editing')||ty.value!=='Ticketing'||$('bki-ov'))return;
+ var v=pn.value.trim().toUpperCase();if(v.length<5||asked[v])return;var m=booked().filter(function(x){return String(x.e.pnrGds||'').toUpperCase()===v})[0];if(!m)return;asked[v]=1;ask(m,v)}
+var pn=$('f-pnr-gds'),ty=$('f-type');if(pn)pn.addEventListener('change',check);if(ty)ty.addEventListener('change',check);
+})();
+</script>
+
 
 
 
