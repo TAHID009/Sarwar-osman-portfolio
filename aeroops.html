@@ -15470,13 +15470,32 @@ function saveRate(id){var sc=val('acr-scope'),num=function(i){var v=val(i);retur
  (id?ref.update(d):ref.set(Object.assign({ownerUid:uid,createdAt:now()},d))).then(function(){audit('commission',ref.id,st.sel,id?'edit':'add',KIND[sc],id?diff(o,d,keys):[]);closeM();say('Commission rule saved.')}).catch(err)}
 function verifyAll(){var cs=K.filter(function(c){return c.airlineId===st.sel&&(!st.dept||c.type===st.dept)&&(!st.loc||(c.office||c.country||'')===st.loc)});if(!cs.length||!confirm('Mark '+cs.length+' contact(s) as verified today? Only do this after you have actually confirmed them.'))return;
  var d=now().slice(0,10),b=db.batch();cs.forEach(function(c){b.update(db.collection(COL.k).doc(c.id),{lastVerified:d,updatedAt:now()})});b.commit().then(function(){audit('contact','',st.sel,'verify',cs.length+' contact(s) verified '+d,[]);say('Marked verified.')}).catch(err)}
-function seedData(){if(!db)return say('Sign in first.',1);var b=db.batch(),ids={},n={a:0,r:0,k:0},ex=function(s){return A.filter(function(x){return(s.iata&&x.iata===s.iata)||(x.name||'').toLowerCase()===s.name.toLowerCase()})[0]};
- SEED.airlines.forEach(function(s){var e=ex(s);if(e){ids[s.key]=e.id;return}var ref=db.collection(COL.a).doc();ids[s.key]=ref.id;b.set(ref,{ownerUid:uid,name:s.name,iata:s.iata,country:'',notes:'',active:true,createdAt:now(),updatedAt:now()});n.a++});
- SEED.rules.forEach(function(s){var aid=ids[s.a];if(R.some(function(r){return r.airlineId===aid&&r.scope===s.scope}))return;b.set(db.collection(COL.r).doc(),Object.assign({ownerUid:uid,airlineId:aid,lastVerified:'',createdAt:now(),updatedAt:now()},(function(){var d=Object.assign({},s);delete d.a;return d})()));n.r++});
+function applyData(d,upd){if(!db)return say('Sign in first.',1);var b=db.batch(),ids={},n={a:0,r:0,k:0,u:0},ex=function(s){return A.filter(function(x){return(s.iata&&x.iata===s.iata)||(x.name||'').toLowerCase()===s.name.toLowerCase()})[0]};
+ d.airlines.forEach(function(s){var e=ex(s);if(e){ids[s.key]=e.id;if(s.iata&&!e.iata){b.update(db.collection(COL.a).doc(e.id),{iata:s.iata,updatedAt:now()});n.u++}return}var ref=db.collection(COL.a).doc();ids[s.key]=ref.id;b.set(ref,{ownerUid:uid,name:s.name,iata:s.iata,country:'',notes:'',active:true,createdAt:now(),updatedAt:now()});n.a++});
+ d.rules.forEach(function(s){var aid=ids[s.a],v=Object.assign({},s);delete v.a;var e=R.filter(function(r){return r.airlineId===aid&&r.scope===s.scope})[0];
+  if(e){if(upd){b.update(db.collection(COL.r).doc(e.id),Object.assign({},v,{updatedAt:now()}));n.u++}return}
+  b.set(db.collection(COL.r).doc(),Object.assign({ownerUid:uid,airlineId:aid,lastVerified:'',createdAt:now(),updatedAt:now()},v));n.r++});
  var kk={};K.forEach(function(c){kk[c.airlineId+'|'+c.type+'|'+(c.office||'')+'|'+(c.person||'')+'|'+c.email]=1});
- SEED.contacts.forEach(function(s){var aid=ids[s.a],k=aid+'|'+s.type+'|'+s.office+'|'+s.person+'|'+s.email;if(kk[k])return;b.set(db.collection(COL.k).doc(),{ownerUid:uid,airlineId:aid,type:s.type,office:s.office,person:s.person,phones:s.phones,whatsapp:'',email:s.email,address:'',country:'',hours:s.hours,remarks:s.remarks,lastVerified:'',active:true,createdAt:now(),updatedAt:now()});n.k++});
- if(!n.a&&!n.r&&!n.k)return say('Everything from the workbooks is already loaded.');
- b.commit().then(function(){audit('import','','','seed','Loaded from workbooks: '+n.a+' airline(s), '+n.r+' rule(s), '+n.k+' contact(s)',[]);say('Loaded '+n.a+' airline(s), '+n.r+' commission rule(s), '+n.k+' contact(s) from your workbooks.')}).catch(err)}
+ d.contacts.forEach(function(s){var aid=ids[s.a],k=aid+'|'+s.type+'|'+s.office+'|'+s.person+'|'+s.email;if(kk[k])return;kk[k]=1;b.set(db.collection(COL.k).doc(),{ownerUid:uid,airlineId:aid,type:s.type,office:s.office,person:s.person,phones:s.phones,whatsapp:'',email:s.email,address:'',country:'',hours:s.hours,remarks:s.remarks,lastVerified:'',active:true,createdAt:now(),updatedAt:now()});n.k++});
+ if(!n.a&&!n.r&&!n.k&&!n.u)return say('Nothing new: everything in that file is already loaded.');
+ b.commit().then(function(){audit('import','','','import','Workbook import: '+n.a+' airline(s), '+n.r+' rule(s) added, '+n.u+' updated, '+n.k+' contact(s)',[]);say('Imported '+n.a+' new airline(s), '+n.r+' commission rule(s), '+n.k+' contact(s); '+n.u+' existing record(s) updated.')}).catch(err)}
+function seedData(){applyData(SEED,false)}
+var MON={jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};
+function cleanPh(raw){var s=String(raw==null?'':raw).trim();if(!s)return['',''];var t=s.replace(/[\s().-]/g,'');if(/^880\d{8,11}$/.test(t))t='+'+t;var p=normPhone(t);return p?[p,'']:['',s]}
+function fromWorkbook(wb){var d={airlines:[],rules:[],contacts:[]},have={},nk={},eff='',pcv=function(v){return typeof v==='number'?Math.round(v*1e6)/1e4:''};
+ function addA(key,name,iata){if(!have[key]){have[key]=1;d.airlines.push({key:key,name:name,iata:iata});nk[name.toLowerCase()]=key}return key}
+ function rowsOf(n){return wb.Sheets[n]?XLSX.utils.sheet_to_json(wb.Sheets[n],{header:1,raw:true,defval:''}):[]}
+ rowsOf('Discount List').forEach(function(r){var m=String(r[0]).match(/Effective:\s*(\d{1,2})\s+([A-Za-z]{3})[a-z]*\s+(\d{4})/i);if(m&&MON[m[2].toLowerCase()]!=null)eff=m[3]+'-'+('0'+(MON[m[2].toLowerCase()]+1)).slice(-2)+'-'+('0'+m[1]).slice(-2);
+  var sc=String(r[0]).trim().toUpperCase();if(sc!=='DOM'&&sc!=='INT')return;var code=String(r[1]).trim(),nm=String(r[2]).trim();if(!code)return;if(nm===code&&code==='RX')nm='Riyadh Air';addA(code,nm,code);var na=String(r[4]).trim().toUpperCase()==='N/A',rem=String(r[5]).trim();
+  d.rules.push({a:code,scope:sc,fromDac:pcv(r[3]),toDac:na?'':pcv(r[4]),toDacNA:na,markUp:'',effectiveFrom:eff,remarks:rem==='Domestic'?'':rem})});
+ rowsOf('No Commission').forEach(function(r){var s=String(r[0]).trim();if(!s||typeof r[2]!=='number')return;var m=s.match(/^(.*?)\s*\((\w+)\)\s*$/),nm=m?m[1]:s,key=m?m[2]:s.toLowerCase();addA(key,nm,m?m[2]:'');d.rules.push({a:key,scope:'NOCOM',fromDac:'',toDac:'',toDacNA:false,markUp:pcv(r[2]),effectiveFrom:eff,remarks:'No commission, mark up added'})});
+ var cr=rowsOf('Airline Contact Database'),hi=-1;cr.some(function(r,i){if(String(r[0]).trim().toLowerCase()==='airline name'){hi=i;return true}});
+ if(hi>=0){var H={};cr[hi].forEach(function(h,i){H[String(h).trim().toLowerCase()]=i});var cell=function(r,k){var i=H[k];return i==null?'':String(r[i]==null?'':r[i]).trim()};
+  var TY={reservations:'Reservation',reservation:'Reservation',sales:'Sales & Marketing'};
+  cr.slice(hi+1).forEach(function(r){var nm=cell(r,'airline name');if(!nm)return;var key=nk[nm.toLowerCase()]||addA(nm.toLowerCase(),nm,''),dep=cell(r,'department').toLowerCase(),ph=cleanPh(H['phone 1']==null?'':r[H['phone 1']]),rem=[cell(r,'notes'),ph[1]?'Phone as listed: '+ph[1]+' (needs full international format)':''].filter(Boolean).join(' · ');
+   d.contacts.push({a:key,type:TY[dep]||'Reservation',office:cell(r,'office'),person:cell(r,'contact person'),phones:ph[0]?[{label:'',number:ph[0]}]:[],email:cell(r,'email').split(/[\s,;]+/).filter(Boolean).join(', '),hours:[cell(r,'office hours'),cell(r,'working days')].filter(Boolean).join(', '),remarks:rem})})}
+ if(!d.rules.length&&!d.contacts.length)return say('That workbook has no rows I recognise. Expected sheets: Discount List, No Commission or Airline Contact Database.',1);
+ applyData(d,true)}
 /* ---------- Excel export / import ---------- */
 function exportXls(){if(!window.XLSX)return say('Excel library is not loaded.',1);var wb=XLSX.utils.book_new();
  var ar=[['Name','IATA','Country','Notes']].concat(A.map(function(a){return[a.name,a.iata||'',a.country||'',a.notes||'']}));
@@ -15486,7 +15505,7 @@ function exportXls(){if(!window.XLSX)return say('Excel library is not loaded.',1
  XLSX.writeFile(wb,'AeroOps_Airline_Directory_'+new Date().toISOString().slice(0,10)+'.xlsx');say('Excel file downloaded.')}
 function iso(v){v=String(v||'').trim();if(!v)return'';if(/^\d{4}-\d{2}-\d{2}/.test(v))return v.slice(0,10);var d=new Date(v);return isNaN(d.getTime())?'':d.toISOString().slice(0,10)}
 function importXls(file){if(!window.XLSX||!db)return say('Sign in first and make sure the Excel library is loaded.',1);var fr=new FileReader();
- fr.onload=function(){try{var wb=XLSX.read(fr.result,{type:'array'}),ws=wb.Sheets.Contacts||wb.Sheets[wb.SheetNames[0]],rows=XLSX.utils.sheet_to_json(ws,{defval:'',raw:false}),ops=[],made={},added=0,skip=[],keys={};
+ fr.onload=function(){try{var wb=XLSX.read(fr.result,{type:'array'});if(wb.Sheets['Discount List']||wb.Sheets['No Commission']||wb.Sheets['Airline Contact Database'])return fromWorkbook(wb);var ws=wb.Sheets.Contacts||wb.Sheets[wb.SheetNames[0]],rows=XLSX.utils.sheet_to_json(ws,{defval:'',raw:false}),ops=[],made={},added=0,skip=[],keys={};
   function g(r,k){for(var h in r)if(h.toLowerCase().replace(/[^a-z]/g,'')===k)return String(r[h]).trim();return''}
   K.forEach(function(c){keys[c.airlineId+'|'+c.type+'|'+(c.person||'').toLowerCase()+'|'+((c.phones||[])[0]||{}).number]=1});
   rows.forEach(function(r,i){var nm=g(r,'airline'),ia=g(r,'iata').toUpperCase(),ty=g(r,'department')||g(r,'contacttype')||g(r,'type');if(!nm&&!ia)return;
