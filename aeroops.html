@@ -15324,6 +15324,7 @@ renderSettings();render();
 .ac-md{background:#fff;color:#0B2545;border-radius:14px;width:min(640px,100%);padding:18px 20px}.ac-md h3{margin:0 0 8px}.ac-md label{display:block;font-size:12px;font-weight:700;color:#475467;margin:10px 0 3px}.ac-md input,.ac-md select,.ac-md textarea{width:100%}.ac-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.ac-ph{display:grid;grid-template-columns:120px 1fr auto;gap:6px;margin:4px 0}
 #ac-mmsg .n,#ac-msg .n{padding:9px 14px;border-radius:10px;background:#DDF3E3;color:#15803D;font-size:13px;margin-bottom:10px}#ac-mmsg .n.e,#ac-msg .n.e{background:#FEE4E2;color:#B42318}
 @media(max-width:1100px){.ac-two{grid-template-columns:1fr}.ac-kpi{grid-template-columns:repeat(2,1fr)}}@media(max-width:760px){.ac-grid{grid-template-columns:1fr}#ac-list{max-height:230px}.ac-2{grid-template-columns:1fr}.ac-ban h3{font-size:21px}.ac-date{display:none}}
+#ac-msg{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:100000;max-width:92vw}#ac-msg .n{box-shadow:0 6px 20px rgba(11,37,69,.25);margin:0}
 </style>
 <script id="ac-js">
 (function(){'use strict';
@@ -15427,7 +15428,7 @@ function profile(v){var a=v.a,rs=v.rs.slice().sort(function(x,y){return x.scope<
  +'<div class="ac-two"><div class="ac-pn"><div class="ac-ph2"><b>⚖ Commission Details</b><button class="ac-ib" data-a="addr" type="button">+ Add rule</button></div><div class="ac-pb">'+(rs.length?rs.map(function(r){return ruleHtml(r,1)}).join(''):'<div class="ac-empty">No commission rule recorded for this airline.</div>')+'</div></div>'
  +'<div class="ac-pn"><div class="ac-ph2 dark"><b>📞 Contact Directory</b><button class="ac-btn pri" data-a="addk" type="button">+ Add Contact</button></div><div class="ac-pb">'+(v.cs.length?v.cs.map(function(c){return cCard(c,0)}).join(''):'<div class="ac-empty">No contact recorded'+(st.dept||st.loc?' with the current filters':'')+'.</div>')+'</div>'
  +(v.cs.length?'<div class="ac-vf'+(vd?'':' w')+'"><span>'+(vd?'✔ Last Verified: '+esc(vd):'⚠ Contacts not verified yet')+'</span><button class="ac-ib" data-a="verify" type="button">↻ Mark verified today</button></div>':'')+'</div></div>'
- +'<div class="ac-acts"><button class="ac-btn b1" data-a="editair" type="button">✎ Edit Airline</button><button class="ac-btn b2" data-a="addk" type="button">+ Add Contact</button><button class="ac-btn b3" data-a="imp" type="button">⬇ Import Excel</button><button class="ac-btn b4" data-a="exp" type="button">⬆ Export Data</button><button class="ac-btn warn" data-a="delair" type="button">Delete airline</button><button class="ac-btn" data-a="all" type="button">All airlines</button></div>'
+ +'<div class="ac-acts"><button class="ac-btn b1" data-a="editair" type="button">✎ Edit Airline</button><button class="ac-btn warn" data-a="delair" type="button">Delete airline</button><button class="ac-btn" data-a="all" type="button">All airlines</button></div>'
  +'<details class="ac-card"><summary><b>Change history</b></summary><div id="ac-hist">'+histHtml()+'</div></details>'}
 /* ---------- forms ---------- */
 function fld(l,id,v,t,x){return'<div><label for="'+id+'">'+l+'</label><input id="'+id+'" type="'+(t||'text')+'" value="'+esc(v)+'" '+(x||'')+'></div>'}
@@ -15497,14 +15498,14 @@ function fromWorkbook(wb){var d={airlines:[],rules:[],contacts:[]},have={},nk={}
  if(!d.rules.length&&!d.contacts.length)return say('That workbook has no rows I recognise. Expected sheets: Discount List, No Commission or Airline Contact Database.',1);
  applyData(d,true)}
 /* ---------- Excel export / import ---------- */
-function exportXls(){if(!window.XLSX)return say('Excel library is not loaded.',1);var wb=XLSX.utils.book_new();
+function buildXls(){var wb=XLSX.utils.book_new();
  var ar=[['Name','IATA','Country','Notes']].concat(A.map(function(a){return[a.name,a.iata||'',a.country||'',a.notes||'']}));
  var rr=[['Airline','IATA','Type','From DAC %','To DAC %','Mark Up %','Remarks','Effective From','Last Verified']].concat(R.map(function(r){var a=airline(r.airlineId)||{};return[a.name||'',a.iata||'',r.scope||'',r.fromDac,r.toDacNA?'N/A':r.toDac,r.markUp,r.remarks||'',r.effectiveFrom||'',r.lastVerified||'']}));
  var kr=[CH].concat(K.map(function(c){var a=airline(c.airlineId)||{};return[a.name||'',a.iata||'',c.type||'',c.office||'',c.person||'',(c.phones||[]).map(function(p){return(p.label?p.label+': ':'')+p.number}).join('; '),c.whatsapp||'',c.email||'',c.address||'',c.country||'',c.hours||'',c.remarks||'',c.lastVerified||'',c.active===false?'No':'Yes']}));
  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(ar),'Airlines');XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(rr),'Commission');XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(kr),'Contacts');
- XLSX.writeFile(wb,'AeroOps_Airline_Directory_'+new Date().toISOString().slice(0,10)+'.xlsx');say('Excel file downloaded.')}
+ return wb}
 function iso(v){v=String(v||'').trim();if(!v)return'';if(/^\d{4}-\d{2}-\d{2}/.test(v))return v.slice(0,10);var d=new Date(v);return isNaN(d.getTime())?'':d.toISOString().slice(0,10)}
-function importXls(file){if(!window.XLSX||!db)return say('Sign in first and make sure the Excel library is loaded.',1);var fr=new FileReader();
+function importXls2(file){var fr=new FileReader();
  fr.onload=function(){try{var wb=XLSX.read(fr.result,{type:'array'});if(wb.Sheets['Discount List']||wb.Sheets['No Commission']||wb.Sheets['Airline Contact Database'])return fromWorkbook(wb);var ws=wb.Sheets.Contacts||wb.Sheets[wb.SheetNames[0]],rows=XLSX.utils.sheet_to_json(ws,{defval:'',raw:false}),ops=[],made={},added=0,skip=[],keys={};
   function g(r,k){for(var h in r)if(h.toLowerCase().replace(/[^a-z]/g,'')===k)return String(r[h]).trim();return''}
   K.forEach(function(c){keys[c.airlineId+'|'+c.type+'|'+(c.person||'').toLowerCase()+'|'+((c.phones||[])[0]||{}).number]=1});
@@ -15523,6 +15524,9 @@ function importXls(file){if(!window.XLSX||!db)return say('Sign in first and make
 var chunks=[];for(var i=0;i<ops.length;i+=400)chunks.push(ops.slice(i,i+400));
   Promise.all(chunks.map(function(ch){var b=db.batch();ch.forEach(function(o){b.set(o[0],o[1],{merge:true})});return b.commit()})).then(function(){if(added||rc||Object.keys(made).length)audit('import','',  '', 'import','Excel import: '+added+' contact(s), '+Object.keys(made).length+' new airline(s)',[]);say('Imported '+added+' contact(s), '+rc+' commission rule(s), '+Object.keys(made).length+' new airline(s).'+(skip.length?' '+skip.length+' note(s): '+skip.slice(0,3).join(' | '):''),!added&&skip.length)}).catch(err)}catch(e){console.error(e);say('Could not read that Excel file.',1)}};
  fr.readAsArrayBuffer(file)}
+function withXLSX(ok){if(window.XLSX&&XLSX.utils)return ok();var s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';s.onload=function(){window.XLSX&&XLSX.utils?ok():say('The Excel library could not load.',1)};s.onerror=function(){say('The Excel library could not load. Check your connection.',1)};document.head.appendChild(s)}
+function importXls(file){if(!db)return say('Sign in first.',1);withXLSX(function(){importXls2(file)})}
+function exportXls(){say('Preparing Excel file…');withXLSX(function(){try{var wb=buildXls(),out=XLSX.write(wb,{bookType:'xlsx',type:'array'}),a=document.createElement('a');a.href=URL.createObjectURL(new Blob([out],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));a.download='AeroOps_Airline_Directory_'+new Date().toISOString().slice(0,10)+'.xlsx';document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},1500);say('Excel file downloaded: '+A.length+' airline(s), '+R.length+' rule(s), '+K.length+' contact(s).')}catch(e){console.error(e);say('Export failed: '+(e&&e.message||e),1)}})}
 
 /* ---------- events ---------- */
 sec.addEventListener('input',function(e){if(e.target.id==='ac-q'){st.q=e.target.value;draw()}});
