@@ -15293,6 +15293,195 @@ try{var ls=JSON.parse(localStorage.getItem('aeroops.menuOrder')||'null');if(ls&&
 renderSettings();render();
 })();
 </script>
+<!-- ===== Airline Commission & Contacts. Self-contained add-on; own Firestore collections ac_*; touches no other module. ===== -->
+<style id="ac-css">
+#aero-ac{display:none;padding:14px 0}#ptc-root.ac-active #aero-ac{display:block}
+#ptc-root.ac-active #lb,#ptc-root.ac-active #ptc-body-grid,#ptc-root.ac-active #pwi-root,#ptc-root.ac-active #aero-master,#ptc-root.ac-active #aero-settings,#ptc-root.ac-active #aero-pax,#ptc-root.ac-active #aero-kh{display:none!important}
+#aero-ac input,#aero-ac select,#aero-ac textarea,.ac-md input,.ac-md select,.ac-md textarea{font:inherit;font-size:13px;padding:7px 10px;border:1px solid #D0D7E2;border-radius:8px;background:var(--card,#fff);color:var(--ink,#0B2545);max-width:100%;box-sizing:border-box}
+.ac-hd{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:10px}.ac-hd h2{margin:0;font-size:22px}.ac-hd p{margin:2px 0 0;font-size:13px;color:var(--muted,#667085)}
+.ac-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}.ac-bar #ac-q{flex:1;min-width:180px}
+.ac-btn{font:inherit;font-size:12.5px;font-weight:600;border:0;border-radius:8px;padding:7px 12px;cursor:pointer;background:#EEF2F6;color:#0B2545;text-decoration:none;display:inline-block}.ac-btn.pri{background:#2563EB;color:#fff}.ac-btn.warn{background:#FEF3F2;color:#B42318}.ac-btn.wa{background:#E7F6EC;color:#067647}
+.ac-tabs{display:flex;gap:6px;margin-bottom:10px}.ac-tab{font:inherit;font-size:13px;font-weight:600;border:1px solid #D0D7E2;background:var(--card,#fff);color:var(--ink-soft,#475467);border-radius:999px;padding:7px 16px;cursor:pointer}.ac-tab.on{background:#0B2545;color:#fff;border-color:#0B2545}
+.ac-grid{display:grid;grid-template-columns:260px 1fr;gap:12px;align-items:start}
+.ac-side{border:1px solid #E3E9F0;border-radius:12px;background:var(--card,#fff);max-height:70vh;overflow:auto}
+.ac-al{display:block;width:100%;text-align:left;font:inherit;border:0;border-bottom:1px solid #EEF2F6;background:none;padding:9px 12px;cursor:pointer;color:var(--ink,#0B2545)}.ac-al.on{background:#E8F0FC}.ac-al b{font-size:13.5px}.ac-al small{display:block;font-size:11.5px;color:var(--muted,#667085)}
+.ac-card{background:var(--card,#fff);border:1px solid #E3E9F0;border-radius:12px;padding:12px 14px;margin-bottom:10px}
+.ac-h3{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin:14px 0 8px;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted,#667085)}
+.ac-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:4px 0;font-size:13px}.ac-m{font-size:12px;color:var(--muted,#667085)}
+.ac-b{font-size:11px;font-weight:700;border-radius:999px;padding:2px 9px;background:#EEF0F3;color:#475467}.ac-b.ok{background:#E4F3D4;color:#3B7A1A}.ac-b.w{background:#FEF0C7;color:#93370D}.ac-b.e{background:#FEE4E2;color:#B42318}.ac-b.t{background:#E8F0FC;color:#1D4ED8}
+.ac-empty{text-align:center;padding:28px 14px;border:1px dashed #C7D0DC;border-radius:12px;color:var(--ink-soft,#475467);font-size:13.5px}
+.ac-tb{border-collapse:collapse;width:100%;font-size:13px}.ac-tb th,.ac-tb td{border-bottom:1px solid #EEF2F6;padding:7px 8px;text-align:left}.ac-tb tr[data-sel]{cursor:pointer}.ac-tb tr[data-sel]:hover{background:#F4F7FC}
+.ac-ov{display:none;position:fixed;inset:0;background:rgba(11,37,69,.55);z-index:99999;align-items:flex-start;justify-content:center;overflow:auto;padding:24px 10px}.ac-ov.on{display:flex}
+.ac-md{background:#fff;color:#0B2545;border-radius:14px;width:min(640px,100%);padding:18px 20px}.ac-md h3{margin:0 0 8px}.ac-md label{display:block;font-size:12px;font-weight:700;color:#475467;margin:10px 0 3px}.ac-md input,.ac-md select,.ac-md textarea{width:100%}.ac-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ac-ph{display:grid;grid-template-columns:120px 1fr auto;gap:6px;margin:4px 0}
+#ac-msg .n{padding:8px 12px;border-radius:8px;background:#E4F3D4;color:#3B7A1A;font-size:13px;margin-bottom:8px}#ac-msg .n.e{background:#FEE4E2;color:#B42318}
+@media(max-width:760px){.ac-grid{grid-template-columns:1fr}.ac-side{max-height:220px}.ac-2{grid-template-columns:1fr}}
+</style>
+<script id="ac-js">
+(function(){'use strict';
+var root=document.getElementById('ptc-root'),set=document.getElementById('aero-settings'),nav=document.getElementById('ptc-nav');
+if(!root||!set||!nav)return;
+var A=[],R=[],K=[],H=[],db=null,uid=null,un=[],hun=null,hsel='';
+var st={tab:'comm',q:'',dept:'',loc:'',sel:''};
+var TYPES=['Reservation','Ticketing Support','Sales & Marketing','Airport Office','Refund & Reissue','Emergency / After-hours Support','General Customer Service'];
+var STALE=180,COL={a:'ac_airlines',r:'ac_commissions',k:'ac_contacts',h:'ac_audit'};
+function $(i){return document.getElementById(i)}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function now(){return new Date().toISOString()}
+function say(m,bad){var e=$('ac-msg');if(e){e.innerHTML=m?'<div class="n'+(bad?' e':'')+'">'+esc(m)+'</div>':'';if(m)setTimeout(function(){if(e)e.innerHTML=''},6000)}}
+function err(e){console.error(e);say(e&&e.code==='permission-denied'?'Firebase rules blocked this. Publish firestore.airline-directory.rules and make sure you are signed in.':'Could not reach Firebase. Nothing was saved.',1)}
+function who(){try{var u=firebase.auth().currentUser;return u.email||u.uid}catch(e){return''}}
+function normPhone(s){s=String(s||'').trim();if(!s)return'';var t=s.replace(/[\s().-]/g,'');if(t.slice(0,2)==='00')t='+'+t.slice(2);return/^\+[1-9]\d{6,14}$/.test(t)?t:null}
+function airline(id){return A.filter(function(a){return a.id===id})[0]}
+function tag(a){return a?(a.name+(a.iata?' ('+a.iata+')':'')):'—'}
+function vstat(c){if(!c.lastVerified)return['Not verified','w'];var d=Math.floor((Date.now()-new Date(c.lastVerified).getTime())/864e5);return d>STALE?['Re-verify · '+c.lastVerified,'e']:['Verified · '+c.lastVerified,'ok']}
+function pct(v){return v===''||v==null?'—':v+'%'}
+/* ---------- page + nav ---------- */
+var sec=document.createElement('section');sec.id='aero-ac';sec.className='aero-page';sec.setAttribute('aria-label','Airline Commission and Contacts');
+var kh=$('aero-kh');(kh||set).insertAdjacentElement('afterend',sec);
+var ov=document.createElement('div');ov.className='ac-ov';ov.innerHTML='<div class="ac-md" id="ac-md"></div>';document.body.appendChild(ov);
+ov.addEventListener('mousedown',function(e){if(e.target===ov)closeM()});document.addEventListener('keydown',function(e){if(e.key==='Escape')closeM()});
+function openM(h){$('ac-md').innerHTML=h;ov.classList.add('on')}function closeM(){ov.classList.remove('on')}
+var anchor=nav.querySelector('[data-aero="kh"]')||nav.querySelector('[data-aero="passengers"]'),ab=document.createElement('button');
+ab.type='button';ab.className='ptc-nav-btn';ab.setAttribute('data-aero','ac');ab.title='Airline Commission & Contacts';
+ab.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 10a16 16 0 0 0 6 6l1.4-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg><span class="aero-lbl">Airline Directory</span>';
+nav.insertBefore(ab,anchor?anchor.nextSibling:nav.firstChild);
+function mark(){if(root.classList.contains('ac-active'))[].slice.call(nav.querySelectorAll('.ptc-nav-btn')).forEach(function(b){b.classList.toggle('active',b===ab)})}
+ab.addEventListener('click',function(){root.classList.remove('set-active','mas-active','pax-active','pwi-active','kh-active','wr-intel-on','wr-form-open');root.classList.add('ac-active');tick();draw();setTimeout(mark,0);try{window.scrollTo({top:0})}catch(e){}});
+nav.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('.ptc-nav-btn');if(b&&b!==ab)root.classList.remove('ac-active')},true);
+if(window.MutationObserver)new MutationObserver(mark).observe(root,{attributes:true,attributeFilter:['class','data-pane']});
+var op=window.ptcSetPane;if(typeof op==='function')window.ptcSetPane=function(){root.classList.remove('ac-active');return op.apply(this,arguments)};
+/* ---------- live data (same sign-in gate; per-user records) ---------- */
+function stop(){un.forEach(function(u){u()});un=[];if(hun){hun();hun=null}uid=null;db=null;A=[];R=[];K=[];H=[];hsel='';draw()}
+function listen(c,cb){un.push(db.collection(c).where('ownerUid','==',uid).onSnapshot(function(s){var o=[];s.forEach(function(d){var v=d.data();v.id=d.id;o.push(v)});cb(o);draw()},err))}
+function tick(){var u=null;try{u=window.firebase&&firebase.apps&&firebase.apps.length&&firebase.auth().currentUser}catch(e){}
+ if(!u){if(uid)stop();return}if(uid===u.uid)return;uid=u.uid;db=firebase.firestore();
+ listen(COL.a,function(o){A=o.sort(function(x,y){return(x.name||'').localeCompare(y.name||'')})});listen(COL.r,function(o){R=o});listen(COL.k,function(o){K=o})}
+setInterval(tick,1500);
+function watchHist(){if(!db||hsel===st.sel)return;if(hun){hun();hun=null}hsel=st.sel;H=[];if(!st.sel)return;
+ hun=db.collection(COL.h).where('ownerUid','==',uid).where('airlineId','==',st.sel).onSnapshot(function(s){H=[];s.forEach(function(d){H.push(d.data())});H.sort(function(a,b){return a.at<b.at?1:-1});var e=$('ac-hist');if(e)e.innerHTML=histHtml()},function(e){console.warn('history',e&&e.code)})}
+function histHtml(){if(!H.length)return'<div class="ac-m">No changes recorded yet.</div>';return H.slice(0,40).map(function(h){return'<div class="ac-row"><span class="ac-m">'+esc(h.at.slice(0,16).replace('T',' '))+'</span><b>'+esc(h.action)+' '+esc(h.entity)+'</b>'+esc(h.label||'')+'<span class="ac-m">'+esc(h.byName||'')+'</span></div>'+(h.changes||[]).map(function(c){return'<div class="ac-m" style="margin-left:14px">'+esc(c.f)+': '+esc(c.from||'(blank)')+' → '+esc(c.to||'(blank)')+'</div>'}).join('')}).join('')}
+function audit(entity,id,airlineId,action,label,changes){db.collection(COL.h).add({ownerUid:uid,at:now(),byUid:uid,byName:who(),entity:entity,entityId:id,airlineId:airlineId||'',action:action,label:String(label||'').slice(0,200),changes:changes||[]}).catch(function(e){console.warn('audit not saved',e&&e.code)})}
+function diff(o,n,keys){var out=[];keys.forEach(function(k){var a=Array.isArray(o[k])?o[k].map(function(p){return p.label?p.label+': '+p.number:p.number}).join('; '):String(o[k]==null?'':o[k]),b=Array.isArray(n[k])?n[k].map(function(p){return p.label?p.label+': '+p.number:p.number}).join('; '):String(n[k]==null?'':n[k]);if(a!==b)out.push({f:k,from:a.slice(0,200),to:b.slice(0,200)})});return out}
+/* ---------- search + filters (across commission and contacts) ---------- */
+function cmatch(c,q,dq){return[c.person,c.type,c.email,c.country,c.address,c.remarks].some(function(x){return String(x||'').toLowerCase().indexOf(q)>-1})||(dq.length>=3&&(c.phones||[]).concat([{number:c.whatsapp}]).some(function(p){return String(p.number||'').replace(/\D/g,'').indexOf(dq)>-1}))}
+function rmatch(r,q){return[r.scope,r.remarks].some(function(x){return String(x||'').toLowerCase().indexOf(q)>-1})}
+function view(){var q=st.q.trim().toLowerCase(),dq=q.replace(/\D/g,''),out=[];
+ A.forEach(function(a){var cs=K.filter(function(c){return c.airlineId===a.id}),rs=R.filter(function(r){return r.airlineId===a.id});
+  var cf=cs.filter(function(c){return(!st.dept||c.type===st.dept)&&(!st.loc||(c.country||'')===st.loc)});
+  if((st.dept||st.loc)&&!cf.length)return;
+  var hit=!q||[a.name,a.iata,a.country].some(function(x){return String(x||'').toLowerCase().indexOf(q)>-1})||cs.some(function(c){return cmatch(c,q,dq)})||rs.some(function(r){return rmatch(r,q)});
+  if(hit)out.push({a:a,cs:cf,rs:rs})});return out}
+/* ---------- rendering ---------- */
+function shell(){if($('ac-q'))return;sec.innerHTML='<div class="ac-hd"><div><h2>Airline Commission &amp; Contacts</h2><p>Commission rules and contact directory per airline. Nothing is pre-filled: blank fields stay blank until you enter verified information.</p></div><div class="ac-bar" style="margin:0"><button class="ac-btn pri" data-a="addair" type="button">+ Add Airline</button><button class="ac-btn" data-a="imp" type="button">Import Excel</button><button class="ac-btn" data-a="exp" type="button">Export Excel</button><input type="file" id="ac-file" accept=".xlsx,.xls" hidden></div></div><div id="ac-msg"></div>'
+ +'<div class="ac-bar"><input id="ac-q" type="search" placeholder="Search airline, IATA code, phone number, department, person, email…" autocomplete="off"><select id="ac-air" aria-label="Airline"></select><select id="ac-dept" aria-label="Department"></select><select id="ac-loc" aria-label="Location"></select></div>'
+ +'<div class="ac-tabs"><button class="ac-tab" data-tab="comm" type="button">Commission &amp; Discount</button><button class="ac-tab" data-tab="cont" type="button">Airline Contacts</button></div><div class="ac-grid"><div class="ac-side" id="ac-list"></div><div id="ac-main"></div></div>'}
+function opts(sel,first,vals,cur){sel.innerHTML='<option value="">'+first+'</option>'+vals.map(function(v){return'<option value="'+esc(v[0])+'"'+(v[0]===cur?' selected':'')+'>'+esc(v[1])+'</option>'}).join('')}
+function draw(){shell();var V=view();
+ opts($('ac-air'),'All airlines',A.map(function(a){return[a.id,tag(a)]}),st.sel);
+ opts($('ac-dept'),'All departments',TYPES.map(function(t){return[t,t]}),st.dept);
+ var locs=[];K.forEach(function(c){if(c.country&&locs.indexOf(c.country)<0)locs.push(c.country)});locs.sort();opts($('ac-loc'),'All locations',locs.map(function(l){return[l,l]}),st.loc);
+ [].forEach.call(sec.querySelectorAll('.ac-tab'),function(b){b.classList.toggle('on',b.getAttribute('data-tab')===st.tab)});
+ $('ac-list').innerHTML=V.length?V.map(function(v){return'<button class="ac-al'+(v.a.id===st.sel?' on':'')+'" data-sel="'+v.a.id+'" type="button"><b>'+esc(v.a.name)+'</b>'+(v.a.iata?' <span class="ac-b t">'+esc(v.a.iata)+'</span>':'')+'<small>'+v.rs.length+' commission rule'+(v.rs.length===1?'':'s')+' · '+v.cs.length+' contact'+(v.cs.length===1?'':'s')+'</small></button>'}).join(''):'<div class="ac-empty" style="border:0">'+(A.length?'No airline matches.':(uid?'No airlines yet. Add one or import an Excel file.':'Sign in to AeroOps to load airlines.'))+'</div>';
+ var cur=V.filter(function(v){return v.a.id===st.sel})[0];
+ $('ac-main').innerHTML=cur?profile(cur):(st.tab==='comm'?allRates(V):allContacts(V));watchHist()}
+function rateRow(r,edit){return'<tr><td>'+esc(r.scope||'—')+'</td><td>'+pct(r.commissionPct)+'</td><td>'+pct(r.discountPct)+'</td><td>'+esc((r.effectiveFrom||'—')+(r.effectiveTo?' → '+r.effectiveTo:''))+'</td><td>'+esc(r.remarks||'')+'</td><td>'+(r.lastVerified?esc(r.lastVerified):'<span class="ac-b w">Not verified</span>')+'</td>'+(edit?'<td><button class="ac-btn" data-a="editr" data-id="'+r.id+'" type="button">Edit</button> <button class="ac-btn warn" data-a="delr" data-id="'+r.id+'" type="button">Delete</button></td>':'')+'</tr>'}
+function allRates(V){var rows='';V.forEach(function(v){v.rs.forEach(function(r){rows+='<tr data-sel="'+v.a.id+'"><td><b>'+esc(tag(v.a))+'</b></td>'+rateRow(r,0).slice(4)})});
+ return rows?'<div class="ac-card" style="overflow:auto"><table class="ac-tb"><tr><th>Airline</th><th>Scope</th><th>Commission</th><th>Discount</th><th>Effective</th><th>Remarks</th><th>Verified</th></tr>'+rows+'</table></div>':'<div class="ac-empty">No commission rules recorded yet. Select an airline and add a rule when you have verified figures.</div>'}
+function cCard(c,showAir){var a=airline(c.airlineId),vs=vstat(c),ph=(c.phones||[]).filter(function(p){return p&&p.number}),wa=normPhone(c.whatsapp);
+ return'<div class="ac-card"><div class="ac-row"><b>'+esc(c.person||c.type)+'</b><span class="ac-b t">'+esc(c.type)+'</span><span class="ac-b '+vs[1]+'">'+esc(vs[0])+'</span>'+(c.active===false?'<span class="ac-b e">Inactive</span>':'')+(showAir&&a?'<span class="ac-m">'+esc(tag(a))+'</span>':'')+'</div>'
+ +ph.map(function(p){var n=normPhone(p.number);return'<div class="ac-row">📞 '+(p.label?'<span class="ac-m">'+esc(p.label)+'</span>':'')+(n?'<a href="tel:'+n+'">'+esc(p.number)+'</a>':esc(p.number))+'<button class="ac-btn" data-copy="'+esc(p.number)+'" type="button">Copy</button></div>'}).join('')
+ +(wa?'<div class="ac-row">💬 '+esc(c.whatsapp)+' <a class="ac-btn wa" href="https://wa.me/'+wa.slice(1)+'" target="_blank" rel="noopener">WhatsApp</a><button class="ac-btn" data-copy="'+esc(c.whatsapp)+'" type="button">Copy</button></div>':'')
+ +(c.email?'<div class="ac-row">✉️ <a href="mailto:'+esc(c.email)+'">'+esc(c.email)+'</a><button class="ac-btn" data-copy="'+esc(c.email)+'" type="button">Copy</button></div>':'')
+ +(c.address||c.country?'<div class="ac-row ac-m">📍 '+esc([c.address,c.country].filter(Boolean).join(', '))+'</div>':'')+(c.hours?'<div class="ac-row ac-m">🕒 '+esc(c.hours)+'</div>':'')+(c.remarks?'<div class="ac-row ac-m">'+esc(c.remarks)+'</div>':'')
+ +'<div class="ac-row"><button class="ac-btn" data-a="editk" data-id="'+c.id+'" type="button">Edit</button><button class="ac-btn warn" data-a="delk" data-id="'+c.id+'" type="button">Delete</button></div></div>'}
+function allContacts(V){var h='';V.forEach(function(v){v.cs.forEach(function(c){h+=cCard(c,1)})});return h||'<div class="ac-empty">No contacts recorded yet. Select an airline and add a contact, or import an Excel file.</div>'}
+function profile(v){var a=v.a,rs=v.rs.slice().sort(function(x,y){return(x.scope||'').localeCompare(y.scope||'')}),sc='<div class="ac-card"><div class="ac-row"><b style="font-size:17px">'+esc(a.name)+'</b>'+(a.iata?'<span class="ac-b t">'+esc(a.iata)+'</span>':'')+(a.country?'<span class="ac-m">'+esc(a.country)+'</span>':'')+'<button class="ac-btn" data-a="editair" type="button">Edit airline</button><button class="ac-btn warn" data-a="delair" type="button">Delete</button><button class="ac-btn" data-a="back" type="button">← All airlines</button></div>'+(a.notes?'<div class="ac-m">'+esc(a.notes)+'</div>':'')+'</div>';
+ var cm='<div class="ac-h3"><span>Commission &amp; Discount</span><button class="ac-btn pri" data-a="addr" type="button">+ Add rule</button></div>'+(rs.length?'<div class="ac-card" style="overflow:auto"><table class="ac-tb"><tr><th>Scope</th><th>Commission</th><th>Discount</th><th>Effective</th><th>Remarks</th><th>Verified</th><th></th></tr>'+rs.map(function(r){return rateRow(r,1)}).join('')+'</table></div>':'<div class="ac-empty">No commission rule recorded for this airline.</div>');
+ var ct='<div class="ac-h3"><span>Contact Directory</span><button class="ac-btn pri" data-a="addk" type="button">+ Add contact</button></div>'+(v.cs.length?v.cs.map(function(c){return cCard(c,0)}).join(''):'<div class="ac-empty">No contact recorded for this airline'+(st.dept||st.loc?' with the current filters':'')+'.</div>');
+ var hi='<details class="ac-card"><summary><b>Change history</b></summary><div id="ac-hist">'+histHtml()+'</div></details>';
+ return sc+(st.tab==='comm'?cm+ct:ct+cm)+hi}
+/* ---------- forms ---------- */
+function fld(l,id,v,t,x){return'<div><label for="'+id+'">'+l+'</label><input id="'+id+'" type="'+(t||'text')+'" value="'+esc(v)+'" '+(x||'')+'></div>'}
+function airForm(a){a=a||{};openM('<h3>'+(a.id?'Edit':'Add')+' airline</h3>'+fld('Airline name *','acf-name',a.name)+'<div class="ac-2">'+fld('IATA code','acf-iata',a.iata,'text','maxlength="3" style="text-transform:uppercase"')+fld('Country / base','acf-country',a.country)+'</div><label for="acf-notes">Notes</label><textarea id="acf-notes">'+esc(a.notes)+'</textarea><div class="ac-row" style="margin-top:12px"><button class="ac-btn pri" data-a="saveair" data-id="'+esc(a.id||'')+'" type="button">Save</button><button class="ac-btn" data-a="close" type="button">Cancel</button></div>')}
+function rateForm(r){r=r||{};openM('<h3>'+(r.id?'Edit':'Add')+' commission &amp; discount rule</h3><p class="ac-m">Leave anything you have not verified blank.</p>'+fld('Scope (e.g. sector, fare type, region)','acr-scope',r.scope)+'<div class="ac-2">'+fld('Commission %','acr-com',r.commissionPct,'number','min="0" max="100" step="0.01"')+fld('Discount %','acr-dis',r.discountPct,'number','min="0" max="100" step="0.01"')+fld('Effective from','acr-from',r.effectiveFrom,'date')+fld('Effective to','acr-to',r.effectiveTo,'date')+'</div>'+fld('Last verified','acr-ver',r.lastVerified,'date')+'<label for="acr-rem">Remarks</label><textarea id="acr-rem">'+esc(r.remarks)+'</textarea><div class="ac-row" style="margin-top:12px"><button class="ac-btn pri" data-a="saver" data-id="'+esc(r.id||'')+'" type="button">Save</button><button class="ac-btn" data-a="close" type="button">Cancel</button></div>')}
+function phRow(p){p=p||{};return'<div class="ac-ph"><input class="acp-l" placeholder="Label" value="'+esc(p.label)+'"><input class="acp-n" placeholder="+8801XXXXXXXXX" value="'+esc(p.number)+'"><button class="ac-btn warn" data-a="phdel" type="button">×</button></div>'}
+function contForm(c){c=c||{};var ph=(c.phones&&c.phones.length?c.phones:[{}]);openM('<h3>'+(c.id?'Edit':'Add')+' contact — '+esc(tag(airline(c.airlineId||st.sel)))+'</h3><label for="ack-type">Contact type *</label><select id="ack-type">'+TYPES.map(function(t){return'<option'+(t===c.type?' selected':'')+'>'+esc(t)+'</option>'}).join('')+'</select>'+fld('Contact person / department','ack-person',c.person)
+ +'<label>Phone numbers (with country code)</label><div id="ack-ph">'+ph.map(phRow).join('')+'</div><button class="ac-btn" data-a="phadd" type="button">+ Add number</button>'
+ +'<div class="ac-2">'+fld('WhatsApp number (optional)','ack-wa',c.whatsapp,'text','placeholder="+8801XXXXXXXXX"')+fld('Email','ack-email',c.email,'email')+'</div>'+fld('Office address','ack-addr',c.address)+'<div class="ac-2">'+fld('Country / location','ack-country',c.country)+fld('Operating hours','ack-hours',c.hours)+'</div>'+fld('Last verified','ack-ver',c.lastVerified,'date')
+ +'<label for="ack-rem">Remarks</label><textarea id="ack-rem">'+esc(c.remarks)+'</textarea><label style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="ack-act" style="width:auto"'+(c.active===false?'':' checked')+'> Active</label><div class="ac-row" style="margin-top:12px"><button class="ac-btn pri" data-a="savek" data-id="'+esc(c.id||'')+'" type="button">Save</button><button class="ac-btn" data-a="close" type="button">Cancel</button></div>')}
+function val(i){var e=$(i);return e?e.value.trim():''}
+/* ---------- saves ---------- */
+function dup(name,iata,self){var n=name.toLowerCase();return A.some(function(a){return a.id!==self&&((iata&&a.iata===iata)||(a.name||'').toLowerCase()===n)})}
+function saveAir(id){var d={name:val('acf-name'),iata:val('acf-iata').toUpperCase(),country:val('acf-country'),notes:val('acf-notes')};
+ if(!d.name)return say('Airline name is required.',1);if(d.iata&&!/^[A-Z0-9]{2,3}$/.test(d.iata))return say('IATA code must be 2–3 letters/digits.',1);
+ if(dup(d.name,d.iata,id))return say('That airline already exists (same name or IATA). Add contacts to the existing record instead.',1);
+ d.updatedAt=now();var o=id&&airline(id),ref=id?db.collection(COL.a).doc(id):db.collection(COL.a).doc();
+ (id?ref.update(d):ref.set(Object.assign({ownerUid:uid,createdAt:now()},d))).then(function(){audit('airline',ref.id,ref.id,id?'edit':'add',d.name,id?diff(o,d,['name','iata','country','notes']):[]);closeM();if(!id){st.sel=ref.id}say('Airline saved.')}).catch(err)}
+function saveRate(id){var cp=val('acr-com'),dp=val('acr-dis');
+ var d={airlineId:st.sel,scope:val('acr-scope'),commissionPct:cp===''?'':Number(cp),discountPct:dp===''?'':Number(dp),effectiveFrom:val('acr-from'),effectiveTo:val('acr-to'),lastVerified:val('acr-ver'),remarks:val('acr-rem'),updatedAt:now()};
+ if([d.commissionPct,d.discountPct].some(function(x){return x!==''&&(isNaN(x)||x<0||x>100)}))return say('Percentages must be between 0 and 100.',1);
+ var o=id&&R.filter(function(r){return r.id===id})[0],ref=id?db.collection(COL.r).doc(id):db.collection(COL.r).doc(),keys=['scope','commissionPct','discountPct','effectiveFrom','effectiveTo','lastVerified','remarks'];
+ (id?ref.update(d):ref.set(Object.assign({ownerUid:uid,createdAt:now()},d))).then(function(){audit('commission',ref.id,st.sel,id?'edit':'add',d.scope||'rule',id?diff(o,d,keys):[]);closeM();say('Commission rule saved.')}).catch(err)}
+function saveCont(id){var phones=[],bad='';[].forEach.call(document.querySelectorAll('#ack-ph .ac-ph'),function(r){var l=r.querySelector('.acp-l').value.trim(),n=r.querySelector('.acp-n').value.trim();if(!n)return;var p=normPhone(n);if(p===null)bad=n;else phones.push({label:l,number:p})});
+ if(bad)return say('"'+bad+'" is not a valid number. Use the international format, e.g. +8801XXXXXXXXX.',1);
+ var wa=normPhone(val('ack-wa'));if(wa===null)return say('WhatsApp number is not valid. Use the international format.',1);
+ var em=val('ack-email');if(em&&!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em))return say('Email address is not valid.',1);
+ var d={airlineId:id?(K.filter(function(c){return c.id===id})[0]||{}).airlineId:st.sel,type:val('ack-type'),person:val('ack-person'),phones:phones,whatsapp:wa,email:em,address:val('ack-addr'),country:val('ack-country'),hours:val('ack-hours'),lastVerified:val('ack-ver'),remarks:val('ack-rem'),active:$('ack-act').checked,updatedAt:now()};
+ var o=id&&K.filter(function(c){return c.id===id})[0],ref=id?db.collection(COL.k).doc(id):db.collection(COL.k).doc(),keys=['type','person','phones','whatsapp','email','address','country','hours','lastVerified','remarks','active'];
+ (id?ref.update(d):ref.set(Object.assign({ownerUid:uid,createdAt:now()},d))).then(function(){audit('contact',ref.id,d.airlineId,id?'edit':'add',d.type+(d.person?' — '+d.person:''),id?diff(o,d,keys):[]);closeM();say('Contact saved.')}).catch(err)}
+function del(kind,id){var arr=kind==='r'?R:K,o=arr.filter(function(x){return x.id===id})[0];if(!o||!confirm('Delete this '+(kind==='r'?'commission rule':'contact')+'? The deletion is kept in the change history.'))return;
+ db.collection(COL[kind]).doc(id).delete().then(function(){audit(kind==='r'?'commission':'contact',id,o.airlineId,'delete',kind==='r'?(o.scope||'rule'):(o.type+(o.person?' — '+o.person:'')),[]);say('Deleted.')}).catch(err)}
+function delAir(){var a=airline(st.sel);if(!a)return;var rs=R.filter(function(r){return r.airlineId===a.id}),cs=K.filter(function(c){return c.airlineId===a.id});
+ if(!confirm('Delete '+a.name+' with '+rs.length+' commission rule(s) and '+cs.length+' contact(s)? This cannot be undone.'))return;
+ var b=db.batch();rs.forEach(function(r){b.delete(db.collection(COL.r).doc(r.id))});cs.forEach(function(c){b.delete(db.collection(COL.k).doc(c.id))});b.delete(db.collection(COL.a).doc(a.id));
+ b.commit().then(function(){audit('airline',a.id,a.id,'delete',a.name+' (+'+rs.length+' rules, '+cs.length+' contacts)',[]);st.sel='';say('Airline deleted.')}).catch(err)}
+/* ---------- Excel export / import ---------- */
+var CH=['Airline','IATA','Department','Contact Person','Phones','WhatsApp','Email','Office Address','Country','Operating Hours','Remarks','Last Verified','Active'];
+function exportXls(){if(!window.XLSX)return say('Excel library is not loaded.',1);var wb=XLSX.utils.book_new();
+ var ar=[['Name','IATA','Country','Notes']].concat(A.map(function(a){return[a.name,a.iata||'',a.country||'',a.notes||'']}));
+ var rr=[['Airline','IATA','Scope','Commission %','Discount %','Effective From','Effective To','Remarks','Last Verified']].concat(R.map(function(r){var a=airline(r.airlineId)||{};return[a.name||'',a.iata||'',r.scope||'',r.commissionPct,r.discountPct,r.effectiveFrom||'',r.effectiveTo||'',r.remarks||'',r.lastVerified||'']}));
+ var kr=[CH].concat(K.map(function(c){var a=airline(c.airlineId)||{};return[a.name||'',a.iata||'',c.type||'',c.person||'',(c.phones||[]).map(function(p){return(p.label?p.label+': ':'')+p.number}).join('; '),c.whatsapp||'',c.email||'',c.address||'',c.country||'',c.hours||'',c.remarks||'',c.lastVerified||'',c.active===false?'No':'Yes']}));
+ XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(ar),'Airlines');XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(rr),'Commission');XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(kr),'Contacts');
+ XLSX.writeFile(wb,'AeroOps_Airline_Directory_'+new Date().toISOString().slice(0,10)+'.xlsx');say('Excel file downloaded.')}
+function iso(v){v=String(v||'').trim();if(!v)return'';if(/^\d{4}-\d{2}-\d{2}/.test(v))return v.slice(0,10);var d=new Date(v);return isNaN(d.getTime())?'':d.toISOString().slice(0,10)}
+function importXls(file){if(!window.XLSX||!db)return say('Sign in first and make sure the Excel library is loaded.',1);var fr=new FileReader();
+ fr.onload=function(){try{var wb=XLSX.read(fr.result,{type:'array'}),ws=wb.Sheets.Contacts||wb.Sheets[wb.SheetNames[0]],rows=XLSX.utils.sheet_to_json(ws,{defval:'',raw:false}),ops=[],made={},added=0,skip=[],keys={};
+  function g(r,k){for(var h in r)if(h.toLowerCase().replace(/[^a-z]/g,'')===k)return String(r[h]).trim();return''}
+  K.forEach(function(c){keys[c.airlineId+'|'+c.type+'|'+(c.person||'').toLowerCase()+'|'+((c.phones||[])[0]||{}).number]=1});
+  rows.forEach(function(r,i){var nm=g(r,'airline'),ia=g(r,'iata').toUpperCase(),ty=g(r,'department')||g(r,'contacttype')||g(r,'type');if(!nm&&!ia)return;
+   var T=TYPES.filter(function(t){return t.toLowerCase()===ty.toLowerCase()})[0];if(!T)return skip.push('Row '+(i+2)+': unknown department "'+ty+'"');
+   var a=A.filter(function(x){return ia?x.iata===ia:(x.name||'').toLowerCase()===nm.toLowerCase()})[0]||made[ia||nm.toLowerCase()];
+   if(!a){if(!nm)return skip.push('Row '+(i+2)+': airline not found and no name to create it');var ref=db.collection(COL.a).doc();a={id:ref.id,name:nm,iata:ia};made[ia||nm.toLowerCase()]=a;ops.push([ref,{ownerUid:uid,name:nm,iata:ia,country:'',notes:'',createdAt:now(),updatedAt:now()}])}
+   var phones=[],badP=false;g(r,'phones').split(/[;\n]+/).forEach(function(s){s=s.trim();if(!s)return;var m=s.match(/^(?:(.*?):\s*)?(\+?[\d\s().-]+)$/),p=m&&normPhone(m[2]);if(p)phones.push({label:(m[1]||'').trim(),number:p});else badP=true});
+   var wa=normPhone(g(r,'whatsapp'));if(badP||wa===null)skip.push('Row '+(i+2)+': invalid phone/WhatsApp left blank');if(wa===null)wa='';
+   var k=a.id+'|'+T+'|'+g(r,'contactperson').toLowerCase()+'|'+(phones[0]||{}).number;if(keys[k])return skip.push('Row '+(i+2)+': duplicate, skipped');keys[k]=1;
+   ops.push([db.collection(COL.k).doc(),{ownerUid:uid,airlineId:a.id,type:T,person:g(r,'contactperson'),phones:phones,whatsapp:wa,email:g(r,'email'),address:g(r,'officeaddress'),country:g(r,'country'),hours:g(r,'operatinghours'),remarks:g(r,'remarks'),lastVerified:iso(g(r,'lastverified')),active:g(r,'active').toLowerCase()!=='no',createdAt:now(),updatedAt:now()}]);added++});
+  var chunks=[];for(var i=0;i<ops.length;i+=400)chunks.push(ops.slice(i,i+400));
+  Promise.all(chunks.map(function(ch){var b=db.batch();ch.forEach(function(o){b.set(o[0],o[1])});return b.commit()})).then(function(){if(added||Object.keys(made).length)audit('import','',  '', 'import','Excel import: '+added+' contact(s), '+Object.keys(made).length+' new airline(s)',[]);say('Imported '+added+' contact(s), '+Object.keys(made).length+' new airline(s).'+(skip.length?' '+skip.length+' note(s): '+skip.slice(0,3).join(' | '):''),!added&&skip.length)}).catch(err)}catch(e){console.error(e);say('Could not read that Excel file.',1)}};
+ fr.readAsArrayBuffer(file)}
+/* ---------- events ---------- */
+function copy(t){var done=function(){say('Copied: '+t)};if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(done,function(){fb()});else fb();function fb(){var x=document.createElement('textarea');x.value=t;document.body.appendChild(x);x.select();try{document.execCommand('copy');done()}catch(e){say('Copy failed.',1)}document.body.removeChild(x)}}
+function sel(id){st.sel=id;draw()}
+sec.addEventListener('input',function(e){if(e.target.id==='ac-q'){st.q=e.target.value;var p=e.target.selectionStart;draw();}});
+sec.addEventListener('change',function(e){var i=e.target.id;if(i==='ac-air')sel(e.target.value);else if(i==='ac-dept'){st.dept=e.target.value;draw()}else if(i==='ac-loc'){st.loc=e.target.value;draw()}else if(i==='ac-file'&&e.target.files[0]){importXls(e.target.files[0]);e.target.value=''}});
+function act(e){var t=e.target.closest&&e.target.closest('[data-a],[data-tab],[data-sel],[data-copy]');if(!t)return;
+ if(t.hasAttribute('data-copy'))return copy(t.getAttribute('data-copy'));
+ if(t.hasAttribute('data-tab')){st.tab=t.getAttribute('data-tab');return draw()}
+ var a=t.getAttribute('data-a'),id=t.getAttribute('data-id')||'';
+ if(!a)return sel(t.getAttribute('data-sel'));
+ if(!db&&/^(addair|imp|exp)$/.test(a)===false)return;
+ var need=/^(addair|editair|saveair|addr|editr|saver|delr|addk|editk|savek|delk|delair|imp)$/.test(a);if(need&&!db)return say('Sign in to AeroOps first.',1);
+ ({addair:function(){airForm()},editair:function(){airForm(airline(st.sel))},saveair:function(){saveAir(id)},delair:delAir,back:function(){sel('')},close:closeM,
+  addr:function(){rateForm()},editr:function(){rateForm(R.filter(function(r){return r.id===id})[0])},saver:function(){saveRate(id)},delr:function(){del('r',id)},
+  addk:function(){contForm()},editk:function(){contForm(K.filter(function(c){return c.id===id})[0])},savek:function(){saveCont(id)},delk:function(){del('k',id)},
+  phadd:function(){$('ack-ph').insertAdjacentHTML('beforeend',phRow())},phdel:function(){var r=t.closest('.ac-ph');if(r&&$('ack-ph').children.length>1)r.remove();else if(r){r.querySelectorAll('input').forEach(function(i){i.value=''})}},
+  imp:function(){$('ac-file').click()},exp:exportXls}[a]||function(){})()}
+sec.addEventListener('click',act);ov.addEventListener('click',act);
+tick();draw();
+})();
+</script>
+
 
 
 <!-- ===== AeroOps UI polish: icons, tooltips, upload pipeline (presentation only; no data/logic touched) ===== -->
