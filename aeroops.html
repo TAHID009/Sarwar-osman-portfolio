@@ -11376,7 +11376,7 @@ A.onChange(A.fillForm);
   /* ---------- Firebase (Firestore): the system of record for activities ---------- */
   var cloud = {db:null, unsub:null, uid:null, failed:false, on:false, loaded:false};
   window.aeroPwiData = function(){ return cloud.loaded ? acts.slice() : null; };
-  /* Performance Analytics now lives inside Intelligence & Reports > Performance. The Intelligence page owns the single date control and drives this pane through this bridge. */
+  /* Performance Analytics now lives inside Work Analytics > Performance. The Work Analytics page owns the single date control and drives this pane through this bridge. */
   var hosted = false;
   window.aeroPerfHost = {
     setRange: function(key, from, to){
@@ -12030,7 +12030,7 @@ A.onChange(A.fillForm);
   function setTab(t){
     if(t === 'entry') t = 'home';
     if(t === 'perf') t = 'dash';
-    if(t === 'dash' && !hosted) t = 'home'; /* the dashboard is shown in Intelligence & Reports > Performance */
+    if(t === 'dash' && !hosted) t = 'home'; /* the dashboard is shown in Work Analytics > Performance */
     st.tab = t;
     $('pwi-pane-home').hidden = t !== 'home'; $('pwi-pane-entry').hidden = true; $('pwi-pane-dash').hidden = t !== 'dash';
     pwi.querySelectorAll('.pwi-subtabs button').forEach(function(b){ b.classList.toggle('on', b.dataset.v === t); });
@@ -12868,7 +12868,7 @@ var PWR=document.getElementById('pwi-root'),PA=document.createComment('pwi-ancho
 function perfPark(){var p=document.getElementById('pwi-root');if(!p||!PA.parentNode||!intel.contains(p))return;if(window.aeroPerfHost)window.aeroPerfHost.hide();PA.parentNode.insertBefore(p,PA.nextSibling)}
 function perfMount(){var sl=document.getElementById('wr-perf-slot'),p=document.getElementById('pwi-root'),H=window.aeroPerfHost;if(!sl||!p||!H)return;sl.appendChild(p);var sp=span();H.setRange(R.key,sp.from,sp.to);H.show();var rc=document.getElementById('pwi-records');if(rc&&!rc.parentNode.classList.contains('nx-ar')){var dt=document.createElement('details');dt.className='nx-ex nx-ar';var sm=document.createElement('summary');sm.innerHTML=ic('database')+'Activity Records (expand to view, edit or delete)';dt.appendChild(sm);rc.parentNode.insertBefore(dt,rc);dt.appendChild(rc)}}
 
-/* ===== NexOps dashboard layer for Intelligence & Reports: presentation only. Every number comes from the existing helpers (rows, stats, insData, bizTab, perf bridge). ===== */
+/* ===== NexOps dashboard layer for Work Analytics: presentation only. Every number comes from the existing helpers (rows, stats, insData, bizTab, perf bridge). ===== */
 var NXI={"layout-dashboard": "<rect width=\"7\" height=\"9\" x=\"3\" y=\"3\" rx=\"1\" /> <rect width=\"7\" height=\"5\" x=\"14\" y=\"3\" rx=\"1\" /> <rect width=\"7\" height=\"9\" x=\"14\" y=\"12\" rx=\"1\" /> <rect width=\"7\" height=\"5\" x=\"3\" y=\"16\" rx=\"1\" />", "chart-no-axes-combined": "<path d=\"M12 16v5\" /> <path d=\"M16 14.639V21\" /> <path d=\"M20 10.656V21\" /> <path d=\"m22 3-8.646 8.646a.5.5 0 0 1-.708 0L9.354 8.354a.5.5 0 0 0-.707 0L2 15\" /> <path d=\"M4 18.463V21\" /> <path d=\"M8 14.656V21\" />", "clipboard-list": "<rect width=\"8\" height=\"4\" x=\"8\" y=\"2\" rx=\"1\" ry=\"1\" /> <path d=\"M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2\" /> <path d=\"M12 11h4\" /> <path d=\"M12 16h4\" /> <path d=\"M8 11h.01\" /> <path d=\"M8 16h.01\" />", "ticket": "<path d=\"M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z\" /> <path d=\"M13 5v2\" /> <path d=\"M13 17v2\" /> <path d=\"M13 11v2\" />", "headset": "<path d=\"M3 11h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-5Zm0 0a9 9 0 1 1 18 0m0 0v5a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3Z\" /> <path d=\"M21 16v2a4 4 0 0 1-4 4h-5\" />", "circle-check": "<circle cx=\"12\" cy=\"12\" r=\"10\" /> <path d=\"m16 9-5.5 5.5L8 12\" />", "clock": "<circle cx=\"12\" cy=\"12\" r=\"10\" /> <path d=\"M12 6v6l4 2\" />", "refresh-cw": "<path d=\"M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8\" /> <path d=\"M21 3v5h-5\" /> <path d=\"M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16\" /> <path d=\"M8 16H3v5\" />", "plane": "<path d=\"M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z\" />", "building-2": "<path d=\"M10 12h4\" /> <path d=\"M10 8h4\" /> <path d=\"M14 21v-3a2 2 0 0 0-4 0v3\" /> <path d=\"M6 10H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2\" /> <path d=\"M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16\" />", "wallet": "<path d=\"M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1\" /> <path d=\"M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4\" />", "trending-up": "<path d=\"M16 7h6v6\" /> <path d=\"m22 7-8.5 8.5-5-5L2 17\" />", "calendar-days": "<path d=\"M8 2v3\" /> <path d=\"M16 2v3\" /> <rect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"2\" /> <path d=\"M3 9h18\" /> <path d=\"M8 13h.01\" /> <path d=\"M12 13h.01\" /> <path d=\"M16 13h.01\" /> <path d=\"M8 17h.01\" /> <path d=\"M12 17h.01\" /> <path d=\"M16 17h.01\" />", "download": "<path d=\"M12 15V3\" /> <path d=\"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4\" /> <path d=\"m7 10 5 5 5-5\" />", "lightbulb": "<path d=\"M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5\" /> <path d=\"M9 18h6\" /> <path d=\"M10 22h4\" />", "settings": "<path d=\"M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915\" /> <circle cx=\"12\" cy=\"12\" r=\"3\" />", "menu": "<path d=\"M4 5h16\" /> <path d=\"M4 12h16\" /> <path d=\"M4 19h16\" />", "layers": "<path d=\"M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z\" /> <path d=\"M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12\" /> <path d=\"M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17\" />", "database": "<ellipse cx=\"12\" cy=\"5\" rx=\"9\" ry=\"3\" /> <path d=\"M3 5V19A9 3 0 0 0 21 19V5\" /> <path d=\"M3 12A9 3 0 0 0 21 12\" />", "arrow-right": "<path d=\"M5 12h14\" /> <path d=\"m12 5 7 7-7 7\" />", "x": "<path d=\"M18 6 6 18\" /> <path d=\"m6 6 12 12\" />"};
 function ic(n){return'<svg class="nxi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(NXI[n]||'')+'</svg>'}
 var NXC={Ticketing:'#2563EB',Reissue:'#16A34A',Refund:'#F59E0B',Void:'#8B5CF6'},NXV=[['ov','Overview','layout-dashboard'],['pf','Performance','trending-up'],['wl','Workload','clipboard-list'],['bz','My Business','building-2'],['rc','Records','database']];
@@ -12887,30 +12887,27 @@ function nxK(i,c,label,val,note,go){return'<button type="button" class="nx-k" st
 function nxPaint(l,pl,A,A0,P,ps,s,st,S0,pr){try{
  if(!NXV.some(function(v){return v[0]===IS.tab}))IS.tab='ov';var V=IS.tab,closed=function(x){return x.status==='Solved'||x.status==='Resolved'},cn=function(a){return a?a.filter(closed).length:0},
  pa=A0&&ps?A0.filter(function(x){return within({date:x.date},ps)}):null,tk=A?A.length:0,tot=st.n+tk,ptot=pl&&pa?pl.length+pa.length:null,
- svc=l.reduce(function(a,r){return a+svcOf(r.e)},0),psv=pl?pl.reduce(function(a,r){return a+svcOf(r.e)},0):null,
- adjN=function(x){return x.filter(function(r){return r.e.txn==='Refund'&&r.e.refundStatus!=='PENDING'&&r.e.adjustmentGiven==='YES'}).length},
+  adjN=function(x){return x.filter(function(r){return r.e.txn==='Refund'&&r.e.refundStatus!=='PENDING'&&r.e.adjustmentGiven==='YES'}).length},
  cr=tk?Math.round(cn(A)*100/tk):null,pend=A?A.filter(function(x){return x.status==='Pending'}).length:0,d=insData(l,pl,A,A0,P),
  days={};l.forEach(function(r){if(r.e.date)days[r.e.date]=1});(A||[]).forEach(function(x){if(x.date)days[x.date]=1});var nd=Object.keys(days).length,
  H=window.aeroPerfHost,sc=null;if(H){H.setRange(R.key,s.from,s.to);var q=H.score();sc=q&&q.s!=null?q.s:null}
  var rp=A?A.filter(function(x){return x.kind==='repeat'}).length:0,
  K='<div class="nx-kg">'+nxK('clipboard-list','#2563EB','Total Work Items',tot,delta(tot,ptot,0),'rc')+nxK('ticket','#16A34A','Transactions',st.n,delta(st.n,pl?pl.length:null,0),'rc')+nxK('headset','#F59E0B','Query &amp; Support',A?tk:'—',delta(tk,pa?pa.length:null,0),'pf')
  +nxK('circle-check','#7C3AED','Completion Rate',cr==null?'—':cr+'%','<em class="nx-bar"><u style="width:'+(cr||0)+'%"></u></em>','pf')+nxK('clock','#0E9F6E','Pending Tasks',A?pend:'—','<small class="'+(pend?'dn':'up')+'">'+(pend?'Requires attention':'All clear')+'</small>','pf')
- +nxK('wallet','#4F46E5','Service Charges','BDT '+fm(svc),delta(svc,psv,0),'wl')+nxK('refresh-cw','#10B981','Refund Adjustments',adjN(l),delta(adjN(l),pl?adjN(pl):null,0),'wl')+'</div>';
+ +nxK('refresh-cw','#10B981','Refund Adjustments',adjN(l),delta(adjN(l),pl?adjN(pl):null,0),'wl')+'</div>';
  var ty=TY.map(function(t){return{k:t,v:st.by[t]||0,c:NXC[t]}}),wt=ty.map(function(x){return{k:x.k,v:x.v,c:x.c}}).concat(A?agg(A.map(function(x){return{e:x}}),function(x){return x.category},function(){return 1}).slice(0,4).map(function(o){return{k:o.k,v:o.v,c:'#8B5CF6'}}):[]).filter(function(x){return x.v>0}).sort(function(a,b){return b.v-a.v}),
  rf=l.filter(function(r){return r.e.txn==='Refund'}),paid=rf.filter(function(r){return r.e.refundStatus!=='PENDING'}),adj=adjN(l),
  pipe=hbars([{k:'Refund requests',v:rf.length,c:'#2563EB'},{k:'Airline paid',v:paid.length,c:'#16A34A'},{k:'Adjustment given',v:adj,c:'#F59E0B'},{k:'Adjustment pending',v:paid.length-adj,c:'#94A3B8'},{k:'Awaiting airline',v:rf.length-paid.length,c:'#8B5CF6'}],'#2563EB',String),
  ins=d.o.length?'<ul class="nx-ins">'+d.o.slice(0,5).map(function(x){return'<li>'+ic('circle-check')+'<span>'+x+'</span></li>'}).join('')+'</ul>':'<div class="wr-empty">Not enough records in this period for insights (at least 5 are needed).</div>',
- rec=sorted(l).slice(0,5).map(function(r){var e=r.e,sx=status(e),pe=/Pending|Awaiting/.test(sx);return'<button type="button" class="nx-ra" data-act="open" data-i="'+r.i+'"><i>'+ic('plane')+'</i><span><b>'+esc(e.pnrGds||e.pnrAirline||'—')+' · '+esc(e.txn||'')+'</b><small>'+esc(fmtD(e.date||''))+'</small></span><em class="'+(pe?'pe':'ok')+'">'+esc(pe?'Pending':sx==='—'?'Recorded':'Completed')+'</em></button>'}).join('')||EMPTY,
  gr='<span class="wr-seg">'+[['daily','Daily'],['weekly','Weekly'],['monthly','Monthly']].map(function(g){return'<button type="button" data-act="igr" data-v="'+g[0]+'" class="'+(IS.gr===g[0]?'on':'')+'">'+g[1]+'</button>'}).join('')+'</span>',
  leg='<div class="wr-legend">'+TY.map(function(t){return'<span><i style="background:'+NXC[t]+'"></i>'+t+'</span>'}).join('')+'</div>',c='';
  if(V==='ov'){c=K+'<div class="wr-grid nx-g2"><div>'+nxCard('Work Activity Trend','chart-no-axes-combined',gr+leg+nxGroup(l,s))+'</div><div>'+nxCard('Transaction Distribution','layers',donutG(ty.map(function(x){return{l:x.k,c:x.c,v:x.v}}),'Total'))+'</div></div>'
   +'<div class="nx-g3">'+nxCard('Work Type','clipboard-list',hbars(wt,'#2563EB',String))+nxCard('Refund Pipeline','refresh-cw',pipe)+nxCard('Operational Insights','lightbulb',ins)+'</div>'
-  +'<div class="nx-g3">'+nxCard('Performance Overview','trending-up','<div class="nx-po">'+nxGauge(sc)+'<div class="nx-pm"><div><span>Avg. daily work</span><b>'+(nd?(tot/nd).toFixed(1):'—')+'</b></div><div><span>Avg. response time</span><b>—</b><small>Not recorded</small></div><div><span>Repeat / reopen</span><b>'+(tk?(rp*100/tk).toFixed(1)+'%':'—')+'</b></div></div></div><p class="wr-sub">Score comes from the Performance tab, with its own weights.</p>')+nxCard('Performance vs previous period','chart-no-axes-combined',nxCmp(l,A,pl,pa,s,ps))+nxCard('Recent Activities','plane',rec+'<button type="button" class="wr-link" data-act="nxv" data-v="rc">View all</button>')+'</div>'}
+  +'<div class="nx-g3 nx-g3-two">'+nxCard('Performance Overview','trending-up','<div class="nx-po">'+nxGauge(sc)+'<div class="nx-pm"><div><span>Avg. daily work</span><b>'+(nd?(tot/nd).toFixed(1):'—')+'</b></div><div><span>Avg. response time</span><b>—</b><small>Not recorded</small></div><div><span>Repeat / reopen</span><b>'+(tk?(rp*100/tk).toFixed(1)+'%':'—')+'</b></div></div></div><p class="wr-sub">Score comes from the Performance tab, with its own weights.</p>')+nxCard('Performance vs previous period','chart-no-axes-combined',nxCmp(l,A,pl,pa,s,ps))+'</div>'}
  else if(V==='pf')c='<div id="wr-perf-slot"></div>';
  else if(V==='wl'){var tkn=st.by.Ticketing,rg=function(n,t,col){return ring(tkn?n*100/tkn:0,t,col,t)},src=A?agg(A.map(function(x){return{e:x}}),function(x){return x.source},function(){return 1}):[],ex=function(t,i,b){return'<details class="nx-ex"><summary>'+ic(i)+t+'</summary><div>'+b+'</div></details>'},
-  by=TY.map(function(t){return{k:t,v:l.filter(function(r){return r.e.txn===t}).reduce(function(a,r){return a+svcOf(r.e)},0),c:NXC[t]}}).filter(function(x){return x.v>0}),
   top=function(f,col){return hbars(agg(l,f,function(){return 1}).slice(0,8),col,String)},it=insTab(l,pl,A,A0,P,ps);
-  c='<div class="rgs">'+rg(st.by.Refund,'Refund rate','#F59E0B')+rg(st.by.Reissue,'Reissue rate','#16A34A')+rg(st.by.Void,'Void rate','#8B5CF6')+'</div><div class="nx-g3">'+nxCard('Busiest Weekdays','calendar-days',it.wk.replace(/^<div class="wr-card"><h3>[^<]*<\/h3>/,'').replace(/<\/div>$/,''))+nxCard('Service charges by type','wallet',hbars(by,'#4F46E5',function(v){return'BDT '+short(v)}))+nxCard('Pending Task Ageing','clock',it.ag.replace(/^<div class="wr-card"><h3>[^<]*<\/h3>/,'').replace(/<\/div>$/,''))+'</div>'
+  c='<div class="rgs">'+rg(st.by.Refund,'Refund rate','#F59E0B')+rg(st.by.Reissue,'Reissue rate','#16A34A')+rg(st.by.Void,'Void rate','#8B5CF6')+'</div><div class="nx-g3 nx-g3-two">'+nxCard('Busiest Weekdays','calendar-days',it.wk.replace(/^<div class="wr-card"><h3>[^<]*<\/h3>/,'').replace(/<\/div>$/,''))+nxCard('Pending Task Ageing','clock',it.ag.replace(/^<div class="wr-card"><h3>[^<]*<\/h3>/,'').replace(/<\/div>$/,''))+'</div>'
   +ex('Work Source Breakdown','layers',src.length?shareDonut(src,'tasks'):EMPTY)+ex('Company / Client Analysis','building-2',A?hbars(agg(A.map(function(x){return{e:x}}),function(x){return x.company||x.client},function(){return 1}).slice(0,8),'#2563EB',String):EMPTY)
   +ex('Airline Analytics','plane',top(function(e){return e.airline},'#0E8FA0'))+ex('Route Analytics','plane',top(function(e){return e.sector},'#2563EB'))+ex('Booking Platform Analysis','database',top(function(e){return e.platform},'#7C3AED'))+ex('Tasks by category and repeated issues','clipboard-list',it.tb+(it.rp||''))}
  else if(V==='bz')c=bizTab(S0,s,ps);
@@ -12921,7 +12918,7 @@ function nxPaint(l,pl,A,A0,P,ps,s,st,S0,pr){try{
  live=!!A0,now=new Date();
  perfPark();
  intel.innerHTML='<div class="nx'+(NX_OPEN?' open':'')+'"><main class="nx-m">'
- +'<header class="nx-h"><div><h2>Intelligence &amp; Reports</h2><p>NEXOPS · Aviation Operations Platform</p></div><div class="nx-ctl"><label class="nx-dd">'+ic('calendar-days')+'<select data-act="range" aria-label="Reporting period">'+opt+'</select></label><span class="nx-chips">'+chips+'</span>'+(R.key==='custom'?'<input type="date" data-act="from" value="'+esc(R.from)+'"><input type="date" data-act="to" value="'+esc(R.to)+'">':'')+'<button type="button" class="nx-ex1" data-act="export">'+ic('download')+'Export CSV</button></div></header>'
+ +'<header class="nx-h"><div><h2>Work Analytics</h2><p>NEXOPS · Aviation Operations Platform</p></div><div class="nx-ctl"><label class="nx-dd">'+ic('calendar-days')+'<select data-act="range" aria-label="Reporting period">'+opt+'</select></label><span class="nx-chips">'+chips+'</span>'+(R.key==='custom'?'<input type="date" data-act="from" value="'+esc(R.from)+'"><input type="date" data-act="to" value="'+esc(R.to)+'">':'')+'<button type="button" class="nx-ex1" data-act="export">'+ic('download')+'Export CSV</button></div></header>'
  +'<div class="nx-tabs"><div>'+nav+'</div><span class="nx-live"><i class="'+(live?'':'off')+'"></i>'+(live?'Live Data':'Not signed in')+' <small>Updated: '+now.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})+' · '+now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})+'</small></span></div><p class="wr-sub">'+esc(periodLabel())+'</p>'+c+'</main></div>';
  perfMount();return true}catch(e){if(window.console)console.error('NexOps layout',e);return false}}
 var NX_OPEN=false;
@@ -12958,7 +12955,7 @@ function cd(t,b,x){return'<div class="wr-card'+(x?' '+x:'')+'">'+(t?'<h3>'+t+'</
 function grid2(a,b,q){return'<div class="wr-grid'+(q?' eq':'')+'">'+a+b+'</div>'}
 function stile(label,v,tip){return'<div class="ov-k" title="'+esc(tip||'')+'"><span>'+label+'</span><b>'+v+'</b></div>'}
 function shareDonut(it,small){var i=0;return donutG(it.map(function(x){return{l:x.k,c:PAL[i++%PAL.length],v:x.v}}),small)}
-/* ---- Overview + Intelligence & Reports ---- */
+/* ---- Overview + Work Analytics ---- */
 function renderIntel(){if(!root.classList.contains('wr-intel-on'))return;
  var s=span(),l=rows(s),ps=prevSpan(),pl=ps?rows(ps):null,st=stats(l),bs=bucketCounts(l),c='',P=D().pending().filter(coOk),S0=D().sales()||[],A0=window.aeroPwiData?window.aeroPwiData():null;
  var pr=E().filter(function(e){return coOk(e)&&e.txn==='Refund'&&e.refundStatus==='PENDING'}).length;
@@ -12986,9 +12983,9 @@ function renderIntel(){if(!root.classList.contains('wr-intel-on'))return;
  }
  else c=dlCard();
  function dlCard(){return cd('Download','<div class="wr-dls"><button type="button" class="wr-btn" data-act="export">This period (CSV)</button><button type="button" class="wr-btn ghost" data-dl="entries">All records (Excel)</button><button type="button" class="wr-btn ghost" data-dl="pending">Pending adjustments (Excel)</button><button type="button" class="wr-btn ghost" data-dl="summary">Summary (Excel)</button><button type="button" class="wr-btn ghost" data-dl="all">Complete data pack (Excel)</button></div><p class="wr-sub">The CSV covers the dates and company chosen above. The Excel files include all saved data.</p>');}
- var info='<details class="ov-info"><summary aria-label="How these numbers are calculated">i</summary><div class="ov-pop"><b>How numbers are calculated</b><ul><li><b>Revenue</b> = ticket sales + reissue collections.</li><li><b>Refunds</b> = amounts returned to customers.</li><li><b>Net result</b> = Revenue − Refunds.</li><li><b>Commission</b> = service charges and markup recorded.</li><li><b>Compared with</b> the previous period of the same length'+cmp+'.</li><li><b>Void</b> records count as work but carry no revenue.</li><li>Open items (refund adjustments, awaiting airline) show everything pending now, whatever date range is chosen.</li><li><b>Insights</b> are sentences built only from recorded data; percentages need at least 5 records and nothing is estimated.</li></ul></div></details>';
+ var info='<details class="ov-info"><summary aria-label="How these numbers are calculated">i</summary><div class="ov-pop"><b>How numbers are calculated</b><ul><li><b>Revenue</b> = ticket sales + reissue collections.</li><li><b>Refunds</b> = amounts returned to customers.</li><li><b>Net result</b> = Revenue − Refunds.</li><li><b>Compared with</b> the previous period of the same length'+cmp+'.</li><li><b>Void</b> records count as work but carry no revenue.</li><li>Open items (refund adjustments, awaiting airline) show everything pending now, whatever date range is chosen.</li><li><b>Insights</b> are sentences built only from recorded data; percentages need at least 5 records and nothing is estimated.</li></ul></div></details>';
  var tabs=[['iw','My Work'],['ip','Performance'],['ib','My Business'],['id','Downloads']];
- perfPark();intel.innerHTML='<div class="wr-top"><div><h2>'+(ov?'Overview':'Intelligence &amp; Reports')+(ov?info:'')+'</h2><p class="wr-sub">'+esc(coLabel())+' · <b>'+esc(periodLabel())+'</b></p></div><div class="wr-ctl">'+coSelect()+rangeCtl()+'<button type="button" class="wr-btn" data-act="export">Export CSV</button></div></div>'
+ perfPark();intel.innerHTML='<div class="wr-top"><div><h2>'+(ov?'Overview':'Work Analytics')+(ov?info:'')+'</h2><p class="wr-sub">'+esc(coLabel())+' · <b>'+esc(periodLabel())+'</b></p></div><div class="wr-ctl">'+coSelect()+rangeCtl()+'<button type="button" class="wr-btn" data-act="export">Export CSV</button></div></div>'
   +'<div class="wr-card" style="padding:0 14px;'+(ov?'display:none':'')+'"><div class="wr-tabs" style="margin:0" role="tablist">'+tabs.map(function(t){return'<button type="button" role="tab" data-act="ijump" data-v="'+t[0]+'" class=""'+(t[0]==='overview'?' style="display:none"':'')+'>'+t[1]+'</button>'}).join('')+'</div></div>'+'<p class="ov-tip"><b>One page.</b> Your work, performance evaluation, activity breakdowns, Aero Travels business and downloads, all for the period above. Use the links to jump to a section.</p>'+c;perfMount()}
 
 /* ---- Insights (evidence-only sentences, weekday, ageing, category table) ---- */
@@ -13036,30 +13033,25 @@ function wrSide(l){var sd=stats(l),P=D().pending().filter(coOk),aw=l.filter(func
  mx=TY.map(function(t){return{k:t,v:sd.by[t]||0,c:TC[t]}}).filter(function(x){return x.v>0});
  return cd('Needs attention','<div class="ov-ats" style="grid-template-columns:1fr 1fr"><div class="ov-at'+(P.length?' warn':'')+'"><b>'+P.length+'</b><span>Refund adjustments due</span></div><div class="ov-at'+(aw?' warn':'')+'"><b>'+aw+'</b><span>Refunds awaiting airline</span></div></div>')
   +cd('Work mix',hbars(mx,'#2563EB',String))+cd('Service charges by type',hbars(sv,'#7C3AED',function(v){return'BDT '+short(v)}))}
-var TIPS={work:'<b>Your work, measured.</b> Everything you handled in the period, from top to bottom: totals, what needs action, service charges, refund workflow and queries. Use the Review links to open the records behind a number.',perf:'<b>Performance.</b> Score with its evidence, query and source breakdowns, frequent cases and every activity record, for the period above. Counts and trends are in My Work.',biz:'<b>Your own business (Aero Travels).</b> Private sales, profit and dues, kept separate from your company work.',reports:'<b>Reports.</b> Download your records for the period above.'};
+var TIPS={work:'<b>Your work, measured.</b> Everything you handled in the period, from top to bottom: totals, what needs action, refund workflow and queries. Use the Review links to open the records behind a number.',perf:'<b>Performance.</b> Score with its evidence, query and source breakdowns, frequent cases and every activity record, for the period above. Counts and trends are in My Work.',biz:'<b>Your own business (Aero Travels).</b> Private sales, profit and dues, kept separate from your company work.',reports:'<b>Reports.</b> Download your records for the period above.'};
 function svcOf(e){return num(D().earn(e))}
 function workTab(l,pl,A,A0,P,ps,s,st,pr){var ap=A0&&ps?A0.filter(function(x){return within({date:x.date},ps)}):null,closed=function(x){return x.status==='Solved'||x.status==='Resolved'},
  tk=A?A.length:0,tc=A?A.filter(closed).length:0,tot=st.n+tk,ptot=pl&&ap?pl.length+ap.length:null,days={};
  l.forEach(function(r){if(r.e.date)days[r.e.date]=1});(A||[]).forEach(function(x){if(x.date)days[x.date]=1});var nd=Object.keys(days).length,
- svc=l.reduce(function(a,r){return a+svcOf(r.e)},0),psv=pl?pl.reduce(function(a,r){return a+svcOf(r.e)},0):null,
- fu=A0?A0.filter(function(x){return x.status==='Follow-up'}).length:0,pn=A0?A0.filter(function(x){return x.status==='Pending'}).length:0;
- var head='<p class="ov-lead">'+(tot?'In <b>'+esc(periodLabel())+'</b> you handled <b>'+tot+'</b> work items: <b>'+st.n+'</b> transactions'+(A?' and <b>'+tk+'</b> query and support tasks':'')+(nd?', about <b>'+(tot/nd).toFixed(1)+'</b> per active day':'')+'.'+(A&&tk?' <b>'+Math.round(tc*100/tk)+'%</b> of the tasks are closed.':'')+' Service charges collected: <b>BDT '+fm(svc)+'</b>.':'No work was recorded in this period.')+'</p><p class="wr-sub">Detailed scoring with your own weights: see the Performance tab. Turnaround and accuracy are shown only where times and error records exist; nothing is estimated.</p>';
- var K=[['Total work items',tot,'#2563EB',ptot,'Transactions plus query and support tasks in the period'],['Transactions',st.n,'#0E8FA0',pl?pl.length:null,'Ticketing, reissue, refund and void records'],['Query &amp; support tasks',A?tk:'—','#F59E0B',ap?ap.length:null,'From the Activity Tracker'],['Tasks closed',A&&tk?Math.round(tc*100/tk)+'%':'—','#16875A',null,'Solved + Resolved divided by all tasks'],['Service charges','BDT '+fm(svc),'#7C3AED',psv,'Service charges recorded on your transactions']];
- var tiles='<div class="ov-kg">'+K.map(function(k){var cur=typeof k[1]==='number'?k[1]:(k[0]==='Service charges'?svc:0);return'<div class="ov-k" style="--c:'+k[2]+'" title="'+esc(k[4])+'"><span>'+k[0]+'</span><b>'+k[1]+'</b>'+delta(cur,k[3],0)+'</div>'}).join('')+'</div>';
+  fu=A0?A0.filter(function(x){return x.status==='Follow-up'}).length:0,pn=A0?A0.filter(function(x){return x.status==='Pending'}).length:0;
+ var head='<p class="ov-lead">'+(tot?'In <b>'+esc(periodLabel())+'</b> you handled <b>'+tot+'</b> work items: <b>'+st.n+'</b> transactions'+(A?' and <b>'+tk+'</b> query and support tasks':'')+(nd?', about <b>'+(tot/nd).toFixed(1)+'</b> per active day':'')+'.'+(A&&tk?' <b>'+Math.round(tc*100/tk)+'%</b> of the tasks are closed.':''):'No work was recorded in this period.')+'</p><p class="wr-sub">Detailed scoring with your own weights: see the Performance tab. Turnaround and accuracy are shown only where times and error records exist; nothing is estimated.</p>';
+ var K=[['Total work items',tot,'#2563EB',ptot,'Transactions plus query and support tasks in the period'],['Transactions',st.n,'#0E8FA0',pl?pl.length:null,'Ticketing, reissue, refund and void records'],['Query &amp; support tasks',A?tk:'—','#F59E0B',ap?ap.length:null,'From the Activity Tracker'],['Tasks closed',A&&tk?Math.round(tc*100/tk)+'%':'—','#16875A',null,'Solved + Resolved divided by all tasks']];
+ var tiles='<div class="ov-kg">'+K.map(function(k){var cur=typeof k[1]==='number'?k[1]:0;return'<div class="ov-k" style="--c:'+k[2]+'" title="'+esc(k[4])+'"><span>'+k[0]+'</span><b>'+k[1]+'</b>'+delta(cur,k[3],0)+'</div>'}).join('')+'</div>';
  var at=function(n,t,go){return'<div class="ov-at'+(n?' warn':'')+'"><b>'+n+'</b><span>'+t+'</span>'+(go&&n?'<button type="button" class="wr-link" data-act="igo" data-v="'+go+'">Review</button>':'')+'</div>'};
  var per=buckets(l).map(function(b){var n=l.filter(function(r){var d=r.e.date||'';return d>=b.a&&d<=b.b}).length+(A?A.filter(function(x){var d=x.date||'';return d>=b.a&&d<=b.b}).length:0);return{l:b.l,v:n}});
  var d=insTab(l,pl,A,A0,P,ps),
  ty=TY.map(function(t){return{k:t,v:st.by[t]||0,c:TC[t]}}).concat(A?agg(A.map(function(x){return{e:x}}),function(x){return x.category},function(){return 1}).slice(0,5).map(function(o){return{k:o.k,v:o.v,c:'#94A3B8'}}):[]).filter(function(x){return x.v>0}).sort(function(a,b){return b.v-a.v});
- var by=TY.map(function(t){return{k:t,v:l.filter(function(r){return r.e.txn===t}).reduce(function(a,r){return a+svcOf(r.e)},0),c:TC[t]}}).filter(function(x){return x.v>0}),
- ch=l.filter(function(r){return svcOf(r.e)>0}).length,
- tr=buckets(l).map(function(b){return{l:b.l,v:Math.round(l.filter(function(r){var dd=r.e.date||'';return dd>=b.a&&dd<=b.b}).reduce(function(a,r){return a+svcOf(r.e)},0))}});
- var sv=grid2(cd('Service charges by task type',(svc?'<p class="wr-sub"><b>BDT '+fm(svc)+'</b> from '+ch+' of '+st.n+' transactions, average BDT '+fm(svc/ch)+'. Query tasks have no amount field, so they are not included.</p>':'<p class="wr-sub">No service charges recorded in this period.</p>')+hbars(by,'#7C3AED',function(v){return'BDT '+short(v)})),cd('Service charges per period',barsOne(tr,'#7C3AED',function(v){return'BDT '+short(v)})),1);
  var tkn=st.by.Ticketing,rf=l.filter(function(r){return r.e.txn==='Refund'}),paid=rf.filter(function(r){return r.e.refundStatus!=='PENDING'}),adj=paid.filter(function(r){return r.e.adjustmentGiven==='YES'}).length,pend=paid.length-adj,
  rings='<div class="rgs">'+ring(tkn?st.by.Refund*100/tkn:0,'Refund rate','#EF4444','Refund records ÷ tickets issued')+ring(tkn?st.by.Reissue*100/tkn:0,'Reissue rate','#F59E0B','Reissue records ÷ tickets issued')+ring(tkn?st.by.Void*100/tkn:0,'Void rate','#475569','Void records ÷ tickets issued')+ring(paid.length?adj*100/paid.length:0,'Adjustments given','#16875A','Airline-paid refunds with the client adjustment given')+'</div>',
  pipe=cd('Refund pipeline',hbars([{k:'Refund requests',v:rf.length,c:'#3B82F6'},{k:'Airline paid',v:paid.length,c:'#0E8FA0'},{k:'Adjustment given',v:adj,c:'#16875A'},{k:'Adjustment pending',v:pend,c:'#F59E0B'},{k:'Awaiting airline',v:rf.length-paid.length,c:'#C2410C'}],'#2563EB',String));
  return cd('Your work in this period',head)+tiles+'<div class="ov-ats">'+at(P.length,'Refund adjustments due','Pending Adj.')+at(pr,'Refunds awaiting airline','Refund Pending')+at(fu,'Follow-up tasks','')+at(pn,'Pending tasks','')+'</div>'+d.list
   +grid2(cd('Work completed per period',barsOne(per,'#2563EB',function(v){return v+' item'+(v===1?'':'s')})),cd('Work by type',hbars(ty,'#2563EB',String)),1)
-  +sv+rings+grid2(pipe,d.wk,1)}
+  +rings+grid2(pipe,d.wk,1)}
 function bizTab(S0,s,ps){if(!S0.length)return cd('My Business (Aero Travels)','<div class="wr-empty">No Aero Travels sales recorded yet. Add sales in Aero Travels and they appear here.</div>');
  var SB=S0.filter(function(x){return within({date:x.date},s)}),SP=ps?S0.filter(function(x){return within({date:x.date},ps)}):null,sum=function(a,f){return a.reduce(function(t,x){return t+num(x[f])},0)},
  price=sum(SB,'price'),profit=sum(SB,'profit'),paid=sum(SB,'paid'),due=sum(S0,'due'),W=SB.map(function(x){return{e:x}}),
@@ -13088,7 +13080,7 @@ dash.addEventListener('keydown',function(e){var t=e.target;if((e.key==='Enter'||
 intel.addEventListener('input',function(e){if(e.target.id==='wr-iq'){IS.q=e.target.value;var s=span(),f=filt(sorted(rows(s)),IS);$('wr-irec').innerHTML=recTable(f)}});
 intel.addEventListener('click',function(e){var b=e.target.closest('[data-act="open"]');if(b)openDetail(+b.dataset.i)});
 /* Intelligence nav button */
-var ib=document.createElement('button');ib.type='button';ib.className='ptc-nav-btn';ib.dataset.aero='intel';ib.title='Reports and analytics';ib.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg><span class="aero-lbl">Intelligence</span>';
+var ib=document.createElement('button');ib.type='button';ib.className='ptc-nav-btn';ib.dataset.aero='intel';ib.title='Work Analytics';ib.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg><span class="aero-lbl">Work Analytics</span>';
 var pw=nav.querySelector('[data-aero="pwi"]');nav.insertBefore(ib,pw?pw.nextSibling:nav.firstChild);
 var enfN=0,enfT=0;function enforce(){if(!root.classList.contains('wr-intel-on'))return;var now=Date.now();if(now-enfT>300){enfT=now;enfN=0}if(++enfN>12)return; /* loop guard */[].forEach.call(nav.querySelectorAll('.ptc-nav-btn'),function(b){var on=b===ib;if(b.classList.contains('active')!==on)b.classList.toggle('active',on)})}
 ib.addEventListener('click',function(){
@@ -13356,7 +13348,7 @@ function fixDark(){if(document.documentElement.getAttribute("data-theme")!=="dar
 function watchFx(){if(!fxObs)fxObs=new MutationObserver(function(){clearTimeout(fxT);fxT=setTimeout(fixDark,160)});
  fxObs.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:["class","hidden","style"]})}
 function orig(k){return q('#ptc-nav .ptc-nav-btn[data-aero="'+k+'"]')}
-var ITEMS=[["wr","Work Record & Performance","home"],["at","Aero Travels","sales"],["ir","Intelligence & Reports","intel","work"],["se","Settings & Access","settings"]];
+var ITEMS=[["wr","Work Record & Performance","home"],["at","Aero Travels","sales"],["ir","Work Analytics","intel","work"],["se","Settings & Access","settings"]];
 var HIDE=["home","pwi","intel","sales","logs","pending","reports","master","settings"];
 function pickTab(v){var n=0;(function t(){var b=q('[data-act="itab"][data-v="'+v+'"]');if(b)b.click();else if(n++<12)setTimeout(t,120)})()}
 function buildNav(){var nav=q("#ptc-nav");if(!nav||nav.getAttribute("data-ao"))return;
@@ -16061,5 +16053,291 @@ new MutationObserver(function(ms){for(var i=0;i<ms.length;i++)for(var j=0;j<ms[i
  if(n.nodeType===1&&n.classList.contains('aoe'))continue;q.push(n)}
  if(!tm)tm=setTimeout(flush,80)}).observe(document.body,{childList:true,subtree:true});
 }catch(e){}})();
+</script>
+<style id="aeroops-ui-refresh">
+/* ===== AeroOps UI refresh — Settings page, Work Analytics grids, compact sidebar =====
+   Presentation only. Scoped to #aero-settings, #wr-intel and #ptc-nav. ===== */
+
+/* ---------- Sidebar: compact, consistent Lucide icons ---------- */
+html body #ptc-root #ptc-nav{gap:2px}
+html body #ptc-root #ptc-nav .ptc-nav-btn{min-height:36px!important;padding:7px 10px!important;gap:9px!important;border-radius:9px!important;font-size:13px!important;font-weight:550;line-height:1.2;color:#475569;background:transparent!important;border:0!important;box-shadow:none!important;transform:none!important;transition:background-color .18s ease,color .18s ease}
+html body #ptc-root #ptc-nav .ptc-nav-btn .aero-lbl{line-height:1.2;letter-spacing:0}
+html body #ptc-root #ptc-nav .ptc-nav-btn svg{width:16px!important;height:16px!important;min-width:16px;flex:0 0 16px!important;stroke-width:1.75!important;color:#64748B;transition:color .18s ease}
+html body #ptc-root #ptc-nav .ptc-nav-btn:hover{background:rgba(37,99,235,.06)!important;color:#0F172A!important}
+html body #ptc-root #ptc-nav .ptc-nav-btn:hover svg{color:#2563EB}
+html body #ptc-root #ptc-nav .ptc-nav-btn.active,html body #ptc-root #ptc-nav .ptc-nav-btn.active:hover{background:rgba(37,99,235,.10)!important;color:#1D4ED8!important;font-weight:600;box-shadow:none!important}
+html body #ptc-root #ptc-nav .ptc-nav-btn.active svg{color:#2563EB}
+html body #ptc-root #ptc-nav .ptc-nav-btn:focus-visible{outline:0;box-shadow:0 0 0 2px rgba(37,99,235,.35)!important}
+html body #ptc-root.aero-compact #ptc-nav .ptc-nav-btn{justify-content:center;padding:8px 0!important}
+html[data-theme="dark"] html body #ptc-root #ptc-nav .ptc-nav-btn{color:#B8C4D9}
+html[data-theme="dark"] html body #ptc-root #ptc-nav .ptc-nav-btn svg{color:#8FA0BB}
+html[data-theme="dark"] html body #ptc-root #ptc-nav .ptc-nav-btn:hover{background:rgba(255,255,255,.06)!important;color:#fff!important}
+html[data-theme="dark"] html body #ptc-root #ptc-nav .ptc-nav-btn:hover svg,html[data-theme="dark"] html body #ptc-root #ptc-nav .ptc-nav-btn.active svg{color:#7FB0FF}
+html[data-theme="dark"] html body #ptc-root #ptc-nav .ptc-nav-btn.active,html[data-theme="dark"] html body #ptc-root #ptc-nav .ptc-nav-btn.active:hover{background:rgba(96,165,250,.16)!important;color:#A9C8FF!important}
+
+/* ---------- Work Analytics: grids after removing cards ---------- */
+#ptc-root #wr-intel .nx-kg{grid-template-columns:repeat(6,minmax(0,1fr))}
+#ptc-root #wr-intel .nx-g3.nx-g3-two{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media(max-width:1200px){#ptc-root #wr-intel .nx-kg{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:900px){#ptc-root #wr-intel .nx-g3.nx-g3-two{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:560px){#ptc-root #wr-intel .nx-kg{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* ---------- Settings: tokens ---------- */
+#aero-settings{--aoz-ink:#0F172A;--aoz-mut:#64748B;--aoz-ln:#E2E8F4;--aoz-ln2:#D3DCEC;--aoz-card:#FFFFFF;--aoz-soft:#F4F7FC;--aoz-blue:#2563EB;--aoz-blue2:#1D4ED8;--aoz-navy:#0B1F44;--aoz-ring:rgba(37,99,235,.20);--aoz-btn:#FFFFFF;--aoz-ic1:#E8F0FF;--aoz-ic2:#EFE9FF;--aoz-tabon1:#EEF4FF;--aoz-tabon2:#F2EDFF;--aoz-sh:0 1px 2px rgba(15,31,68,.05),0 8px 22px -10px rgba(15,31,68,.14)}
+html[data-theme="dark"] #aero-settings{--aoz-ink:#E6EDF8;--aoz-mut:#94A3B8;--aoz-ln:#26324A;--aoz-ln2:#33425F;--aoz-card:#121B2E;--aoz-soft:#182339;--aoz-btn:#1A2640;--aoz-ic1:#1B2C52;--aoz-ic2:#2A2352;--aoz-tabon1:#1B2C52;--aoz-tabon2:#2A2352;--aoz-blue2:#8FB4FF;--aoz-sh:0 1px 2px rgba(0,0,0,.35),0 10px 24px -12px rgba(0,0,0,.55)}
+
+/* ---------- Settings: page header ---------- */
+#ptc-root #aero-settings{padding:16px 2px 28px;max-width:1180px;margin:0 auto}
+#aero-settings .aset-head{margin:0 0 16px;padding:0}
+#aero-settings .aset-head .pwi-kicker{display:none!important}
+#ptc-root #aero-settings .aset-head h2{margin:0;font-size:24px;line-height:1.2;font-weight:700;letter-spacing:-.015em;color:var(--aoz-ink)}
+#ptc-root #aero-settings .aset-head p{margin:5px 0 0;font-size:13.5px;line-height:1.45;color:var(--aoz-mut)}
+
+/* ---------- Settings: horizontal category tabs ---------- */
+#aero-settings .aoz-tabs{display:flex;gap:4px;padding:5px;margin:0 0 16px;background:var(--aoz-card);border:1px solid var(--aoz-ln);border-radius:14px;box-shadow:var(--aoz-sh);overflow-x:auto;scrollbar-width:none}
+#aero-settings .aoz-tabs::-webkit-scrollbar{display:none}
+html:not(#a):not(#b) body #aero-settings .aoz-tab{display:inline-flex;align-items:center;gap:8px;height:36px;padding:0 14px;border:0;border-radius:10px;background:transparent;color:var(--aoz-mut);font:inherit;font-size:13px;font-weight:600;white-space:nowrap;cursor:pointer;transition:background-color .16s ease,color .16s ease,box-shadow .16s ease;flex:0 0 auto}
+html:not(#a):not(#b) body #aero-settings .aoz-tab svg{width:16px;height:16px;stroke-width:1.75;flex:0 0 16px}
+html:not(#a):not(#b) body #aero-settings .aoz-tab:hover{background:var(--aoz-soft);color:var(--aoz-ink)}
+html:not(#a):not(#b) body #aero-settings .aoz-tab[aria-selected="true"]{background:linear-gradient(135deg,var(--aoz-tabon1),var(--aoz-tabon2));color:var(--aoz-blue2);box-shadow:inset 0 0 0 1px rgba(37,99,235,.18)}
+html:not(#a):not(#b) body #aero-settings .aoz-tab:focus-visible{outline:0;box-shadow:0 0 0 3px var(--aoz-ring)}
+
+/* ---------- Settings: panels and two-column card grid ---------- */
+#aero-settings .aoz-panel[hidden]{display:none}
+#aero-settings .aoz-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:start}
+#aero-settings .aoz-full{grid-column:1/-1}
+@media(max-width:900px){#aero-settings .aoz-grid{grid-template-columns:minmax(0,1fr)}}
+
+/* ---------- Settings: section card ---------- */
+#aero-settings .aoz-sec{background:var(--aoz-card);border:1px solid var(--aoz-ln);border-radius:14px;box-shadow:var(--aoz-sh);min-width:0;overflow:hidden}
+#aero-settings .aoz-sec:not(.aoz-has){display:none}
+#aero-settings .aoz-hd{display:flex;align-items:center;gap:11px;padding:14px 16px 12px;border-bottom:1px solid var(--aoz-ln)}
+#aero-settings .aoz-ic{width:32px;height:32px;flex:0 0 32px;display:grid;place-items:center;border-radius:9px;color:var(--aoz-blue2);background:linear-gradient(135deg,var(--aoz-ic1),var(--aoz-ic2))}
+#aero-settings .aoz-ic svg{width:17px;height:17px;stroke-width:1.75}
+#ptc-root #aero-settings .aoz-hd h3{margin:0;font-size:14.5px;line-height:1.25;font-weight:650;letter-spacing:-.005em;color:var(--aoz-ink);text-transform:none}
+#aero-settings .aoz-hd p{margin:2px 0 0;font-size:12px;line-height:1.35;color:var(--aoz-mut)}
+#aero-settings .aoz-bd{padding:14px 16px 16px;min-width:0}
+
+/* existing card chrome is neutralised inside a section; titles come from the section header */
+#ptc-root #aero-settings .aoz-bd>.aset-card,#ptc-root #aero-settings .aoz-bd>.ao-card{background:transparent;border:0;border-radius:0;box-shadow:none;padding:0;margin:0}
+#ptc-root #aero-settings .aoz-own>h3{display:none}
+#ptc-root #aero-settings #kh-set.aoz-own>h3:nth-of-type(3){display:block}
+#ptc-root #aero-settings .aoz-bd .aset-note{margin:0 0 12px;font-size:12.5px;line-height:1.5;color:var(--aoz-mut)}
+#ptc-root #aero-settings .aoz-bd code{font-size:11.5px;padding:1px 5px;border-radius:5px;background:var(--aoz-soft);color:var(--aoz-ink)}
+#ptc-root #aero-settings .aoz-bd h4,#ptc-root #aero-settings .aoz-bd .aset-card>h3,#ptc-root #aero-settings #kh-set.aoz-own>h3:nth-of-type(3){margin:16px 0 8px;font-size:12px;font-weight:650;letter-spacing:.01em;text-transform:none;color:var(--aoz-mut)}
+#ptc-root #aero-settings .aoz-bd>.aoz-own>h4:first-of-type{margin-top:4px}
+
+/* rows */
+#ptc-root #aero-settings .aoz-bd .aset-row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:11px 0;border-top:1px solid var(--aoz-ln)}
+#ptc-root #aero-settings .aoz-bd .aset-row:first-child,#ptc-root #aero-settings .aoz-bd>.aset-row:first-of-type{border-top:0;padding-top:2px}
+#ptc-root #aero-settings .aoz-bd .aset-row b{display:block;font-size:13px;font-weight:600;color:var(--aoz-ink)}
+#ptc-root #aero-settings .aoz-bd .aset-row span{font-size:12px;line-height:1.4;color:var(--aoz-mut)}
+
+/* segmented toggles (Sidebar / Animations) */
+html:not(#a):not(#b) body #aero-settings .aset-seg{display:inline-flex;gap:2px;padding:3px;background:var(--aoz-soft);border:1px solid var(--aoz-ln);border-radius:10px}
+html:not(#a):not(#b) body #aero-settings .aoz-bd .aset-seg.aset-seg button{height:26px;min-height:26px;padding:0 12px;border:0!important;border-radius:7px;background:transparent!important;color:var(--aoz-mut)!important;font-size:12.5px;font-weight:600;box-shadow:none!important;cursor:pointer;transition:background-color .16s ease,color .16s ease,box-shadow .16s ease}
+html:not(#a):not(#b) body #aero-settings .aoz-bd .aset-seg.aset-seg button:hover:not(.on){color:var(--aoz-ink)!important;background:rgba(37,99,235,.07)!important}
+html:not(#a):not(#b) body #aero-settings .aoz-bd .aset-seg.aset-seg button.on{background:linear-gradient(135deg,#2563EB,#4F46E5)!important;color:#fff!important;box-shadow:0 1px 3px rgba(37,99,235,.35)!important}
+html:not(#a):not(#b) body #aero-settings .aoz-bd .aset-seg.aset-seg button:focus-visible{outline:0;box-shadow:0 0 0 3px var(--aoz-ring)!important}
+
+/* buttons: one compact system (beats the global [data-aoui] normaliser by specificity) */
+html:not(#a):not(#b) body #aero-settings .aoz-bd button:not([data-mv]){display:inline-flex;align-items:center;justify-content:center;gap:6px;height:30px;min-height:30px;padding:0 12px;border:1px solid var(--aoz-ln2)!important;border-radius:8px;background:var(--aoz-btn)!important;color:var(--aoz-ink)!important;font:inherit;font-size:12.5px;font-weight:600;line-height:1;box-shadow:0 1px 1px rgba(15,31,68,.04)!important;cursor:pointer;transition:background-color .16s ease,border-color .16s ease,box-shadow .16s ease,transform .1s ease}
+html:not(#a):not(#b) body #aero-settings .aoz-bd button svg{width:14px;height:14px;flex:0 0 14px;stroke-width:1.9}
+html:not(#a):not(#b) body #aero-settings .aoz-bd button:hover:not(:disabled){background:var(--aoz-soft)!important;border-color:#9FB6E6!important}
+html:not(#a):not(#b) body #aero-settings .aoz-bd button:active:not(:disabled){transform:translateY(.5px);box-shadow:none!important}
+html:not(#a):not(#b) body #aero-settings .aoz-bd button:focus-visible{outline:0;box-shadow:0 0 0 3px var(--aoz-ring)!important}
+html:not(#a):not(#b) body #aero-settings .aoz-bd button:disabled{opacity:.5;cursor:not-allowed}
+html:not(#a):not(#b) body #aero-settings .aoz-bd button.ao-btn--primary,html:not(#a):not(#b) body #aero-settings .aoz-bd button[data-tone="primary"],html:not(#a):not(#b) body #aero-settings .aoz-bd button.aset-dl.big{background:linear-gradient(135deg,#2563EB,#4F46E5)!important;border-color:transparent!important;color:#fff!important;box-shadow:0 1px 2px rgba(37,99,235,.35),0 4px 12px -4px rgba(79,70,229,.45)!important}
+html:not(#a):not(#b) body #aero-settings .aoz-bd button.ao-btn--primary:hover:not(:disabled),html:not(#a):not(#b) body #aero-settings .aoz-bd button[data-tone="primary"]:hover:not(:disabled),html:not(#a):not(#b) body #aero-settings .aoz-bd button.aset-dl.big:hover:not(:disabled){background:linear-gradient(135deg,#1D4ED8,#4338CA)!important;border-color:transparent!important}
+html:not(#a):not(#b) body #aero-settings .aoz-bd button[data-tone="export"]:not(.big),html:not(#a):not(#b) body #aero-settings .aoz-bd button[data-tone="edit"]{background:#EEF4FF!important;border-color:#C9D9FA!important;color:#1D4ED8!important}
+html:not(#a):not(#b) body #aero-settings .aoz-bd button[data-tone="export"]:not(.big):hover:not(:disabled),html:not(#a):not(#b) body #aero-settings .aoz-bd button[data-tone="edit"]:hover:not(:disabled){background:#E1ECFF!important;border-color:#93B4F5!important}
+html[data-theme="dark"] html:not(#a):not(#b) body #aero-settings .aoz-bd button[data-tone="export"]:not(.big),html[data-theme="dark"] html:not(#a):not(#b) body #aero-settings .aoz-bd button[data-tone="edit"]{background:#1B2C52!important;border-color:#2E4A86!important;color:#9DBBFF!important}
+html:not(#a):not(#b) body #aero-settings .aoz-bd button.aset-danger,html:not(#a):not(#b) body #aero-settings .aoz-bd button[data-tone="danger"]{background:#FEF2F2!important;border-color:#FECACA!important;color:#B91C1C!important}
+html:not(#a):not(#b) body #aero-settings .aoz-bd button.aset-danger:hover:not(:disabled),html:not(#a):not(#b) body #aero-settings .aoz-bd button[data-tone="danger"]:hover:not(:disabled){background:#FEE2E2!important;border-color:#F87171!important}
+
+/* inputs and dropdowns */
+html:not(#a):not(#b) body #aero-settings .aoz-bd input:not([type=checkbox]):not([type=radio]),html:not(#a):not(#b) body #aero-settings .aoz-bd select{height:32px;min-height:32px;padding:0 10px;border:1px solid var(--aoz-ln2);border-radius:8px;background:var(--aoz-card);color:var(--aoz-ink);font:inherit;font-size:13px;box-shadow:none;transition:border-color .16s ease,box-shadow .16s ease}
+html:not(#a):not(#b) body #aero-settings .aoz-bd select{padding-right:26px}
+html:not(#a):not(#b) body #aero-settings .aoz-bd input::placeholder{color:#94A3B8}
+html:not(#a):not(#b) body #aero-settings .aoz-bd input:hover,html:not(#a):not(#b) body #aero-settings .aoz-bd select:hover{border-color:#9FB6E6}
+html:not(#a):not(#b) body #aero-settings .aoz-bd input:focus,html:not(#a):not(#b) body #aero-settings .aoz-bd select:focus{outline:0;border-color:var(--aoz-blue);box-shadow:0 0 0 3px var(--aoz-ring)}
+
+/* Company & Workspace */
+html:not(#a):not(#b) body #aero-settings .aow-cur{display:flex;flex-direction:column;align-items:flex-start;text-align:left;gap:0;margin:0 0 12px;padding:12px 14px;border-radius:12px;border:0;background:linear-gradient(120deg,#0B1F44 0%,#15387A 58%,#3F3FAE 100%);box-shadow:0 6px 16px -8px rgba(11,31,68,.55)}
+html:not(#a):not(#b) body #aero-settings .aow-cur span{display:block;font-size:11.5px;font-weight:600;letter-spacing:.01em;text-transform:none;color:#A9C2F2}
+html:not(#a):not(#b) body #aero-settings .aow-cur b{display:block;margin-top:2px;font-size:14.5px;font-weight:650;color:#fff}
+html:not(#a):not(#b) body #aero-settings #aow-list .aow-row{padding:10px 12px;margin:0 0 6px;border:1px solid var(--aoz-ln);border-radius:10px;background:var(--aoz-soft)}
+html:not(#a):not(#b) body #aero-settings #aow-list .aow-row.is-active{border-color:#B6CBF7;background:linear-gradient(135deg,#F3F7FF,#F6F2FF)}
+html[data-theme="dark"] html:not(#a):not(#b) body #aero-settings #aow-list .aow-row.is-active{border-color:#2E4A86;background:linear-gradient(135deg,#182848,#221F46)}
+html:not(#a):not(#b) body #aero-settings .aow-add{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:10px 0 0;border-top:0}
+html:not(#a):not(#b) body #aero-settings .aow-add .aow-in{flex:1 1 140px;min-width:0}
+html:not(#a):not(#b) body #aero-settings .aow-add select.aow-in{flex:0 1 150px}
+html:not(#a):not(#b) body #aero-settings .aow-msg{font-size:12px;color:var(--aoz-mut);min-height:0}
+
+/* Customize Menu Order */
+html:not(#a):not(#b) body #aero-settings .kh-mrow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 8px 7px 11px;margin:0 0 6px;border:1px solid var(--aoz-ln);border-radius:10px;background:var(--aoz-soft);font-size:13px;font-weight:550;color:var(--aoz-ink);cursor:grab;transition:border-color .16s ease,background-color .16s ease}
+html:not(#a):not(#b) body #aero-settings .kh-mrow:hover{border-color:#B6CBF7;background:var(--aoz-card)}
+html:not(#a):not(#b) body #aero-settings .kh-mrow>span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+html:not(#a):not(#b) body #aero-settings .kh-mrow>span:last-child{display:inline-flex;gap:6px;flex:0 0 auto}
+html:not(#a):not(#b) body #aero-settings .aoz-bd .kh-mrow button{display:inline-flex;align-items:center;justify-content:center;height:26px;min-height:26px;padding:0 10px;border:1px solid var(--aoz-ln2)!important;border-radius:7px;background:var(--aoz-btn)!important;color:var(--aoz-ink)!important;font:inherit;font-size:12px;font-weight:600;line-height:1;box-shadow:none!important;cursor:pointer;transition:background-color .16s ease,border-color .16s ease}
+html:not(#a):not(#b) body #aero-settings .aoz-bd .kh-mrow button:hover:not(:disabled){background:var(--aoz-soft)!important;border-color:#9FB6E6!important}
+html:not(#a):not(#b) body #aero-settings .aoz-bd .kh-mrow button:focus-visible{outline:0;box-shadow:0 0 0 3px var(--aoz-ring)!important}
+html:not(#a):not(#b) body #aero-settings .aoz-bd .kh-mrow button:disabled{opacity:.45;cursor:not-allowed}
+html:not(#a):not(#b) body #aero-settings #kh-set .aset-btns{margin:10px 0 0}
+html:not(#a):not(#b) body #aero-settings #kh-set .kh-row{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:8px}
+html:not(#a):not(#b) body #aero-settings #kh-set .kh-row>input:nth-child(3){grid-column:1/-1}
+html:not(#a):not(#b) body #aero-settings #kh-set .kh-row>button{grid-column:1/-1;justify-self:start}
+html:not(#a):not(#b) body #aero-settings #kh-set .kh-row>input{width:100%;box-sizing:border-box}
+
+/* action groups */
+html:not(#a):not(#b) body #aero-settings .aset-btns{display:flex;flex-wrap:wrap;gap:8px}
+html:not(#a):not(#b) body #aero-settings .aoz-quick .aset-btns{display:grid;grid-template-columns:minmax(0,1fr);gap:8px}
+html:not(#a):not(#b) body #aero-settings .aoz-quick .aoz-bd .aset-btns button{justify-content:flex-start;height:38px;padding:0 14px}
+
+/* Employee & Access */
+html:not(#a):not(#b) body #aero-settings .aoz-soon{display:flex;align-items:flex-start;gap:10px}
+html:not(#a):not(#b) body #aero-settings .aoz-soon p{margin:0;font-size:12.5px;line-height:1.5;color:var(--aoz-mut)}
+html:not(#a):not(#b) body #aero-settings .aoz-badge{flex:0 0 auto;display:inline-block;padding:3px 9px;border-radius:999px;font-size:11px;font-weight:650;color:#6D4FD6;background:#F0EBFF;border:1px solid #DED3FA}
+html[data-theme="dark"] html:not(#a):not(#b) body #aero-settings .aoz-badge{color:#C4B2FF;background:#2A2352;border-color:#3D3475}
+
+/* Master Data & Downloads */
+html:not(#a):not(#b) body #aero-settings #ao-master-block>.aset-card{margin:0 0 12px;padding:12px;border:1px solid var(--aoz-ln);border-radius:12px;background:var(--aoz-soft);box-shadow:none}
+html:not(#a):not(#b) body #aero-settings #ao-master-block>.aset-card:last-child{margin-bottom:0}
+html:not(#a):not(#b) body #aero-settings #ao-master-block>.aset-hero{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;border-color:#C9D9FA;background:linear-gradient(135deg,#EEF4FF,#F3EEFF)}
+html[data-theme="dark"] html:not(#a):not(#b) body #aero-settings #ao-master-block>.aset-hero{border-color:#2E4A86;background:linear-gradient(135deg,#18284A,#221F46)}
+html:not(#a):not(#b) body #aero-settings #ao-master-block>.aset-hero b{display:block;font-size:13.5px;font-weight:650;color:var(--aoz-ink)}
+html:not(#a):not(#b) body #aero-settings #ao-master-block>.aset-hero span{display:block;margin-top:2px;max-width:46ch;font-size:12px;line-height:1.45;color:var(--aoz-mut)}
+html:not(#a):not(#b) body #aero-settings #ao-master-block>.aset-card>h3{margin:0 0 6px;font-size:12px;font-weight:650;color:var(--aoz-mut)}
+html:not(#a):not(#b) body #aero-settings #ao-master-block .aset-row span{display:block;overflow:hidden;text-overflow:ellipsis}
+html:not(#a):not(#b) body #aero-settings #ao-master-block .aset-row>div{min-width:0;flex:1 1 180px}
+
+/* small screens */
+@media(max-width:600px){
+ #ptc-root #aero-settings .aset-head h2{font-size:21px}
+ #aero-settings .aoz-hd{padding:12px 13px 10px}
+ #aero-settings .aoz-bd{padding:12px 13px 14px}
+ html:not(#a):not(#b) body #aero-settings .aoz-tab{padding:0 12px}
+ html:not(#a):not(#b) body #aero-settings .aow-cur{padding:11px 12px}
+}
+@media(prefers-reduced-motion:reduce){#aero-settings *,#ptc-root #ptc-nav .ptc-nav-btn{transition:none!important}}
+
+</style>
+<script>
+/* AeroOps UI refresh — Settings layout. Re-parents the existing Settings cards into tabbed, two-column sections.
+   No nodes are recreated, so every existing handler, id and data hook keeps working. */
+(function(){
+try{
+var SET=document.getElementById('aero-settings');
+if(!SET||SET.getAttribute('data-aoz'))return;
+SET.setAttribute('data-aoz','1');
+
+function svg(p){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+p+'</svg>'}
+var I={
+ building:'<path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/>',
+ shield:'<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/>',
+ palette:'<circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/>',
+ database:'<ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/>',
+ zap:'<path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/>',
+ globe:'<circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/>',
+ order:'<path d="M10 12h11"/><path d="M10 18h11"/><path d="M10 6h11"/><path d="M4 10h2"/><path d="M4 6h1v4"/><path d="M6 18H4c0-1 2-2 2-3s-1-1.5-2-1"/>',
+ sliders:'<line x1="21" x2="14" y1="4" y2="4"/><line x1="10" x2="3" y1="4" y2="4"/><line x1="21" x2="12" y1="12" y2="12"/><line x1="8" x2="3" y1="12" y2="12"/><line x1="21" x2="16" y1="20" y2="20"/><line x1="12" x2="3" y1="20" y2="20"/><line x1="14" x2="14" y1="2" y2="6"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="16" x2="16" y1="18" y2="22"/>',
+ settings2:'<path d="M20 7h-9"/><path d="M14 17H5"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/>',
+ download:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/>',
+ chart:'<path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/>',
+ archive:'<rect width="20" height="5" x="2" y="3" rx="1"/><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/><path d="M10 12h4"/>',
+ restore:'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>',
+ send:'<path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/>',
+ plus:'<path d="M5 12h14"/><path d="M12 5v14"/>'
+};
+
+function cardWith(sel){var n=SET.querySelector(sel);return n?(n.closest('.aset-card,.ao-card')||null):null}
+function cardTitled(re){var c=SET.querySelectorAll(':scope > .aset-card, :scope > .ao-card');for(var i=0;i<c.length;i++){var h=c[i].querySelector(':scope > h3');if(h&&re.test(h.textContent.trim()))return c[i]}return null}
+
+var TABS=[
+ {id:'company',label:'Company & Workspace',icon:'building',secs:['company','access']},
+ {id:'data',label:'Data Management',icon:'database',secs:['records','quick']},
+ {id:'public',label:'Public Dashboard',icon:'globe',secs:['public']},
+ {id:'reports',label:'Customer & Reports',icon:'chart',secs:['menu','master']},
+ {id:'system',label:'System Preferences',icon:'settings2',secs:['appearance','other']}
+];
+var SECS={
+ company:{title:'Company & Workspace',desc:'Choose the active company and manage workspaces.',icon:'building',find:function(){return document.getElementById('ao-ws')}},
+ access:{title:'Employee & Access',desc:'Who can use this workspace.',icon:'shield'},
+ records:{title:'Data & Work Records',desc:'Where your work records are stored.',icon:'database'},
+ quick:{title:'Quick Actions',desc:'Export, back up or restore your work records.',icon:'zap',cls:'aoz-quick'},
+ 'public':{title:'Public Dashboard',desc:'Share a privacy-safe summary on your portfolio home page.',icon:'globe',full:true,find:function(){return cardTitled(/^public snapshot$/i)}},
+ menu:{title:'Customize Menu Order',desc:'Arrange the sidebar to match how you work.',icon:'order',find:function(){return document.getElementById('kh-set')}},
+ master:{title:'Master Data & Downloads',desc:'Excel exports and the auto-save Master Data File.',icon:'download',find:function(){return document.getElementById('ao-master-block')}},
+ appearance:{title:'Appearance',desc:'Sidebar layout and motion.',icon:'palette',find:function(){return cardTitled(/^appearance$/i)}},
+ other:{title:'Other Settings',desc:'Reset preferences stored on this device.',icon:'sliders',find:function(){return cardWith('#aset-reset')}}
+};
+
+/* ---- header copy ---- */
+var head=SET.querySelector('.aset-head');
+if(head){var h2=head.querySelector('h2'),hp=head.querySelector('p');
+ if(h2)h2.textContent='Settings';
+ if(hp)hp.textContent='Manage your workspace, data, public dashboard and system preferences.'}
+
+/* ---- tabs + panels ---- */
+var tabs=document.createElement('div');tabs.className='aoz-tabs';tabs.setAttribute('role','tablist');tabs.setAttribute('aria-label','Settings categories');
+var wrap=document.createElement('div');wrap.className='aoz-panels';
+var secEls={};
+TABS.forEach(function(t,ti){
+ var b=document.createElement('button');b.type='button';b.className='aoz-tab';b.id='aoz-tab-'+t.id;b.setAttribute('role','tab');b.setAttribute('aria-controls','aoz-panel-'+t.id);b.setAttribute('aria-selected',ti===0?'true':'false');b.tabIndex=ti===0?0:-1;
+ b.innerHTML=svg(I[t.icon])+'<span></span>';b.lastChild.textContent=t.label;tabs.appendChild(b);
+ var p=document.createElement('section');p.className='aoz-panel';p.id='aoz-panel-'+t.id;p.setAttribute('role','tabpanel');p.setAttribute('aria-labelledby',b.id);if(ti)p.hidden=true;
+ var g=document.createElement('div');g.className='aoz-grid';p.appendChild(g);
+ t.secs.forEach(function(k){var d=SECS[k],s=document.createElement('section');s.className='aoz-sec'+(d.full?' aoz-full':'')+(d.cls?' '+d.cls:'');s.setAttribute('data-aoz-sec',k);
+  s.innerHTML='<header class="aoz-hd"><span class="aoz-ic">'+svg(I[d.icon])+'</span><div><h3></h3><p></p></div></header><div class="aoz-bd"></div>';
+  s.querySelector('h3').textContent=d.title;s.querySelector('p').textContent=d.desc;g.appendChild(s);secEls[k]=s});
+ wrap.appendChild(p)});
+function pick(id,focus){TABS.forEach(function(t){var on=t.id===id,b=document.getElementById('aoz-tab-'+t.id),p=document.getElementById('aoz-panel-'+t.id);
+  b.setAttribute('aria-selected',on?'true':'false');b.tabIndex=on?0:-1;p.hidden=!on;if(on&&focus)b.focus()})}
+tabs.addEventListener('click',function(e){var b=e.target.closest('.aoz-tab');if(b)pick(b.id.replace('aoz-tab-',''))});
+tabs.addEventListener('keydown',function(e){var i=-1;TABS.forEach(function(t,n){if(document.getElementById('aoz-tab-'+t.id).getAttribute('aria-selected')==='true')i=n});
+ if(e.key==='ArrowRight')i=(i+1)%TABS.length;else if(e.key==='ArrowLeft')i=(i+TABS.length-1)%TABS.length;else if(e.key==='Home')i=0;else if(e.key==='End')i=TABS.length-1;else return;
+ e.preventDefault();pick(TABS[i].id,true)});
+SET.insertBefore(tabs,head?head.nextSibling:SET.firstChild);SET.insertBefore(wrap,tabs.nextSibling);
+
+/* ---- placement: idempotent, so cards that appear later are picked up too ---- */
+function body(k){return secEls[k].querySelector('.aoz-bd')}
+function adopt(k,node){if(!node||node.getAttribute('data-aoz-in')===k)return;node.setAttribute('data-aoz-in',k);node.classList.add('aoz-own');body(k).appendChild(node);secEls[k].classList.add('aoz-has')}
+var ICN={'export-all':'download','backup':'archive','restore':'restore'};
+function icons(){
+ [].forEach.call(SET.querySelectorAll('[data-sact]'),function(b){dec(b,ICN[b.getAttribute('data-sact')])});
+ dec(document.getElementById('snap-open'),'send');dec(document.getElementById('aset-reset'),'restore');
+ [].forEach.call(SET.querySelectorAll('.aset-dl'),function(b){if(!/master data file/i.test(b.textContent))dec(b,'download')});
+ dec(SET.querySelector('#aow-list ~ .aow-add [data-a="add"]'),'plus')}
+function dec(b,k){if(!b||!k||b.getAttribute('data-aoz-ico'))return;b.setAttribute('data-aoz-ico','1');b.insertAdjacentHTML('afterbegin',svg(I[k]))}
+function place(){
+ adopt('company',SECS.company.find());
+ adopt('appearance',SECS.appearance.find());
+ adopt('public',SECS['public'].find());
+ adopt('menu',SECS.menu.find());
+ adopt('other',SECS.other.find());
+ adopt('master',SECS.master.find());
+ /* Data & Storage card: note -> Data & Work Records, action buttons -> Quick Actions (same nodes, same handlers) */
+ var dc=cardWith('[data-sact="export-all"]');
+ if(dc&&!dc.getAttribute('data-aoz-split')){dc.setAttribute('data-aoz-split','1');
+  var note=dc.querySelector(':scope > .aset-note'),bt=dc.querySelector(':scope > .aset-btns');
+  if(note){note.setAttribute('data-aoz-in','records');body('records').appendChild(note);secEls.records.classList.add('aoz-has')}
+  if(bt){bt.setAttribute('data-aoz-in','quick');body('quick').appendChild(bt);secEls.quick.classList.add('aoz-has')}
+  dc.style.display='none'}
+ /* Employee & Access: the wording already written for this app (accessCard), shown as a status note */
+ if(!secEls.access.classList.contains('aoz-has')){var d=document.createElement('div');d.className='aoz-soon';
+  d.innerHTML='<span class="aoz-badge">Coming later</span><p>Owner and user permissions are planned. Nothing is enforced yet, and your sign-in works as before.</p>';
+  body('access').appendChild(d);secEls.access.classList.add('aoz-has')}
+ /* safety net: any other settings card added by another module still shows up (under Other Settings) */
+ [].forEach.call(SET.querySelectorAll(':scope > .aset-card, :scope > .ao-card'),function(c){
+  if(c.getAttribute('data-aoz-in')||c.getAttribute('data-aoz-split')||c.style.display==='none')return;
+  var h=c.querySelector(':scope > h3');if(!h||!h.textContent.trim()){return}
+  adopt('other',c)});
+ icons()}
+place();
+var tm=0;new MutationObserver(function(){clearTimeout(tm);tm=setTimeout(place,60)}).observe(SET,{childList:true});
+[300,900,2000,4500].forEach(function(ms){setTimeout(place,ms)});
+}catch(e){if(window.console)console.error('Settings layout',e)}
+})();
+
 </script>
 </body></html>
