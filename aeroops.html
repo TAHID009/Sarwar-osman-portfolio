@@ -5021,7 +5021,7 @@ html[data-theme="dark"] #pwi-root .pwi-import textarea{background:#0E1E36;border
           </div>
         </div>
 
-        <div id="pwi-perf-wrap"><div class="pwi-perf-h"><h3>Performance Evaluation</h3><span class="pwi-sub">Uses the date range selected above</span></div><div id="pwi-perf"></div></div>
+        <div id="pwi-perf-wrap"><div class="pwi-perf-h"><h3>Performance Evaluation</h3><span class="pwi-sub">Uses the period selected at the top of the page</span></div><div id="pwi-perf"></div></div>
 
         <div class="pwi-card" id="pwi-records">
           <div class="pwi-card-h">
@@ -11362,6 +11362,20 @@ A.onChange(A.fillForm);
   /* ---------- Firebase (Firestore): the system of record for activities ---------- */
   var cloud = {db:null, unsub:null, uid:null, failed:false, on:false, loaded:false};
   window.aeroPwiData = function(){ return cloud.loaded ? acts.slice() : null; };
+  /* Performance Analytics now lives inside Intelligence & Reports > Performance. The Intelligence page owns the single date control and drives this pane through this bridge. */
+  var hosted = false;
+  window.aeroPerfHost = {
+    setRange: function(key, from, to){
+      if(key === 'today' || key === 'month' || key === 'year'){ settings.range = key; }
+      else{
+        var t = todayISO(), f = from || acts.reduce(function(a, x){ return x.date && (!a || x.date < a) ? x.date : a; }, '') || t;
+        settings.range = 'custom'; settings.from = f; settings.to = to || t;
+      }
+      st.filters.bucket = null;
+    },
+    show: function(){ hosted = true; st.tab = 'dash'; $('pwi-pane-home').hidden = true; $('pwi-pane-entry').hidden = true; $('pwi-pane-dash').hidden = false; try{ renderDash(); }catch(e){ if(window.console) console.error(e); } },
+    hide: function(){ hosted = false; if(st.tab === 'dash'){ st.tab = 'home'; $('pwi-pane-home').hidden = false; $('pwi-pane-dash').hidden = true; } }
+  };
   function canWrite(){
     if(cloud.on && cloud.loaded && cloud.db) return true;
     toast(cloud.failed ? 'Firebase is blocking the "' + COLL + '" collection — nothing was saved.' : 'Not connected to Firebase yet — nothing was saved. Try again in a moment.');
@@ -11989,7 +12003,7 @@ A.onChange(A.fillForm);
     try{ renderPerf(); }catch(e){ if(window.console) console.error(e); }
   }
   function renderAll(){
-    if(!active){ dirty = true; return; }
+    if(!active && !hosted){ dirty = true; return; }
     dirty = false; renderEntryLists();
     if(st.tab === 'dash') renderDash();
     if(st.tab === 'perf') renderPerf();
@@ -12001,6 +12015,7 @@ A.onChange(A.fillForm);
   function setTab(t){
     if(t === 'entry') t = 'home';
     if(t === 'perf') t = 'dash';
+    if(t === 'dash' && !hosted) t = 'home'; /* the dashboard is shown in Intelligence & Reports > Performance */
     st.tab = t;
     $('pwi-pane-home').hidden = t !== 'home'; $('pwi-pane-entry').hidden = true; $('pwi-pane-dash').hidden = t !== 'dash';
     pwi.querySelectorAll('.pwi-subtabs button').forEach(function(b){ b.classList.toggle('on', b.dataset.v === t); });
@@ -12834,6 +12849,13 @@ document.addEventListener('click',function(ev){var t=ev.target;if(t.id==='wr-det
 /* ---- Intelligence ---- */
 var intel=document.createElement('div');intel.id='wr-intel';intel.className='wr';shell.appendChild(intel);
 var IS={tab:'work',q:'',type:'',st:'',gr:'daily'};
+/* Performance tab: the existing Performance Analytics section (#pwi-root) is parked here while the tab is open and returned to its place afterwards. */
+var PWR=document.getElementById('pwi-root'),PA=document.createComment('pwi-anchor');if(PWR&&PWR.parentNode)PWR.parentNode.insertBefore(PA,PWR);
+(function(){var st=document.createElement('style');st.textContent='#wr-perf-slot #pwi-root{display:block!important;margin:0;padding:0;background:transparent;border:0;box-shadow:none}#wr-perf-slot #pwi-root>*{display:none!important}#wr-perf-slot #pwi-root>#pwi-pane-dash{display:block!important}#wr-perf-slot .pwi-rangebar,#wr-perf-slot #pwi-kpis,#wr-perf-slot .pwi-card:has(#pwi-c-trend),#wr-perf-slot .pwi-card:has(#pwi-summary){display:none!important}';document.head.appendChild(st)})();
+function perfPark(){var p=document.getElementById('pwi-root');if(!p||!PA.parentNode||!intel.contains(p))return;if(window.aeroPerfHost)window.aeroPerfHost.hide();PA.parentNode.insertBefore(p,PA.nextSibling)}
+function perfMount(){if(IS.tab!=='perf')return;var sl=document.getElementById('wr-perf-slot'),p=document.getElementById('pwi-root'),H=window.aeroPerfHost;if(!sl||!p||!H)return;sl.appendChild(p);var sp=span();H.setRange(R.key,sp.from,sp.to);H.show()}
+function perfExtras(l,pl,A,A0,P,ps){var d=insTab(l,pl,A,A0,P,ps);return d.rp?grid2(d.ag,d.rp,1):d.ag}
+new MutationObserver(function(){if(!root.classList.contains('wr-intel-on'))perfPark()}).observe(root,{attributes:true,attributeFilter:['class']});
 function csv(l){var H=['Date','Company','Type','GDS PNR','Airline PNR','Passengers','Ticket numbers','Airline','Route','Status','Amount'],q=function(v){v=String(v==null?'':v);return/[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};
  return'\ufeff'+[H.join(',')].concat(l.map(function(r){var e=r.e;return[e.date,coOf(e),e.txn,e.pnrGds,e.pnrAirline,names(e).join('; '),tkts(e).join('; '),e.airline,e.sector,status(e),e.txn==='Void'?'':val(e)].map(q).join(',')})).join('\r\n')}
 function exportCsv(l){var b=new Blob([csv(l)],{type:'text/csv;charset=utf-8'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='AeroOps_Work_Record_Report_'+iso(new Date())+'.csv';document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},500)}
@@ -12870,6 +12892,7 @@ function renderIntel(){if(!root.classList.contains('wr-intel-on'))return;
  var A=A0?A0.filter(function(x){return within({date:x.date},s)}):null,ov=false;
  var cmp=ps&&(ps.from||ps.to)?' · vs '+esc(fmtD(ps.from)+' – '+fmtD(ps.to)):'';
  if(IS.tab==='work'){c=workTab(l,pl,A,A0,P,ps,s,st,pr)}
+ else if(IS.tab==='perf'){c='<div id="wr-perf-slot"></div>'+perfExtras(l,pl,A,A0,P,ps)}
  else if(IS.tab==='biz'){c=bizTab(S0,s,ps)}
  else if(IS.tab==='operations'){
   var tk=st.by.Ticketing,rf=l.filter(function(r){return r.e.txn==='Refund'}),paid=rf.filter(function(r){return r.e.refundStatus!=='PENDING'}),adj=paid.filter(function(r){return r.e.adjustmentGiven==='YES'}).length,pend=paid.length-adj;
@@ -12889,9 +12912,9 @@ function renderIntel(){if(!root.classList.contains('wr-intel-on'))return;
  }
  else c=cd('Download','<div class="wr-dls"><button type="button" class="wr-btn" data-act="export">This period (CSV)</button><button type="button" class="wr-btn ghost" data-dl="entries">All records (Excel)</button><button type="button" class="wr-btn ghost" data-dl="pending">Pending adjustments (Excel)</button><button type="button" class="wr-btn ghost" data-dl="summary">Summary (Excel)</button><button type="button" class="wr-btn ghost" data-dl="all">Complete data pack (Excel)</button></div><p class="wr-sub">The CSV covers the dates and company chosen above. The Excel files include all saved data.</p>');
  var info='<details class="ov-info"><summary aria-label="How these numbers are calculated">i</summary><div class="ov-pop"><b>How numbers are calculated</b><ul><li><b>Revenue</b> = ticket sales + reissue collections.</li><li><b>Refunds</b> = amounts returned to customers.</li><li><b>Net result</b> = Revenue − Refunds.</li><li><b>Commission</b> = service charges and markup recorded.</li><li><b>Compared with</b> the previous period of the same length'+cmp+'.</li><li><b>Void</b> records count as work but carry no revenue.</li><li>Open items (refund adjustments, awaiting airline) show everything pending now, whatever date range is chosen.</li><li><b>Insights</b> are sentences built only from recorded data; percentages need at least 5 records and nothing is estimated.</li></ul></div></details>';
- var tabs=[['work','My Work'],['biz','My Business'],['reports','Reports']];
- intel.innerHTML='<div class="wr-top"><div><h2>'+(ov?'Overview':'Intelligence &amp; Reports')+(ov?info:'')+'</h2><p class="wr-sub">'+esc(coLabel())+' · <b>'+esc(periodLabel())+'</b></p></div><div class="wr-ctl">'+coSelect()+rangeCtl()+'<button type="button" class="wr-btn" data-act="export">Export CSV</button></div></div>'
-  +'<div class="wr-card" style="padding:0 14px;'+(ov?'display:none':'')+'"><div class="wr-tabs" style="margin:0" role="tablist">'+tabs.map(function(t){return'<button type="button" role="tab" data-act="itab" data-v="'+t[0]+'" class="'+(IS.tab===t[0]?'on':'')+'"'+(t[0]==='overview'?' style="display:none"':'')+'>'+t[1]+'</button>'}).join('')+'</div></div>'+(!ov&&TIPS[IS.tab]?'<p class="ov-tip">'+TIPS[IS.tab]+'</p>':'')+c}
+ var tabs=[['work','My Work'],['perf','Performance'],['biz','My Business'],['reports','Reports']];
+ perfPark();intel.innerHTML='<div class="wr-top"><div><h2>'+(ov?'Overview':'Intelligence &amp; Reports')+(ov?info:'')+'</h2><p class="wr-sub">'+esc(coLabel())+' · <b>'+esc(periodLabel())+'</b></p></div><div class="wr-ctl">'+coSelect()+rangeCtl()+'<button type="button" class="wr-btn" data-act="export">Export CSV</button></div></div>'
+  +'<div class="wr-card" style="padding:0 14px;'+(ov?'display:none':'')+'"><div class="wr-tabs" style="margin:0" role="tablist">'+tabs.map(function(t){return'<button type="button" role="tab" data-act="itab" data-v="'+t[0]+'" class="'+(IS.tab===t[0]?'on':'')+'"'+(t[0]==='overview'?' style="display:none"':'')+'>'+t[1]+'</button>'}).join('')+'</div></div>'+(!ov&&TIPS[IS.tab]?'<p class="ov-tip">'+TIPS[IS.tab]+'</p>':'')+c;perfMount()}
 
 /* ---- Insights (evidence-only sentences, weekday, ageing, category table) ---- */
 function insData(l,pl,A,A0,P){var o=[],wd=[0,0,0,0,0,0,0],N=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],today=pd(iso(new Date())),cats=[],
@@ -12938,14 +12961,14 @@ function wrSide(l){var sd=stats(l),P=D().pending().filter(coOk),aw=l.filter(func
  mx=TY.map(function(t){return{k:t,v:sd.by[t]||0,c:TC[t]}}).filter(function(x){return x.v>0});
  return cd('Needs attention','<div class="ov-ats" style="grid-template-columns:1fr 1fr"><div class="ov-at'+(P.length?' warn':'')+'"><b>'+P.length+'</b><span>Refund adjustments due</span></div><div class="ov-at'+(aw?' warn':'')+'"><b>'+aw+'</b><span>Refunds awaiting airline</span></div></div>')
   +cd('Work mix',hbars(mx,'#2563EB',String))+cd('Service charges by type',hbars(sv,'#7C3AED',function(v){return'BDT '+short(v)}))}
-var TIPS={work:'<b>Your work, measured.</b> Everything you handled in the period, from top to bottom: totals, what needs action, service charges, refund workflow and queries. Use the Review links to open the records behind a number.',biz:'<b>Your own business (Aero Travels).</b> Private sales, profit and dues, kept separate from your company work.',reports:'<b>Reports.</b> Download your records for the period above.'};
+var TIPS={work:'<b>Your work, measured.</b> Everything you handled in the period, from top to bottom: totals, what needs action, service charges, refund workflow and queries. Use the Review links to open the records behind a number.',perf:'<b>Performance.</b> Score with its evidence, query and source breakdowns, frequent cases and every activity record, for the period above. Counts and trends are in My Work.',biz:'<b>Your own business (Aero Travels).</b> Private sales, profit and dues, kept separate from your company work.',reports:'<b>Reports.</b> Download your records for the period above.'};
 function svcOf(e){return num(D().earn(e))}
 function workTab(l,pl,A,A0,P,ps,s,st,pr){var ap=A0&&ps?A0.filter(function(x){return within({date:x.date},ps)}):null,closed=function(x){return x.status==='Solved'||x.status==='Resolved'},
  tk=A?A.length:0,tc=A?A.filter(closed).length:0,tot=st.n+tk,ptot=pl&&ap?pl.length+ap.length:null,days={};
  l.forEach(function(r){if(r.e.date)days[r.e.date]=1});(A||[]).forEach(function(x){if(x.date)days[x.date]=1});var nd=Object.keys(days).length,
  svc=l.reduce(function(a,r){return a+svcOf(r.e)},0),psv=pl?pl.reduce(function(a,r){return a+svcOf(r.e)},0):null,
  fu=A0?A0.filter(function(x){return x.status==='Follow-up'}).length:0,pn=A0?A0.filter(function(x){return x.status==='Pending'}).length:0;
- var head='<p class="ov-lead">'+(tot?'In <b>'+esc(periodLabel())+'</b> you handled <b>'+tot+'</b> work items: <b>'+st.n+'</b> transactions'+(A?' and <b>'+tk+'</b> query and support tasks':'')+(nd?', about <b>'+(tot/nd).toFixed(1)+'</b> per active day':'')+'.'+(A&&tk?' <b>'+Math.round(tc*100/tk)+'%</b> of the tasks are closed.':'')+' Service charges collected: <b>BDT '+fm(svc)+'</b>.':'No work was recorded in this period.')+'</p><p class="wr-sub">Detailed scoring with your own weights: Activity &amp; Performance → Performance. Turnaround and accuracy are shown only where times and error records exist; nothing is estimated.</p>';
+ var head='<p class="ov-lead">'+(tot?'In <b>'+esc(periodLabel())+'</b> you handled <b>'+tot+'</b> work items: <b>'+st.n+'</b> transactions'+(A?' and <b>'+tk+'</b> query and support tasks':'')+(nd?', about <b>'+(tot/nd).toFixed(1)+'</b> per active day':'')+'.'+(A&&tk?' <b>'+Math.round(tc*100/tk)+'%</b> of the tasks are closed.':'')+' Service charges collected: <b>BDT '+fm(svc)+'</b>.':'No work was recorded in this period.')+'</p><p class="wr-sub">Detailed scoring with your own weights: see the Performance tab. Turnaround and accuracy are shown only where times and error records exist; nothing is estimated.</p>';
  var K=[['Total work items',tot,'#2563EB',ptot,'Transactions plus query and support tasks in the period'],['Transactions',st.n,'#0E8FA0',pl?pl.length:null,'Ticketing, reissue, refund and void records'],['Query &amp; support tasks',A?tk:'—','#F59E0B',ap?ap.length:null,'From the Activity Tracker'],['Tasks closed',A&&tk?Math.round(tc*100/tk)+'%':'—','#16875A',null,'Solved + Resolved divided by all tasks'],['Service charges','BDT '+fm(svc),'#7C3AED',psv,'Service charges recorded on your transactions']];
  var tiles='<div class="ov-kg">'+K.map(function(k){var cur=typeof k[1]==='number'?k[1]:(k[0]==='Service charges'?svc:0);return'<div class="ov-k" style="--c:'+k[2]+'" title="'+esc(k[4])+'"><span>'+k[0]+'</span><b>'+k[1]+'</b>'+delta(cur,k[3],0)+'</div>'}).join('')+'</div>';
  var at=function(n,t,go){return'<div class="ov-at'+(n?' warn':'')+'"><b>'+n+'</b><span>'+t+'</span>'+(go&&n?'<button type="button" class="wr-link" data-act="igo" data-v="'+go+'">Review</button>':'')+'</div>'};
@@ -12961,7 +12984,7 @@ function workTab(l,pl,A,A0,P,ps,s,st,pr){var ap=A0&&ps?A0.filter(function(x){ret
  pipe=cd('Refund pipeline',hbars([{k:'Refund requests',v:rf.length,c:'#3B82F6'},{k:'Airline paid',v:paid.length,c:'#0E8FA0'},{k:'Adjustment given',v:adj,c:'#16875A'},{k:'Adjustment pending',v:pend,c:'#F59E0B'},{k:'Awaiting airline',v:rf.length-paid.length,c:'#C2410C'}],'#2563EB',String));
  return cd('Your work in this period',head)+tiles+'<div class="ov-ats">'+at(P.length,'Refund adjustments due','Pending Adj.')+at(pr,'Refunds awaiting airline','Refund Pending')+at(fu,'Follow-up tasks','')+at(pn,'Pending tasks','')+'</div>'+d.list
   +grid2(cd('Work completed per period',barsOne(per,'#2563EB',function(v){return v+' item'+(v===1?'':'s')})),cd('Work by type',hbars(ty,'#2563EB',String)),1)
-  +sv+rings+grid2(pipe,d.wk,1)+d.ag+d.tb+d.rp}
+  +sv+rings+grid2(pipe,d.wk,1)}
 function bizTab(S0,s,ps){if(!S0.length)return cd('My Business (Aero Travels)','<div class="wr-empty">No Aero Travels sales recorded yet. Add sales in Aero Travels and they appear here.</div>');
  var SB=S0.filter(function(x){return within({date:x.date},s)}),SP=ps?S0.filter(function(x){return within({date:x.date},ps)}):null,sum=function(a,f){return a.reduce(function(t,x){return t+num(x[f])},0)},
  price=sum(SB,'price'),profit=sum(SB,'profit'),paid=sum(SB,'paid'),due=sum(S0,'due'),W=SB.map(function(x){return{e:x}}),
@@ -13271,7 +13294,7 @@ function buildNav(){var nav=q("#ptc-nav");if(!nav||nav.getAttribute("data-ao"))r
   var badge=b.querySelector(".ptc-nav-badge");if(badge)badge.remove();
   var tn=[];(function w(n){for(var c=n.firstChild;c;c=c.nextSibling){if(c.nodeType===3&&c.textContent.trim())tn.push(c);else if(c.nodeType===1&&c.tagName!=="svg")w(c)}})(b);
   if(tn.length){tn[0].textContent=it[1];for(var i=1;i<tn.length;i++)tn[i].textContent=""}else{var sp=document.createElement("span");sp.textContent=it[1];b.appendChild(sp)}
-  b.addEventListener("click",function(e){e.preventDefault();var o=orig(it[2]);if(o)o.click();if(it[3])pickTab(it[3]);setTimeout(sync,120)});
+  b.addEventListener("click",function(e){e.preventDefault();var o=orig(it[2]);if(o)o.click();if(it[3]){pickTab(window.__aeroIntelTab||it[3]);window.__aeroIntelTab=null}setTimeout(sync,120)});
   nav.insertBefore(b,first)});
  HIDE.forEach(function(k){var o=orig(k);if(o)o.classList.add("ao-hide")});
  var mo=new MutationObserver(function(){sync()});mo.observe(nav,{attributes:true,subtree:true,attributeFilter:["class"]});var rt=q("#ptc-root");if(rt)mo.observe(rt,{attributes:true,attributeFilter:["class","data-pane"]});
@@ -14300,8 +14323,8 @@ render();
      +'<div class="wh-tabs" role="tablist" aria-label="Work Record sections">'
      +'<button type="button" role="tab" data-wh="entries" title="Ticketing, reissue, refund and void entries">Entries</button>'
      +'<button type="button" role="tab" data-wh="activity" title="Daily tasks, queries and support work">Activity</button>'
-     +'<button type="button" role="tab" data-wh="dash" title="Activity dashboard and performance evaluation">Performance Analytics</button></div>'
-     +'<select class="wh-sel" aria-label="Section" data-whsel="1"><option value="entries">Entries</option><option value="activity">Activity</option><option value="dash">Performance Analytics</option></select>';
+     +'</div>'
+     +'<select class="wh-sel" aria-label="Section" data-whsel="1"><option value="entries">Entries</option><option value="activity">Activity</option></select>';
   }
   var bar1=document.createElement('div');bar1.className='wh-bar';bar1.id='wh-bar-main';bar1.innerHTML=barHtml(true);
   var bar2=document.createElement('div');bar2.className='wh-bar';bar2.id='wh-bar-pwi';bar2.innerHTML=barHtml(false);
@@ -14345,7 +14368,13 @@ render();
 
   /* ---------- navigation: reuse the existing handlers by clicking the original buttons ---------- */
   var SUB={activity:'home',dash:'dash',perf:'dash'};
+  function openPerf(){
+    window.__aeroIntelTab='perf';
+    var b=document.querySelector('#ptc-nav .ao-nav[data-ao="ir"]');if(b)b.click();
+    var n=0;(function t(){var x=document.querySelector('#wr-intel [data-act="itab"][data-v="perf"]');if(x){window.__aeroIntelTab=null;if(!x.classList.contains('on'))x.click()}else if(n++<15)setTimeout(t,120)})();
+  }
   function go(k){
+    if(k==='dash'||k==='perf'){openPerf();return}
     var homeBtn=document.querySelector('#ptc-nav .ptc-nav-btn[data-aero="home"]'),pwiBtn=$('pwi-nav-btn');
     if(k==='entries'){
       if(homeBtn&&(root.classList.contains('pwi-active')||root.getAttribute('data-pane')!=='entrydesk'))homeBtn.click();
@@ -14434,11 +14463,8 @@ render();
       h+='<div class="pwi-empty">No transactions saved in this period.</div>';
     }else{
       h+='<div class="pf-kpis">'
-       +k('Transactions',S.n,P.n)+k('Ticketing',S.tk,P.tk)+k('Reissue',S.re,P.re)+k('Refund',S.rf,P.rf)+k('Void',S.vd,P.vd)
        +k('Active days',S.ad,P.ad)+k('Avg / active day',Math.round(S.avg*10)/10,Math.round(P.avg*10)/10)
        +k('Ticket sales (BDT)',S.sales,P.sales,fm)+k('Reissue collection (BDT)',S.coll,P.coll,fm)
-       +k('Refund rate',S.rfRate==null?null:Math.round(S.rfRate*10)/10,P.rfRate==null?null:Math.round(P.rfRate*10)/10,pct,true,'Refunds as a share of tickets issued in the period')
-       +k('Void rate',S.vdRate==null?null:Math.round(S.vdRate*10)/10,P.vdRate==null?null:Math.round(P.vdRate*10)/10,pct,true,'Voids as a share of tickets issued in the period')
        +k('Record completeness',S.comp==null?null:Math.round(S.comp),P.comp==null?null:Math.round(P.comp),pct,false,'Share of records that have both a PNR and a ticket number')
        +'</div>';
     }
@@ -14447,11 +14473,9 @@ render();
         +(pend&&due?' · ':'')
         +(due?due+' ticket payment'+(due>1?'s':'')+' to collect'+(over?' ('+over+' overdue)':''):'')+'.'
         :'No open refund adjustments or payment follow-ups right now.')
-      +' Rates compare against tickets issued in the same period; deltas compare with the previous period.</p></div>';
+      +' Deltas compare with the previous period. Counts, rates and trends are shown once, in My Work.</p></div>';
     if(S.n){
-      h+='<div class="pwi-dgrid"><div class="pwi-card c12"><div class="pwi-card-h"><h3>Transaction volume trend</h3></div>'+trend(cur,R)+'</div>'
-       
-       +'<div class="pwi-card c6"><div class="pwi-card-h"><h3>Top airlines</h3></div>'+bars(tally(cur,function(e){return e.airline}).slice(0,6),S.n,'#0E9AA7')+'</div>'
+      h+='<div class="pwi-dgrid"><div class="pwi-card c6"><div class="pwi-card-h"><h3>Top airlines</h3></div>'+bars(tally(cur,function(e){return e.airline}).slice(0,6),S.n,'#0E9AA7')+'</div>'
        +'<div class="pwi-card c6"><div class="pwi-card-h"><h3>Booking platforms</h3></div>'+bars(tally(cur,function(e){return e.platform}).slice(0,6),S.n,'#7C5CC4')+'</div></div>';
     }
     return h;
