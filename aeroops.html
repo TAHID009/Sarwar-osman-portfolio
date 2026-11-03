@@ -5013,22 +5013,15 @@ html[data-theme="dark"] #pwi-root .pwi-import textarea{background:#0E1E36;border
           </div>
           <div class="pwi-card c4"><div class="pwi-card-h"><h3>Company / Client Workload</h3></div><div id="pwi-co-bars"></div></div>
 
-          <div class="pwi-card c6">
+          <div class="pwi-card c12">
             <div class="pwi-card-h"><h3>Most Frequent Cases</h3>
               <div class="pwi-tabs-s" id="pwi-pat-tabs"><button type="button" data-act="pat" data-v="cc" class="on">Type + Client</button><button type="button" data-act="pat" data-v="cs">Type + Source</button><button type="button" data-act="pat" data-v="kw">Note keywords</button></div>
             </div>
             <div id="pwi-patterns"></div>
           </div>
-          <div class="pwi-card c6">
-            <div class="pwi-card-h"><h3>Weekly / Monthly / Yearly</h3>
-              <div class="pwi-tabs-s" id="pwi-wmy-tabs"><button type="button" data-act="wmy" data-v="weekly" class="on">Weekly</button><button type="button" data-act="wmy" data-v="monthly">Monthly</button><button type="button" data-act="wmy" data-v="yearly">Yearly</button></div>
-            </div>
-            <div class="pwi-chartbox"><canvas id="pwi-c-wmy" aria-label="Weekly, monthly and yearly activity chart"></canvas></div>
-            <div class="pwi-sub" style="margin-top:6px">Click a bar to set the dashboard to that period.</div>
-          </div>
         </div>
 
-        <div id="pwi-perf-wrap"><div class="pwi-perf-h"><h3>Performance &amp; Evaluation</h3><span class="pwi-sub">Uses the date range selected above</span></div><div id="pwi-perf"></div></div>
+        <div id="pwi-perf-wrap"><div class="pwi-perf-h"><h3>Performance Evaluation</h3><span class="pwi-sub">Uses the date range selected above</span></div><div id="pwi-perf"></div></div>
 
         <div class="pwi-card" id="pwi-records">
           <div class="pwi-card-h">
@@ -11836,7 +11829,7 @@ A.onChange(A.fillForm);
       type:'doughnut',
       data:{labels:empty ? ['No data'] : names, datasets:[{data:empty ? [1] : names.map(function(s){ return counts[s]||0; }),
         backgroundColor:empty ? ['#EDF1F6'] : names.map(function(s){ return alpha(srcColor(s), !st.filters.source || st.filters.source === s); }), borderColor:'#fff', borderWidth:2}]},
-      options:{responsive:true, maintainAspectRatio:false, cutout:'62%', plugins:{legend:{display:false}, tooltip:{enabled:!empty}}, onHover:hoverPtr,
+      options:{responsive:true, maintainAspectRatio:false, cutout:'62%', plugins:{legend:{display:false}, tooltip:{enabled:!empty, callbacks:{label:function(c){ var t = c.dataset.data.reduce(function(a,b){ return a+b; },0); return ' '+c.label+': '+c.parsed+' ('+(t ? Math.round(c.parsed*1000/t)/10 : 0)+'%)'; }}}}, onHover:hoverPtr,
         onClick:function(e, els){ if(els.length && !empty){ toggleFilter('source', names[els[0].index]); } }}
     });
     $('pwi-src-legend').innerHTML = empty ? '<div class="pwi-empty">No activities in this period.</div>' :
@@ -11965,14 +11958,12 @@ A.onChange(A.fillForm);
     function inR(x){ var d = String(x && x.date || '').slice(0,10); return d >= r.f && d <= r.t; }
     var eN = readLS('pnr_entries_v1').filter(window.aeroWs ? aeroWs.isActive : Boolean).filter(inR).length, sN = readLS('pnr_sales_v1').filter(window.aeroWs ? aeroWs.isActiveStrict : Boolean).filter(inR).length;
     $('pwi-summary').innerHTML =
-      '<div class="pwi-sum"><div><span>Activities</span><b>'+list.length+'</b></div><div><span>Active days</span><b>'+days.length+'</b></div>' +
+      '<div class="pwi-sum">' +
       '<div><span>Avg / active day</span><b>'+(days.length ? (list.length/days.length).toFixed(1) : '0')+'</b></div>' +
       '<div><span>Busiest day</span><b>'+(busiest ? fmtShort(parseISO(busiest))+' · '+byDay[busiest] : '—')+'</b></div>' +
-      '<div><span>Clients</span><b>'+distinct(list, function(a){ return coKey(a.company); })+'</b></div>' +
       '<div><span>Query types</span><b>'+distinct(list, function(a){ return a.category; })+'</b></div></div>' +
       '<span class="pwi-sub">Effort logged</span><div class="pwi-mini" style="margin:2px 0 8px">Quick <b>'+(ef.Quick||0)+'</b> · Standard <b>'+(ef.Standard||0)+'</b> · Deep <b>'+(ef.Deep||0)+'</b> · Not set <b>'+(ef.none||0)+'</b></div>' +
-      '<span class="pwi-sub">By weekday</span><div class="pwi-wd">' + order.map(function(d){ return '<div title="'+DAY[d]+': '+wd[d]+'"><i style="height:'+Math.round(wd[d]/wmax*36)+'px"></i>'+DAY[d]+'</div>'; }).join('') + '</div>' +
-      '<div class="pwi-note">Also recorded in AeroOps this period: Entry Log <b>'+eN+'</b> · Revenue Desk <b>'+sN+'</b>. Shown for context only — not added to PWI counts.</div>';
+      '<span class="pwi-sub">By weekday</span><div class="pwi-wd">' + order.map(function(d){ return '<div title="'+DAY[d]+': '+wd[d]+'"><i style="height:'+Math.round(wd[d]/wmax*36)+'px"></i>'+DAY[d]+'</div>'; }).join('') + '</div>';
   }
   function renderRecords(){
     var list = sel(''), total = list.length, shown = list.slice(0, st.recLimit);
@@ -11994,7 +11985,7 @@ A.onChange(A.fillForm);
     buildCoNames(); syncRangeUI();
     renderKPIs(); renderFilterBar(); renderTrend(); renderSummary(); renderCategoryBars();
     renderSourceChart(sel('source'), sel('source').length);
-    renderCompanyBars(); renderPatterns(); renderWMY(); renderRecords();
+    renderCompanyBars(); renderPatterns(); renderRecords();
     try{ renderPerf(); }catch(e){ if(window.console) console.error(e); }
   }
   function renderAll(){
@@ -12250,7 +12241,7 @@ A.onChange(A.fillForm);
     if(E.n && E.rw / E.n > 0.25) act.push('Review the repeated client/type combinations in the Dashboard (Most Frequent Cases) for a root cause.');
     if(!act.length) act.push('Keep logging outcome and effort on every task so the evidence stays reliable.');
     function ul(a){ return '<ul>' + a.map(function(x){ return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>'; }
-    return '<div class="pf-grid3"><div><h4>Objective measurements</h4>'+ul(obj)+'</div><div><h4>Strengths <small>(evidence-based)</small></h4>'+ul(str)+'</div><div><h4>Risks</h4>'+ul(risk)+'</div></div><div class="pf-rec"><h4>Recommended next actions <small>(suggestions, not measurements)</small></h4>'+ul(act)+'</div>';
+    return '<div class="pf-grid3" style="grid-template-columns:repeat(2,minmax(0,1fr))"><div><h4>Strengths <small>(evidence-based)</small></h4>'+ul(str)+'</div><div><h4>Risks</h4>'+ul(risk)+'</div></div><div class="pf-rec"><h4>Recommended next actions <small>(suggestions, not measurements)</small></h4>'+ul(act)+'</div>';
   }
   function renderPerf(){
     var el = $('pwi-perf'); if(!el) return;
@@ -12267,9 +12258,7 @@ A.onChange(A.fillForm);
       '<p class="pwi-sub">Score = Σ(component value × weight) ÷ Σ(weights of components that could be measured). Components with no data are excluded, never scored as zero. Open items inside the ' + SC.grace + '-day grace window are not penalised. Effort points: Quick 1, Standard 2, Deep 3.</p></div>';
     try{ h += window.aeroWhPerf ? window.aeroWhPerf(R) : ''; }catch(e){}
     h += '<div class="pwi-dgrid">' +
-      '<div class="pwi-card c4"><div class="pwi-card-h"><h3>Repeat-issue analysis</h3></div>' + pbar('Repeat cases', E.repeat, E.n, E.n, '#C97F1E') + pbar('Reopened tasks', E.reopened, E.n, E.n, '#C0392B') + barBlock(tally(cur.filter(function(a){ return a.kind === 'repeat'; }), function(a){ return coName(a) + ' · ' + (a.taskType || a.category); }).slice(0, 5), 0, '#C97F1E') + '</div>' +
-      '<div class="pwi-card c4"><div class="pwi-card-h"><h3>Pending workload &amp; aging <small class="pwi-sub">all open items, any date</small></h3></div>' + (function(){ var op = acts.filter(function(a){ return isOpenS(a.status); }), g = [['0–' + SC.grace + ' days (within grace)', 0], ['Overdue', 0], ['8+ days', 0]]; op.forEach(function(a){ var d = ageD(a); if(d <= SC.grace) g[0][1]++; else g[1][1]++; if(d >= 8) g[2][1]++; }); var mx = Math.max(g[0][1], g[1][1], 1); return op.length ? g.map(function(r, i){ return pbar(r[0], r[1], mx, 0, i ? '#C0392B' : '#D9A441'); }).join('') : '<div class="pwi-empty">No pending or follow-up items.</div>'; })() + '</div>' +
-      '<div class="pwi-card c4"><div class="pwi-card-h"><h3>Outstanding priorities</h3></div>' + (function(){ var op = acts.filter(function(a){ return isOpenS(a.status); }).sort(function(a, b){ return (a.date + a.time).localeCompare(b.date + b.time); }).slice(0, 5); return op.length ? op.map(function(a){ return '<div class="pf-pr"><b>'+esc(coName(a))+'</b> · '+esc(a.taskType || a.category)+(a.ref ? ' · '+esc(a.ref) : '')+'<small>'+esc(a.status)+' · '+ageD(a)+'d old</small></div>'; }).join('') : '<div class="pwi-empty">Nothing outstanding.</div>'; })() + '</div></div>';
+      '<div class="pwi-card c12"><div class="pwi-card-h"><h3>Outstanding priorities</h3></div>' + (function(){ var op = acts.filter(function(a){ return isOpenS(a.status); }).sort(function(a, b){ return (a.date + a.time).localeCompare(b.date + b.time); }).slice(0, 5); return op.length ? op.map(function(a){ return '<div class="pf-pr"><b>'+esc(coName(a))+'</b> · '+esc(a.taskType || a.category)+(a.ref ? ' · '+esc(a.ref) : '')+'<small>'+esc(a.status)+' · '+ageD(a)+'d old</small></div>'; }).join('') : '<div class="pwi-empty">Nothing outstanding.</div>'; })() + '</div></div>';
     h += '<div class="pwi-card"><div class="pwi-card-h"><h3>Detailed evaluation</h3></div>' + (E.n ? perfNarrative(E, P, true) : '<div class="pwi-empty">No records in this period, so there is nothing to evaluate.</div>') + '</div>';
     h += '<details class="pwi-card pf-cfg"><summary><b>Scoring settings</b> <span class="pwi-sub">weights and thresholds (saved on this device)</span></summary><div class="pf-cfgg">' + [['wComp','Weight: completion'],['wRew','Weight: repeat/reopen'],['wTime','Weight: turnaround'],['wData','Weight: completeness'],['grace','Grace period (days)'],['tat','Turnaround target (hours)'],['cap','Repeat share giving 0 (%)'],['min','Min. records for a score'],['ex','Excellent from'],['gd','Good from'],['fr','Fair from']].map(function(f){ return '<label>'+f[1]+'<input type="number" min="0" step="1" data-cfg="'+f[0]+'" value="'+SC[f[0]]+'"></label>'; }).join('') + '</div><div class="pf-cfgb"><button type="button" class="pwi-btn pri" data-act="perf-save">Save settings</button><button type="button" class="pwi-btn" data-act="perf-reset">Reset to defaults</button></div></details>';
     el.innerHTML = h;
@@ -14311,8 +14300,8 @@ render();
      +'<div class="wh-tabs" role="tablist" aria-label="Work Record sections">'
      +'<button type="button" role="tab" data-wh="entries" title="Ticketing, reissue, refund and void entries">Entries</button>'
      +'<button type="button" role="tab" data-wh="activity" title="Daily tasks, queries and support work">Activity</button>'
-     +'<button type="button" role="tab" data-wh="dash" title="Activity dashboard and performance evaluation">Dashboard &amp; Performance</button></div>'
-     +'<select class="wh-sel" aria-label="Section" data-whsel="1"><option value="entries">Entries</option><option value="activity">Activity</option><option value="dash">Dashboard &amp; Performance</option></select>';
+     +'<button type="button" role="tab" data-wh="dash" title="Activity dashboard and performance evaluation">Performance Analytics</button></div>'
+     +'<select class="wh-sel" aria-label="Section" data-whsel="1"><option value="entries">Entries</option><option value="activity">Activity</option><option value="dash">Performance Analytics</option></select>';
   }
   var bar1=document.createElement('div');bar1.className='wh-bar';bar1.id='wh-bar-main';bar1.innerHTML=barHtml(true);
   var bar2=document.createElement('div');bar2.className='wh-bar';bar2.id='wh-bar-pwi';bar2.innerHTML=barHtml(false);
@@ -14382,7 +14371,7 @@ render();
       last=k;
       [].forEach.call(document.querySelectorAll('.wh-tabs button'),function(b){var on=b.getAttribute('data-wh')===k;b.classList.toggle('on',on);b.setAttribute('aria-selected',on?'true':'false')});
       [].forEach.call(document.querySelectorAll('.wh-sel'),function(s){s.value=k});
-      bar2.setAttribute('data-k',k);var pt2=$('wh-pt');if(pt2)pt2.textContent={activity:'Activity Tracker',dash:'Dashboard & Performance',perf:'Dashboard & Performance',entries:'Work Record'}[k]||'';
+      bar2.setAttribute('data-k',k);var pt2=$('wh-pt');if(pt2)pt2.textContent={activity:'Activity Tracker',dash:'Performance Analytics',perf:'Performance Analytics',entries:'Work Record'}[k]||'';
     }
     if(host.firstChild!==bar1&&bar1.parentNode===host)host.insertBefore(bar1,host.firstChild);
   }
@@ -14460,13 +14449,62 @@ render();
         :'No open refund adjustments or payment follow-ups right now.')
       +' Rates compare against tickets issued in the same period; deltas compare with the previous period.</p></div>';
     if(S.n){
-      h+='<div class="pwi-dgrid"><div class="pwi-card c8"><div class="pwi-card-h"><h3>Transaction volume trend</h3></div>'+trend(cur,R)+'</div>'
-       +'<div class="pwi-card c4"><div class="pwi-card-h"><h3>Transaction mix</h3></div>'+bars(tally(cur,function(e){return e.txn}),S.n,'#2563EB')+'</div>'
+      h+='<div class="pwi-dgrid"><div class="pwi-card c12"><div class="pwi-card-h"><h3>Transaction volume trend</h3></div>'+trend(cur,R)+'</div>'
+       
        +'<div class="pwi-card c6"><div class="pwi-card-h"><h3>Top airlines</h3></div>'+bars(tally(cur,function(e){return e.airline}).slice(0,6),S.n,'#0E9AA7')+'</div>'
        +'<div class="pwi-card c6"><div class="pwi-card-h"><h3>Booking platforms</h3></div>'+bars(tally(cur,function(e){return e.platform}).slice(0,6),S.n,'#7C5CC4')+'</div></div>';
     }
     return h;
   };
+})();
+</script>
+<script id="aero-hover-tips">
+/* Hover details for every visual on the Performance Analytics tab. Chart.js charts use their own tooltips;
+   this adds the same kind of tooltip to the HTML bars, columns, KPI cards and score tiles. Read-only. */
+(function(){
+  var pane=document.getElementById('pwi-pane-dash'); if(!pane) return;
+  var tip=document.createElement('div'); tip.id='aero-tip'; tip.setAttribute('role','tooltip'); tip.hidden=true; document.body.appendChild(tip);
+  var st=document.createElement('style');
+  st.textContent='#aero-tip{position:fixed;z-index:99999;pointer-events:none;max-width:280px;padding:8px 11px;border-radius:8px;background:#0B2545;color:#fff;font:600 12px/1.4 "IBM Plex Sans",system-ui,sans-serif;box-shadow:0 8px 24px rgba(11,37,69,.3);white-space:pre-line}#aero-tip[hidden]{display:none}#aero-tip b{font-weight:700}html[data-theme="dark"] #aero-tip{background:#E6EDF7;color:#0B2545}';
+  document.head.appendChild(st);
+  var SEL='.pwi-bar,.pf-b,.pf-col,.pwi-wd>div,.pwi-kpi,.pf-kpis>div,.pwi-sum>div,.pf-score,.pwi-kw button,.pf-pr,.pwi-mini,[title]';
+  function T(e){return (e&&e.textContent||'').replace(/\s+/g,' ').trim()}
+  function make(el){
+    var a,b,c;
+    if(el.classList.contains('pwi-bar')){a=el.querySelector('.pwi-bar-n');b=el.querySelector('.pwi-bar-v');if(!a||!b)return '';
+      c=b.querySelector('small');return T(a)+'\n'+(b.firstChild?T(b.firstChild):'')+(c?' · '+T(c)+' of total':'')+'\nClick to filter';}
+    if(el.classList.contains('pf-b')){a=el.querySelector('.pf-l');b=el.querySelector('b');return a&&b?T(a)+'\n'+T(b):'';}
+    if(el.classList.contains('pf-score')){return 'Performance score\n'+T(el);}
+    if(el.classList.contains('pwi-kpi')){var l=el.querySelector('.pwi-kpi-l'),v=el.querySelector('.pwi-kpi-v'),s=el.querySelector('.pwi-kpi-s');return l&&v?T(l)+': '+T(v)+(s?'\n'+T(s):''):'';}
+    if(el.matches('.pf-kpis>div,.pwi-sum>div')){a=el.querySelector('span');b=el.querySelector('b');c=el.querySelector('small');return a&&b?T(a)+': '+T(b)+(c?'\n'+T(c):''):'';}
+    if(el.classList.contains('pwi-kw')||el.matches('.pwi-kw button')){return T(el).replace(/(\D+)(\d+)$/,'$1 — $2 notes');}
+    if(el.classList.contains('pf-pr')){return T(el);}
+    return '';
+  }
+  function tipFor(el){
+    var t=el.getAttribute('data-tip');
+    if(t) return t;
+    t=el.getAttribute('title');
+    if(t){el.setAttribute('data-tip',t);el.removeAttribute('title');return t;}
+    t=make(el); if(t) el.setAttribute('data-tip',t); return t;
+  }
+  function place(e){
+    var x=e.clientX+14,y=e.clientY+16,w=tip.offsetWidth,h=tip.offsetHeight;
+    if(x+w>window.innerWidth-8)x=Math.max(8,e.clientX-w-14);
+    if(y+h>window.innerHeight-8)y=Math.max(8,e.clientY-h-12);
+    tip.style.left=x+'px';tip.style.top=y+'px';
+  }
+  var cur=null;
+  pane.addEventListener('mouseover',function(e){
+    var el=e.target.closest&&e.target.closest(SEL); if(!el||!pane.contains(el)){return}
+    var t=tipFor(el); if(!t){tip.hidden=true;cur=null;return}
+    cur=el;tip.textContent=t;tip.hidden=false;place(e);
+  });
+  pane.addEventListener('mousemove',function(e){if(cur&&!tip.hidden)place(e)});
+  pane.addEventListener('mouseout',function(e){var to=e.relatedTarget;if(cur&&(!to||!cur.contains(to))){tip.hidden=true;cur=null}});
+  document.addEventListener('scroll',function(){tip.hidden=true;cur=null},true);
+  pane.addEventListener('focusin',function(e){var el=e.target.closest&&e.target.closest(SEL);if(!el)return;var t=tipFor(el);if(!t)return;var r=el.getBoundingClientRect();cur=el;tip.textContent=t;tip.hidden=false;place({clientX:r.left+8,clientY:r.top-8})});
+  pane.addEventListener('focusout',function(){tip.hidden=true;cur=null});
 })();
 </script>
 <script id="aeroops-login-live">
