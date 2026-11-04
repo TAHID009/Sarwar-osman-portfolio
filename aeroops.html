@@ -340,6 +340,10 @@ window.aeroLocalISO=function(d){d=d||new Date();return d.getFullYear()+"-"+Strin
     cursor: pointer;
     border-radius: 50%;
   }
+  .ptc-zero-tkt{ display:flex; flex-wrap:wrap; align-items:center; gap:6px; margin-top:6px; font-size:11px; color:var(--muted); }
+  .ptc-zero-tkt select{ width:auto; min-width:0; padding:3px 6px; font-size:11px; }
+  .ptc-zero-tkt-btn{ border:1px solid var(--line); background:#EEF3F8; color:var(--ink); border-radius:6px; padding:4px 9px; font-size:11px; font-weight:600; cursor:pointer; }
+  .ptc-zero-tkt-btn:hover{ border-color:var(--accent); }
   .ptc-tkt-chip button:hover{ color: var(--refund); background: var(--refund-soft); }
   .ptc-tkt-chip-input input{
     border: none !important;
@@ -4068,6 +4072,16 @@ html[data-theme="dark"] #pwi-root .pwi-import textarea{background:#0E1E36;border
             </div>
             <div class="ptc-field-hint" id="f-newtkt-t-hint"></div>
             <input type="hidden" id="f-newtkt-t" />
+            <div class="ptc-zero-tkt" id="f-tkt-zero-wrap-t">
+              <span class="ptc-zero-tkt-lbl">Airline gives no ticket number (6E IndiGo, Salam Air…)?</span>
+              <select id="f-tkt-zero-n-t" title="How many passengers need a placeholder ticket number. Auto = number of names typed in Passenger Name (max 9).">
+                <option value="" selected>Auto (from names)</option>
+                <option value="1">1 passenger</option><option value="2">2 passengers</option><option value="3">3 passengers</option>
+                <option value="4">4 passengers</option><option value="5">5 passengers</option><option value="6">6 passengers</option>
+                <option value="7">7 passengers</option><option value="8">8 passengers</option><option value="9">9 passengers</option>
+              </select>
+              <button type="button" id="f-tkt-zero-t" class="ptc-zero-tkt-btn" title="Adds 0000000000000 once for every passenger (maximum 9)">Use 0000000000000 per passenger</button>
+            </div>
           </div>
           <div class="ptc-field ptc-type-select">
             <label for="f-routetype-t">Route Type</label>
@@ -4123,13 +4137,42 @@ html[data-theme="dark"] #pwi-root .pwi-import textarea{background:#0E1E36;border
             <select id="f-paystat-t" title="Choose Partial Payment when the ticket is issued before the client has paid in full.">
               <option value="FULL" selected>Full Payment</option>
               <option value="PARTIAL">Partial Payment</option>
+              <option value="FULL_DUE">Full Due (nothing received yet)</option>
             </select>
           </div>
           <div></div>
         </div>
-        <div id="f-partial-wrap-t" style="display:none;">
+        <div id="f-paymethod-wrap-t">
           <div class="ptc-row">
             <div class="ptc-field">
+              <label for="f-paymethod-t">Payment Method</label>
+              <select id="f-paymethod-t" title="How the client paid the amount received now.">
+                <option value="" disabled selected>Select Type</option>
+                <option value="CASH">Cash</option>
+                <option value="BKASH">bKash</option>
+                <option value="NAGAD">Nagad</option>
+                <option value="ROCKET">Rocket</option>
+                <option value="BANK">Bank Transfer</option>
+                <option value="CARD">Card</option>
+                <option value="OTHER">Other</option>
+              </select>
+            </div>
+            <div class="ptc-field">
+              <label for="f-paychgpct-t">Method Charge % <span style="font-weight:400;color:var(--muted);font-size:11px;">(optional)</span></label>
+              <input type="number" step="0.01" min="0" id="f-paychgpct-t" class="mono" placeholder="0.00" title="Charge rate of the payment method (e.g. bKash / card fee). Charge Amount is calculated on the amount paid now." />
+            </div>
+          </div>
+          <div class="ptc-row">
+            <div class="ptc-field">
+              <label for="f-paychg-t">Method Charge Amount <span style="font-weight:400;color:var(--muted);font-size:11px;">(optional)</span></label>
+              <input type="number" step="0.01" min="0" id="f-paychg-t" class="mono" placeholder="0.00" title="Calculated from the % on the amount paid now — or type the exact charge. Recorded separately; it does not change Payable Fare or Due." />
+            </div>
+            <div></div>
+          </div>
+        </div>
+        <div id="f-partial-wrap-t" style="display:none;">
+          <div class="ptc-row">
+            <div class="ptc-field" id="f-paidamt-wrap-t">
               <label for="f-paidamt-t">Amount Received Now <span class="ptc-required">*</span></label>
               <input type="number" step="0.01" min="0" id="f-paidamt-t" class="mono" placeholder="0.00" />
             </div>
@@ -5287,7 +5330,8 @@ A.onChange(A.fillForm);
           error = `Ticket number "${digits}" must be exactly 13 digits.`;
           continue;
         }
-        if(list.includes(digits)) continue;
+        // 0000000000000 is the "airline issued no ticket number" placeholder — one per passenger, so repeats are allowed
+        if(list.includes(digits) && digits !== '0000000000000') continue;
         list.push(digits);
         addedAny = true;
       }
@@ -5323,7 +5367,13 @@ A.onChange(A.fillForm);
       if(hint && hint.classList.contains('ptc-field-hint-error')) showHint(defaultHint || '', false);
     });
     renderChips();
-    return { getTickets, setTickets };
+    // Replaces the list with n placeholder numbers (0000000000000), one per passenger, max 9.
+    function fillPlaceholder(n){
+      n = Math.max(1, Math.min(MAX_TICKETS_PER_PNR, parseInt(n, 10) || 1));
+      setTickets(new Array(n).fill('0000000000000'));
+      showHint(n + ' placeholder ticket number' + (n > 1 ? 's' : '') + ' (0000000000000) added — one per passenger.', false);
+    }
+    return { getTickets, setTickets, fillPlaceholder };
   }
 
   function fmtTicketList(v){
@@ -5352,6 +5402,18 @@ A.onChange(A.fillForm);
 
   const entryNewTktChips = initTicketChipField('f-newtkt-t-input', 'f-newtkt-t-chips', 'f-newtkt-t', 'f-newtkt-t-hint',
     'One ticket per passenger — add each 13-digit ticket number, then press Enter.');
+  (function wireZeroTicket(){
+    const b = $('f-tkt-zero-t'); if(!b) return;
+    b.addEventListener('click', () => {
+      if(!entryNewTktChips) return;
+      let n = parseInt(($('f-tkt-zero-n-t') || {}).value, 10);
+      if(!n){
+        n = String($('f-pname').value || '').split(/[,;\n]+/).map(x => x.trim()).filter(Boolean).length || 1;
+        if(n > 9){ toast('A PNR can have at most 9 passengers — placeholder added for the first 9.'); }
+      }
+      entryNewTktChips.fillPlaceholder(n);
+    });
+  })();
   const entryOldTktReissueChips = initTicketChipField('f-oldtkt-r-input', 'f-oldtkt-r-chips', 'f-oldtkt-r', 'f-oldtkt-r-hint',
     'Add each 13-digit ticket number — press Enter, or paste several separated by comma/semicolon.');
   const entryNewTktReissueChips = initTicketChipField('f-newtkt-r-input', 'f-newtkt-r-chips', 'f-newtkt-r', 'f-newtkt-r-hint',
@@ -5466,6 +5528,9 @@ A.onChange(A.fillForm);
     { h:'DUE PAYMENT DATE', f:'dueDate' },
     { h:'PAYMENT REFERENCE', f:'dueRef' },
     { h:'DUE STATUS', f:'dueStatus' },
+    { h:'PAYMENT METHOD', f:'payMethod' },
+    { h:'METHOD CHARGE %', f:'payMethodChargePct', n:true },
+    { h:'METHOD CHARGE AMOUNT', f:'payMethodCharge', n:true },
     { h:'NOTE', f:'note' },
     { h:'CREATED AT', f:'createdAt' },
     { h:'LAST EDITED', f:'editedAt' },
@@ -5477,7 +5542,7 @@ A.onChange(A.fillForm);
 
   const COMMON_FIELDS = ['date','pnrGds','pnrAirline','pname','pnum','ptype','platform','airline'];
   const SHEET_DEFS = [
-    { name:'Ticketing', fields: COMMON_FIELDS.concat(['newTkt','sector','baseFare','taxFare','airlineTicketPrice','discount','discountAmount','discountPct','totalFare','payStatus','paidAmount','dueAmount','dueDate','dueRef','dueStatus','note']) },
+    { name:'Ticketing', fields: COMMON_FIELDS.concat(['newTkt','sector','baseFare','taxFare','airlineTicketPrice','discount','discountAmount','discountPct','totalFare','payStatus','paidAmount','dueAmount','dueDate','dueRef','dueStatus','payMethod','payMethodChargePct','payMethodCharge','note']) },
     { name:'Booking', fields: COMMON_FIELDS.concat(['sector','baseFare','taxFare','airlineTicketPrice','totalFare','note']) },
     { name:'Reissue', fields: COMMON_FIELDS.concat(['oldTkt','newTkt','sector','code','fareDiff','airlineCharge','svc','totalCollection','note']) },
     { name:'Refund', fields: COMMON_FIELDS.concat(['oldTkt','refundType','refTotalFare','usedSegmentFare','usedSegmentTax','refTotalTax','refNonRefundTax','airlineCharge','commissionAdj','refundableFare','refundableTax','airlineRefund','svcApplied','svc','refundCharge','taxRefund','refundStatus','adjustmentGiven','adjustmentAmount','note']) },
@@ -6279,7 +6344,7 @@ A.onChange(A.fillForm);
   }
   function existingTicketMap(){
     const m = {};
-    entries.forEach((e, i) => { if(editingIndex === i) return; [e.newTkt, e.oldTkt].forEach(v => String(v || '').split(',').forEach(t => { t = t.trim(); if(t) m[t] = e.pnrGds || '?'; })); });
+    entries.forEach((e, i) => { if(editingIndex === i) return; [e.newTkt, e.oldTkt].forEach(v => String(v || '').split(',').forEach(t => { t = t.trim(); if(t && t !== '0000000000000') m[t] = e.pnrGds || '?'; })); });
     return m;
   }
 
@@ -7326,16 +7391,50 @@ A.onChange(A.fillForm);
   function recalcDueAmount(){
     const el = $('f-dueamt-t'); if(!el) return;
     const payable = parseFloat($('f-totalfare-t').value) || 0;
+    if($('f-paystat-t') && $('f-paystat-t').value === 'FULL_DUE'){ el.value = payable.toFixed(2); recalcPayCharge(); return; }
     const paid = parseFloat($('f-paidamt-t').value);
     el.value = (isNaN(paid) || $('f-paidamt-t').value === '') ? '' : Math.max(0, payable - paid).toFixed(2);
+    recalcPayCharge();
+  }
+  // ---- Payment method charge: % of the amount paid now (Full = Payable Fare, Partial = Amount Received) ----
+  function payChargeBase(){
+    const st = $('f-paystat-t') ? $('f-paystat-t').value : 'FULL';
+    if(st === 'FULL_DUE') return 0;
+    if(st === 'PARTIAL') return parseFloat($('f-paidamt-t').value) || 0;
+    return parseFloat($('f-totalfare-t').value) || 0;
+  }
+  function recalcPayCharge(){
+    const pct = $('f-paychgpct-t'), amt = $('f-paychg-t'); if(!pct || !amt) return;
+    if(pct.value === '') return;               // nothing to calculate from; a typed amount stays as typed
+    const r = parseFloat(pct.value);
+    amt.value = isNaN(r) ? '' : (payChargeBase() * r / 100).toFixed(2);
   }
   function syncPartialPay(){
-    const on = $('f-paystat-t') && $('f-paystat-t').value === 'PARTIAL';
+    const st = $('f-paystat-t') ? $('f-paystat-t').value : 'FULL';
+    const on = (st === 'PARTIAL' || st === 'FULL_DUE');
     const w = $('f-partial-wrap-t'); if(w) w.style.display = on ? '' : 'none';
+    // Full Due: nothing received now, so Amount Received is hidden and fixed at 0
+    const pw = $('f-paidamt-wrap-t'); if(pw) pw.style.display = (st === 'FULL_DUE') ? 'none' : '';
+    if($('f-paidamt-t')){
+      if(st === 'FULL_DUE'){ $('f-paidamt-t').value = '0'; $('f-paidamt-t').dataset.autoZero = '1'; }
+      else if($('f-paidamt-t').dataset.autoZero === '1'){ $('f-paidamt-t').value = ''; delete $('f-paidamt-t').dataset.autoZero; }
+    }
+    // Payment method only applies when money is received now
+    const mw = $('f-paymethod-wrap-t'); if(mw) mw.style.display = (st === 'FULL_DUE') ? 'none' : '';
+    if(st === 'FULL_DUE'){
+      if($('f-paymethod-t')) $('f-paymethod-t').value = '';
+      if($('f-paychgpct-t')) $('f-paychgpct-t').value = '';
+      if($('f-paychg-t')) $('f-paychg-t').value = '';
+    }
     recalcDueAmount();
   }
   if($('f-paystat-t')) $('f-paystat-t').addEventListener('change', syncPartialPay);
   if($('f-paidamt-t')) $('f-paidamt-t').addEventListener('input', recalcDueAmount);
+  if($('f-paychgpct-t')) $('f-paychgpct-t').addEventListener('input', recalcPayCharge);
+  if($('f-paychg-t')) $('f-paychg-t').addEventListener('input', () => {
+    const base = payChargeBase(), a = parseFloat($('f-paychg-t').value);
+    $('f-paychgpct-t').value = (base > 0 && !isNaN(a)) ? (a / base * 100).toFixed(2) : '';
+  });
   // Used when loading an existing record for edit: shows Total Fare and Discount %,
   // and puts back the record's own saved Payable Fare (falls back to the formula
   // only if the record has none) so opening a record never silently changes totals.
@@ -7530,6 +7629,9 @@ A.onChange(A.fillForm);
       dueDate: '',
       dueRef: '',
       dueStatus: '',
+      payMethod: '',
+      payMethodChargePct: '',
+      payMethodCharge: '',
       refBaseFare: '',
       refTotalFare: '',
       usedSegmentFare: '',
@@ -7558,9 +7660,17 @@ A.onChange(A.fillForm);
       base.markupAmount = '';
       base.totalFare = parseFloat($('f-totalfare-t').value) || 0;
       // Payment: Full by default; Partial records what was received and when the rest is due.
-      base.payStatus = ($('f-paystat-t') && $('f-paystat-t').value === 'PARTIAL') ? 'PARTIAL' : 'FULL';
-      if(base.payStatus === 'PARTIAL'){
-        const paid = parseFloat($('f-paidamt-t').value);
+      const psv = $('f-paystat-t') ? $('f-paystat-t').value : 'FULL';
+      base.payStatus = (psv === 'PARTIAL' || psv === 'FULL_DUE') ? psv : 'FULL';
+      // Payment method + its charge (recorded on its own — never added to Payable Fare or Due)
+      if(base.payStatus !== 'FULL_DUE'){
+        base.payMethod = ($('f-paymethod-t') || {}).value || '';
+        const cp = parseFloat(($('f-paychgpct-t') || {}).value), ca = parseFloat(($('f-paychg-t') || {}).value);
+        base.payMethodChargePct = isNaN(cp) ? '' : cp;
+        base.payMethodCharge = isNaN(ca) ? '' : ca;
+      }
+      if(base.payStatus === 'PARTIAL' || base.payStatus === 'FULL_DUE'){
+        const paid = base.payStatus === 'FULL_DUE' ? 0 : parseFloat($('f-paidamt-t').value);
         base.paidAmount = isNaN(paid) ? '' : paid;
         base.dueAmount = isNaN(paid) ? '' : Math.max(0, base.totalFare - paid);
         base.dueDate = $('f-duedate-t').value || '';
@@ -7679,6 +7789,13 @@ A.onChange(A.fillForm);
       if(err) return err;
       if((entry.discountAmount || 0) < 0) return 'Discount amount cannot be negative.';
       if((entry.discountAmount || 0) > (parseFloat(entry.airlineTicketPrice) || 0)) return 'Discount amount cannot be more than the Total Fare.';
+      if(entry.payMethodCharge !== '' && entry.payMethodCharge !== undefined && entry.payMethodCharge < 0) return 'Payment method charge cannot be negative.';
+      if(entry.payMethod === '' && entry.payMethodCharge !== '' && entry.payMethodCharge > 0) return 'Select the Payment Method for the charge you entered.';
+      if(entry.payStatus === 'FULL_DUE'){
+        if(!(parseFloat(entry.totalFare) > 0)) return 'Full Due: enter the fare first — the due amount equals the Payable Fare.';
+        if(!entry.dueDate) return 'Full Due: please enter the Due Payment Date.';
+        if(entry.date && entry.dueDate < entry.date) return 'Due Payment Date cannot be before the ticketing date.';
+      }
       if(entry.payStatus === 'PARTIAL'){
         if(entry.paidAmount === '' || entry.paidAmount === null || entry.paidAmount === undefined) return 'Partial payment: please enter the amount received now.';
         if(entry.paidAmount < 0) return 'Amount received cannot be negative.';
@@ -7739,12 +7856,14 @@ A.onChange(A.fillForm);
 
   // Payment cell: Full-payment / legacy records stay blank; partial payments show due state + amount.
   function payCellHTML(e){
-    const d = dueInfo(e); if(!d) return '';
+    const mth = (e.txn === 'Ticketing' && e.payMethod) ? '<div style="font-size:11px;color:var(--muted);margin-top:2px;">' + esc(payMethodLabel(e.payMethod)) + ((parseFloat(e.payMethodCharge) > 0) ? ' · charge ' + fmtMoney(e.payMethodCharge) : '') + '</div>' : '';
+    const d = dueInfo(e); if(!d) return mth;
     const amt = d.state === 'paid' ? '' : '<div class="mono" style="font-size:11px;margin-top:2px;">Due ' + fmtMoney(d.amt) + '</div>';
     const ref = e.dueRef ? '<div style="font-size:11px;color:var(--muted);margin-top:2px;">' + esc(e.dueRef) + '</div>' : '';
     const dt = (d.state !== 'paid' && d.date) ? '<div class="mono" style="font-size:11px;color:var(--muted);">' + esc(d.date) + '</div>' : '';
-    return '<span class="ptc-tag" style="background:' + dueColor(d.state) + '">' + esc(dueLabel(d)) + '</span>' + amt + dt + ref;
+    return '<span class="ptc-tag" style="background:' + dueColor(d.state) + '">' + esc(dueLabel(d)) + '</span>' + amt + dt + ref + mth;
   }
+  function payMethodLabel(v){ return ({ CASH:'Cash', BKASH:'bKash', NAGAD:'Nagad', ROCKET:'Rocket', BANK:'Bank Transfer', CARD:'Card', OTHER:'Other' })[v] || v || ''; }
   function render(){
     const tbody = $('ptc-tbody');
     const empty = $('ptc-empty');
@@ -7941,7 +8060,7 @@ A.onChange(A.fillForm);
     ['f-pnr-gds','f-pnr-air','f-pname','f-pnum','f-note','f-platform-other','f-airline-other',
      'f-newtkt-t','f-sector-t','f-basefare-t','f-taxfare-t','f-discamt-t','f-discpct-t','f-atp-t',
      'f-sector-b','f-basefare-b','f-taxfare-b','f-gross-b','f-net-b',
-     'f-paidamt-t','f-dueamt-t','f-duedate-t','f-dueref-t',
+     'f-paidamt-t','f-dueamt-t','f-duedate-t','f-dueref-t','f-paychgpct-t','f-paychg-t',
      'f-oldtkt-r','f-newtkt-r','f-sector-r','f-code-r','f-faredif-r','f-airline-r','f-svc-r',
      'f-oldtkt-f','f-airline-f','f-svc-f','f-charge-f','f-tax-f','f-adjamt-f',
      'f-refbasefare-f','f-usedseg-f','f-usedsegtax-f','f-reftotaltax-f','f-nonrefundtax-f','f-commission-f',
@@ -7973,6 +8092,8 @@ A.onChange(A.fillForm);
     if(typeof setAdjustmentGiven === 'function') setAdjustmentGiven('NO');
     if($('f-paystat-t')) $('f-paystat-t').value = 'FULL';
     if($('f-duestat-t')) $('f-duestat-t').value = 'PENDING';
+    if($('f-paymethod-t')) $('f-paymethod-t').value = '';
+    if($('f-tkt-zero-n-t')) $('f-tkt-zero-n-t').value = '';
     recalcTicketingFare();
     syncPartialPay();
     if(typeof resetBooking === 'function') resetBooking();
@@ -8054,14 +8175,19 @@ A.onChange(A.fillForm);
       setVal('f-discamt-t', discountAmountOf(e) || '');
       showTicketingBreakdown(e);
       // Payment: records saved before this feature have no payStatus — they open as Full Payment.
-      setVal('f-paystat-t', e.payStatus === 'PARTIAL' ? 'PARTIAL' : 'FULL');
+      setVal('f-paystat-t', (e.payStatus === 'PARTIAL' || e.payStatus === 'FULL_DUE') ? e.payStatus : 'FULL');
       setVal('f-paidamt-t', e.paidAmount);
+      setVal('f-paymethod-t', e.payMethod || '');
+      setVal('f-paychgpct-t', e.payMethodChargePct);
+      setVal('f-paychg-t', e.payMethodCharge);
       setVal('f-duedate-t', e.dueDate);
       setVal('f-dueref-t', e.dueRef);
       setVal('f-duestat-t', e.dueStatus === 'PAID' ? 'PAID' : 'PENDING');
       syncPartialPay();
       // restore the stored Due Amount as-is (never silently recomputed for a saved record)
-      if(e.payStatus === 'PARTIAL' && e.dueAmount !== '' && e.dueAmount !== undefined && e.dueAmount !== null) setVal('f-dueamt-t', Number(e.dueAmount).toFixed(2));
+      if((e.payStatus === 'PARTIAL' || e.payStatus === 'FULL_DUE') && e.dueAmount !== '' && e.dueAmount !== undefined && e.dueAmount !== null) setVal('f-dueamt-t', Number(e.dueAmount).toFixed(2));
+      // syncPartialPay re-derives the charge from the % — put the saved values back as-is
+      setVal('f-paychgpct-t', e.payMethodChargePct); setVal('f-paychg-t', e.payMethodCharge);
     } else if(e.txn === 'Reissue'){
       if(entryOldTktReissueChips) entryOldTktReissueChips.setTickets(e.oldTkt ? e.oldTkt.toString().split(',').filter(Boolean) : []);
       else setVal('f-oldtkt-r', e.oldTkt);
@@ -8171,7 +8297,7 @@ A.onChange(A.fillForm);
         if(!o || o === self || (self && o._id && o._id === self._id)) continue;
         if(o.txn !== 'Ticketing' && o.txn !== 'Reissue') continue;
         const theirs = (o.newTkt || '').toString().split(',').map(s => s.trim()).filter(Boolean);
-        const hit = mine.find(t => theirs.indexOf(t) > -1);
+        const hit = mine.find(t => t !== '0000000000000' && theirs.indexOf(t) > -1);  // 0000000000000 = airline gave no number, may repeat
         if(hit){ clash = { t: hit, o }; break; }
       }
       if(clash){ toast('NOT SAVED — ticket number ' + clash.t + ' is already recorded (PNR ' + (clash.o.pnrGds || '—') + ', ' + (clash.o.date || '') + '). A ticket number cannot be saved twice; the same PNR is fine.'); return; }
@@ -8304,7 +8430,7 @@ A.onChange(A.fillForm);
                        'refTotalFare','usedSegmentFare','usedSegmentTax','refTotalTax','refNonRefundTax','commissionAdj','svcApplied',
                        'refundableFare','refundableTax','airlineRefund',
                        'refundCharge','taxRefund','refundType','refundStatus','adjustmentGiven','adjustmentAmount',
-                       'payStatus','paidAmount','dueAmount','dueDate','dueRef','dueStatus',
+                       'payStatus','paidAmount','dueAmount','dueDate','dueRef','dueStatus','payMethod','payMethodChargePct','payMethodCharge',
                        'code','note','createdAt','editedAt','company','companyId'];
   const HEADER_TO_FIELD = {
     'WORKSPACE ID':'companyId','DATE':'date','GDS PNR':'pnrGds','AIRLINE PNR':'pnrAirline','PNR':'pnrGds',
@@ -8325,13 +8451,14 @@ A.onChange(A.fillForm);
     'ADJUSTMENT GIVEN':'adjustmentGiven','ADJUSTMENT AMOUNT':'adjustmentAmount',
     'PAYMENT STATUS':'payStatus','AMOUNT RECEIVED':'paidAmount','DUE AMOUNT':'dueAmount','DUE PAYMENT DATE':'dueDate',
     'PAYMENT REFERENCE':'dueRef','DUE STATUS':'dueStatus',
+    'PAYMENT METHOD':'payMethod','METHOD CHARGE %':'payMethodChargePct','METHOD CHARGE AMOUNT':'payMethodCharge',
     'REISSUE CODE':'code','NOTE':'note','CREATED AT':'createdAt','LAST EDITED':'editedAt'
   };
   const NUMERIC_FIELDS = ['baseFare','taxFare','airlineTicketPrice','discount','discountAmount','markUp','markupAmount','totalFare','fareDiff',
                           'airlineCharge','svc','totalCollection','payableFare',
                           'refTotalFare','usedSegmentFare','usedSegmentTax','refTotalTax','refNonRefundTax','commissionAdj',
                           'refundableFare','refundableTax','airlineRefund',
-                          'refundCharge','taxRefund','adjustmentAmount','paidAmount','dueAmount'];
+                          'refundCharge','taxRefund','adjustmentAmount','paidAmount','dueAmount','payMethodChargePct','payMethodCharge'];
 
   function parseCsvLine(line){
     const out = [];
@@ -11186,7 +11313,7 @@ A.onChange(A.fillForm);
   /* ---- Partial payment: due-date status for a Ticketing record ----
      state: overdue | today | soon (within 2 days) | pending | paid. Returns null for records without a partial payment. */
   function dueInfo(e){
-    if(!e || e.txn !== 'Ticketing' || e.payStatus !== 'PARTIAL') return null;
+    if(!e || e.txn !== 'Ticketing' || (e.payStatus !== 'PARTIAL' && e.payStatus !== 'FULL_DUE')) return null;
     const amt = parseFloat(e.dueAmount) || 0;
     if(e.dueStatus === 'PAID') return { state:'paid', days:0, amt:amt, date:e.dueDate || '' };
     if(!e.dueDate) return { state:'pending', days:null, amt:amt, date:'' };
@@ -12841,7 +12968,7 @@ var ospp=window.ptcSetPane;if(typeof ospp==='function')window.ptcSetPane=functio
 /* ---- Record Details ---- */
 function closeDetail(){var d=$('wr-detail-back');if(d)d.remove()}
 function dueP(e){var d=D().dueInfo&&D().dueInfo(e);return d?' '+pill(D().dueLabel(d),D().dueColor(d.state)):''}
-function dueRows(e){var d=D().dueInfo&&D().dueInfo(e);if(!d)return'';return frow('Payment','Partial payment')+frow('Amount received',num(e.paidAmount))+frow('Due amount',num(e.dueAmount))+frow('Due payment date',e.dueDate?fmtD(e.dueDate):'')+frow('Payment reference',e.dueRef||'')+frow('Due status',d.state==='paid'?'Received':D().dueLabel(d))}
+function dueRows(e){var d=D().dueInfo&&D().dueInfo(e);var ML={CASH:'Cash',BKASH:'bKash',NAGAD:'Nagad',ROCKET:'Rocket',BANK:'Bank Transfer',CARD:'Card',OTHER:'Other'};var m=(e.txn==='Ticketing'&&e.payMethod)?frow('Payment method',ML[e.payMethod]||e.payMethod)+frow('Method charge',num(e.payMethodCharge)):'';if(!d)return m;return frow('Payment',e.payStatus==='FULL_DUE'?'Full due':'Partial payment')+frow('Amount received',num(e.paidAmount))+frow('Due amount',num(e.dueAmount))+frow('Due payment date',e.dueDate?fmtD(e.dueDate):'')+frow('Payment reference',e.dueRef||'')+frow('Due status',d.state==='paid'?'Received':D().dueLabel(d))+m}
 function frow(l,v){return v===''||v===undefined||v===null?'':'<div><span>'+l+'</span><b>'+(typeof v==='number'?fm(v):esc(v))+'</b></div>'}
 function openDetail(i){var e=E()[i];if(!e)return;closeDetail();var st=status(e),n=names(e),t=tkts(e),m=Math.max(n.length,t.length),pr='';
  for(var k=0;k<m;k++)pr+='<tr><td>'+(k+1)+'</td><td>'+esc(n[k]||'—')+'</td><td class="mono">'+esc(t[k]||'—')+'</td></tr>';
