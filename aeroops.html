@@ -6148,6 +6148,27 @@ A.onChange(A.fillForm);
         filledAny = true;
       }
       if(typeof recalcTicketingFare === 'function') recalcTicketingFare();
+    } else if(typeSelect.value === 'Booking'){
+      // Booking form has its own sector / base fare / tax fields (ids end in -b).
+      // Previously nothing was applied here, so the fare read from the PDF was
+      // lost after clicking OK and had to be typed again by hand.
+      if(fields.sector && $('f-sector-b')){
+        $('f-sector-b').value = fields.sector;
+        pdfHighlight('f-sector-b');
+        filledAny = true;
+      }
+      if(fields.baseFare !== undefined && $('f-basefare-b')){
+        $('f-basefare-b').value = fields.baseFare.toFixed(2);
+        pdfHighlight('f-basefare-b');
+        filledAny = true;
+      }
+      if(fields.taxFare !== undefined && $('f-taxfare-b')){
+        $('f-taxfare-b').value = fields.taxFare.toFixed(2);
+        pdfHighlight('f-taxfare-b');
+        filledAny = true;
+      }
+      // Gross Payment = Base + Tax (Net Payable follows it)
+      if(typeof recalcBooking === 'function') recalcBooking();
     } else if(typeSelect.value === 'Reissue'){
       // The PDF is the OLD ticket being reissued — fare-difference fields aren't in
       // it (they only exist once you know the new fare), so just the ticket number.
