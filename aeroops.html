@@ -12938,7 +12938,7 @@ function buckets(l){var s=span(),a=s.from,b=s.to||iso(new Date());if(!a){a=l.red
  else if(days<=200){for(d=addD(A,-((A.getDay()+6)%7));d<=B;d=addD(d,7))out.push({l:d.getDate()+' '+d.toLocaleString('en',{month:'short'}),a:iso(d),b:iso(addD(d,6))})}
  else{for(d=new Date(A.getFullYear(),A.getMonth(),1);d<=B;d=new Date(d.getFullYear(),d.getMonth()+1,1))out.push({l:d.toLocaleString('en',{month:'short'})+" '"+String(d.getFullYear()).slice(2),a:iso(d),b:iso(new Date(d.getFullYear(),d.getMonth()+1,0))})}
  return out.slice(-60)}
-function bucketCounts(l){return buckets(l).map(function(b){var o={l:b.l,t:{Ticketing:0,Reissue:0,Refund:0,Void:0}};l.forEach(function(r){var d=r.e.date||'';if(d>=b.a&&d<=b.b)o.t[r.e.txn]=(o.t[r.e.txn]||0)+1});o.v=TY.reduce(function(a,t){return a+o.t[t]},0);return o})}
+function bucketCounts(l){return buckets(l).map(function(b){var o={l:b.l,t:{Ticketing:0,Booking:0,Reissue:0,Refund:0,Void:0}};l.forEach(function(r){var d=r.e.date||'';if(d>=b.a&&d<=b.b)o.t[r.e.txn]=(o.t[r.e.txn]||0)+1});o.v=TY.reduce(function(a,t){return a+o.t[t]},0);return o})}
 var EMPTY='<div class="wr-empty">No records in this period</div>';
 function legend(){return'<div class="wr-legend">'+TY.map(function(t){return'<span><i style="background:'+TC[t]+'"></i>'+t+'</span>'}).join('')+'</div>'}
 function tick(m){var st=Math.max(1,Math.ceil(m/4));return[st,st*4]}
@@ -12965,7 +12965,7 @@ function amt(e){if(e.txn==='Void')return'—';if(e.txn==='Booking')return fm(num
 function tkCell(e){var t=tkts(e);return t.length?esc(t[0])+(t.length>1?' <small>+'+(t.length-1)+'</small>':''):'—'}
 function pxCell(e){var n=names(e);return n.length?esc(n[0])+(n.length>1?' <small>+'+(n.length-1)+'</small>':''):'—'}
 function recTable(l,opt){opt=opt||{};if(!l.length)return EMPTY;var lim=opt.pager?l.slice(DS.page*PGS,DS.page*PGS+PGS):(opt.limit?l.slice(0,opt.limit):l);
- return'<div class="wr-tw"><table><thead><tr><th>Date</th><th>Type</th><th>Airline</th><th>PNR</th><th>TKT No.</th><th>Passenger(s)</th><th>Route</th><th>Status</th><th class="r">Amount</th><th class="wr-th-act">Action</th></tr></thead><tbody>'+lim.map(function(r){var e=r.e,st=status(e);return'<tr><td title="'+fmtD(e.date)+'">'+fmtD(e.date).replace(/ (\d{2})(\d{2})$/," '$2")+'</td><td>'+pill(e.txn,TC[e.txn]||'#475569')+'</td><td>'+esc(e.airline||'—')+'</td><td class="mono">'+esc(e.pnrGds)+'</td><td class="mono">'+tkCell(e)+'</td><td>'+pxCell(e)+'</td><td>'+esc(e.sector||'—')+'</td><td>'+pill(st,SC[st]||'#475569')+dueP(e)+'</td><td class="r">'+amt(e)+'</td><td class="wr-td-act"><button type="button" class="wr-link wr-dots" data-act="open" data-i="'+r.i+'" title="Open record" aria-label="Open record">'+lui('dots',16)+'</button></td></tr>'}).join('')+'</tbody></table></div>'+(opt.pager?pager(l.length):'')+(!opt.pager&&opt.limit&&l.length>opt.limit?'<div style="text-align:center;margin-top:10px"><button type="button" class="wr-link" data-act="more">Show more ('+(l.length-opt.limit)+' left)</button></div>':'')}
+ return'<div class="wr-tw"><table><thead><tr><th>Date</th><th>Type / status</th><th>Airline</th><th>PNR</th><th>TKT No.</th><th>Passenger(s)</th><th>Route</th><th class="r">Amount</th><th class="wr-th-act">Action</th></tr></thead><tbody>'+lim.map(function(r){var e=r.e,st=status(e);return'<tr><td title="'+fmtD(e.date)+'">'+fmtD(e.date).replace(/ (\d{2})(\d{2})$/," '$2")+'</td><td>'+pill(e.txn,TC[e.txn]||'#475569')+(({Ticketing:'Ticketed',Booking:'Booked',Reissue:'Reissued',Void:'Voided'})[e.txn]===st?'':'<br>'+pill(st,SC[st]||'#475569'))+dueP(e)+'</td><td>'+esc(e.airline||'—')+'</td><td class="mono">'+esc(e.pnrGds)+'</td><td class="mono">'+tkCell(e)+'</td><td>'+pxCell(e)+'</td><td>'+esc(e.sector||'—')+'</td><td class="r">'+amt(e)+'</td><td class="wr-td-act"><button type="button" class="wr-link wr-dots" data-act="open" data-i="'+r.i+'" title="Open record" aria-label="Open record">'+lui('dots',16)+'</button></td></tr>'}).join('')+'</tbody></table></div>'+(opt.pager?pager(l.length):'')+(!opt.pager&&opt.limit&&l.length>opt.limit?'<div style="text-align:center;margin-top:10px"><button type="button" class="wr-link" data-act="more">Show more ('+(l.length-opt.limit)+' left)</button></div>':'')}
 
 var PGS=10;
 function pager(n){var pg=Math.ceil(n/PGS);if(DS.page>=pg)DS.page=Math.max(0,pg-1);var a=DS.page*PGS+1,b=Math.min(n,DS.page*PGS+PGS),h='<div class="wr-pager"><span class="wr-pg-i">Showing '+a+' – '+b+' of '+n+' record'+(n===1?'':'s')+'</span>';
@@ -15970,7 +15970,7 @@ function age(e){var t=Date.parse(e.date||'');if(isNaN(t))return'';var d=Math.flo
 function paint(){var dash=$('wr-dash');if(!dash||!dash.parentNode)return;if(panel.parentNode!==dash.parentNode)dash.parentNode.insertBefore(panel,dash);
  var b=booked(),s=b.map(function(x){return(x.e._id||x.i)+'|'+x.e.pnrGds+'|'+x.e.pname+'|'+x.e.sector}).join('~');if(s===sig)return;sig=s;
  if(!b.length){panel.hidden=true;panel.innerHTML='';return}panel.hidden=false;
- panel.innerHTML='<details open><summary>✈ Booked — awaiting ticket ('+b.length+')</summary>'+b.slice(0,15).map(function(x){var e=x.e,a=age(e),old=a&&a!=='today'&&a!=='1d ago';
+ panel.innerHTML='<details'+(b.length<=2?' open':'')+'><summary>✈ Booked — awaiting ticket ('+b.length+')</summary>'+b.slice(0,15).map(function(x){var e=x.e,a=age(e),old=a&&a!=='today'&&a!=='1d ago';
   return'<div class="bki-r"><b>'+esc(e.pnrGds||'—')+'</b><span>'+esc(String(e.pname||'—').split(/[,;\n]+/).map(function(z){return z.trim()}).filter(Boolean).join(', '))+'</span><span class="bki-m">'+esc(e.sector||'')+'</span><span class="'+(old?'bki-w':'bki-m')+'">'+esc(a)+'</span><button type="button" class="bki-go" data-bki="'+x.i+'">✓ Mark Issued</button><button type="button" class="bki-cx" data-bkc="'+x.i+'">✕ Cancel</button></div>'}).join('')+(b.length>15?'<div class="bki-m" style="padding-top:6px">+ '+(b.length-15)+' more — open a record and use Mark Issued.</div>':'')+'</details>'}
 setInterval(paint,1500);paint();
 /* ---- 2) "Mark Issued" inside Record Details ---- */
@@ -16746,6 +16746,45 @@ html body #ptc-root #ptc-nav{gap:4px}
 @media(max-width:1300px){#ptc-root .wr-k2 span,#ptc-root .wr-k2 small{white-space:normal}#ptc-root .wr-k2 b{font-size:24px}#ptc-root .wr-k2{column-gap:10px}}
 
 /* New Record form: same neutral button system (no electric blue) */
+/* ---- screen fit: Work Record + Activity Tracker ---- */
+html body #ptc-root .wr-kpis{gap:10px}
+html body #ptc-root .wr-k2{padding:10px 12px 26px;column-gap:10px;grid-template-columns:36px minmax(0,1fr)}
+html body #ptc-root .wr-k2 span,html body #ptc-root .wr-k2 small{white-space:normal;overflow:hidden;text-overflow:ellipsis}
+html body #ptc-root .wr-k2 b{font-size:24px}
+html body #ptc-root .wr-k2 i{width:36px;height:36px}
+html body #ptc-root .wr .wr-tw table{min-width:0;width:100%;table-layout:fixed}
+html body #ptc-root .wr .wr-tw th,html body #ptc-root .wr .wr-tw td{padding:8px 6px;font-size:12px;white-space:normal;word-break:break-word;overflow:hidden;vertical-align:middle}
+html body #ptc-root .wr .wr-tw td .wr-pill,html body #ptc-root .wr .wr-tw th{white-space:nowrap}
+html body #ptc-root .wr .wr-tw th:nth-child(1){width:9%}html body #ptc-root .wr .wr-tw th:nth-child(2){width:14%}html body #ptc-root .wr .wr-tw th:nth-child(3){width:7%}html body #ptc-root .wr .wr-tw th:nth-child(4){width:10%}html body #ptc-root .wr .wr-tw th:nth-child(5){width:16%}html body #ptc-root .wr .wr-tw th:nth-child(6){width:17%}html body #ptc-root .wr .wr-tw th:nth-child(7){width:13%}html body #ptc-root .wr .wr-tw th:nth-child(8){width:8%}html body #ptc-root .wr .wr-tw th:nth-child(9){width:6%}
+html body #ptc-root .wr .wr-tw .mono{font-size:11px}
+html body #ptc-root .wr-log .wr-tw{overflow-x:hidden}
+html body #ptc-root .wr-act .wr-ov{gap:10px}
+html body #ptc-root .wr-act .wr-ov svg{width:96px;height:96px}
+html body #ptc-root .wr-trend svg{max-height:120px}
+html body #ptc-root .wr-side .wr-card{padding:12px 14px}
+html body #ptc-root .wr-side .wr-card h3{margin-bottom:8px}
+/* Activity tracker */
+html body #pwi-root .hm-imp{align-items:center}
+html body #pwi-root .hm-tiles{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+html body #pwi-root .hm-tiles>div{display:grid;grid-template-columns:28px 1fr;column-gap:8px;align-items:center;text-align:left;padding:8px 10px}
+html body #pwi-root .hm-tiles .hm-ti{grid-row:1/3}
+html body #pwi-root .hm-tiles .hm-tl{min-height:0;font-size:11px}
+html body #pwi-root .hm-tiles b{font-size:18px;grid-column:2}
+html body #pwi-root .hm-dn{flex-direction:column;align-items:center;gap:6px}
+html body #pwi-root .hm-dl2{width:100%}
+html body #pwi-root .hm-dl2>div{display:flex;align-items:center;gap:6px;min-width:0}
+html body #pwi-root .hm-dl2 span{white-space:normal;overflow:visible;text-overflow:clip;flex:1;min-width:0}
+html body #pwi-root .hm-dl2 b{margin-left:auto;white-space:nowrap}
+html body #pwi-root #hm-entry textarea{min-height:60px}
+html body #pwi-root .hm-card{padding:12px 14px}
+
+html body #ptc-root .wr-log .wr-tw{max-height:calc(100vh - 560px);min-height:260px;overflow-y:auto}
+html body #ptc-root .wr-log .wr-tw thead th{position:sticky;top:0;z-index:1}
+html body #ptc-root .wr-th-act,html body #ptc-root .wr-td-act{text-align:center;padding-left:2px;padding-right:2px}
+@media(max-height:820px){html body #ptc-root .wr-k2{padding-bottom:10px}html body #ptc-root .wr-k2 .wr-sp{display:none}html body #pwi-root .hm-card{padding:10px 12px}}
+@media(max-height:820px){html body #pwi-root #hm-entry .pwi-entry{gap:6px 10px;padding:12px}html body #pwi-root #hm-entry select,html body #pwi-root #hm-entry input[type=text],html body #pwi-root #hm-entry input[type=date],html body #pwi-root #hm-entry input[type=time]{padding-top:6px;padding-bottom:6px}html body #pwi-root #hm-entry textarea{min-height:44px}html body #pwi-root .hm-k{padding:8px 12px}}
+@media(max-height:900px){html body #ptc-root .wr-k2 b{font-size:22px}html body #ptc-root .wr .wr-tw td{padding:6px}}
+
 #pwi-root .hm-rates:empty{display:none}
 #pwi-root .hm-tiles b{font-size:20px}
 #pwi-root .hm-cap{margin-left:auto;font-size:11.5px;color:#667085}
