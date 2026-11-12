@@ -4996,7 +4996,7 @@ html[data-theme="dark"] #pwi-root .pwi-import textarea{background:#0E1E36;border
 
       <div id="pwi-pane-home">
         <div class="hm-head"><div><h2>Activity Tracker</h2><p>Track your daily tasks, performance and create meaningful impact.</p></div>
-          <div class="hm-tools"><div class="hm-dsel"><button type="button" data-act="hm-prev" aria-label="Previous day">‹</button><input type="date" id="hm-date" aria-label="Selected date"><button type="button" id="hm-next" data-act="hm-next" aria-label="Next day">›</button></div><input type="search" id="hm-q" placeholder="Search client, PNR, task, or keyword…" aria-label="Search"><button type="button" class="pwi-btn pri" data-act="hm-new">+ New Record</button></div></div>
+          <div class="hm-tools"><div class="hm-dsel"><button type="button" data-act="hm-prev" aria-label="Previous day">‹</button><input type="date" id="hm-date" aria-label="Selected date"><button type="button" id="hm-next" data-act="hm-next" aria-label="Next day">›</button></div><input type="search" id="hm-q" placeholder="Filter this day's tasks…" aria-label="Search"><button type="button" class="pwi-btn pri" data-act="hm-new">+ New Record</button></div></div>
         <div class="hm-kpis" id="hm-kpis"></div><div class="hm-rates" id="hm-rates"></div>
         <div class="hm-cols"><div class="hm-col"><div class="pwi-card hm-card" id="hm-impact"></div><div class="pwi-card hm-card" id="hm-over"></div></div><div class="hm-col"><div id="hm-entry"></div><div class="pwi-card hm-card" id="hm-recent"></div></div></div>
         <div class="pwi-card hm-card hm-sum" id="hm-sum"></div>
@@ -12462,7 +12462,7 @@ A.onChange(A.fillForm);
   function hmDate(){ return HM.d || todayISO(); }
   function cnt(l, f){ return l.filter(f).length; }
   function hmPct(a, b){ return b ? Math.round((a - b) * 100 / b) : (a ? null : 0); }
-  function hmDelta(a, b, suf){ var p = hmPct(a, b), t = p == null ? 'new' : p > 0 ? '▲ ' + p + '%' : p < 0 ? '▼ ' + Math.abs(p) + '%' : '0%'; return '<small class="hm-dl '+(p == null || p > 0 ? 'up' : p < 0 ? 'dn' : '')+'">'+t+(suf ? ' <em>'+suf+'</em>' : '')+'</small>'; }
+  function hmDelta(a, b, suf){ var p = hmPct(a, b), sm = a < 5 && b < 5 && a !== b, t = sm ? (a > b ? '▲ ' : '▼ ') + Math.abs(a - b) : p == null ? 'new' : p > 0 ? '▲ ' + p + '%' : p < 0 ? '▼ ' + Math.abs(p) + '%' : '0%'; if(sm) p = a > b ? 1 : -1; return '<small class="hm-dl '+(p == null || p > 0 ? 'up' : p < 0 ? 'dn' : '')+'">'+t+(suf ? ' <em>'+suf+'</em>' : '')+'</small>'; }
   function hmWin(kind, d){
     var D = parseISO(d), f, pf, pt;
     if(kind === 'last7'){ f = addDays(D, -6); pf = addDays(f, -7); pt = addDays(f, -1); }
@@ -12495,6 +12495,11 @@ A.onChange(A.fillForm);
     return '<svg viewBox="0 0 '+W+' '+H+'" class="hm-csvg" role="img" aria-label="Tasks and resolution rate">'+g+bars+line+dots+tag+lab+'</svg>';
   }
   function hmChart(key, el, cfg){ if(hmCh[key]){ try{ hmCh[key].destroy(); }catch(e){} delete hmCh[key]; } if(el && window.Chart){ try{ hmCh[key] = new Chart(el, cfg); }catch(e){} } }
+  function hmAttn(E2){
+    var o = E2.open || [], h = '<div class="hm-attn"><h4>Needs attention</h4>';
+    if(!o.length) return h + '<div class="hm-clear"><i>✓</i><span>All clear. No pending or follow-up tasks in this period.</span></div></div>';
+    return h + o.slice(0, 4).map(function(a){ return '<div class="hm-ai"><b>'+esc(coName(a))+'</b><span>'+esc(typeLabel(a))+'</span><em>'+esc(a.status)+'</em></div>'; }).join('') + (o.length > 4 ? '<button type="button" class="pwi-link" data-act="hm-all">View all '+o.length+' open items →</button>' : '') + '</div>';
+  }
   function renderHome(){
     var d = hmDate(), T = todayISO(), pd = iso(addDays(parseISO(d), -1)), isT = d === T;
     ['t', 'd'].forEach(function(k){ if(hmCh[k]){ try{ hmCh[k].destroy(); }catch(e){} delete hmCh[k]; } });
@@ -12505,29 +12510,29 @@ A.onChange(A.fillForm);
     $('hm-kpis').innerHTML = [['Total Tasks', E.n, P.n, '#2563C9', IC.total, 'tot'], ['Solved', E.S.Solved, P.S.Solved, '#1E9E5A', ICON.Solved], ['Resolved', E.S.Resolved, P.S.Resolved, '#0E9AA7', ICON.Resolved], ['Pending', E.S.Pending, P.S.Pending, '#F59E0B', ICON.Pending], ['Follow-up', E.S.FU, P.S.FU, '#7C3AED', ICON['Follow-up']]].map(function(k){
       var right = k[5] ? hmDelta(k[1], k[2]) : '<small class="hm-dl" style="color:'+k[3]+'">'+(E.n ? Math.round(k[1] * 100 / E.n) : 0)+'%</small>';
       return '<div class="hm-k"><span class="hm-ki" style="background:'+k[3]+'">'+k[4]+'</span><div class="hm-kv"><span>'+k[0]+'</span><b>'+k[1]+'</b></div><div class="hm-kr">'+right+'<em>'+(k[5] ? 'vs. previous day' : 'of total tasks')+'</em></div></div>'; }).join('');
-    $('hm-rates').innerHTML = '<div><span>Resolution Rate</span><b>'+E.S.rate+'</b><em><u style="width:'+(parseInt(E.S.rate, 10) || 0)+'%;background:#1E9E5A"></u></em></div><div><span>Repeated Issues</span><b>'+E.S.rep+'</b><em><u style="width:'+(parseInt(E.S.rep, 10) || 0)+'%;background:#C97F1E"></u></em></div><div class="hm-note"><i></i>All tasks are from Air Ticketing services</div>';
+    $('hm-rates').innerHTML = '';
     /* Performance & Impact */
     var W = hmWin(HM.imp, d), c2 = acts.filter(function(a){ return inR(a, W.f, W.t); }), p2 = acts.filter(function(a){ return inR(a, W.pf, W.pt); }), E2 = evalSet(c2), P2 = evalSet(p2), sc = E2.score, circ = 251.3;
     var tiles = [['Ticketing Tasks', IC.plane, function(l){ return cnt(l, function(a){ return a.category === 'Ticketing'; }); }], ['Reissue Tasks', ICON.Resolved, function(l){ return cnt(l, function(a){ return a.category === 'Reissue'; }); }], ['Refund / Void Tasks', IC.ref, function(l){ return cnt(l, function(a){ return a.category === 'Refund/Void' || a.category === 'Refund' || a.category === 'Cancellation & Void' || a.category === 'Cancellation'; }); }], ['Other Tasks', IC.cancel, function(l){ return cnt(l, function(a){ return a.category === 'Others'; }); }]];
     var rt = E2.S.rate, title = !E2.n ? 'Ready when you are' : rt === '100%' ? 'Great work!' : 'Keep going';
     $('hm-impact').innerHTML = '<div class="hm-ch"><span class="hm-ico">'+IC.chart+'</span><div><h3>Your Performance &amp; Impact</h3><p>How your work creates value for the company</p></div><select id="hm-imp" class="hm-sel hm-sm"><option value="day"'+(HM.imp === 'day' ? ' selected' : '')+'>'+(isT ? 'Today' : 'Selected day')+'</option><option value="last7"'+(HM.imp === 'last7' ? ' selected' : '')+'>Last 7 days</option><option value="month"'+(HM.imp === 'month' ? ' selected' : '')+'>This month</option></select></div>' +
       '<div class="hm-imp"><div class="hm-gauge"><div class="hm-gw"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke="#E6ECF4" stroke-width="9"/><circle cx="50" cy="50" r="40" fill="none" stroke="#1E9E5A" stroke-width="9" stroke-linecap="round" stroke-dasharray="'+((sc || 0) / 100 * circ * 0.75).toFixed(1)+' '+circ+'" transform="rotate(135 50 50)"/></svg><b>'+(sc == null ? '—' : sc + '%')+'</b></div><span>Performance Score</span>'+(sc != null && P2.score != null ? '<small class="hm-dl '+(sc >= P2.score ? 'up' : 'dn')+'">'+(sc >= P2.score ? '▲ +' : '▼ ')+(sc - P2.score)+' pts <em>vs. previous</em></small>' : '<small class="hm-dl"><em>'+(sc == null ? 'needs '+SC.min+'+ records' : 'no earlier score')+'</em></small>')+'</div>' +
-      '<div class="hm-tiles">'+tiles.map(function(t){ var v = t[2](c2); return '<div><span class="hm-ti">'+t[1]+'</span><span class="hm-tl">'+t[0]+'</span><b>'+v+'</b>'+hmDelta(v, t[2](p2))+'</div>'; }).join('')+'</div></div>' +
-      '<button type="button" class="hm-banner" data-act="hm-report"><span class="hm-bi">'+IC.star+'</span><div><b>'+title+'</b><span>'+(E2.n ? 'Your resolution rate is '+rt+(HM.imp === 'day' && isT ? ' today' : ' for this period')+'. '+(rt === '100%' ? 'Keep it up!' : E2.open.length + ' open item(s) remain.') : 'Log a task to see your evaluation.')+'</span></div><i>›</i></button>';
+      '<div class="hm-tiles">'+[['Clients served', IC.users, E2.clients], ['Avg. effort', ICON.Pending, effLabel(c2)], ['Repeat issues', ICON.Resolved, E2.repeat], ['Closed work', IC.chart, E2.closed.length + ' / ' + E2.n]].map(function(t){ return '<div><span class="hm-ti">'+t[1]+'</span><span class="hm-tl">'+t[0]+'</span><b>'+t[2]+'</b></div>'; }).join('')+'</div></div>' +
+      hmAttn(E2);
     /* Performance Overview */
-    var N = HM.ov, labels = [], nums = [], rates = [], day = parseISO(d), lastN = [];
+    var N = HM.imp === 'month' ? 30 : 7, labels = [], nums = [], rates = [], day = parseISO(d), lastN = [];
     for(var i = N - 1; i >= 0; i--){ var x = iso(addDays(day, -i)), l = acts.filter(function(a){ return a.date === x; }), cl = cnt(l, function(a){ return !isOpenS(a.status); }); labels.push(pad(parseISO(x).getDate()) + ' ' + MON[parseISO(x).getMonth()]); nums.push(l.length); rates.push(l.length ? Math.round(cl * 100 / l.length) : null); lastN = lastN.concat(l); }
     var E7 = evalSet(lastN), dist = tally(lastN, function(a){ return a.category; }), top = dist.slice(0, 5), rest = dist.slice(5).reduce(function(s, r){ return s + r[1]; }, 0); if(rest) top.push(['Other', rest]);
-    $('hm-over').innerHTML = '<div class="hm-ch"><h3 class="hm-h3">Performance Overview</h3><select id="hm-ov" class="hm-sel hm-sm"><option value="7"'+(N === 7 ? ' selected' : '')+'>Last 7 days</option><option value="14"'+(N === 14 ? ' selected' : '')+'>Last 14 days</option><option value="30"'+(N === 30 ? ' selected' : '')+'>Last 30 days</option></select></div>' +
+    $('hm-over').innerHTML = '<div class="hm-ch"><h3 class="hm-h3">Performance Overview</h3><span class="hm-cap">Last '+N+' days, ends on the selected date</span></div>' +
       '<div class="hm-ov"><div class="hm-box"><h4>Tasks &amp; Resolution Rate</h4><div class="hm-lg"><i style="background:#2563C9"></i>Total Tasks <i style="background:#1E9E5A"></i>Resolution Rate</div><div class="hm-cv"><canvas id="hm-c-t" aria-label="Tasks and resolution rate"></canvas></div></div>' +
       '<div class="hm-box"><h4>Task Distribution</h4>'+(lastN.length ? '<div class="hm-dn"><div class="hm-dc"><canvas id="hm-c-d" aria-label="Task distribution"></canvas><div class="hm-ct"><b>'+lastN.length+'</b><span>Total Tasks</span></div></div><div class="hm-dl2">'+top.map(function(r, i){ return '<div><i style="background:'+PAL[i % PAL.length]+'"></i><span>'+esc(r[0])+'</span><b>'+r[1]+' <small>('+Math.round(r[1] * 100 / lastN.length)+'%)</small></b></div>'; }).join('')+'</div></div>' : '<div class="pwi-empty">No records in this period.</div>')+'</div></div>' +
-      '<div class="hm-wi"><h4>Your Work Impact</h4><div><div><span class="hm-ti">'+IC.users+'</span><small>Clients Served</small><b>'+E7.clients+'</b></div><div><span class="hm-ti">'+ICON.Pending+'</span><small>Avg. Effort</small><b>'+effLabel(lastN)+'</b></div><div><span class="hm-ti">'+ICON.Resolved+'</span><small>Repeat Issues</small><b>'+E7.repeat+'</b></div><div><span class="hm-ti">'+IC.chart+'</span><small>Closed Work</small><b>'+E7.closed.length+' / '+E7.n+'</b></div></div></div>';
+      '';
     var cv = $('hm-c-t'); if(cv && cv.parentNode) cv.parentNode.innerHTML = hmCombo(labels, nums, rates);
     var dc = $('hm-c-d'); if(dc && dc.parentNode){ var tot = lastN.length, off = 0, C = 2 * Math.PI * 40; dc.parentNode.insertAdjacentHTML('afterbegin', '<svg viewBox="0 0 100 100" class="hm-dsvg" role="img" aria-label="Task distribution"><circle cx="50" cy="50" r="40" fill="none" stroke="#EEF2F7" stroke-width="16"/>' + top.map(function(r, i){ var len = r[1] / tot * C, el = '<circle cx="50" cy="50" r="40" fill="none" stroke="'+PAL[i % PAL.length]+'" stroke-width="16" stroke-dasharray="'+len.toFixed(2)+' '+(C - len).toFixed(2)+'" stroke-dashoffset="'+(-off).toFixed(2)+'" transform="rotate(-90 50 50)"><title>'+esc(r[0])+': '+r[1]+'</title></circle>'; off += len; return el; }).join('') + '</svg>'); dc.remove(); }
     /* Recent activity */
     var q = HM.q, list = cur.filter(function(a){ return (!q || (hay(a) + ' ' + (a.ref || '') + ' ' + (a.taskType || '') + ' ' + (a.customType || '') + ' ' + (a.importText || '')).toLowerCase().indexOf(q) > -1) && (!HM.src || a.source === HM.src) && (!HM.typ || a.category === HM.typ) && (!HM.sts || a.status === HM.sts); });
-    var pages = Math.max(1, Math.ceil(list.length / 5)); HM.pg = Math.min(Math.max(1, HM.pg), pages);
-    var rows = list.slice((HM.pg - 1) * 5, HM.pg * 5), pg = '';
+    var pages = Math.max(1, Math.ceil(list.length / 10)); HM.pg = Math.min(Math.max(1, HM.pg), pages);
+    var rows = list.slice((HM.pg - 1) * 10, HM.pg * 10), pg = '';
     for(var p = Math.max(1, Math.min(HM.pg - 1, pages - 2)); p <= Math.min(pages, Math.max(HM.pg - 1, 1) + 2); p++) pg += '<button type="button" class="'+(p === HM.pg ? 'on' : '')+'" data-act="hm-page" data-v="'+p+'">'+p+'</button>';
     $('hm-recent').innerHTML = '<div class="hm-ch"><span class="hm-ico">'+IC.list+'</span><h3 class="hm-h3">Recent Activity</h3><div class="hm-fl">'+hmSel('hm-fs', SOURCES, HM.src, 'All Sources')+hmSel('hm-ft', ALLCATS, HM.typ, 'All Task Types')+hmSel('hm-fst', STATUSES, HM.sts, 'All Status')+'<button type="button" class="hm-fb" data-act="hm-clear" title="Clear filters" aria-label="Clear filters">⛛</button></div></div>' +
       '<div class="pwi-twrap"><table class="hm-t"><thead><tr><th>Time</th><th>Client / Company</th><th>Task</th><th>Source / Type</th><th>Outcome</th><th>Effort</th><th>Action</th></tr></thead><tbody>'+(rows.length ? rows.map(function(a){ var ef = a.effort === 'Quick' ? 'Low' : a.effort === 'Deep' ? 'High' : a.effort === 'Standard' ? 'Medium' : '—';
@@ -12535,12 +12540,22 @@ A.onChange(A.fillForm);
       '<div class="hm-pg"><span>Showing '+rows.length+' of '+list.length+' records</span><span class="hm-pn"><button type="button" data-act="hm-page" data-v="'+(HM.pg - 1)+'"'+(HM.pg <= 1 ? ' disabled' : '')+'>‹</button>'+pg+'<button type="button" data-act="hm-page" data-v="'+(HM.pg + 1)+'"'+(HM.pg >= pages ? ' disabled' : '')+'>›</button></span><button type="button" class="pwi-link" data-act="hm-all">View all activity →</button></div>';
     /* Summary */
     var tt = tally(cur, function(a){ return typeLabel(a); })[0], ts = tally(cur, function(a){ return a.source; })[0], ef2 = effLabel(cur);
-    $('hm-sum').innerHTML = '<div class="hm-sumi"><span class="hm-ico">'+IC.chart+'</span><div><h3>'+(isT ? "Today's" : esc(fmtDate(d))+'')+' Performance Summary</h3><p>'+(E.n ? 'You completed '+E.closed.length+' out of '+E.n+' tasks with '+E.S.rate+' resolution rate.'+(E.score != null ? ' <b>'+esc(band(E.score))+' performance!</b>' : '') : 'No tasks recorded for this day.')+'</p></div></div>' +
-      '<div class="hm-st"><span class="hm-ti">'+IC.plane+'</span><div><small>Top Task Type</small><b>'+(tt ? esc(tt[0]) : '—')+'</b>'+(tt ? '<em>('+tt[1]+' tasks)</em>' : '')+'</div></div><div class="hm-st"><span class="hm-sc" style="background:'+(ts ? srcColor(ts[0]) : '#8A97A8')+'">'+(ts ? esc(ts[0].charAt(0)) : '–')+'</span><div><small>Top Source</small><b>'+(ts ? esc(ts[0]) : '—')+'</b>'+(ts ? '<em>('+ts[1]+' tasks)</em>' : '')+'</div></div><div class="hm-st"><span class="hm-ti">'+ICON.Pending+'</span><div><small>Avg. Effort</small><b>'+ef2+'</b>'+(E.n ? '<em>('+E.n+' tasks)</em>' : '')+'</div></div><button type="button" class="hm-rep" data-act="hm-report">View Detailed Report →</button>';
+    $('hm-sum').innerHTML = '<div class="hm-sumi"><span class="hm-ico">'+IC.chart+'</span><div><h3>'+(isT ? "Today's" : esc(fmtDate(d))+'')+' Highlights</h3></div></div>' +
+      '<div class="hm-st"><span class="hm-ti">'+IC.plane+'</span><div><small>Top Task Type</small><b>'+(tt ? esc(tt[0]) : '—')+'</b>'+(tt ? '<em>('+tt[1]+' tasks)</em>' : '')+'</div></div><div class="hm-st"><span class="hm-sc" style="background:'+(ts ? srcColor(ts[0]) : '#8A97A8')+'">'+(ts ? esc(ts[0].charAt(0)) : '–')+'</span><div><small>Top Source</small><b>'+(ts ? esc(ts[0]) : '—')+'</b>'+(ts ? '<em>('+ts[1]+' tasks)</em>' : '')+'</div></div><button type="button" class="hm-rep" data-act="hm-report">View Detailed Report →</button>';
   }
+  (function(){
+    var K = 'aeroops.hmEntryMin';
+    function apply(){ var e = document.getElementById('hm-entry'); if(!e) return; var m = '0'; try{ m = localStorage.getItem(K) || '0'; }catch(x){} e.classList.toggle('hm-min', m === '1'); }
+    document.addEventListener('click', function(ev){
+      var h = ev.target && ev.target.closest ? ev.target.closest('#hm-entry .pwi-entry > .hm-ch') : null; if(!h) return;
+      var e = document.getElementById('hm-entry'); if(!e) return; var v = !e.classList.contains('hm-min'); e.classList.toggle('hm-min', v);
+      try{ localStorage.setItem(K, v ? '1' : '0'); }catch(x){}
+    });
+    setTimeout(apply, 1500);
+  })();
   function homeAct(act, v){
     var d = parseISO(hmDate()), T = todayISO();
-    if(act === 'hm-new'){ fillNow(); var c = $('pwi-company'); c.scrollIntoView({behavior:'smooth', block:'center'}); c.focus(); return true; }
+    if(act === 'hm-new'){ var _en = $('hm-entry'); if(_en) _en.classList.remove('hm-min'); fillNow(); var c = $('pwi-company'); c.scrollIntoView({behavior:'smooth', block:'center'}); c.focus(); return true; }
     if(act === 'hm-all'){ setTab('dash'); return true; }
     if(act === 'hm-report'){ if(hmDate() === T) PS.p = 'today'; else { PS.p = 'custom'; PS.from = PS.to = hmDate(); } setTab('perf'); return true; }
     if(act === 'hm-clear'){ HM.src = HM.typ = HM.sts = HM.q = ''; $('hm-q').value = ''; HM.pg = 1; }
@@ -16731,6 +16746,23 @@ html body #ptc-root #ptc-nav{gap:4px}
 @media(max-width:1300px){#ptc-root .wr-k2 span,#ptc-root .wr-k2 small{white-space:normal}#ptc-root .wr-k2 b{font-size:24px}#ptc-root .wr-k2{column-gap:10px}}
 
 /* New Record form: same neutral button system (no electric blue) */
+#pwi-root .hm-rates:empty{display:none}
+#pwi-root .hm-tiles b{font-size:20px}
+#pwi-root .hm-cap{margin-left:auto;font-size:11.5px;color:#667085}
+#pwi-root .hm-attn{margin-top:12px;border:1px solid #F3E2BC;background:#FDF6E8;border-radius:12px;padding:10px 14px}
+#pwi-root .hm-attn h4{margin:0 0 6px;font-size:13px}
+#pwi-root .hm-ai{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:center;padding:5px 0;border-top:1px solid #F3E2BC;font-size:12px}
+#pwi-root .hm-ai:first-of-type{border-top:0}
+#pwi-root .hm-ai em{font-style:normal;font-weight:600;color:#9A6A10}
+#pwi-root .hm-clear{display:flex;align-items:center;gap:10px;font-size:13px;color:#16875A}
+#pwi-root .hm-clear i{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:#E6F4EC;font-style:normal;font-weight:700}
+#pwi-root #hm-entry .pwi-entry>.hm-ch{cursor:pointer;display:flex;align-items:center}
+#pwi-root #hm-entry .pwi-entry>.hm-ch::after{content:'\25BE';margin-left:auto;color:#667085;font-size:14px}
+#pwi-root #hm-entry.hm-min .pwi-entry>.hm-ch::after{content:'\25B8'}
+#pwi-root #hm-entry.hm-min .pwi-entry>*:not(.hm-ch){display:none!important}
+html[data-theme="dark"] #pwi-root .hm-attn{background:var(--card);border-color:var(--ao-soft)}
+html[data-theme="dark"] #pwi-root .hm-ai{border-color:var(--ao-soft)}
+
 #ptc-root .wr-lgn{font-style:normal;margin-left:auto;margin-right:10px;color:#667085;font-size:12px}
 #ptc-root .wr-clear{display:flex;align-items:center;gap:10px;padding:12px 16px;font-size:13.5px;color:#16875A}
 #ptc-root .wr-clr-i{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:#E6F4EC;font-weight:700}
