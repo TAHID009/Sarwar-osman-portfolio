@@ -15817,7 +15817,7 @@ sec.addEventListener('click',function(e){var t=e.target.closest('[data-t],[data-
  else if(g==='tstar')starter()
  else if(g==='tsrc')openSrc(t.dataset.doc,t.dataset.pg)
  else if(g==='rcp'){try{navigator.clipboard.writeText(t.dataset.c);t.style.color='#16A34A';setTimeout(function(){t.style.color=''},1200)}catch(x){}}
- else if(g==='radd')addRel(t.dataset.c,t.dataset.s)
+ else if(g==='radd')addRel(t.dataset.c,t.dataset.s,t.dataset.l)
  else if(g==='relo'){var rid2=t.dataset.id;sel=rid2;pdf=null;setTab('d');setTimeout(function(){loadDoc(rid2,parseInt(t.dataset.pg,10)||1)},300)}
  else if(!n)return;
  else if(g==='edt')form('Edit title',[['Title',n.title],['Caution note (optional, shown under the table)',n.caution||'',0,'t']],function(v){if(v[0])db.collection('kh_notes').doc(n.id).update({title:v[0],caution:v[1],updatedAt:now()}).catch(fail)},function(){if(confirm('Delete "'+n.title+'" and all its rows and screenshots?'))db.collection('kh_notes').doc(n.id).delete().then(function(){delShots(n.id)}).catch(fail)});
@@ -15929,30 +15929,39 @@ var TXT={},RC={},RK='',STOP='and,or,the,for,with,from,manual,auto,of,in,on,to,by
 function ptext(d){if(TXT[d.id])return Promise.resolve(TXT[d.id]);if(d.txt){TXT[d.id]=d.txt;return Promise.resolve(d.txt)}
  return new Promise(function(res){lib(function(){d.blob.arrayBuffer().then(function(b){return pdfjsLib.getDocument({data:b}).promise}).then(function(pf){var out=[],i=1;(function nx(){if(i>pf.numPages){TXT[d.id]=out;d.txt=out;tx('readwrite',function(s){return s.put(d)}).catch(function(){});res(out);return}pf.getPage(i).then(function(pp){return pp.getTextContent()}).then(function(c){out.push(c.items.map(function(x){return x.str}).join(' ').replace(/\s+/g,' '));i++;nx()})})()}).catch(function(){res([])})},function(){res([])})})}
 function okTok(c,KN){if(c.length<3||c.length>60||!/[A-Z]/.test(c))return false;if(/^\d+[A-Z]?$/.test(c)||/^\d{1,2}[A-Z]{3}\d{0,4}$/.test(c))return false;if(KN[c])return true;if(/^\d+=[A-Z]*$/.test(c)||/^[A-Z]+\/$/.test(c))return false;if(!/[¤¥*\/.\-+#@=<>&:]/.test(c)&&!/\d/.test(c))return false;if(/^[A-Z]+([\/\-][A-Z]+)+$/.test(c))return false;return true}
-function addRel(c,src){var n=NS[gsel];if(!n)return;form('Add as task row',[['Task',''],['Command / format',c,0,'t'],['Remarks',src,0,'t']],function(v){var cs=(n.commands||[]).slice();cs.push({description:v[0],syntax:v[1],exceptions:v[2],example:''});sv(n,cs)})}
+function addRel(c,src,l){var n=NS[gsel];if(!n)return;form('Add as task row',[['Task',l||''],['Command / format',c,0,'t'],['Remarks',src,0,'t']],function(v){var cs=(n.commands||[]).slice();cs.push({description:v[0],syntax:v[1],exceptions:v[2],example:''});sv(n,cs)})}
 /* Related commands: finds the pages of your PDFs that match the open title (or selected task), then lists the command-like entries written next to the match */
-function snip(pt,a,b,terms,KN){if(a>0){var sp=pt.indexOf(' ',a);if(sp>-1&&sp<a+25)a=sp+1}var sb=pt.lastIndexOf(' ',b);if(sb>a)b=sb;
- var w=pt.slice(a,b).trim().split(' ').map(function(x,i,ar){var c=x.replace(/^\(+/,'').replace(/[.,:;)(]+$/,''),lo=x.toLowerCase();if(c&&(okTok(c,KN)||(/^[A-Z]{3,8}$/.test(c)&&(ar[i+1]||'').charAt(0)==='(')))return'<code class="kg-ch" data-g="rcp" data-c="'+esc(c)+'" title="Click to copy">'+esc(x)+'</code>';return terms.some(function(t){return lo.indexOf(t)>-1})?'<mark>'+esc(x)+'</mark>':esc(x)});
- return(a>0?'... ':'')+w.join(' ')+' ...'}
+function isCmd(x,ar,i,KN){var c=x.replace(/^\(+/,'').replace(/[-.,:;)(]+$/,'');return c&&(okTok(c,KN)||(/^[A-Z]{3,8}$/.test(c)&&(ar[i+1]||'').charAt(0)==='('))?c:''}
+/* turns a stretch of PDF text into [command, short label] pairs */
+function pairs(txt,KN){var w=txt.split(' ').filter(Boolean),cm=w.map(function(x,i,ar){return isCmd(x,ar,i,KN)}),cons=[],out=[],i,k,t,DS=/^[-\u2013\u2014]+$/;
+ for(i=0;i<w.length;i++){if(!cm[i])continue;var B='',R='',j=i+1,dash=/-$/.test(w[i])||!!(w[j]&&DS.test(w[j]));
+  while(j<w.length&&DS.test(w[j]))j++;
+  if(w[j]&&/^[(\[]/.test(w[j])){for(t=[],k=j;k<w.length&&t.length<9;k++){t.push(w[k]);cons[k]=1;if(/[)\]]$/.test(w[k]))break}R=t.join(' ').replace(/^[(\[]+|[)\]]+$/g,'')}
+  if(!dash){for(t=[],k=i-1;k>=0&&t.length<3;k--){if(cm[k]||cons[k]||!/^[A-Z&]{2,}$/.test(w[k])||/^(OR|AND)$/.test(w[k]))break;t.unshift(w[k])}B=t.join(' ')}
+  if(!R&&!B){for(t=[],k=j;k<w.length&&t.length<5;k++){if(cm[k]||/^\d{1,2}\.$/.test(w[k])||/^(OR|AND)$/.test(w[k]))break;t.push(w[k]);cons[k]=1}R=t.join(' ')}
+  var l=[B,R].filter(Boolean).join(' - ').replace(/\s+/g,' ').trim();if(l.length>70)l=l.slice(0,70);l=l?l.charAt(0).toUpperCase()+l.slice(1).toLowerCase():'';
+  out.push({c:cm[i],l:l})}
+ return out}
 function related(){var el=$('kg-rl');if(!el||!gsel)return;var n=NS[gsel],row=selRow>=0?(n.commands||[])[selRow]:null,cl=function(v){return tkey(v).replace(/[^a-z0-9 ]+/g,' ').replace(/\s+/g,' ').trim()},qq=cl(q);
  var phrase=qq.length>=3?qq:cl(row&&row.description?row.description:ttl(n)),key=gsel+'|'+selRow+'|'+gds+'|'+phrase;RK=key;
  var terms=phrase.split(' ').filter(function(w){return w.length>2&&STOP.indexOf(w)<0}).map(function(w){return w.length>4?w.replace(/s$/,''):w});terms=terms.filter(function(w,i){return terms.indexOf(w)===i});
- var hd='<div class="kg-sht" style="margin:4px 0 6px">Related in your PDFs <span style="font-weight:400;color:var(--km)">for "'+esc(phrase)+'"</span></div>';
+ var hd='<div class="kg-sht" style="margin:4px 0 6px">Related commands <span style="font-weight:400;color:var(--km)">for "'+esc(phrase)+'"</span></div>';
  if(RC[key]){el.innerHTML=RC[key];return}
  if(!phrase||!terms.length){el.innerHTML='';return}
  el.innerHTML=hd+'<div class="kg-hint">Reading your PDFs...</div>';
  var KN={};Object.keys(NS).forEach(function(k){var x=NS[k];if(code(x)!==gds)return;(x.commands||[]).forEach(function(c){String(c.syntax||'').split(/\s+/).forEach(function(w){if(w.length>1)KN[w]=1})})});
  function done(h){RC[key]=h;if(RK===key&&$('kg-rl'))$('kg-rl').innerHTML=h}
  tx('readonly',function(s){return s.getAll()}).then(function(L){var D=(L||[]).filter(function(d){return d.gds===gds});
-  if(!D.length){done(hd+'<div class="kg-hint">Upload a '+gl(gds)+' PDF in Documents to see related commands here.</div>');return}
+  if(!D.length){done(hd+'<div class="kg-hint">Upload a '+gl(gds)+' PDF in Documents (Documents tab, then Drop PDF here). Related commands will appear here.</div>');return}
   var hits=[],empty=0,need=terms.length>1?Math.ceil(terms.length/2):1;
   return Promise.all(D.map(function(d){return ptext(d).then(function(P){if(!P.join('').trim())empty++;P.forEach(function(pt,i){var low=pt.toLowerCase(),m=0,tot=0,pos=[];terms.forEach(function(w){var k=0,j=-1;while((j=low.indexOf(w,j+1))>-1&&k<8){pos.push(j);k++}if(k){m++;tot+=Math.min(k,3)}});if(m>=need)hits.push({d:d,pg:i+1,m:m,tot:tot,pos:pos.sort(function(a,b){return a-b}),pt:pt,low:low})})})})).then(function(){
-   hits.sort(function(a,b){return b.m-a.m||b.tot-a.tot||a.pg-b.pg});
-   var G=hits.slice(0,3).map(function(x){var W=[];x.pos.forEach(function(p){var a=Math.max(0,p-50),b=Math.min(x.pt.length,p+250),l=W[W.length-1];if(l&&a<=l.b)l.b=Math.max(l.b,b);else W.push({a:a,b:b})});
-    W.forEach(function(w){var lw=x.low.slice(w.a,w.b);w.c=terms.filter(function(t){return lw.indexOf(t)>-1}).length});
-    W.sort(function(a,b){return b.c-a.c||a.a-b.a});
-    return'<div class="kg-rc"><div class="kg-rt"><span><b>'+esc(x.d.name.replace(/\.pdf$/i,''))+'</b> &middot; page '+x.pg+'</span><button type="button" class="kg-b" data-g="relo" data-id="'+x.d.id+'" data-pg="'+x.pg+'">Open page</button></div>'+W.slice(0,2).map(function(w){return'<div class="kg-rs" style="margin-top:4px">'+snip(x.pt,w.a,Math.min(w.b,w.a+340),terms,KN)+'</div>'}).join('')+'</div>'}).join('');
-   done(hd+(G?'<div class="kg-hint" style="margin:0 0 6px">Click a blue command to copy it. Open page shows the full table.</div>'+G:'<div class="kg-hint">Nothing found for this in your '+gl(gds)+' PDFs.</div>')+(empty?'<div class="kg-hint" style="margin-top:6px">'+empty+' PDF'+(empty>1?'s have':' has')+' no readable text (scanned pages cannot be searched).</div>':''))})}).catch(function(){if(RK===key&&$('kg-rl'))$('kg-rl').innerHTML=''})}
+   hits.sort(function(a,b){return b.m-a.m||b.tot-a.tot||a.pg-b.pg});var seen={};
+   var G=hits.slice(0,3).map(function(x){var W=[];x.pos.forEach(function(p){var a=Math.max(0,p-60),b=Math.min(x.pt.length,p+450),l=W[W.length-1];if(l&&a<=l.b)l.b=Math.max(l.b,b);else W.push({a:a,b:b})});
+    W.forEach(function(w){var lw=x.low.slice(w.a,w.b);w.c=terms.filter(function(t){return lw.indexOf(t)>-1}).length});W.sort(function(a,b){return b.c-a.c||a.a-b.a});
+    var P=[];W.slice(0,2).forEach(function(w){pairs(x.pt.slice(w.a,Math.min(w.b,w.a+700)),KN).forEach(function(o){if(!seen[o.c]){seen[o.c]=1;P.push(o)}})});
+    var src=x.d.name.replace(/\.pdf$/i,'')+', page '+x.pg;if(!P.length)return'';
+    return'<div class="kg-rt" style="margin:6px 0 4px"><span style="color:var(--km);font-size:12px">'+esc(src)+'</span><button type="button" class="kg-b" style="padding:3px 9px;font-size:12px" data-g="relo" data-id="'+x.d.id+'" data-pg="'+x.pg+'">Open page</button></div>'+P.slice(0,7).map(function(o){return'<div class="kg-rm"><div style="min-width:0"><code>'+esc(o.c)+'</code>'+(o.l?'<div class="kg-hint">'+esc(o.l)+'</div>':'')+'</div><span class="kg-ob" style="flex:none;flex-wrap:nowrap"><button type="button" class="kg-i" title="Copy" data-g="rcp" data-c="'+esc(o.c)+'">'+ic('copy',15)+'</button><button type="button" class="kg-i" title="Add as a task row" data-g="radd" data-c="'+esc(o.c)+'" data-s="'+esc(src)+'" data-l="'+esc(o.l)+'">'+ic('pl',15)+'</button></span></div>'}).join('')}).join('');
+   done(hd+(G?G:'<div class="kg-hint">No related commands found in your '+gl(gds)+' PDFs.</div>')+(empty?'<div class="kg-hint" style="margin-top:6px">'+empty+' PDF'+(empty>1?'s have':' has')+' no readable text (scanned pages cannot be searched).</div>':''))})}).catch(function(){if(RK===key&&$('kg-rl'))$('kg-rl').innerHTML=''})}
 /* screen fit: the Hub fills the window; only the inner panels scroll */
 function fit(){['kg-g','kg-d'].forEach(function(id){var e=$(id);if(!e)return;if(window.innerWidth<761||!e.classList.contains('on')){e.style.height='';return}e.style.height=Math.max(320,window.innerHeight-e.getBoundingClientRect().top-14)+'px'})}
 window.addEventListener('resize',fit);
