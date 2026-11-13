@@ -15688,7 +15688,7 @@ tr.kg-sr td{background:var(--ka)}
 .kg-ob{display:flex;gap:6px;flex-wrap:wrap}.kg-ob .kg-b{padding:4px 10px;font-size:12px}
 .kg-ex{display:none;margin-top:8px;font-size:12px;color:var(--km);white-space:pre-wrap;font-family:ui-monospace,Consolas,monospace}
 .kg-ad{font-size:12.5px;color:var(--ki)}.kg-ad b{display:block;font-size:12px;color:var(--km);margin:0 0 2px}
-#kg-rl{margin-top:2px}.kg-rm{display:flex;gap:6px;align-items:center;justify-content:space-between;padding:6px 8px;border:1px solid var(--kl);border-radius:8px;background:var(--kc);margin:0 0 6px}.kg-rm code{font-family:ui-monospace,Consolas,monospace;font-size:12.5px;word-break:break-all;color:var(--ki);min-width:0}.kg-hint{font-size:12.5px;color:var(--km)}
+#kg-rl{margin-top:2px}.kg-ch{font-family:ui-monospace,Consolas,monospace;font-size:12px;font-weight:600;background:var(--ka);color:var(--kat);padding:1px 5px;border-radius:5px;cursor:pointer;word-break:break-all}.kg-rm{display:flex;gap:6px;align-items:center;justify-content:space-between;padding:6px 8px;border:1px solid var(--kl);border-radius:8px;background:var(--kc);margin:0 0 6px}.kg-rm code{font-family:ui-monospace,Consolas,monospace;font-size:12.5px;word-break:break-all;color:var(--ki);min-width:0}.kg-hint{font-size:12.5px;color:var(--km)}
 .kg-rc{border:1px solid var(--kl);border-radius:10px;padding:8px 10px;margin:0 0 8px;background:var(--kc)}
 .kg-rt{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;font-size:13px;margin:0 0 4px;color:var(--ki)}
 .kg-rs{font-size:12.5px;color:var(--km);line-height:1.55;word-break:break-word}
@@ -15931,25 +15931,28 @@ function ptext(d){if(TXT[d.id])return Promise.resolve(TXT[d.id]);if(d.txt){TXT[d
 function okTok(c,KN){if(c.length<3||c.length>60||!/[A-Z]/.test(c))return false;if(/^\d+[A-Z]?$/.test(c)||/^\d{1,2}[A-Z]{3}\d{0,4}$/.test(c))return false;if(KN[c])return true;if(/^\d+=[A-Z]*$/.test(c)||/^[A-Z]+\/$/.test(c))return false;if(!/[¤¥*\/.\-+#@=<>&:]/.test(c)&&!/\d/.test(c))return false;if(/^[A-Z]+([\/\-][A-Z]+)+$/.test(c))return false;return true}
 function addRel(c,src){var n=NS[gsel];if(!n)return;form('Add as task row',[['Task',''],['Command / format',c,0,'t'],['Remarks',src,0,'t']],function(v){var cs=(n.commands||[]).slice();cs.push({description:v[0],syntax:v[1],exceptions:v[2],example:''});sv(n,cs)})}
 /* Related commands: finds the pages of your PDFs that match the open title (or selected task), then lists the command-like entries written next to the match */
-function related(){var el=$('kg-rl');if(!el||!gsel)return;var n=NS[gsel],row=selRow>=0?(n.commands||[])[selRow]:null;
- var phrase=tkey(row&&row.description?row.description:ttl(n)).replace(/[^a-z0-9 ]+/g,' ').replace(/\s+/g,' ').trim(),key=gsel+'|'+selRow+'|'+gds+'|'+(n.commands||[]).length;RK=key;
+function snip(pt,a,b,terms,KN){if(a>0){var sp=pt.indexOf(' ',a);if(sp>-1&&sp<a+25)a=sp+1}var sb=pt.lastIndexOf(' ',b);if(sb>a)b=sb;
+ var w=pt.slice(a,b).trim().split(' ').map(function(x,i,ar){var c=x.replace(/^\(+/,'').replace(/[.,:;)(]+$/,''),lo=x.toLowerCase();if(c&&(okTok(c,KN)||(/^[A-Z]{3,8}$/.test(c)&&(ar[i+1]||'').charAt(0)==='(')))return'<code class="kg-ch" data-g="rcp" data-c="'+esc(c)+'" title="Click to copy">'+esc(x)+'</code>';return terms.some(function(t){return lo.indexOf(t)>-1})?'<mark>'+esc(x)+'</mark>':esc(x)});
+ return(a>0?'... ':'')+w.join(' ')+' ...'}
+function related(){var el=$('kg-rl');if(!el||!gsel)return;var n=NS[gsel],row=selRow>=0?(n.commands||[])[selRow]:null,cl=function(v){return tkey(v).replace(/[^a-z0-9 ]+/g,' ').replace(/\s+/g,' ').trim()},qq=cl(q);
+ var phrase=qq.length>=3?qq:cl(row&&row.description?row.description:ttl(n)),key=gsel+'|'+selRow+'|'+gds+'|'+phrase;RK=key;
  var terms=phrase.split(' ').filter(function(w){return w.length>2&&STOP.indexOf(w)<0}).map(function(w){return w.length>4?w.replace(/s$/,''):w});terms=terms.filter(function(w,i){return terms.indexOf(w)===i});
- var hd='<div class="kg-sht" style="margin:4px 0 6px">Related commands <span style="font-weight:400;color:var(--km)">from your PDFs</span></div>';
+ var hd='<div class="kg-sht" style="margin:4px 0 6px">Related in your PDFs <span style="font-weight:400;color:var(--km)">for "'+esc(phrase)+'"</span></div>';
  if(RC[key]){el.innerHTML=RC[key];return}
- if(!phrase){el.innerHTML='';return}
+ if(!phrase||!terms.length){el.innerHTML='';return}
  el.innerHTML=hd+'<div class="kg-hint">Reading your PDFs...</div>';
- var KN={},have={};Object.keys(NS).forEach(function(k){var x=NS[k];if(code(x)!==gds)return;(x.commands||[]).forEach(function(c){String(c.syntax||'').split(/\s+/).forEach(function(w){if(w.length>1){KN[w]=1;if(x===n)have[w]=1}})})});
+ var KN={};Object.keys(NS).forEach(function(k){var x=NS[k];if(code(x)!==gds)return;(x.commands||[]).forEach(function(c){String(c.syntax||'').split(/\s+/).forEach(function(w){if(w.length>1)KN[w]=1})})});
  function done(h){RC[key]=h;if(RK===key&&$('kg-rl'))$('kg-rl').innerHTML=h}
  tx('readonly',function(s){return s.getAll()}).then(function(L){var D=(L||[]).filter(function(d){return d.gds===gds});
   if(!D.length){done(hd+'<div class="kg-hint">Upload a '+gl(gds)+' PDF in Documents to see related commands here.</div>');return}
   var hits=[],empty=0,need=terms.length>1?Math.ceil(terms.length/2):1;
-  return Promise.all(D.map(function(d){return ptext(d).then(function(P){if(!P.join('').trim())empty++;P.forEach(function(pt,i){var low=pt.toLowerCase(),ph=!!phrase&&low.indexOf(phrase)>-1,m=0,sc=ph?5:0;terms.forEach(function(w){var k=low.split(w).length-1;if(k){m++;sc+=Math.min(k,3)}});if(ph||(m>=need&&sc>=2))hits.push({d:d,pg:i+1,sc:sc,low:low,pt:pt,ph:ph})})})})).then(function(){
-   hits.sort(function(a,b){return b.sc-a.sc||a.pg-b.pg});var SC={};
-   hits.slice(0,6).forEach(function(x){var pos=[],i0=-1;if(x.ph){while((i0=x.low.indexOf(phrase,i0+1))>-1&&pos.length<6)pos.push(i0)}else terms.forEach(function(w){var j=x.low.indexOf(w);if(j>-1)pos.push(j)});if(!pos.length)return;
-    var RE=/[A-Z0-9¤¥*][A-Z0-9¤¥*\/.\-+#&():@=<>]{1,59}/g,m;
-    while((m=RE.exec(x.pt))){var c=m[0].replace(/^\(+/,'').replace(/[.,:;)(]+$/,'');if(!okTok(c,KN)||have[c])continue;var ix=m.index,dist=Math.min.apply(null,pos.map(function(p){return ix>=p?ix-p:(p-ix)*2+80}));if(dist>900)continue;var w=(1/(1+dist/150))*(1+x.sc/10),o=SC[c]||(SC[c]={c:c,s:0,w:0,x:x});o.s+=w;if(w>o.w){o.w=w;o.x=x}}});
-   var R=Object.keys(SC).map(function(k){return SC[k]}).filter(function(o){return o.s>=.2}).sort(function(a,b){return b.s-a.s}).slice(0,10);
-   done(hd+(R.length?R.map(function(o){var src=o.x.d.name.replace(/\.pdf$/i,'')+', page '+o.x.pg;return'<div class="kg-rm"><code>'+esc(o.c)+'</code><span class="kg-ob" style="flex:none;flex-wrap:nowrap"><button type="button" class="kg-i" title="Copy" data-g="rcp" data-c="'+esc(o.c)+'">'+ic('copy',15)+'</button><button type="button" class="kg-i" title="Add as a task row" data-g="radd" data-c="'+esc(o.c)+'" data-s="'+esc(src)+'">'+ic('pl',15)+'</button><button type="button" class="kg-i" style="font-size:11px;font-weight:600" title="Open '+esc(src)+'" data-g="relo" data-id="'+o.x.d.id+'" data-pg="'+o.x.pg+'">p'+o.x.pg+'</button></span></div>'}).join(''):'<div class="kg-hint">No related commands found in your '+gl(gds)+' PDFs.</div>')+(empty?'<div class="kg-hint" style="margin-top:6px">'+empty+' PDF'+(empty>1?'s have':' has')+' no readable text (scanned pages cannot be searched).</div>':''))})}).catch(function(){if(RK===key&&$('kg-rl'))$('kg-rl').innerHTML=''})}
+  return Promise.all(D.map(function(d){return ptext(d).then(function(P){if(!P.join('').trim())empty++;P.forEach(function(pt,i){var low=pt.toLowerCase(),m=0,tot=0,pos=[];terms.forEach(function(w){var k=0,j=-1;while((j=low.indexOf(w,j+1))>-1&&k<8){pos.push(j);k++}if(k){m++;tot+=Math.min(k,3)}});if(m>=need)hits.push({d:d,pg:i+1,m:m,tot:tot,pos:pos.sort(function(a,b){return a-b}),pt:pt,low:low})})})})).then(function(){
+   hits.sort(function(a,b){return b.m-a.m||b.tot-a.tot||a.pg-b.pg});
+   var G=hits.slice(0,3).map(function(x){var W=[];x.pos.forEach(function(p){var a=Math.max(0,p-50),b=Math.min(x.pt.length,p+250),l=W[W.length-1];if(l&&a<=l.b)l.b=Math.max(l.b,b);else W.push({a:a,b:b})});
+    W.forEach(function(w){var lw=x.low.slice(w.a,w.b);w.c=terms.filter(function(t){return lw.indexOf(t)>-1}).length});
+    W.sort(function(a,b){return b.c-a.c||a.a-b.a});
+    return'<div class="kg-rc"><div class="kg-rt"><span><b>'+esc(x.d.name.replace(/\.pdf$/i,''))+'</b> &middot; page '+x.pg+'</span><button type="button" class="kg-b" data-g="relo" data-id="'+x.d.id+'" data-pg="'+x.pg+'">Open page</button></div>'+W.slice(0,2).map(function(w){return'<div class="kg-rs" style="margin-top:4px">'+snip(x.pt,w.a,Math.min(w.b,w.a+340),terms,KN)+'</div>'}).join('')+'</div>'}).join('');
+   done(hd+(G?'<div class="kg-hint" style="margin:0 0 6px">Click a blue command to copy it. Open page shows the full table.</div>'+G:'<div class="kg-hint">Nothing found for this in your '+gl(gds)+' PDFs.</div>')+(empty?'<div class="kg-hint" style="margin-top:6px">'+empty+' PDF'+(empty>1?'s have':' has')+' no readable text (scanned pages cannot be searched).</div>':''))})}).catch(function(){if(RK===key&&$('kg-rl'))$('kg-rl').innerHTML=''})}
 /* screen fit: the Hub fills the window; only the inner panels scroll */
 function fit(){['kg-g','kg-d'].forEach(function(id){var e=$(id);if(!e)return;if(window.innerWidth<761||!e.classList.contains('on')){e.style.height='';return}e.style.height=Math.max(320,window.innerHeight-e.getBoundingClientRect().top-14)+'px'})}
 window.addEventListener('resize',fit);
