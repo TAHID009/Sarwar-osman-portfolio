@@ -4744,7 +4744,7 @@ html[data-theme="dark"] #pwi-root .pwi-import textarea{background:#0E1E36;border
         <div class="ptc-editing-banner" id="sales-editing-banner">
           <span id="sales-editing-banner-text">Editing sale #1</span>
         </div>
-        <div class="wctx" role="radiogroup" aria-label="Work Context"><div class="wctx-t">Work Context</div><button type="button" role="radio" aria-checked="false" data-ctx="employment"><i></i><b>Employment Work</b><small>Work Records, Activity Tracker and Work Performance. No profit analytics.</small></button><button type="button" role="radio" aria-checked="true" data-ctx="self"><i></i><b>Self Business</b><small>Personal business records, revenue, collection, commission and profit analytics.</small></button></div>
+
         <div class="ptc-section-row">
           <div class="ptc-section-label" style="--sec-color:#1E7A46; margin:0;"><span class="aero-v1-only">🎫 </span>Ticket Sale Information</div>
           <div class="ptc-pdf-import" id="ptc-pdf-import-sales">
@@ -5590,6 +5590,7 @@ A.onChange(A.fillForm);
     { h:'CREATED AT', f:'createdAt' },
     { h:'LAST EDITED', f:'editedAt' },
     { h:'WORKSPACE ID', f:'companyId' },
+    { h:'WORK CONTEXT', f:'workContext' },
   ];
   const COL_BY_FIELD = {};
   ALL_COLUMNS.forEach(c => { COL_BY_FIELD[c.f] = c; });
@@ -6696,11 +6697,11 @@ A.onChange(A.fillForm);
     if(!cloudDb) return;
     clearTimeout(publicStatsTimer);
     publicStatsTimer = setTimeout(() => {
-      const ticketsIssued = entries.filter(e => e.txn === 'Ticketing').length;
-      const reissuesHandled = entries.filter(e => e.txn === 'Reissue').length;
-      const refundsProcessed = entries.filter(e => e.txn === 'Refund').length;
+      const ticketsIssued = empList().filter(e => e.txn === 'Ticketing').length;
+      const reissuesHandled = empList().filter(e => e.txn === 'Reissue').length;
+      const refundsProcessed = empList().filter(e => e.txn === 'Refund').length;
       const airlines = new Set();
-      entries.forEach(e => { if(e.airline) airlines.add(String(e.airline).trim().toUpperCase()); });
+      empList().forEach(e => { if(e.airline) airlines.add(String(e.airline).trim().toUpperCase()); });
       cloudDb.collection(PUBLIC_STATS_COLLECTION).doc('homepage').set({
         ticketsIssued,
         reissuesHandled,
@@ -7725,6 +7726,36 @@ A.onChange(A.fillForm);
   $('btn-adj-yes').addEventListener('click', () => setAdjustmentGiven('YES'));
   setAdjustmentGiven('NO');
 
+  /* Work Context (Employment Work / Self Business). Same form, same save: Self Business only adds workContext:'self' to the
+     entry. Records without the field are Employment Work, so all history is unchanged. */
+  let entryWorkContext = 'employment';
+  function setEntryContext(c){
+    entryWorkContext = (c === 'self') ? 'self' : 'employment';
+    document.querySelectorAll('#ptc-card .wctx button[data-ctx]').forEach(b => b.setAttribute('aria-checked', b.getAttribute('data-ctx') === entryWorkContext ? 'true' : 'false'));
+  }
+  document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('#ptc-card .wctx button[data-ctx]'); if(b) setEntryContext(b.getAttribute('data-ctx')); });
+  function isSelfEntry(e){ return !!e && e.workContext === 'self'; }
+  function empList(){ return entries.filter(e => !isSelfEntry(e)); }
+  // Self Business entries presented as sale-like records for the personal business analytics:
+  // revenue = payable fare (fare minus discount); collection/dues from the payment fields. The service charge (svc) is the user's work
+  // for the company, so it never counts as personal business commission or profit. Profit stays 0 until a business profit basis is defined.
+  function selfAsSale(e){
+    const n = v => parseFloat(v) || 0;
+    let price = 0, paid = 0, due = 0;
+    if(e.txn === 'Ticketing'){
+      price = n(e.totalFare);
+      const basis = (e.totalPayable !== undefined && e.totalPayable !== '') ? n(e.totalPayable) : price;
+      if(e.payStatus === 'PARTIAL' || e.payStatus === 'FULL_DUE'){
+        if(e.dueStatus === 'PAID'){ paid = basis; due = 0; } else { paid = n(e.paidAmount); due = n(e.dueAmount); }
+      } else { paid = basis; }
+    } else if(e.txn === 'Reissue'){ price = n(e.totalCollection); paid = price; }
+    const profit = 0;
+    return { _id:'entry:' + (e._id || ''), _fromEntry:true, date:e.date || '', pname:e.pname || '', sector:e.sector || '', airline:e.airline || '', tkt:e.newTkt || '',
+      pnrGds:e.pnrGds || '', pnrAirline:e.pnrAirline || '', price:price, cost:'', profit:profit, method:e.payMethod || '', paid:paid, due:due, dueDate:e.dueDate || '',
+      ticketStatus:'Active', txn:e.txn };
+  }
+  function selfSalesList(){ return entries.filter(e => isSelfEntry(e) && e.txn !== 'Booking').map(selfAsSale); }
+
   function collectEntry(){
     const type = typeSelect.value;
     const base = {
@@ -7783,6 +7814,7 @@ A.onChange(A.fillForm);
       company: (window.aeroWs ? aeroWs.active().name : (($('f-company') || {}).value || '')),
       companyId: (window.aeroWs ? aeroWs.active().id : ''),
       note: val('f-note'),
+      workContext: entryWorkContext === 'self' ? 'self' : '',
     };
 
     if(type === 'Ticketing'){
@@ -8195,6 +8227,7 @@ A.onChange(A.fillForm);
 
   function clearForm(){
     try{ if(window.aeroCo) window.aeroCo.resetForm(); }catch(err){}
+    setEntryContext('employment');
     ['f-pnr-gds','f-pnr-air','f-pname','f-pnum','f-note','f-platform-other','f-airline-other',
      'f-newtkt-t','f-sector-t','f-basefare-t','f-taxfare-t','f-discamt-t','f-discpct-t','f-atp-t',
      'f-sector-b','f-basefare-b','f-taxfare-b','f-gross-b','f-net-b',
@@ -8284,6 +8317,7 @@ A.onChange(A.fillForm);
   }
 
   function populateForm(e){
+    setEntryContext(e && e.workContext);
     typeSelect.value = e.txn;
     if(typeof syncTypeTabs === 'function') syncTypeTabs();
     showSection(e.txn);
@@ -8571,9 +8605,9 @@ A.onChange(A.fillForm);
                        'refundableFare','refundableTax','airlineRefund',
                        'refundCharge','taxRefund','refundType','refundStatus','adjustmentGiven','adjustmentAmount',
                        'payStatus','paidAmount','dueAmount','dueDate','dueRef','dueStatus','payMethod','payMethodChargePct','payMethodCharge','totalPayable',
-                       'code','note','createdAt','editedAt','company','companyId'];
+                       'code','note','createdAt','editedAt','company','companyId','workContext'];
   const HEADER_TO_FIELD = {
-    'WORKSPACE ID':'companyId','DATE':'date','GDS PNR':'pnrGds','AIRLINE PNR':'pnrAirline','PNR':'pnrGds',
+    'WORKSPACE ID':'companyId','WORK CONTEXT':'workContext','DATE':'date','GDS PNR':'pnrGds','AIRLINE PNR':'pnrAirline','PNR':'pnrGds',
     'PASSENGER NAME':'pname','PASSENGER NUMBER':'pnum',
     'PASSENGER TYPE':'ptype','PLATFORM':'platform','AIRLINE':'airline','TRANSACTION TYPE':'txn','OLD TKT NUMBER':'oldTkt',
     'NEW TKT NUMBER':'newTkt','SECTOR':'sector',
@@ -8762,7 +8796,7 @@ A.onChange(A.fillForm);
     const label = $('ach-range-label');
     if(label) label.textContent = start && end ? (start + ' → ' + end) : 'All recorded entries';
 
-    const current = entries.filter(e => inRange(e, start, end));
+    const current = empList().filter(e => inRange(e, start, end));
 
     // Previous window of identical length, for a like-for-like comparison.
     let previous = [];
@@ -8773,7 +8807,7 @@ A.onChange(A.fillForm);
       const prevStart = new Date(prevEnd); prevStart.setDate(prevStart.getDate() - (days - 1));
       const ps = aeroLocalISO(prevStart);
       const pe = aeroLocalISO(prevEnd);
-      previous = entries.filter(e => inRange(e, ps, pe));
+      previous = empList().filter(e => inRange(e, ps, pe));
     }
 
     const sumVal = (arr) => arr.reduce((t,e) => t + entryValue(e), 0);
@@ -9326,9 +9360,9 @@ A.onChange(A.fillForm);
     const totalEntries = entries.length;
     const now = new Date();
     const monthKey = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
-    const thisMonth = entries.filter(e => (e.date||'').slice(0,7) === monthKey);
+    const thisMonth = empList().filter(e => (e.date||'').slice(0,7) === monthKey);
     let ticketingValue = 0, reissueValue = 0, refundValue = 0, pendingRefunds = 0, agencyEarnings = 0;
-    entries.forEach(e => {
+    empList().forEach(e => {
       if(e.txn === 'Ticketing') ticketingValue += Number(e.totalFare)||0;
       if(e.txn === 'Reissue') reissueValue += Number(e.totalCollection)||0;
       if(e.txn === 'Refund'){ refundValue += Number(e.refundCharge)||0; if(e.refundStatus === 'PENDING') pendingRefunds++; }
@@ -9356,7 +9390,7 @@ A.onChange(A.fillForm);
       months.push({ key: d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'), label: d.toLocaleString(undefined,{month:'short'}) });
     }
     const byMonthType = months.map(m => {
-      const rows = entries.filter(e => (e.date||'').slice(0,7) === m.key);
+      const rows = empList().filter(e => (e.date||'').slice(0,7) === m.key);
       return {
         Ticketing: rows.filter(e=>e.txn==='Ticketing').length,
         Reissue: rows.filter(e=>e.txn==='Reissue').length,
@@ -9388,7 +9422,7 @@ A.onChange(A.fillForm);
 
     // ---- Mix by type (donut) ----
     const typeCounts = { Ticketing:0, Reissue:0, Refund:0, Void:0 };
-    entries.forEach(e => { if(typeCounts.hasOwnProperty(e.txn)) typeCounts[e.txn]++; });
+    empList().forEach(e => { if(typeCounts.hasOwnProperty(e.txn)) typeCounts[e.txn]++; });
     if(chartsAvailable) try {
       destroyChart('type');
       charts.type = new Chart($('chart-type'), {
@@ -9408,7 +9442,7 @@ A.onChange(A.fillForm);
 
     // ---- Top airlines ----
     const airlineCounts = {};
-    entries.forEach(e => { const a = e.airline || 'Unknown'; airlineCounts[a] = (airlineCounts[a]||0)+1; });
+    empList().forEach(e => { const a = e.airline || 'Unknown'; airlineCounts[a] = (airlineCounts[a]||0)+1; });
     const topAirlines = Object.entries(airlineCounts).sort((a,b)=>b[1]-a[1]).slice(0,8);
     if(chartsAvailable) try {
       destroyChart('airline');
@@ -9427,7 +9461,7 @@ A.onChange(A.fillForm);
     } catch(err){ console.error('Airline chart failed', err); }
 
     // ---- Refund status ----
-    const refunds = entries.filter(e => e.txn === 'Refund');
+    const refunds = empList().filter(e => e.txn === 'Refund');
     const refunded = refunds.filter(e => e.refundStatus === 'REFUNDED').length;
     const pending = refunds.filter(e => e.refundStatus === 'PENDING').length;
     if(chartsAvailable) try {
@@ -10188,40 +10222,6 @@ A.onChange(A.fillForm);
   });
 
 
-  /* Work Context. Employment Work saves through the Work Record pipeline and Self Business through the existing
-     Aero Travels sales pipeline: nothing about either collection changes. Switching carries over only the shared
-     identity fields (never money, never overwriting what is already typed) and is blocked while an edit is open. */
-  function wctxSwitch(target){
-    const toSelf = target === 'self';
-    const card = $(toSelf ? 'ptc-card' : 'sales-card');
-    if(card && card.classList.contains('ptc-editing')){ toast('Finish or cancel the current edit before changing Work Context.'); return; }
-    let moved = 0;
-    const setIf = (id, v) => { const el = $(id); if(el && v && !String(el.value || '').trim()){ el.value = v; moved++; } };
-    try{
-      if(toSelf){
-        const air = $('f-airline') ? $('f-airline').value : '';
-        setIf('s-pname', $('f-pname').value.trim()); setIf('s-pnr-gds', $('f-pnr-gds').value.trim()); setIf('s-pnr-air', $('f-pnr-air').value.trim());
-        setIf('s-sector', ($('f-sector-t').value || '').trim().toUpperCase()); setIf('s-airline', air && air !== 'Other' ? air : '');
-        const tk = entryNewTktChips && entryNewTktChips.getTickets ? entryNewTktChips.getTickets() : [];
-        if(tk.length && salesTktChips && !salesTktChips.getTickets().length){ salesTktChips.setTickets(tk); moved++; }
-      }else{
-        setIf('f-pname', $('s-pname').value.trim()); setIf('f-pnr-gds', $('s-pnr-gds').value.trim()); setIf('f-pnr-air', $('s-pnr-air').value.trim());
-        setIf('f-sector-t', ($('s-sector').value || '').trim().toUpperCase());
-        const a = ($('s-airline').value || '').trim().toUpperCase(), sel = $('f-airline');
-        if(a && sel && !sel.value && [...sel.options].some(o => o.value === a)){ sel.value = a; sel.dispatchEvent(new Event('change', { bubbles: true })); moved++; }
-        const tk = salesTktChips && salesTktChips.getTickets ? salesTktChips.getTickets() : [];
-        if(tk.length && entryNewTktChips && !entryNewTktChips.getTickets().length){ entryNewTktChips.setTickets(tk); moved++; }
-      }
-    }catch(e){ console.warn('Work Context carry-over skipped', e); }
-    if(window.ptcSetPane) window.ptcSetPane(toSelf ? 'salesdesk' : 'entrydesk');
-    toast((toSelf ? 'Self Business: saves to your Aero Travels records.' : 'Employment Work: saves to your Work Records.') + (moved ? ' Shared details carried over.' : ''));
-  }
-  document.addEventListener('click', e => {
-    const b = e.target.closest && e.target.closest('.wctx button[data-ctx]'); if(!b) return;
-    if(b.getAttribute('aria-checked') === 'true') return;
-    wctxSwitch(b.getAttribute('data-ctx'));
-  });
-
   // ---- Revenue Trend / Payment Status Mix are hidden by default (declutters the
   // Revenue Desk) — this toggle reveals them on demand and remembers the choice. ----
   const SALES_CHARTS_VISIBLE_KEY = 'wrd_sales_charts_visible_v1';
@@ -10873,7 +10873,7 @@ A.onChange(A.fillForm);
   function ptcUpdateReports(){
     const box = $('ptc-rep-kpis'); if(!box) return;
     let vol = 0, earn = 0, pend = 0;
-    entries.forEach(e => {
+    empList().forEach(e => {
       if(e.txn === 'Ticketing') vol += Number(e.totalFare) || 0;
       if(e.txn === 'Reissue') vol += Number(e.totalCollection) || 0;
       earn += entryEarnings(e);
@@ -11512,7 +11512,7 @@ A.onChange(A.fillForm);
     return d.date ? 'Due ' + d.date : 'Due pending';
   }
   function dueColor(st){ return ({ overdue:'#B42318', today:'#C2410C', soon:'#B7791F', pending:'#2563EB', paid:'#16875A' })[st] || '#2563EB'; }
-  window.aeroData = { entries:function(){ return entries; }, sales:function(){ return salesEntries; },
+  window.aeroData = { entries:function(){ return entries; }, employment:function(){ return empList(); }, sales:function(){ return salesEntries.concat(selfSalesList()); },
     pending:function(){ return entries.filter(function(e){ return lbStatus(e)[0] === 'Pending Adj.'; }); },
     dueInfo:dueInfo, dueList:dueList, dueLabel:dueLabel, dueColor:dueColor, editEntry:function(i){ startEdit(i); },
     build:buildWorkbook, earn:entryEarnings,
@@ -12854,7 +12854,7 @@ function hdSync(P,pr,fu){
  var b=$('ad-bell-n');b.hidden=!n;b.textContent=n>99?'99+':n;
  nm=nm.trim();$('ad-nm').textContent=nm||'Profile';$('ad-ini').textContent=nm?nm.split(/\s+/).slice(0,2).map(function(w){return w[0]}).join('').toUpperCase():'AO'}
 function renderDash(force){if(!D()||!dv||!dv.classList.contains('active'))return;
- var f0=from(),keep=function(l){return f0?l.filter(function(x){return(x.date||'')>=f0}):l},E0=D().entries(),S0=D().sales(),A0=acts(),E=keep(E0),S=keep(S0),A=A0?keep(A0):null,P=D().pending();
+ var f0=from(),keep=function(l){return f0?l.filter(function(x){return(x.date||'')>=f0}):l},E0=D().employment(),S0=D().sales(),A0=acts(),E=keep(E0),S=keep(S0),A=A0?keep(A0):null,P=D().pending();
  var earn=function(e){return num(D().earn(e))},val=function(e){return e.txn==='Ticketing'?num(e.totalFare):e.txn==='Reissue'?num(e.totalCollection):e.txn==='Refund'?num(e.refundCharge):0};
  var pr=E0.filter(function(e){return e.txn==='Refund'&&e.refundStatus==='PENDING'}).length,fuN=A0?A0.filter(function(x){return x.status==='Follow-up'}).length:0,dueN=D().dueList?D().dueList().filter(function(x){return x.d.state!=='pending'}).length:0,openN=A0?A0.filter(function(x){return x.status==='Pending'||x.status==='Follow-up'}).length:0;
  hdSync(P.length,pr,fuN+dueN);
@@ -12954,7 +12954,7 @@ function tally(list,key,vals,merge){var o={},other=0;vals.forEach(function(v){o[
 function compute(k){
  var A=window.aeroPwiData&&window.aeroPwiData();
  if(!A)return{error:'Activity records have not loaded yet. Wait until the tracker shows it is connected, then try again.'};
- var E=window.aeroData&&window.aeroData.entries?window.aeroData.entries():[];
+ var E=window.aeroData&&window.aeroData.employment?window.aeroData.employment():[];
  var t=ymd(new Date()),cur=t.slice(0,7),inProg=(k===cur),maxDay=inProg?+t.slice(8,10):0;
  var m=inMonth(A,k,0),prev=inMonth(A,shift(k,-1),maxDay);
  if(!m.length)return{error:'There are no activity records for '+label(k)+'.'};
@@ -13061,7 +13061,7 @@ function prevSpan(){var t=new Date(),k=R.key,s=span();
  if(k==='custom'&&s.from&&s.to){var n=Math.round((pd(s.to)-pd(s.from))/864e5)+1;return{from:iso(addD(pd(s.from),-n)),to:iso(addD(pd(s.from),-1))}}
  return null}
 function within(e,s){var d=e.date||'';return(!s.from||d>=s.from)&&(!s.to||d<=s.to)}
-function rows(s){return E().map(function(e,i){return{e:e,i:i}}).filter(function(r){return within(r.e,s)&&coOk(r.e)})}
+function rows(s){return E().map(function(e,i){return{e:e,i:i}}).filter(function(r){return within(r.e,s)&&coOk(r.e)&&r.e.workContext!=='self'})}
 function sorted(l){return l.slice().sort(function(a,b){return((b.e.date||'')+(b.e.createdAt||'')).localeCompare((a.e.date||'')+(a.e.createdAt||''))})}
 function stats(l){var s={n:l.length,rev:0,com:0,ref:0,by:{Ticketing:0,Reissue:0,Refund:0,Void:0},pend:0,done:0};
  l.forEach(function(r){var e=r.e;s.by[e.txn]=(s.by[e.txn]||0)+1;if(e.txn==='Ticketing'||e.txn==='Reissue')s.rev+=val(e);if(e.txn==='Refund')s.ref+=Math.abs(val(e));s.com+=num(D().earn(e));
@@ -13397,7 +13397,7 @@ function workTab(l,pl,A,A0,P,ps,s,st,pr){var ap=A0&&ps?A0.filter(function(x){ret
  return cd('Your work in this period',head)+tiles+'<div class="ov-ats">'+at(P.length,'Refund adjustments due','Pending Adj.')+at(pr,'Refunds awaiting airline','Refund Pending')+at(fu,'Follow-up tasks','')+at(pn,'Pending tasks','')+'</div>'+d.list
   +grid2(cd('Work completed per period',barsOne(per,'#2563EB',function(v){return v+' item'+(v===1?'':'s')})),cd('Work by type',hbars(ty,'#2563EB',String)),1)
   +rings+grid2(pipe,d.wk,1)}
-function bizTab(S0,s,ps){if(!S0.length)return cd('My Business (Aero Travels)','<div class="wr-empty">No Aero Travels sales recorded yet. Add sales in Aero Travels and they appear here.</div>');
+function bizTab(S0,s,ps){if(!S0.length)return cd('My Business (Self Business + Aero Travels)','<div class="wr-empty">No Self Business or Aero Travels sales recorded yet. Choose Self Business on a Work Record entry, or add a sale in Aero Travels, and it appears here.</div>');
  var SB=S0.filter(function(x){return within({date:x.date},s)}),SP=ps?S0.filter(function(x){return within({date:x.date},ps)}):null,sum=function(a,f){return a.reduce(function(t,x){return t+num(x[f])},0)},
  price=sum(SB,'price'),profit=sum(SB,'profit'),paid=sum(SB,'paid'),due=sum(S0,'due'),W=SB.map(function(x){return{e:x}}),
  K=[['Sales','BDT '+fm(price),'#2563EB',price,SP?sum(SP,'price'):null,'Selling price of tickets sold in the period'],['Profit','BDT '+fm(profit),'#16875A',profit,SP?sum(SP,'profit'):null,'Selling price minus net cost'],['Margin',price?(profit*100/price).toFixed(1)+'%':'—','#0E8FA0',0,null,'Profit divided by sales'],['Collected','BDT '+fm(paid),'#F59E0B',paid,SP?sum(SP,'paid'):null,'Amount received from customers'],['Outstanding dues','BDT '+fm(due),'#EF4444',0,null,'All unpaid balances, not limited to the period']];
@@ -13406,7 +13406,7 @@ function bizTab(S0,s,ps){if(!S0.length)return cd('My Business (Aero Travels)','<
  sec=agg(W,function(e){return e.sector},function(e){return num(e.profit)}).filter(function(x){return x.v>0}).slice(0,6),air=agg(W,function(e){return e.airline},function(e){return num(e.profit)}).filter(function(x){return x.v>0}).slice(0,6),
  mt=agg(W,function(e){return e.method},function(){return 1}),dl=S0.filter(function(x){return num(x.due)>0}).sort(function(a,b){return num(b.due)-num(a.due)}).slice(0,8);
  var dt=dl.length?'<div class="wr-tw"><table><thead><tr><th>Customer</th><th>Sector</th><th class="r">Due (BDT)</th><th>Due date</th></tr></thead><tbody>'+dl.map(function(x){return'<tr><td>'+esc(x.pname||'')+'</td><td>'+esc(x.sector||'')+'</td><td class="r">'+fm(num(x.due))+'</td><td>'+(x.dueDate?fmtD(x.dueDate):'—')+'</td></tr>'}).join('')+'</tbody></table></div>':'<div class="wr-empty">No unpaid balances.</div>';
- return cd('Aero Travels · private records','<p class="ov-lead">'+(SB.length?'You sold <b>'+SB.length+'</b> ticket'+(SB.length===1?'':'s')+' for <b>BDT '+fm(price)+'</b> with a profit of <b>BDT '+fm(profit)+'</b>.':'No sales in this period.')+'</p><p class="wr-sub">Kept separate from your company work; nothing here changes the My Work numbers. <button type="button" class="wr-link" data-act="nxv" data-v="ov">Go to Overview</button></p>')+tiles
+ return cd('Self Business · private records','<p class="ov-lead">'+(SB.length?'You sold <b>'+SB.length+'</b> ticket'+(SB.length===1?'':'s')+' for <b>BDT '+fm(price)+'</b> with a profit of <b>BDT '+fm(profit)+'</b>.':'No sales in this period.')+'</p><p class="wr-sub">Kept separate from your company work; nothing here changes the My Work numbers. <button type="button" class="wr-link" data-act="nxv" data-v="ov">Go to Overview</button></p>')+tiles
   +grid2(cd('Profit per period',barsOne(tr,'#16875A',function(v){return'BDT '+short(v)})),cd('Payment method',mt.length?shareDonut(mt,'sales'):EMPTY),1)
   +grid2(cd('Top sectors by profit',hbars(sec,'#0E8FA0',function(v){return'BDT '+short(v)})),cd('Top airlines by profit',hbars(air,'#2563EB',function(v){return'BDT '+short(v)})),1)+cd('Customers with dues',dt)}
 function renderAll(){renderDash();renderIntel()}
