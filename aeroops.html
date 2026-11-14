@@ -3330,16 +3330,28 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
 .apv-hl{background:#EEF4FD;margin:0 -14px;padding-left:14px;padding-right:14px;color:#1D4ED8}.apv-hl .apv-v{color:#1D4ED8}
 .apv-badge{justify-self:end;font-size:12px;font-weight:700;padding:2px 10px;border-radius:999px;background:#EEF2F7;color:#62748C}.apv-badge.ok{background:#DCEBFF;color:#1D4ED8}.apv-badge.warn{background:#FFF1D6;color:#7A4E0A}
 .apv-pay{margin-bottom:12px}
-#pdf-import-banner{background:#EEF4FD;border:1px solid #BFD3F2;color:#0F2742;padding:10px 14px}
-#pdf-import-banner .aimp-steps{padding:0 0 10px;border:0;background:none}
+#pdf-import-banner,#pdf-import-banner-sales{background:#EEF4FD;border:1px solid #BFD3F2;color:#0F2742;padding:10px 14px}
+#pdf-import-banner .aimp-steps,#pdf-import-banner-sales .aimp-steps{padding:0 0 10px;border:0;background:none}
 .aimp-row{display:flex;align-items:center;gap:12px}
 .aimp-ok{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:#16875A;color:#fff;font-weight:800;flex:none}
 .aimp-t{flex:1;min-width:0}.aimp-t b{display:block;color:#14653F;font-size:13.5px}.aimp-t small{display:block;color:#62748C;font-size:12px;font-weight:500}
 .aimp-view{font:inherit;font-weight:600;font-size:12.5px;padding:6px 14px;border:1px solid #2563EB;color:#1D4ED8;background:#fff;border-radius:8px;cursor:pointer}.aimp-view:hover{background:#EEF4FD}
 .aimp-note{margin-top:8px;font-size:11.5px;font-weight:500;color:#7A4E0A}
 #ptc-card.aimp-drag{outline:2px dashed #2563EB;outline-offset:-6px;background-image:linear-gradient(#F4F8FF,#F4F8FF)}
-html[data-theme="dark"] .apv-steps,html[data-theme="dark"] .apv-load,html[data-theme="dark"] #pdf-import-banner{background:var(--card);color:inherit}
+html[data-theme="dark"] .apv-steps,html[data-theme="dark"] .apv-load,html[data-theme="dark"] #pdf-import-banner,html[data-theme="dark"] #pdf-import-banner-sales{background:var(--card);color:inherit}
 html[data-theme="dark"] .apv-card,html[data-theme="dark"] .apv-v,html[data-theme="dark"] .apv-card h4{color:inherit;border-color:var(--ao-soft)}
+
+/* Work Context: Employment Work vs Self Business */
+.wctx{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 12px;padding:10px 12px;border:1px solid #E1E8F1;border-radius:12px;background:#F8FAFC}
+.wctx-t{flex:0 0 100%;font-weight:700;font-size:13px;color:#0F2742}
+.wctx button{flex:1 1 240px;display:grid;grid-template-columns:20px 1fr;column-gap:10px;align-items:center;text-align:left;font:inherit;padding:9px 12px;border:1px solid #D5DCE6;border-radius:10px;background:#fff;color:#0F2742;cursor:pointer}
+.wctx button:hover{border-color:#9DB9E8}
+.wctx button i{grid-row:1 / span 2;width:16px;height:16px;border-radius:50%;border:2px solid #9AA8BC;position:relative;box-sizing:border-box}
+.wctx button b{font-size:13.5px}.wctx button small{font-size:11.5px;font-weight:500;color:#62748C}
+.wctx button[aria-checked="true"]{border-color:#2563EB;background:#EEF4FD;cursor:default}
+.wctx button[aria-checked="true"] i{border-color:#2563EB}.wctx button[aria-checked="true"] i::after{content:"";position:absolute;inset:2px;border-radius:50%;background:#2563EB}
+.wctx button[data-ctx="self"][aria-checked="true"]{border-color:#16875A;background:#EAF6F0}.wctx button[data-ctx="self"][aria-checked="true"] i{border-color:#16875A}.wctx button[data-ctx="self"][aria-checked="true"] i::after{background:#16875A}
+html[data-theme="dark"] .wctx{background:var(--card);border-color:var(--ao-soft)}html[data-theme="dark"] .wctx button{background:transparent;color:inherit}
 @media(max-width:700px){.apv-cards{grid-template-columns:1fr}.apv-steps span,.aimp-steps span{font-size:12px}}
 </style>
 <style id="aero-wr-style">
@@ -3516,7 +3528,7 @@ html[data-theme="dark"] #pwi-root .pwi-import textarea{background:#0E1E36;border
         <div class="aero-auth-hero">
           <a class="aero-hero-brand" href="index.html" aria-label="Return to Home">
             <span class="aero-brandmark"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 11.3 21 3l-7.9 18-2.8-7.4L3 11.3Z" fill="currentColor"/><path d="M10.3 13.6 21 3" stroke="#fff" stroke-width="1.2"/></svg></span>
-            <span>AEROOPS<small>WORK RECORD SYSTEM</small></span>
+            <span>NEXOPS<small>WORK RECORD SYSTEM</small></span>
           </a>
           <div class="aero-hero-copy">
             <div class="aero-eyebrow">Your operations workspace</div>
@@ -3675,7 +3687,7 @@ html[data-theme="dark"] #pwi-root .pwi-import textarea{background:#0E1E36;border
   <div class="ptc-shell">
     <div class="ptc-brandbar">
       <span class="ptc-brandbar-logo"><svg viewBox="0 0 32 32" width="34" height="34" aria-hidden="true"><defs><linearGradient id="aoG1" x1="4" y1="2" x2="28" y2="30" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#60A5FA"/><stop offset="1" stop-color="#1D4ED8"/></linearGradient></defs><rect width="32" height="32" rx="9" fill="url(#aoG1)"/><path d="M24.6 7.4 7.4 14.1l6.3 2.9z" fill="#fff"/><path d="M24.6 7.4 13.7 17l3.1 7.6z" fill="#fff" fill-opacity=".72"/></svg></span>
-      <span class="ptc-brandbar-text"><span class="ptc-brandbar-name">AeroOps</span><span class="ptc-brandbar-sub">Airline Operations Platform</span></span>
+      <span class="ptc-brandbar-text"><span class="ptc-brandbar-name">NexOps</span><span class="ptc-brandbar-sub">Airline Operations Platform</span></span>
       <span class="ptc-brandbar-sep">|</span>
       <span class="ptc-brandbar-page"><span class="aero-v1-only">🏠 </span>Work Record Database</span>
     </div>
@@ -3805,7 +3817,7 @@ html[data-theme="dark"] #pwi-root .pwi-import textarea{background:#0E1E36;border
     </div>
 
     <div class="ptc-body-grid" id="ptc-toprow-grid">
-    <nav id="ptc-nav" aria-label="AeroOps sections">
+    <nav id="ptc-nav" aria-label="NexOps sections">
       <button type="button" class="ptc-nav-btn active" data-aero="home" data-nav="entrydesk" data-pane="entrydesk" title="Add ticketing, reissue, refund and void entries"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2M9 12h6M9 16h4"/></svg><span class="aero-lbl">Work Record</span></button>
       <button type="button" class="ptc-nav-btn" data-aero="pwi" data-nav="pwi" id="pwi-nav-btn" title="Professional Work Intelligence"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><span class="aero-lbl">Activity Tracker</span></button>
       <button type="button" class="ptc-nav-btn" data-aero="sales" data-nav="salesdesk" data-pane="salesdesk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg><span class="aero-lbl">Revenue Desk</span></button>
@@ -3824,7 +3836,7 @@ html[data-theme="dark"] #pwi-root .pwi-import textarea{background:#0E1E36;border
         <button type="button" class="ptc-nav-menu-item" data-pane="saleslog">Revenue Log</button>
       </div>
     </div>
-    <div class="aero-sb-card"><div class="aero-sb-card-h"><span class="aero-sb-mark sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg></span><b>AeroOps</b><i>v2.0.0</i></div><p>Your daily work, digitally organized.</p></div>
+    <div class="aero-sb-card"><div class="aero-sb-card-h"><span class="aero-sb-mark sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg></span><b>NexOps</b><i>v2.0.0</i></div><p>Your daily work, digitally organized.</p></div>
     </div><!-- /ptc-toprow-grid -->
 
     <section id="lb" aria-label="Log Board">
@@ -3967,6 +3979,7 @@ html[data-theme="dark"] #pwi-root .pwi-import textarea{background:#0E1E36;border
       <div class="ptc-editing-banner" id="ptc-editing-banner">
         <span id="ptc-editing-banner-text">Editing entry #1</span>
       </div>
+      <div class="wctx" role="radiogroup" aria-label="Work Context"><div class="wctx-t">Work Context</div><button type="button" role="radio" aria-checked="true" data-ctx="employment"><i></i><b>Employment Work</b><small>Work Records, Activity Tracker and Work Performance. No profit analytics.</small></button><button type="button" role="radio" aria-checked="false" data-ctx="self"><i></i><b>Self Business</b><small>Personal business records, revenue, collection, commission and profit analytics.</small></button></div>
       <!-- TKT AutoFill and Transaction Type now live in the header only (see
            .ptc-header-controls above) — moved, not duplicated, so #pdf-ticket-input,
            #pdf-ticket-btn, #f-type and #f-type-tabs still work exactly as before. -->
@@ -4731,6 +4744,7 @@ html[data-theme="dark"] #pwi-root .pwi-import textarea{background:#0E1E36;border
         <div class="ptc-editing-banner" id="sales-editing-banner">
           <span id="sales-editing-banner-text">Editing sale #1</span>
         </div>
+        <div class="wctx" role="radiogroup" aria-label="Work Context"><div class="wctx-t">Work Context</div><button type="button" role="radio" aria-checked="false" data-ctx="employment"><i></i><b>Employment Work</b><small>Work Records, Activity Tracker and Work Performance. No profit analytics.</small></button><button type="button" role="radio" aria-checked="true" data-ctx="self"><i></i><b>Self Business</b><small>Personal business records, revenue, collection, commission and profit analytics.</small></button></div>
         <div class="ptc-section-row">
           <div class="ptc-section-label" style="--sec-color:#1E7A46; margin:0;"><span class="aero-v1-only">🎫 </span>Ticket Sale Information</div>
           <div class="ptc-pdf-import" id="ptc-pdf-import-sales">
@@ -4742,7 +4756,9 @@ html[data-theme="dark"] #pwi-root .pwi-import textarea{background:#0E1E36;border
           </div>
         </div>
         <div id="pdf-import-banner-sales" style="display:none;">
-          ⚠️ Fields were auto-filled from the uploaded PDF — verify every value before saving. Layouts vary by airline/GDS, so extraction can miss or misread a field.
+          <div class="aimp-steps" aria-label="Import progress"><span class="done"><i>✓</i>Import PDF</span><u></u><span class="done"><i>✓</i>Review Details</span><u></u><span class="on"><i>3</i>Save</span></div>
+          <div class="aimp-row"><span class="aimp-ok">✓</span><div class="aimp-t"><b>File Loaded Successfully</b><small id="pdf-import-file-sales">Booking details have been extracted. Verify every value, then save the sale.</small></div><button type="button" id="pdf-view-file-sales" class="aimp-view">View File</button></div>
+          <div class="aimp-note">⚠️ Layouts vary by airline/GDS, so extraction can miss or misread a field.</div>
         </div>
 
         <div class="ptc-row">
@@ -4997,7 +5013,7 @@ html[data-theme="dark"] #pwi-root .pwi-import textarea{background:#0E1E36;border
 <div id="px-empty" class="px-hint" role="status"></div><div class="px-pager"><button type="button" id="px-prev" class="px-btn alt">Prev</button><span id="px-pg"></span><button type="button" id="px-next" class="px-btn alt">Next</button></div></div></section>
     <section id="aero-master" class="aero-page" aria-label="Master Data"><div class="aset-head"><div style="color:#0E9AA7;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase">Download Center</div><h2>Master Data</h2><p>Download any of your data as an Excel file. Pick a report below.</p></div><div class="aset-card aset-hero"><div><b>Complete Data Pack</b><span>Everything in one Excel file: all entries, sales, pending adjustments, dashboard summary and activities.</span></div><button type="button" class="aset-dl big" data-dl="all">Download everything</button></div><div class="aset-card"><h3>Individual reports</h3><div class="aset-row"><div><b>Work Record — All Entries</b><span>Ticketing, Reissue, Refund and Void, with a sheet for each · <em class="am-n" data-n="entries">…</em></span></div><button type="button" class="aset-dl" data-dl="entries">Download Excel</button></div><div class="aset-row"><div><b>Revenue Desk — Sales &amp; Payments</b><span>Every sale with price, profit, paid and due · <em class="am-n" data-n="sales">…</em></span></div><button type="button" class="aset-dl" data-dl="sales">Download Excel</button></div><div class="aset-row"><div><b>Pending Adjustments</b><span>Refunds still waiting for their adjustment · <em class="am-n" data-n="pending">…</em></span></div><button type="button" class="aset-dl" data-dl="pending">Download Excel</button></div><div class="aset-row"><div><b>Dashboard Summary</b><span>Totals by type and by month, revenue and activity numbers · <em class="am-n" data-n="summary">…</em></span></div><button type="button" class="aset-dl" data-dl="summary">Download Excel</button></div><div class="aset-row"><div><b>Activity Tracker — All Activities</b><span>Every logged task with source, client, status and effort · <em class="am-n" data-n="activities">…</em></span></div><button type="button" class="aset-dl" data-dl="activities">Download Excel</button></div></div><div class="aset-card"><h3>Auto-save file</h3><div class="aset-row"><div><b>Master Data File</b><span>Connect an Excel file so every new entry is saved to it automatically.</span></div><button type="button" class="aset-dl" id="am-connect">Set Master Data File</button></div></div></section>
 
-    <section id="aero-settings" class="aero-page" aria-label="AeroOps Settings"><div class="aset-head"><div class="pwi-kicker" style="color:#0E9AA7;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase">Control Center</div><h2>AeroOps Settings</h2><p>Changes apply immediately and are remembered on this device.</p></div><div class="aset-card"><h3>Appearance</h3><div class="aset-row"><div><b>Sidebar</b><span>Full labels, or a slim icon-only sidebar.</span></div><div class="aset-seg" data-key="sidebar"><button type="button" data-v="expanded">Expanded</button><button type="button" data-v="compact">Compact</button></div></div><div class="aset-row"><div><b>Animations</b><span>Turn off transitions and motion across the app.</span></div><div class="aset-seg" data-key="anim"><button type="button" data-v="on">On</button><button type="button" data-v="off">Off</button></div></div></div><div class="aset-card"><h3>Data &amp; Storage</h3><p class="aset-note">Activity records are stored in Firebase (collection <code>work_record_pwi</code>) and sync across your signed-in devices. Nothing here deletes records.</p><div class="aset-btns"><button type="button" data-sact="export-all">Export all activities (CSV)</button><button type="button" data-sact="backup">Backup (JSON)</button><button type="button" data-sact="restore">Restore from backup…</button></div></div><div class="aset-card"><h3>Reset</h3><div class="aset-row"><div><b>Reset settings</b><span>Restores the options on this page to their defaults. Your activity records are not touched.</span></div><button type="button" class="aset-danger" id="aset-reset">Reset settings</button></div></div></section>
+    <section id="aero-settings" class="aero-page" aria-label="NexOps Settings"><div class="aset-head"><div class="pwi-kicker" style="color:#0E9AA7;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase">Control Center</div><h2>NexOps Settings</h2><p>Changes apply immediately and are remembered on this device.</p></div><div class="aset-card"><h3>Appearance</h3><div class="aset-row"><div><b>Sidebar</b><span>Full labels, or a slim icon-only sidebar.</span></div><div class="aset-seg" data-key="sidebar"><button type="button" data-v="expanded">Expanded</button><button type="button" data-v="compact">Compact</button></div></div><div class="aset-row"><div><b>Animations</b><span>Turn off transitions and motion across the app.</span></div><div class="aset-seg" data-key="anim"><button type="button" data-v="on">On</button><button type="button" data-v="off">Off</button></div></div></div><div class="aset-card"><h3>Data &amp; Storage</h3><p class="aset-note">Activity records are stored in Firebase (collection <code>work_record_pwi</code>) and sync across your signed-in devices. Nothing here deletes records.</p><div class="aset-btns"><button type="button" data-sact="export-all">Export all activities (CSV)</button><button type="button" data-sact="backup">Backup (JSON)</button><button type="button" data-sact="restore">Restore from backup…</button></div></div><div class="aset-card"><h3>Reset</h3><div class="aset-row"><div><b>Reset settings</b><span>Restores the options on this page to their defaults. Your activity records are not touched.</span></div><button type="button" class="aset-danger" id="aset-reset">Reset settings</button></div></div></section>
 
     <section id="pwi-root" aria-label="Professional Work Intelligence">
       <div class="pwi-head">
@@ -5159,7 +5175,7 @@ html[data-theme="dark"] #pwi-root .pwi-import textarea{background:#0E1E36;border
     </section>
 
     <div class="ptc-footerbar">
-      <span>AeroOps &nbsp;|&nbsp; Smarter Operations. Higher Revenue.</span>
+      <span>NexOps &nbsp;|&nbsp; Smarter Operations. Higher Revenue.</span>
       <span class="ptc-footerbar-status"><span class="ptc-dot-online"></span> System Online</span>
     </div>
   </div><!-- /ptc-shell -->
@@ -6478,7 +6494,7 @@ A.onChange(A.fillForm);
     function status(){
       sync(); const inc = st.rows.filter(r => r.inc), w = [];
       (f.paxWarnings || []).forEach(x => w.push(['warn', x]));
-      if(ctx.scanned) w.push(['bad', 'This PDF has no readable text (scanned image). OCR is not built into AeroOps, so nothing could be read automatically. Enter passengers below, or use a text-based PDF.']);
+      if(ctx.scanned) w.push(['bad', 'This PDF has no readable text (scanned image). OCR is not built into NexOps, so nothing could be read automatically. Enter passengers below, or use a text-based PDF.']);
       if(ctx.dupFile) w.push(['warn', 'This exact PDF was already imported on ' + ctx.dupFile + '. Check that you are not entering the same booking twice.']);
       if(!ctx.scanned && !st.rows.length) w.push(['bad', 'No passengers could be detected in this PDF. Nothing was guessed. Add passengers manually, or try a different PDF.']);
       if(f.expectedPax && !ctx.scanned) w.push(f.expectedPax === inc.length ? ['ok', 'Passenger count matches the PDF (' + f.expectedPax + ').'] : ['bad', 'The PDF fare line says ' + f.expectedPax + ' passenger(s) but ' + inc.length + ' are included here. Fix the list before applying.']);
@@ -6567,6 +6583,10 @@ A.onChange(A.fillForm);
     if(vb) vb.addEventListener('click', () => { if(window.__aeroPdfFile) aeroOpenPdf(window.__aeroPdfFile); else toast('No PDF loaded yet.'); });
   }
   wirePdfPreview();
+  (function(){ const fi = $('pdf-ticket-input-sales'), vb = $('pdf-view-file-sales'); if(!fi) return;
+    fi.addEventListener('change', () => { const f0 = fi.files && fi.files[0]; if(f0){ window.__aeroPdfFileSales = f0; const t = $('pdf-import-file-sales'); if(t) t.textContent = f0.name + ' · booking details applied. Verify every value, then save the sale.'; } });
+    if(vb) vb.addEventListener('click', () => { if(window.__aeroPdfFileSales) aeroOpenPdf(window.__aeroPdfFileSales); else toast('No PDF loaded yet.'); });
+  })();
   wirePdfImport('pdf-ticket-input-sales', 'pdf-ticket-btn-sales', 'pdf-import-status-sales', 'pdf-import-banner-sales', applyExtractedSaleFields);
 
   function setCloudStatus(state){
@@ -10165,6 +10185,41 @@ A.onChange(A.fillForm);
     persistSales();
     renderSales();
     toast('All sales cleared');
+  });
+
+
+  /* Work Context. Employment Work saves through the Work Record pipeline and Self Business through the existing
+     Aero Travels sales pipeline: nothing about either collection changes. Switching carries over only the shared
+     identity fields (never money, never overwriting what is already typed) and is blocked while an edit is open. */
+  function wctxSwitch(target){
+    const toSelf = target === 'self';
+    const card = $(toSelf ? 'ptc-card' : 'sales-card');
+    if(card && card.classList.contains('ptc-editing')){ toast('Finish or cancel the current edit before changing Work Context.'); return; }
+    let moved = 0;
+    const setIf = (id, v) => { const el = $(id); if(el && v && !String(el.value || '').trim()){ el.value = v; moved++; } };
+    try{
+      if(toSelf){
+        const air = $('f-airline') ? $('f-airline').value : '';
+        setIf('s-pname', $('f-pname').value.trim()); setIf('s-pnr-gds', $('f-pnr-gds').value.trim()); setIf('s-pnr-air', $('f-pnr-air').value.trim());
+        setIf('s-sector', ($('f-sector-t').value || '').trim().toUpperCase()); setIf('s-airline', air && air !== 'Other' ? air : '');
+        const tk = entryNewTktChips && entryNewTktChips.getTickets ? entryNewTktChips.getTickets() : [];
+        if(tk.length && salesTktChips && !salesTktChips.getTickets().length){ salesTktChips.setTickets(tk); moved++; }
+      }else{
+        setIf('f-pname', $('s-pname').value.trim()); setIf('f-pnr-gds', $('s-pnr-gds').value.trim()); setIf('f-pnr-air', $('s-pnr-air').value.trim());
+        setIf('f-sector-t', ($('s-sector').value || '').trim().toUpperCase());
+        const a = ($('s-airline').value || '').trim().toUpperCase(), sel = $('f-airline');
+        if(a && sel && !sel.value && [...sel.options].some(o => o.value === a)){ sel.value = a; sel.dispatchEvent(new Event('change', { bubbles: true })); moved++; }
+        const tk = salesTktChips && salesTktChips.getTickets ? salesTktChips.getTickets() : [];
+        if(tk.length && entryNewTktChips && !entryNewTktChips.getTickets().length){ entryNewTktChips.setTickets(tk); moved++; }
+      }
+    }catch(e){ console.warn('Work Context carry-over skipped', e); }
+    if(window.ptcSetPane) window.ptcSetPane(toSelf ? 'salesdesk' : 'entrydesk');
+    toast((toSelf ? 'Self Business: saves to your Aero Travels records.' : 'Employment Work: saves to your Work Records.') + (moved ? ' Shared details carried over.' : ''));
+  }
+  document.addEventListener('click', e => {
+    const b = e.target.closest && e.target.closest('.wctx button[data-ctx]'); if(!b) return;
+    if(b.getAttribute('aria-checked') === 'true') return;
+    wctxSwitch(b.getAttribute('data-ctx'));
   });
 
   // ---- Revenue Trend / Payment Status Mix are hidden by default (declutters the
@@ -15226,7 +15281,7 @@ function render(){if(!$('kh-list'))return;
   opts($('kh-src'),'All source documents',uniq(N.map(function(n){return n.source&&n.source.documentName})),f.src);
   $('kh-rec').value=f.rec;$('kh-vf').value=f.vf;$('kh-st').value=f.st}
  var L=sorted(visible()),h='',el=$('kh-list');POSMAP={};if(f.sort==='pos')L.forEach(function(x,i){POSMAP[x.id]={i:i+1,t:L.length}});el.className='khx-grid'+(f.view==='list'?' list':'');$('kh-cnt').textContent='';$('kh-pgr').innerHTML='';
- if(!uid)h='<div class="kh-empty">Sign in to AeroOps to load your Knowledge Hub.</div>';
+ if(!uid)h='<div class="kh-empty">Sign in to NexOps to load your Knowledge Hub.</div>';
  else if(!loaded)h=skel();
  else if(!N.length)h='<div class="kh-empty"><b>No knowledge notes yet.</b><br>Add a note by hand or import a PDF or DOCX document.<br><button class="kh-btn pri" data-a="add" type="button">+ Add New Note</button><button class="kh-btn" data-a="imp" type="button">Import Document</button></div>';
  else if(!L.length)h='<div class="kh-empty"><b>No notes match these filters.</b><br>Try a different search term or clear the filters.<br><button class="kh-btn" data-a="reset" type="button">Clear search and filters</button></div>';
@@ -15839,7 +15894,7 @@ function code(n){var p=PS[n.platformId];return String((p&&p.code)||n.platformCod
 function pname(n){var p=PS[n.platformId];return(p&&p.name)||n.platformName||''}
 function sv(n,cs){return db.collection('kh_notes').doc(n.id).update({commands:cs,updatedAt:now()}).catch(fail)}
 function draw(){var el=$('kg-g');if(!el||tab!=='g')return;
- if(!uid){el.innerHTML='<div class="kg-w"><div class="kg-mn">Sign in to AeroOps to load the Command guide.</div></div>';return}
+ if(!uid){el.innerHTML='<div class="kg-w"><div class="kg-mn">Sign in to NexOps to load the Command guide.</div></div>';return}
  var t=q.toLowerCase(),L=Object.keys(NS).map(function(x){return NS[x]}).filter(function(n){return n.status!=='archived'&&code(n)===gds}).sort(function(a,b){return String(a.title).localeCompare(String(b.title),undefined,{numeric:true})}).filter(function(n){return!t||ttl(n).toLowerCase().indexOf(t)>-1||(n.commands||[]).some(function(c){return[c.syntax,c.description,c.exceptions,c.example,(c.variants||[]).map(function(v){return v.l}).join(' ')].join(' ').toLowerCase().indexOf(t)>-1})});
  var n=NS[gsel];if(!n||L.indexOf(n)<0)n=L[0];gsel=n?n.id:'';
  var sd='<div class="kg-sd"><div class="kg-pl">'+['SABRE','GALILEO','AMADEUS'].map(function(g){return'<button type="button" class="'+(g===gds?'on':'')+'" data-g="gds" data-v="'+g+'">'+g.charAt(0)+g.slice(1).toLowerCase()+'</button>'}).join('')+'</div><div class="kg-sl">'+L.map(function(x){return'<div class="kg-si'+(x===n?' on':'')+'" data-g="pick" data-n="'+x.id+'">'+esc(ttl(x))+'</div>'}).join('')+'</div><div class="kg-sb"><button type="button" class="kg-b" data-g="addt">'+ic('pl',14)+' Add title</button><button type="button" class="kg-b" data-g="imp">'+ic('up',14)+' Import document</button></div></div>',mn;
@@ -16208,7 +16263,7 @@ function draw(){shell();var V=view();
  opts($('ac-dept'),'All departments',TYPES.map(function(t){return[t,t]}),st.dept);
  var locs=[];K.forEach(function(c){var l=c.office||c.country;if(l&&locs.indexOf(l)<0)locs.push(l)});locs.sort();opts($('ac-loc'),'All offices',locs.map(function(l){return[l,l]}),st.loc);
  [].forEach.call(sec.querySelectorAll('.ac-tab'),function(b){b.classList.toggle('on',b.getAttribute('data-tab')===st.tab)});
- $('ac-list').innerHTML=V.length?V.map(function(v){return'<button class="ac-al'+(v.a.id===st.sel?' on':'')+'" data-sel="'+v.a.id+'" type="button">'+av(v.a,38)+'<span><b>'+esc(v.a.name)+'</b><small>'+esc(v.a.iata||'no code')+'</small></span><i>›</i></button>'}).join(''):'<div class="ac-empty" style="border:0">'+(A.length?'No airline matches.':(uid?'No airlines yet.<br><button class="ac-btn pri" data-a="seed" type="button">Load data from your Excel workbooks</button>':'Sign in to AeroOps to load airlines.'))+'</div>';
+ $('ac-list').innerHTML=V.length?V.map(function(v){return'<button class="ac-al'+(v.a.id===st.sel?' on':'')+'" data-sel="'+v.a.id+'" type="button">'+av(v.a,38)+'<span><b>'+esc(v.a.name)+'</b><small>'+esc(v.a.iata||'no code')+'</small></span><i>›</i></button>'}).join(''):'<div class="ac-empty" style="border:0">'+(A.length?'No airline matches.':(uid?'No airlines yet.<br><button class="ac-btn pri" data-a="seed" type="button">Load data from your Excel workbooks</button>':'Sign in to NexOps to load airlines.'))+'</div>';
  var cur=V.filter(function(v){return v.a.id===st.sel})[0];
  $('ac-main').innerHTML=cur?profile(cur):(st.tab==='comm'?allRates(V):allContacts(V));watchHist()}
 function ruleHtml(r,edit){var nc=r.scope==='NOCOM';return'<div class="ac-rule"><div class="ac-rh"><b>'+KIND[r.scope]+'</b>'+(edit?'<span><button class="ac-ib" data-a="editr" data-id="'+r.id+'" type="button">✎ Edit</button><button class="ac-ib" data-a="delr" data-id="'+r.id+'" type="button">🗑</button></span>':'')+'</div>'
@@ -16341,7 +16396,7 @@ function act(e){var t=e.target.closest&&e.target.closest('[data-a],[data-tab],[d
  if(t.hasAttribute('data-chip')){st.chip=t.getAttribute('data-chip');return draw()}
  var a=t.getAttribute('data-a'),id=t.getAttribute('data-id')||'';
  if(!a)return sel(t.getAttribute('data-sel'));
- if(!db&&a!=='exp'&&a!=='close')return say('Sign in to AeroOps first.',1);
+ if(!db&&a!=='exp'&&a!=='close')return say('Sign in to NexOps first.',1);
  ({addair:function(){airForm()},editair:function(){airForm(airline(st.sel))},saveair:function(){saveAir(id)},delair:delAir,all:function(){st.all=true;st.sel='';draw()},first:function(){st.all=false;draw()},close:closeM,seed:seedData,verify:verifyAll,
   addr:function(){rateForm()},editr:function(){rateForm(R.filter(function(r){return r.id===id})[0])},saver:function(){saveRate(id)},delr:function(){del('r',id)},
   addk:function(){contForm()},editk:function(){contForm(K.filter(function(c){return c.id===id})[0])},savek:function(){saveCont(id)},delk:function(){del('k',id)},
