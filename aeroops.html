@@ -3341,6 +3341,62 @@ html, body{ background:linear-gradient(rgba(6,22,48,.80),rgba(6,22,48,.92)),var(
 html[data-theme="dark"] .apv-steps,html[data-theme="dark"] .apv-load,html[data-theme="dark"] #pdf-import-banner,html[data-theme="dark"] #pdf-import-banner-sales{background:var(--card);color:inherit}
 html[data-theme="dark"] .apv-card,html[data-theme="dark"] .apv-v,html[data-theme="dark"] .apv-card h4{color:inherit;border-color:var(--ao-soft)}
 
+
+/* Import review page (read-only), modelled on the Work Record Entry mockup */
+#rv-back,#rv-back *{font-family:Inter,'Segoe UI',system-ui,-apple-system,Roboto,Arial,sans-serif}
+#rv-back .mono{font-family:ui-monospace,Menlo,Consolas,monospace}
+#rv-back{position:fixed;inset:0;z-index:100000;background:#EEF2F8;overflow:auto;display:flex;justify-content:center;padding:22px 18px 28px;color:#0B1B33;outline:none}
+.rv{width:100%;max-width:1180px}
+.rv-top h2{margin:0;font-size:30px;font-weight:800;letter-spacing:-.01em;color:#0B1B33}.rv-top p{margin:4px 0 0;font-size:15px;color:#1F2D46}
+.rv-steps{display:flex;align-items:center;justify-content:center;gap:14px;margin:16px auto 18px;max-width:780px}
+.rv-steps span{display:inline-flex;align-items:center;gap:9px;font-weight:600;font-size:14.5px;color:#7C8AA0;white-space:nowrap}
+.rv-steps i{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:#A9B3C4;color:#fff;font-style:normal;font-size:14px}
+.rv-steps span.on{color:#1D4ED8}.rv-steps span.on i{background:#2563EB}.rv-steps span.done{color:#1F6B47}.rv-steps span.done i{background:#16875A}
+.rv-steps u{flex:1;height:2px;background:#C9D3E2;text-decoration:none;min-width:30px}
+.rv-grid{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:14px;align-items:start}
+.rv-main{display:grid;gap:12px;min-width:0}
+.rv-card{background:#fff;border:1px solid #DDE5F0;border-radius:14px;padding:12px 20px 14px;box-shadow:0 1px 2px rgba(15,39,66,.04);min-width:0}
+.rv-card h4{display:flex;align-items:center;gap:10px;margin:0 0 6px;padding-bottom:8px;border-bottom:1px solid #EEF2F7;font-size:18px;font-weight:700;color:#0B1B33}
+.rv-ic{display:inline-flex;color:#143A78}
+.rv-import{display:flex;align-items:center;gap:14px;background:#E8F0FD;border-color:#C7D8F5;padding:14px 18px;flex-wrap:wrap}
+.rv-import.bad{background:#FFF6E3;border-color:#F0D3A4}
+.rv-pdf{display:inline-grid;place-items:center;width:58px;height:58px;border-radius:50%;background:#fff;flex:none}.rv-pdf b{background:#E5483E;color:#fff;font-size:11px;padding:6px 5px;border-radius:4px}
+.rv-imp-t b{display:block;font-size:16px;color:#0B1B33}.rv-imp-t small{display:block;font-size:12.5px;color:#31405B;margin-top:2px}
+.rv-div{flex:1 1 20px;max-width:1px;align-self:stretch;background:#BFCDE6;margin:0 6px}
+.rv-ok{display:inline-grid;place-items:center;width:38px;height:38px;border-radius:50%;background:#16875A;color:#fff;font-weight:800;flex:none}
+.rv-import.bad .rv-ok{background:#C97F1E}
+.rv-import .rv-imp-t:nth-of-type(2) b{color:#1D4ED8}
+.rv-imp-t+.rv-outline+.rv-div+.rv-ok+.rv-imp-t b{color:#16875A}
+.rv-outline{font:inherit;font-weight:600;font-size:13.5px;padding:9px 18px;border:1.5px solid #2563EB;color:#1D4ED8;background:#fff;border-radius:9px;cursor:pointer;display:inline-flex;align-items:center;gap:8px}.rv-outline:hover{background:#EEF4FD}
+.rv-import>.rv-outline:last-child{margin-left:auto}
+.rv-two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.rv-r{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:9px 0;border-top:1px solid #EEF2F7;font-size:15px;color:#1F2D46}
+.rv-card h4+.rv-r{border-top:0}
+.rv-r b{font-weight:600;color:#0B1B33;text-align:right;overflow-wrap:anywhere}
+.rv-hl{background:#E8F0FD;margin:0 -20px;padding:9px 20px;color:#1D4ED8;font-weight:700}.rv-hl b{color:#1D4ED8}
+.rv-strong b{font-weight:800}
+.rv-badge{display:inline-block;padding:2px 12px;border-radius:999px;font-size:13px;font-weight:700}.rv-badge.ok{background:#DCEBFF;color:#1D4ED8}.rv-badge.warn{background:#FFF1D6;color:#7A4E0A}
+.rv-pill{display:inline-block;margin-left:8px;padding:1px 10px;border-radius:999px;border:1px solid #C9B6F2;background:#F5EEFF;color:#6B3FC4;font-size:12.5px;font-weight:700}
+.rv-tw{overflow-x:auto}.rv-tw table{width:100%;border-collapse:collapse;font-size:14px}
+.rv-tw th{background:#EFF3F9;text-align:left;padding:8px 12px;font-size:13.5px;color:#0B1B33;border:1px solid #E1E8F1}.rv-tw td{padding:8px 12px;border:1px solid #E1E8F1;color:#1F2D46}
+.rv-paycard{padding-bottom:12px}
+.rv-warns{display:grid;gap:8px}
+.rv-w{padding:9px 14px;border-radius:10px;font-size:13.5px;border:1px solid}
+.rv-w.warn{background:#FFF6E3;border-color:#F0D3A4;color:#7A4E0A}.rv-w.bad{background:#FDF0EE;border-color:#F0C2BD;color:#9B2C20}.rv-w.ok{background:#EAF6F0;border-color:#BFE3CF;color:#14653F}
+.rv-det{background:#fff;border:1px solid #DDE5F0;border-radius:12px;padding:10px 16px;font-size:14px}.rv-det summary{cursor:pointer;font-weight:600;color:#143A78}
+.rv-det pre{white-space:pre-wrap;font-size:12px;max-height:240px;overflow:auto;margin:8px 0 0}
+.rv-side .rv-card{padding:14px 18px 16px}
+.rv-radio{display:grid;grid-template-columns:24px 1fr;column-gap:12px;align-items:center;width:100%;text-align:left;font:inherit;background:none;border:0;padding:10px 0;cursor:pointer;color:#0B1B33}
+.rv-radio i{grid-row:1 / span 2;width:22px;height:22px;border-radius:50%;border:2px solid #A9B3C4;box-sizing:border-box;position:relative}
+.rv-radio[aria-checked="true"] i{border-color:#2563EB}.rv-radio[aria-checked="true"] i::after{content:"";position:absolute;inset:3px;border-radius:50%;background:#2563EB}
+.rv-radio b{font-size:15.5px;font-weight:600}.rv-radio small{font-size:12.5px;color:#4A5B78}
+.rv-side hr{border:0;border-top:1px solid #EEF2F7;margin:10px 0}
+.rv-sub{display:flex;align-items:center;gap:10px;font-weight:700;font-size:15px;margin:6px 0 10px;color:#0B1B33}
+.rv-side select{width:100%;font:inherit;font-size:15px;padding:10px 12px;border:1px solid #C9D3E2;border-radius:10px;background:#fff;color:#0B1B33}
+.rv-foot{display:flex;align-items:center;gap:12px;margin-top:16px}
+.rv-backbtn{padding:11px 22px}
+.rv-save{font:inherit;font-weight:700;font-size:15.5px;padding:13px 26px;border:0;border-radius:11px;background:#1D4ED8;color:#fff;cursor:pointer;display:inline-flex;align-items:center;gap:10px;box-shadow:0 2px 6px rgba(29,78,216,.3)}.rv-save:hover{background:#1A44BC}.rv-save:disabled{background:#9DB1D8;cursor:not-allowed;box-shadow:none}
+@media(max-width:980px){.rv-grid{grid-template-columns:1fr}.rv-two{grid-template-columns:1fr}.rv-steps span{font-size:12.5px}.rv-top h2{font-size:24px}}
 /* Work Context: Employment Work vs Self Business */
 .wctx{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 12px;padding:10px 12px;border:1px solid #E1E8F1;border-radius:12px;background:#F8FAFC}
 .wctx-t{flex:0 0 100%;font-weight:700;font-size:13px;color:#0F2742}
@@ -4168,6 +4224,13 @@ html[data-theme="dark"] #pwi-root .pwi-import textarea{background:#0E1E36;border
             <label for="f-discpct-t">Discount % (auto, info only)</label>
             <input type="text" id="f-discpct-t" class="mono" placeholder="0.00" readonly style="background:#F3F5F8; font-weight:700;" title="Discount Amount ÷ Base Fare × 100 — informational only" />
           </div>
+        </div>
+        <div class="ptc-row">
+          <div class="ptc-field">
+            <label for="f-markup-t">Markup Amount (optional)</label>
+            <input type="number" step="0.01" min="0" id="f-markup-t" class="mono ptc-fare-calc" placeholder="0.00 (leave blank if none)" title="Extra amount added to the client's fare on top of the airline fare. It increases the Payable Fare." />
+          </div>
+          <div class="ptc-field"></div>
         </div>
         <div class="ptc-row">
           <div class="ptc-field">
@@ -6434,116 +6497,132 @@ A.onChange(A.fillForm);
     }catch(e){ toast('Could not open the PDF.'); }
   }
 
+  const RV_ICO = {
+    brief:'<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M10 3h4a2 2 0 0 1 2 2v1h3a2 2 0 0 1 2 2v3H3V8a2 2 0 0 1 2-2h3V5a2 2 0 0 1 2-2zm0 3h4V5h-4v1zM3 13h7v1.5h4V13h7v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-5z"/></svg>',
+    plane:'<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z"/></svg>',
+    ticket:'<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v3a2 2 0 0 0 0 4v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-3a2 2 0 0 0 0-4V7zm6 1v8h2V8H9z"/></svg>',
+    card:'<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M3 6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2H3V6zm0 4h18v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-8zm3 4v2h5v-2H6z"/></svg>',
+    eye:'<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 5c5 0 9 4.5 10 7-1 2.5-5 7-10 7S3 14.5 2 12c1-2.5 5-7 10-7zm0 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8zm0 2a2 2 0 1 1 0 4 2 2 0 0 1 0-4z"/></svg>',
+    save:'<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M5 3h11l4 4v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zm2 2v5h8V5H7zm5 8a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/></svg>',
+    check:'<svg viewBox="0 0 24 24" width="26" height="26" fill="#fff"><path d="M9.5 16.2 5.3 12l-1.4 1.4 5.6 5.6L20.1 8.4 18.7 7z"/></svg>'
+  };
+
+  /* Import review (read-only). Page 1 (the entry form) is where everything is edited: the PDF is read straight into the form,
+     then this page only shows what will be saved. Back returns to the form to edit; Save Work Record uses the normal Add Entry. */
   function openPdfPreview(ctx){
-    const old = document.getElementById('apv-back'); if(old) old.remove();
+    ['rv-back', 'apv-back'].forEach(i => { const o = document.getElementById(i); if(o) o.remove(); });
     const f = ctx.fields || {}, exist = existingTicketMap();
-    const st = { rows: (f.passengers || []).map(p => ({ inc: true, name: p.name, ticket: p.ticket })) };
-    st.rows.forEach(r => { if(r.ticket && exist[r.ticket]) r.inc = false; });
-    const back = document.createElement('div'); back.id = 'apv-back';
-    const airOpts = [...$('f-airline').options].map(o => '<option value="' + esc(o.value) + '"' + (o.value === (f.airlineCode || '') ? ' selected' : '') + '>' + esc(o.textContent.trim()) + '</option>').join('');
-    const nv = v => v === undefined ? '' : v;
-    const gotAny = !ctx.scanned && !!(f.reservationPnr || f.pnr || f.airlinePnr || f.sector || f.baseFare !== undefined || (f.passengers || []).length);
-    const fmt2 = v => (v === undefined || v === null || isNaN(v)) ? '—' : Number(v).toFixed(2);
-    const payCard = (f.totalFare !== undefined || f.paidAmount !== undefined)
-      ? '<div class="apv-card apv-pay"><h4>Payment Details <small>as printed on the PDF</small></h4><div class="apv-r"><span>Total amount</span><b class="apv-v">' + fmt2(f.totalFare) + '</b></div><div class="apv-r"><span>Paid amount</span><b class="apv-v">' + fmt2(f.paidAmount) + '</b></div>'
-        + ((f.totalFare !== undefined && f.paidAmount !== undefined) ? '<div class="apv-r"><span>Balance</span><b class="apv-v">' + (f.totalFare - f.paidAmount > 0.004 ? fmt2(f.totalFare - f.paidAmount) + ' due' : 'Fully paid') + '</b></div>' : '') + '</div>'
-      : '';
-    back.innerHTML = '<div class="apv" role="dialog" aria-modal="true" aria-label="Review PDF import"><div class="apv-h"><div><h3>Work Record Entry</h3><p>Import PDF, review details, and save your record</p></div><button type="button" class="apv-x" data-a="cancel" aria-label="Close">×</button></div>'
-      + '<div class="apv-steps" aria-label="Import progress"><span class="done"><i>✓</i>Import PDF</span><u></u><span class="on"><i>2</i>Review Details</span><u></u><span><i>3</i>Save</span></div>'
-      + '<div class="apv-b"><div class="apv-load' + (gotAny ? '' : ' bad') + '"><span class="apv-pdfic">PDF</span><div class="apv-lt"><b>' + (ctx.scanned ? 'No readable text in this PDF' : gotAny ? 'File Loaded Successfully' : 'File loaded, but nothing could be read') + '</b><small>' + (gotAny ? 'Booking details have been extracted · ' : 'Enter the details below by hand · ') + esc(ctx.file.name) + '</small></div><button type="button" data-a="view">View File</button></div>'
-      + '<div id="apv-warn"></div>'
-      + '<div class="apv-cards"><div class="apv-card"><h4>Booking Information</h4>'
-      + '<label class="apv-r"><span>GDS PNR</span><input id="apv-pg" value="' + esc(f.reservationPnr || f.pnr || '') + '"></label>'
-      + '<label class="apv-r"><span>Airline PNR</span><input id="apv-pa" value="' + esc(f.airlinePnr || f.pnr || '') + '"></label>'
-      + '<label class="apv-r"><span>Airline</span><select id="apv-air">' + airOpts + '</select></label>'
-      + '<label class="apv-r"><span>Sector</span><input id="apv-sec" value="' + esc(f.sector || f.itinerary || '') + '"></label>'
-      + '<div class="apv-r"><span>Passenger Name</span><b id="apv-pn" class="apv-v">—</b></div>'
-      + '<div class="apv-r"><span>Booking Type</span><b id="apv-bt" class="apv-badge">—</b></div>'
-      + '<div class="apv-r"><span>Ticket Number</span><b id="apv-tk" class="apv-v">—</b></div></div>'
-      + '<div class="apv-card"><h4>Fare Details</h4>'
-      + '<label class="apv-r"><span>Base Fare (all passengers)</span><input id="apv-bf" type="number" step="0.01" value="' + nv(f.baseFare) + '"></label>'
-      + '<label class="apv-r"><span>Tax (all passengers)</span><input id="apv-tx" type="number" step="0.01" value="' + nv(f.taxFare) + '"></label>'
-      + '<div class="apv-r"><span>Discount</span><b class="apv-v">' + fmt2(f.discountAmount) + '</b></div>'
-      + '<div class="apv-r apv-hl"><span>Discount Percentage</span><b id="apv-dp" class="apv-v">—</b></div>'
-      + '<div class="apv-r"><span>Total (Base + Tax − Discount)</span><b id="apv-tot" class="apv-v">—</b></div></div></div>'
-      + payCard
-      + '<div class="apv-info">' + (f.travelDate ? 'Travel date in PDF: <b>' + esc(f.travelDate) + '</b>. ' : '') + (f.itinerary ? 'Itinerary in PDF: <b>' + esc(f.itinerary) + '</b>. ' : '') + '</div>'
-      + '<div class="apv-ph"><b>Passenger &amp; Ticket Details</b><button type="button" data-a="add">+ Add passenger</button></div><div class="apv-tw"><table><thead><tr><th>Use</th><th>#</th><th>Passenger name</th><th>Ticket number (13 digits)</th><th>Check</th><th></th></tr></thead><tbody id="apv-rows"></tbody></table></div>'
-      + '<details><summary>Extracted text from the PDF</summary><pre>' + esc(ctx.text.trim().slice(0, 6000)) + '</pre></details></div>'
-      + '<div class="apv-f"><button type="button" data-a="retry">Re-read this PDF</button><button type="button" data-a="other">Choose another PDF</button><span style="flex:1"></span><button type="button" data-a="cancel">Cancel</button><button type="button" class="apv-go" data-a="apply">Apply &amp; Continue</button></div></div>';
+    const rows = (f.passengers || []).map(p => ({ name: p.name || '', ticket: p.ticket || '', inc: !(p.ticket && exist[p.ticket]) }));
+    const left = rows.filter(r => !r.inc);
+    const use = rows.filter(r => r.inc && (r.name || r.ticket)), ts = use.map(r => r.ticket).filter(Boolean);
+    const warns = [];
+    (f.paxWarnings || []).forEach(x => warns.push(['warn', x]));
+    if(ctx.scanned) warns.push(['bad', 'This PDF has no readable text (scanned image). OCR is not built into NexOps, so nothing could be read automatically. Enter the details on the form, or use a text-based PDF.']);
+    if(ctx.dupFile) warns.push(['warn', 'This exact PDF was already imported on ' + ctx.dupFile + '. Check that you are not entering the same booking twice.']);
+    if(!ctx.scanned && !rows.length) warns.push(['bad', 'No passengers could be detected in this PDF. Nothing was guessed. Add the passengers on the form.']);
+    left.forEach(r => warns.push(['warn', 'Ticket ' + r.ticket + ' is already saved (PNR ' + exist[r.ticket] + ') and was left out of this import.']));
+    if(f.expectedPax && !ctx.scanned) warns.push(f.expectedPax === use.length ? ['ok', 'Passenger count matches the PDF (' + f.expectedPax + ').'] : ['bad', 'The PDF fare line says ' + f.expectedPax + ' passenger(s) but ' + use.length + ' are included. Check the passengers on the form.']);
+    else if(!ctx.scanned && !f.expectedPax && rows.length) warns.push(['warn', 'The PDF does not state a passenger count, so the number detected (' + rows.length + ') could not be cross-checked.']);
+    const noT = use.filter(r => !r.ticket).length;
+    if(noT) warns.push(['warn', noT + ' passenger(s) have no ticket number' + (f.passengers && !f.passengers.some(p => p.ticket) ? ': this PDF does not contain ticket numbers, so none were invented. Add them on the form.' : '. Add them on the form.')]);
+    if(use.some(r => r.ticket && !/^\d{13}$/.test(r.ticket))) warns.push(['bad', 'Ticket numbers must be exactly 13 digits. Fix them on the form.']);
+    if(new Set(ts).size !== ts.length) warns.push(['bad', 'The same ticket number is listed twice.']);
+    if(use.length > 9) warns.push(['bad', 'A PNR can hold at most 9 tickets (' + use.length + ' found). Split the booking.']);
+
+    // read the PDF straight into the form (page 1)
+    if(use.length){
+      const curTk = (($('f-newtkt-t') || {}).value || '');
+      if(($('f-pname').value.trim() || curTk) && !confirm('The form already has passenger or ticket data. Replace the passenger names (and ticket numbers found here) with the imported ones?')) return;
+    }
+    const fields = Object.assign({}, f);
+    if(use.length){ const nm = use.map(r => r.name).filter(Boolean).join(', '); if(nm) fields.passengerName = nm; fields.ticketNumbers = ts; }
+    if(!fields.sector && fields.itinerary) fields.sector = String(fields.itinerary).replace(/\s+/g, '').toUpperCase();
+    const done = applyExtractedTicketFields(fields);
+    if(done){
+      try{ const l = pdfImportsLoad(); l.push({ hash: ctx.hash, file: ctx.file.name, at: aeroLocalISO(), pnr: fields.reservationPnr || '', passengers: use.map(r => ({ name: r.name, ticket: r.ticket })) }); localStorage.setItem(PDF_IMPORT_KEY, JSON.stringify(l.slice(-200))); }catch(e){}
+      window.__aeroPdfFile = ctx.file; const pfn = $('pdf-import-file'); if(pfn) pfn.textContent = ctx.file.name + ' · booking details applied. Verify every value, then save the work record.';
+      const bn = $('pdf-import-banner'); if(bn) bn.style.display = 'block';
+    }
+    const isT = typeSelect.value === 'Ticketing';
+    const gotAny = !ctx.scanned && !!(f.reservationPnr || f.pnr || f.airlinePnr || f.sector || f.baseFare !== undefined || rows.length);
+    const fmt2 = v => (v === '' || v === undefined || v === null || isNaN(v)) ? '—' : Number(v).toFixed(2);
+    const g = id => { const e = $(id); return e ? String(e.value || '').trim() : ''; };
+    const back = document.createElement('div'); back.id = 'rv-back'; back.tabIndex = -1;
     document.body.appendChild(back);
-    const q = id => back.querySelector('#' + id);
-    function sync(){ back.querySelectorAll('#apv-rows tr').forEach((tr, i) => { const r = st.rows[i]; if(!r) return; r.inc = tr.querySelector('.apv-i').checked; r.name = tr.querySelector('.apv-n').value.trim(); r.ticket = tr.querySelector('.apv-t').value.replace(/[\s-]/g, ''); }); }
-    function rowCheck(r, i){
-      if(r.ticket && !/^\d{13}$/.test(r.ticket)) return ['bad', 'Needs 13 digits'];
-      if(r.ticket && st.rows.some((o, j) => j !== i && o.inc && o.ticket === r.ticket)) return ['bad', 'Duplicate in this list'];
-      if(r.ticket && exist[r.ticket]) return ['bad', 'Already saved (PNR ' + exist[r.ticket] + ')'];
-      if(!r.name) return ['bad', 'Name missing'];
-      if(!r.ticket) return ['warn', 'No ticket number'];
-      return ['ok', 'OK'];
-    }
-    function summary(){
-      const inc = st.rows.filter(r => r.inc), tk = inc.map(r => r.ticket).filter(Boolean), nm = inc.map(r => r.name).filter(Boolean);
-      const set = (id, v) => { const el = q(id); if(el) el.textContent = v; };
-      set('apv-pn', nm.length ? nm[0] + (nm.length > 1 ? '  +' + (nm.length - 1) + ' more' : '') : '—');
-      set('apv-tk', tk.length ? tk[0] + (tk.length > 1 ? '  +' + (tk.length - 1) + ' more' : '') : '—');
-      const bt = q('apv-bt'); if(bt){ bt.textContent = tk.length ? 'Ticketed' : 'No ticket number'; bt.className = 'apv-badge ' + (tk.length ? 'ok' : 'warn'); }
-      const b = parseFloat(q('apv-bf').value), t = parseFloat(q('apv-tx').value), d = Number(f.discountAmount) || 0;
-      set('apv-dp', (b > 0 && d > 0) ? (d * 100 / b).toFixed(2) + '%' : (f.discountAmount !== undefined ? '0.00%' : '—'));
-      set('apv-tot', (isNaN(b) && isNaN(t)) ? '—' : ((isNaN(b) ? 0 : b) + (isNaN(t) ? 0 : t) - d).toFixed(2));
-    }
-    function status(){
-      sync(); const inc = st.rows.filter(r => r.inc), w = [];
-      (f.paxWarnings || []).forEach(x => w.push(['warn', x]));
-      if(ctx.scanned) w.push(['bad', 'This PDF has no readable text (scanned image). OCR is not built into NexOps, so nothing could be read automatically. Enter passengers below, or use a text-based PDF.']);
-      if(ctx.dupFile) w.push(['warn', 'This exact PDF was already imported on ' + ctx.dupFile + '. Check that you are not entering the same booking twice.']);
-      if(!ctx.scanned && !st.rows.length) w.push(['bad', 'No passengers could be detected in this PDF. Nothing was guessed. Add passengers manually, or try a different PDF.']);
-      if(f.expectedPax && !ctx.scanned) w.push(f.expectedPax === inc.length ? ['ok', 'Passenger count matches the PDF (' + f.expectedPax + ').'] : ['bad', 'The PDF fare line says ' + f.expectedPax + ' passenger(s) but ' + inc.length + ' are included here. Fix the list before applying.']);
-      else if(!ctx.scanned && !f.expectedPax && st.rows.length) w.push(['warn', 'The PDF does not state a passenger count, so the number detected (' + st.rows.length + ') could not be cross-checked.']);
-      const noT = inc.filter(r => !r.ticket).length;
-      if(noT) w.push(['warn', noT + ' passenger(s) have no ticket number' + (f.passengers && !f.passengers.some(p => p.ticket) ? ' — this PDF does not contain ticket numbers, so none were invented. Enter them here or in the form.' : '.') + (noT < inc.length ? ' Fill in all or none so names and tickets stay in the same order.' : '')]);
-      if(inc.length > 9) w.push(['bad', 'A PNR can hold at most 9 tickets (' + inc.length + ' included). Split the booking.']);
-      q('apv-warn').innerHTML = w.map(x => '<div class="apv-w ' + x[0] + '">' + esc(x[1]) + '</div>').join('');
-      summary();
-      back.querySelectorAll('#apv-rows tr').forEach((tr, i) => { const c = rowCheck(st.rows[i], i); const td = tr.querySelector('.apv-c'); td.textContent = st.rows[i].inc ? c[1] : 'Not used'; td.className = 'apv-c ' + (st.rows[i].inc ? c[0] : ''); });
-    }
+    const close = () => { document.removeEventListener('keydown', onKey); back.remove(); };
+    const onKey = e => { if(e.key === 'Escape'){ close(); } };
+    document.addEventListener('keydown', onKey);
+
     function draw(){
-      q('apv-rows').innerHTML = st.rows.map((r, i) => '<tr><td><input type="checkbox" class="apv-i" aria-label="Use row ' + (i + 1) + '"' + (r.inc ? ' checked' : '') + '></td><td>' + (i + 1) + '</td><td><input class="apv-n" value="' + esc(r.name) + '" aria-label="Passenger name"></td><td><input class="apv-t" inputmode="numeric" value="' + esc(r.ticket) + '" aria-label="Ticket number"></td><td class="apv-c"></td><td><button type="button" class="apv-rm" data-i="' + i + '" aria-label="Remove row">Remove</button></td></tr>').join('') || '<tr><td colspan="6" class="apv-empty">No passengers detected. Use “+ Add passenger”.</td></tr>';
-      status();
-    }
-    back.addEventListener('input', status); back.addEventListener('change', status);
-    back.addEventListener('click', ev => {
-      const rm = ev.target.closest('.apv-rm'); if(rm){ sync(); st.rows.splice(+rm.dataset.i, 1); draw(); return; }
-      const b = ev.target.closest('[data-a]'); if(!b) return; const a = b.dataset.a;
-      if(a === 'cancel'){ back.remove(); }
-      else if(a === 'view'){ aeroOpenPdf(ctx.file); }
-      else if(a === 'add'){ sync(); st.rows.push({ inc: true, name: '', ticket: '' }); draw(); const ns = back.querySelectorAll('.apv-n'); ns[ns.length - 1].focus(); }
-      else if(a === 'retry'){ back.remove(); ctx.rerun(); }
-      else if(a === 'other'){ back.remove(); $('pdf-ticket-input').click(); }
-      else if(a === 'apply'){
-        sync(); const rows = st.rows.filter(r => r.inc && (r.name || r.ticket)); const err = [];
-        if(!rows.length) err.push('Add at least one passenger.');
-        if(rows.some(r => !r.name)) err.push('Every used row needs a passenger name.');
-        if(rows.some(r => r.ticket && !/^\d{13}$/.test(r.ticket))) err.push('Ticket numbers must be exactly 13 digits.');
-        const ts = rows.map(r => r.ticket).filter(Boolean); if(new Set(ts).size !== ts.length) err.push('The same ticket number is listed twice.');
-        if(rows.length > 9) err.push('A PNR can hold at most 9 tickets.');
-        if(f.expectedPax && f.expectedPax !== rows.length && !confirm('The PDF says ' + f.expectedPax + ' passenger(s) but you are applying ' + rows.length + '. Apply anyway?')) return;
-        if(err.length){ alert(err.join('\n')); return; }
-        const dups = ts.filter(t => exist[t]); if(dups.length && !confirm('Ticket number(s) already saved in another record: ' + dups.join(', ') + '. Apply anyway?')) return;
-        const curTk = (($('f-newtkt-t') || {}).value || ''); if(($('f-pname').value.trim() || curTk) && !confirm('The form already has passenger or ticket data. Replace the passenger names (and ticket numbers found here) with the imported ones?')) return;
-        const num = id => { const v = q(id).value; return v === '' ? undefined : parseFloat(v); };
-        const fields = Object.assign({}, f, { passengerName: rows.map(r => r.name).join(', '), ticketNumbers: ts, reservationPnr: q('apv-pg').value.trim().toUpperCase(), airlinePnr: q('apv-pa').value.trim().toUpperCase(), airlineCode: q('apv-air').value, sector: q('apv-sec').value.trim().toUpperCase().replace(/\s+/g, ''), baseFare: num('apv-bf'), taxFare: num('apv-tx') });
-        if(!fields.reservationPnr && !fields.airlinePnr){ delete fields.reservationPnr; delete fields.airlinePnr; delete fields.pnr; }
-        if(!fields.airlineCode) delete fields.airlineCode; if(!fields.sector) delete fields.sector;
-        delete fields.discountAmount; if(f.discountAmount !== undefined) fields.discountAmount = f.discountAmount;
-        const done = applyExtractedTicketFields(fields);
-        try{ const l = pdfImportsLoad(); l.push({ hash: ctx.hash, file: ctx.file.name, at: aeroLocalISO(), pnr: fields.reservationPnr || '', passengers: rows.map(r => ({ name: r.name, ticket: r.ticket })) }); localStorage.setItem(PDF_IMPORT_KEY, JSON.stringify(l.slice(-200))); }catch(e){}
-        window.__aeroPdfFile = ctx.file; const pfn = $('pdf-import-file'); if(pfn) pfn.textContent = ctx.file.name + ' · booking details applied. Verify every value, then save the work record.';
-        const bn = $('pdf-import-banner'); if(bn) bn.style.display = 'block';
-        back.remove(); toast(done ? ('Applied ' + rows.length + ' passenger(s) to the form — ' + (ts.length < rows.length ? (rows.length - ts.length) + ' still need a ticket number. ' : '') + 'Review, then click Add Entry.') : 'Nothing could be applied.');
+      const tk = isT ? ((entryNewTktChips && entryNewTktChips.getTickets) ? entryNewTktChips.getTickets() : []) : ts;
+      const names = g('f-pname').split(',').map(x => x.trim()).filter(Boolean);
+      const more = (arr, k) => arr.length ? arr[0] + (arr.length > k ? '  +' + (arr.length - k) + ' more' : '') : '—';
+      const sel = $('f-airline'), air = (sel && sel.value && sel.selectedIndex >= 0) ? sel.options[sel.selectedIndex].textContent.trim() : '';
+      const base = isT ? g('f-basefare-t') : (f.baseFare !== undefined ? f.baseFare : ''), tax = isT ? g('f-taxfare-t') : (f.taxFare !== undefined ? f.taxFare : '');
+      const disc = isT ? g('f-discamt-t') : (f.discountAmount !== undefined ? f.discountAmount : '');
+      const bN = parseFloat(base), dN = parseFloat(disc), mk = isT ? parseFloat(g('f-markup-t')) : NaN;
+      const pct = (bN > 0 && !isNaN(dN)) ? (dN * 100 / bN).toFixed(2) + '%' : (disc !== '' ? '0.00%' : '—');
+      const payable = isT ? g('f-totalfare-t') : ((isNaN(parseFloat(base)) && isNaN(parseFloat(tax))) ? '' : ((parseFloat(base) || 0) + (parseFloat(tax) || 0) - (dN || 0)));
+      const ctxSelf = entryWorkContext === 'self';
+      const blockers = warns.filter(w => w[0] === 'bad').length;
+      // payment table (Ticketing form only)
+      let pay = '', paySel = '';
+      if(isT && $('f-paystat-t')){
+        const st = g('f-paystat-t') || 'FULL', grand = parseFloat(g('f-grandtotal-t')) || parseFloat(g('f-totalfare-t')) || 0;
+        const paid = parseFloat(g('f-paidamt-t')), due = parseFloat(g('f-dueamt-t')), dd = g('f-duedate-t');
+        const m = $('f-paymethod-t'), mname = (m && m.value && m.selectedIndex >= 0) ? m.options[m.selectedIndex].textContent.trim() : '';
+        const r = [];
+        if(st === 'PARTIAL'){
+          const pp = (grand > 0 && !isNaN(paid)) ? Math.round(paid * 100 / grand) : null;
+          r.push(['Partial Payment' + (pp !== null ? ' <span class="rv-pill">' + pp + '%</span>' : ''), fmt2(paid), isNaN(paid) ? 'Enter the amount received on the form' : 'Balance due later' + (mname ? ' · via ' + esc(mname) : '')]);
+          r.push(['Pending Balance', fmt2(due), dd ? 'Due on ' + esc(dd) : 'No due date set']);
+        } else if(st === 'FULL_DUE'){
+          r.push(['Full Due', '0.00', 'Nothing received yet']); r.push(['Pending Balance', fmt2(grand), dd ? 'Due on ' + esc(dd) : 'No due date set']);
+        } else r.push(['Full Payment', fmt2(grand), 'Paid in full' + (mname ? ' · via ' + esc(mname) : '')]);
+        pay = '<div class="rv-card rv-paycard"><h4><span class="rv-ic">' + RV_ICO.card + '</span>Payment Details</h4><div class="rv-tw"><table><thead><tr><th>Method</th><th>Amount</th><th>Remarks</th></tr></thead><tbody>' + r.map(x => '<tr><td>' + x[0] + '</td><td>' + x[1] + '</td><td>' + x[2] + '</td></tr>').join('') + '</tbody></table></div></div>';
+        paySel = '<div class="rv-sub"><span class="rv-ic">' + RV_ICO.card + '</span>Payment Status</div><select id="rv-pay" aria-label="Payment status">' + [...$('f-paystat-t').options].map(o => '<option value="' + esc(o.value) + '"' + (o.value === st ? ' selected' : '') + '>' + esc(o.textContent.trim()) + '</option>').join('') + '</select>';
       }
+      const R = (k, v, cls) => '<div class="rv-r' + (cls ? ' ' + cls : '') + '"><span>' + k + '</span><b>' + v + '</b></div>';
+      back.innerHTML = '<div class="rv" role="dialog" aria-modal="true" aria-label="Review import">'
+        + '<div class="rv-top"><h2>Work Record Entry</h2><p>Import PDF, review details, and save your record</p></div>'
+        + '<div class="rv-steps" aria-label="Import progress"><span class="done"><i>✓</i>Import PDF</span><u></u><span class="on"><i>2</i>Review Details</span><u></u><span><i>3</i>Save</span></div>'
+        + '<div class="rv-grid"><div class="rv-main">'
+        + '<div class="rv-card rv-import' + (gotAny ? '' : ' bad') + '"><span class="rv-pdf"><b>PDF</b></span><div class="rv-imp-t"><b>Import Booking PDF</b><small>Drag &amp; drop your PDF file here, or</small></div><button type="button" class="rv-outline" data-a="choose">Choose File</button><span class="rv-div"></span>'
+        + '<span class="rv-ok">' + (gotAny ? RV_ICO.check : '!') + '</span><div class="rv-imp-t"><b>' + (ctx.scanned ? 'No readable text in this PDF' : gotAny ? 'File Loaded Successfully' : 'File loaded, but nothing could be read') + '</b><small>' + (gotAny ? 'Booking details have been extracted.' : 'Enter the details on the form.') + '</small></div><button type="button" class="rv-outline" data-a="view">' + RV_ICO.eye + 'View File</button></div>'
+        + (warns.length ? '<div class="rv-warns">' + warns.map(x => '<div class="rv-w ' + x[0] + '">' + esc(x[1]) + '</div>').join('') + '</div>' : '')
+        + '<div class="rv-two"><div class="rv-card"><h4><span class="rv-ic">' + RV_ICO.plane + '</span>Booking Information</h4>'
+        + R('GDS PNR', esc(g('f-pnr-gds') || '—')) + R('Airline PNR', esc(g('f-pnr-air') || '—')) + R('Airline', esc(air || '—')) + R('Passenger Name', esc(more(names, 1))) + R('Sector', esc((isT ? g('f-sector-t') : (fields.sector || '')) || '—'))
+        + R('Booking Type', '<span class="rv-badge ' + (tk.length ? 'ok' : 'warn') + '">' + (tk.length ? 'Ticketed' : 'No ticket number') + '</span>') + R('Ticket Number', esc(more(tk, 1))) + '</div>'
+        + '<div class="rv-card"><h4><span class="rv-ic">' + RV_ICO.ticket + '</span>Fare Details</h4>'
+        + R('Base Fare', fmt2(base)) + R('Tax', fmt2(tax)) + R('Discount', fmt2(disc)) + R('Discount Percentage', pct, 'rv-hl') + (mk > 0 ? R('Markup', fmt2(mk)) : '') + R('Payable Fare (Client Pays)', fmt2(payable), 'rv-strong') + '</div></div>'
+        + pay
+        + (use.length ? '<details class="rv-det"><summary>Passengers &amp; tickets (' + use.length + ')</summary><div class="rv-tw"><table><thead><tr><th>#</th><th>Passenger</th><th>Ticket number</th></tr></thead><tbody>' + use.map((r, i) => '<tr><td>' + (i + 1) + '</td><td>' + esc(r.name || '—') + '</td><td class="mono">' + esc(r.ticket || '—') + '</td></tr>').join('') + '</tbody></table></div></details>' : '')
+        + '<details class="rv-det"><summary>Text read from the PDF</summary><pre>' + esc(ctx.text.trim().slice(0, 6000)) + '</pre></details>'
+        + '</div>'
+        + '<aside class="rv-side"><div class="rv-card"><h4><span class="rv-ic">' + RV_ICO.brief + '</span>Work Context</h4>'
+        + '<button type="button" class="rv-radio" role="radio" aria-checked="' + (ctxSelf ? 'false' : 'true') + '" data-ctx="employment"><i></i><b>Employment Work</b><small>No profit analytics</small></button>'
+        + '<button type="button" class="rv-radio" role="radio" aria-checked="' + (ctxSelf ? 'true' : 'false') + '" data-ctx="self"><i></i><b>Self Business</b><small>Enable profit analytics</small></button>'
+        + (paySel ? '<hr>' + paySel : '') + '</div></aside></div>'
+        + '<div class="rv-foot"><button type="button" class="rv-outline rv-backbtn" data-a="back">← Back</button><span style="flex:1"></span><button type="button" class="rv-save" data-a="save"' + (blockers ? ' disabled title="Fix the red items on the form first"' : '') + '>' + RV_ICO.save + 'Save Work Record</button></div></div>';
+    }
+    draw();
+    back.addEventListener('change', ev => { if(ev.target.id === 'rv-pay'){ const sp = $('f-paystat-t'); if(sp){ sp.value = ev.target.value; sp.dispatchEvent(new Event('change', { bubbles: true })); } draw(); } });
+    back.addEventListener('click', ev => {
+      const c = ev.target.closest('[data-ctx]'); if(c){ setEntryContext(c.getAttribute('data-ctx')); draw(); return; }
+      const b = ev.target.closest('[data-a]'); if(!b || b.disabled) return; const a = b.dataset.a;
+      if(a === 'view') aeroOpenPdf(ctx.file);
+      else if(a === 'choose') $('pdf-ticket-input').click();
+      else if(a === 'back'){ close(); const n = $('f-pname'); if(n) try{ n.focus(); }catch(e){} }
+      else if(a === 'save'){ close(); $('btn-add').click(); }
     });
-    draw(); const first = back.querySelector('.apv-n, [data-a="add"]'); if(first) first.focus();
+    back.addEventListener('dragover', ev => { if(ev.dataTransfer && [...(ev.dataTransfer.types || [])].includes('Files')) ev.preventDefault(); });
+    back.addEventListener('drop', ev => {
+      if(!(ev.dataTransfer && ev.dataTransfer.files && ev.dataTransfer.files.length)) return; ev.preventDefault();
+      const file = ev.dataTransfer.files[0];
+      if(file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')){ toast('Please drop a PDF file.'); return; }
+      close(); ctx.load(file);
+    });
+    try{ back.focus(); }catch(e){}
   }
 
   function wirePdfPreview(){
@@ -6557,7 +6636,7 @@ A.onChange(A.fillForm);
           const scanned = text.replace(/\s/g, '').length < 40;
           const fields = scanned ? { passengers: [], paxWarnings: [] } : parseTicketText(text);
           const prev = pdfImportsLoad().filter(x => x.hash === hash).pop();
-          end(); openPdfPreview({ file, text, hash, fields, scanned, dupFile: prev ? prev.at : '', rerun: () => run(file) });
+          end(); openPdfPreview({ file, text, hash, fields, scanned, dupFile: prev ? prev.at : '', rerun: () => run(file), load: run });
         }).catch(err => { console.error('PDF extraction failed', err); end(); toast('Could not read that PDF. It may be damaged, password-protected or a scanned image.'); });
       }, () => { end(); toast('Could not load the PDF reader — check your internet connection.'); });
     }
@@ -7515,14 +7594,16 @@ A.onChange(A.fillForm);
   // Total Fare = Base Fare + Tax
   // Discount Amount = typed in (given to the client by the company system) — NEVER revenue / earnings
   // Discount % = Discount Amount / Base Fare x 100 (read-only, informational)
-  // Payable Fare (Client Pays) = Total Fare - Discount Amount
+  // Payable Fare (Client Pays) = Total Fare - Discount Amount + Markup Amount (markup is optional)
   function recalcTicketingFare(){
     const base = parseFloat($('f-basefare-t').value) || 0;
     const tax = parseFloat($('f-taxfare-t').value) || 0;
     let discountAmt = parseFloat($('f-discamt-t').value) || 0;
     if(discountAmt < 0){ discountAmt = 0; $('f-discamt-t').value = 0; }
+    let markupAmt = parseFloat(($('f-markup-t') || {}).value) || 0;
+    if(markupAmt < 0){ markupAmt = 0; $('f-markup-t').value = 0; }
     const totalFare = base + tax;
-    const payableFare = totalFare - discountAmt;
+    const payableFare = totalFare - discountAmt + markupAmt;
     $('f-atp-t').value = totalFare.toFixed(2);
     $('f-discpct-t').value = base > 0 ? (discountAmt / base * 100).toFixed(2) : '';
     $('f-totalfare-t').value = payableFare.toFixed(2);
@@ -7582,7 +7663,8 @@ A.onChange(A.fillForm);
     $('f-atp-t').value = (base + tax).toFixed(2);
     $('f-discpct-t').value = base > 0 ? (discountAmt / base * 100).toFixed(2) : '';
     const saved = e ? parseFloat(e.totalFare) : NaN;
-    $('f-totalfare-t').value = (isNaN(saved) ? (base + tax - discountAmt) : saved).toFixed(2);
+    const mk = parseFloat(($('f-markup-t') || {}).value) || 0;
+    $('f-totalfare-t').value = (isNaN(saved) ? (base + tax - discountAmt + mk) : saved).toFixed(2);
   }
   document.querySelectorAll('.ptc-fare-calc').forEach(el => {
     el.addEventListener('input', recalcTicketingFare);
@@ -7738,7 +7820,7 @@ A.onChange(A.fillForm);
   function empList(){ return entries.filter(e => !isSelfEntry(e)); }
   // Self Business entries presented as sale-like records for the personal business analytics:
   // revenue = payable fare (fare minus discount); collection/dues from the payment fields. The service charge (svc) is the user's work
-  // for the company, so it never counts as personal business commission or profit. Profit stays 0 until a business profit basis is defined.
+  // for the company, so it never counts as personal business commission or profit. Self Business profit = the Markup Amount added to the client's fare.
   function selfAsSale(e){
     const n = v => parseFloat(v) || 0;
     let price = 0, paid = 0, due = 0;
@@ -7749,9 +7831,9 @@ A.onChange(A.fillForm);
         if(e.dueStatus === 'PAID'){ paid = basis; due = 0; } else { paid = n(e.paidAmount); due = n(e.dueAmount); }
       } else { paid = basis; }
     } else if(e.txn === 'Reissue'){ price = n(e.totalCollection); paid = price; }
-    const profit = 0;
+    const profit = (e.txn === 'Ticketing') ? n(e.markupAmount) : 0;
     return { _id:'entry:' + (e._id || ''), _fromEntry:true, date:e.date || '', pname:e.pname || '', sector:e.sector || '', airline:e.airline || '', tkt:e.newTkt || '',
-      pnrGds:e.pnrGds || '', pnrAirline:e.pnrAirline || '', price:price, cost:'', profit:profit, method:e.payMethod || '', paid:paid, due:due, dueDate:e.dueDate || '',
+      pnrGds:e.pnrGds || '', pnrAirline:e.pnrAirline || '', price:price, cost:price - profit, profit:profit, method:e.payMethod || '', paid:paid, due:due, dueDate:e.dueDate || '',
       ticketStatus:'Active', txn:e.txn };
   }
   function selfSalesList(){ return entries.filter(e => isSelfEntry(e) && e.txn !== 'Booking').map(selfAsSale); }
@@ -7826,7 +7908,7 @@ A.onChange(A.fillForm);
       base.discountAmount = parseFloat($('f-discamt-t').value) || 0; // given to the client — not revenue
       base.markUp = '';        // legacy markup fields are no longer written
       base.airlineTicketPrice = parseFloat($('f-atp-t').value) || 0;
-      base.markupAmount = '';
+      { const mk = parseFloat(($('f-markup-t') || {}).value) || 0; base.markupAmount = mk > 0 ? mk : ''; }   // real markup; legacy records kept the discount here, so it is only read as markup when the record has its own discountAmount
       base.totalFare = parseFloat($('f-totalfare-t').value) || 0;
       // Payment: Full by default; Partial records what was received and when the rest is due.
       const psv = $('f-paystat-t') ? $('f-paystat-t').value : 'FULL';
@@ -8229,7 +8311,7 @@ A.onChange(A.fillForm);
     try{ if(window.aeroCo) window.aeroCo.resetForm(); }catch(err){}
     setEntryContext('employment');
     ['f-pnr-gds','f-pnr-air','f-pname','f-pnum','f-note','f-platform-other','f-airline-other',
-     'f-newtkt-t','f-sector-t','f-basefare-t','f-taxfare-t','f-discamt-t','f-discpct-t','f-atp-t',
+     'f-newtkt-t','f-sector-t','f-basefare-t','f-taxfare-t','f-discamt-t','f-markup-t','f-discpct-t','f-atp-t',
      'f-sector-b','f-basefare-b','f-taxfare-b','f-gross-b','f-net-b',
      'f-paidamt-t','f-dueamt-t','f-duedate-t','f-dueref-t','f-paychgpct-t','f-paychg-t',
      'f-oldtkt-r','f-newtkt-r','f-sector-r','f-code-r','f-faredif-r','f-airline-r','f-svc-r',
@@ -8346,6 +8428,7 @@ A.onChange(A.fillForm);
       setVal('f-basefare-t', e.baseFare);
       setVal('f-taxfare-t', e.taxFare);
       setVal('f-discamt-t', discountAmountOf(e) || '');
+      setVal('f-markup-t', !isNaN(parseFloat(e.discountAmount)) ? (e.markupAmount || '') : '');
       showTicketingBreakdown(e);
       // Payment: records saved before this feature have no payStatus — they open as Full Payment.
       setVal('f-paystat-t', (e.payStatus === 'PARTIAL' || e.payStatus === 'FULL_DUE') ? e.payStatus : 'FULL');
@@ -12703,11 +12786,21 @@ A.onChange(A.fillForm);
     });
     setTimeout(apply, 1500);
   })();
+  /* Performance Analytics lives in Work Analytics > Performance, so these buttons open that tab (with the right period). */
+  function openWaPerf(key, from, to){
+    try{ if(window.aeroSetWaRange) window.aeroSetWaRange(key, from, to); }catch(e){}
+    window.__aeroIntelTab = 'perf';
+    var b = document.querySelector('#ptc-nav .ao-nav[data-ao="ir"]') || document.querySelector('#ptc-nav [data-aero="intel"]');
+    if(!b){ setTab('dash'); return; }
+    b.click();
+    var n = 0;
+    (function t(){ var x = document.querySelector('#wr-intel [data-act="nxv"][data-v="pf"]'); if(x){ window.__aeroIntelTab = null; x.click(); } else if(n++ < 20) setTimeout(t, 120); })();
+  }
   function homeAct(act, v){
     var d = parseISO(hmDate()), T = todayISO();
     if(act === 'hm-new'){ var _en = $('hm-entry'); if(_en) _en.classList.remove('hm-min'); fillNow(); var c = $('pwi-company'); c.scrollIntoView({behavior:'smooth', block:'center'}); c.focus(); return true; }
-    if(act === 'hm-all'){ setTab('dash'); return true; }
-    if(act === 'hm-report'){ if(hmDate() === T) PS.p = 'today'; else { PS.p = 'custom'; PS.from = PS.to = hmDate(); } setTab('perf'); return true; }
+    if(act === 'hm-all'){ openWaPerf('all'); return true; }
+    if(act === 'hm-report'){ var rd = hmDate(); if(rd === T){ PS.p = 'today'; openWaPerf('today'); } else { PS.p = 'custom'; PS.from = PS.to = rd; openWaPerf('custom', rd, rd); } return true; }
     if(act === 'hm-clear'){ HM.src = HM.typ = HM.sts = HM.q = ''; $('hm-q').value = ''; HM.pg = 1; }
     else if(act === 'hm-page') HM.pg = Math.max(1, +v || 1);
     else { HM.pg = 1; if(act === 'hm-prev') HM.d = iso(addDays(d, -1)); else { var n = iso(addDays(d, 1)); HM.d = n > T ? T : n; } }
@@ -13049,6 +13142,7 @@ function tkts(e){return list(e.txn==='Ticketing'||e.txn==='Reissue'?e.newTkt:e.o
 function pill(t,c){return'<span class="wr-pill" style="--c:'+c+'">'+esc(t)+'</span>'}
 /* ---- range ---- */
 var R={key:'month',from:'',to:''};
+window.aeroSetWaRange=function(k,f,t){R.key=k||'month';R.from=f||'';R.to=t||''};
 function span(){var t=new Date(),k=R.key,a,b;
  if(k==='today'){a=t;b=t}else if(k==='week'){a=addD(t,-6);b=t}else if(k==='month'){a=new Date(t.getFullYear(),t.getMonth(),1);b=t}else if(k==='30'){a=addD(t,-29);b=t}else if(k==='year'){a=new Date(t.getFullYear(),0,1);b=t}else if(k==='tw'){a=addD(t,-((t.getDay()+6)%7));b=t}else if(k==='90'){a=addD(t,-89);b=t}else if(k==='180'){a=addD(t,-179);b=t}
  else if(k==='custom'){return{from:R.from,to:R.to}}else return{from:'',to:''};
