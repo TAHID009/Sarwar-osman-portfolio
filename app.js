@@ -148,17 +148,91 @@
   document.querySelectorAll("[data-exp-words]").forEach(n => { if (profile.yearsWords) n.textContent = profile.yearsWords; });
 
   // Training & Workshops (Home page) — data lives in profile.workshops
+  // Each workshop has "image" (one photo) or "images" (several, first = cover). Clicking a photo opens the viewer.
+  const wsPhotos = (w) => (Array.isArray(w.images) && w.images.length ? w.images : (w.image ? [w.image] : []));
   if (el("homeTrainingGrid") && profile.workshops) {
-    el("homeTrainingGrid").innerHTML = profile.workshops.map(w => `
+    el("homeTrainingGrid").innerHTML = profile.workshops.map((w, i) => {
+      const photos = wsPhotos(w);
+      const cover = photos[0] ? `<img class="h-train-img" src="${esc(photos[0])}" alt="${esc(w.title)}" loading="lazy">` : "";
+      const media = photos.length
+        ? `<button type="button" class="h-train-media" data-ws="${i}" aria-label="View ${photos.length > 1 ? photos.length + " photos" : "photo"}: ${esc(w.title)}">${cover}<span class="h-train-zoom" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5M11 8v6M8 11h6"/></svg></span>${photos.length > 1 ? `<span class="h-train-count" aria-hidden="true">${photos.length} photos</span>` : ""}</button>`
+        : "";
+      return `
       <article class="h-train-card">
-        <img class="h-train-img" src="${esc(w.image)}" alt="${esc(w.title)}" loading="lazy">
+        ${media}
         <div class="h-train-body">
           <div class="h-train-meta">${w.date ? `<span class="h-train-chip">${esc(w.date)}</span>` : ""}${w.location ? `<span class="h-train-chip">${esc(w.location)}</span>` : ""}</div>
           <h3>${esc(w.title)}</h3>
           ${w.organizer ? `<p class="h-train-org">${esc(w.organizer)}</p>` : ""}
-          <p class="h-train-desc">${esc(w.description)}</p>
+          <p class="h-train-desc">${esc(w.description || "")}</p>
         </div>
-      </article>`).join("");
+      </article>`;
+    }).join("");
+
+    // Photo viewer (lightbox): click a photo, then use the arrows / swipe / keyboard. Esc, the X, or a click outside closes it.
+    let lb = null, lbItems = [], lbIdx = 0, lbTitle = "", lbMeta = "", lbOpener = null, lbTouchX = null;
+    const lbBuild = () => {
+      lb = document.createElement("div");
+      lb.className = "h-lb"; lb.hidden = true;
+      lb.setAttribute("role", "dialog"); lb.setAttribute("aria-modal", "true"); lb.setAttribute("aria-label", "Photo viewer");
+      lb.innerHTML = `
+        <button type="button" class="h-lb-x" aria-label="Close photo viewer">&times;</button>
+        <button type="button" class="h-lb-nav h-lb-prev" aria-label="Previous photo">&#8249;</button>
+        <figure class="h-lb-fig"><img class="h-lb-img" alt=""><figcaption class="h-lb-cap"><strong></strong><span></span></figcaption></figure>
+        <button type="button" class="h-lb-nav h-lb-next" aria-label="Next photo">&#8250;</button>`;
+      document.body.appendChild(lb);
+      lb.addEventListener("click", (ev) => {
+        if (ev.target.closest(".h-lb-x") || ev.target === lb || ev.target.classList.contains("h-lb-fig")) lbClose();
+        else if (ev.target.closest(".h-lb-prev")) lbShow(lbIdx - 1);
+        else if (ev.target.closest(".h-lb-next")) lbShow(lbIdx + 1);
+      });
+      lb.addEventListener("touchstart", (ev) => { lbTouchX = ev.touches[0].clientX; }, { passive: true });
+      lb.addEventListener("touchend", (ev) => {
+        if (lbTouchX === null) return;
+        const dx = ev.changedTouches[0].clientX - lbTouchX; lbTouchX = null;
+        if (Math.abs(dx) > 50) lbShow(lbIdx + (dx < 0 ? 1 : -1));
+      });
+    };
+    const lbShow = (n) => {
+      if (!lbItems.length) return;
+      lbIdx = (n + lbItems.length) % lbItems.length;
+      const img = lb.querySelector(".h-lb-img");
+      img.src = lbItems[lbIdx];
+      img.alt = lbTitle + (lbItems.length > 1 ? " — photo " + (lbIdx + 1) + " of " + lbItems.length : "");
+      lb.querySelector(".h-lb-cap strong").textContent = lbTitle;
+      lb.querySelector(".h-lb-cap span").textContent = [lbMeta, lbItems.length > 1 ? (lbIdx + 1) + " / " + lbItems.length : ""].filter(Boolean).join("  ·  ");
+      lb.classList.toggle("h-lb-single", lbItems.length < 2);
+    };
+    const lbOpen = (w, opener) => {
+      if (!lb) lbBuild();
+      lbItems = wsPhotos(w); lbTitle = w.title || ""; lbMeta = [w.date, w.location].filter(Boolean).join(" · "); lbOpener = opener;
+      lbShow(0);
+      lb.hidden = false; document.documentElement.classList.add("h-lb-open");
+      lb.querySelector(".h-lb-x").focus();
+    };
+    const lbClose = () => {
+      if (!lb || lb.hidden) return;
+      lb.hidden = true; document.documentElement.classList.remove("h-lb-open");
+      lb.querySelector(".h-lb-img").removeAttribute("src");
+      if (lbOpener && lbOpener.focus) lbOpener.focus();
+    };
+    el("homeTrainingGrid").addEventListener("click", (ev) => {
+      const b = ev.target.closest("[data-ws]");
+      if (b && profile.workshops[+b.dataset.ws]) lbOpen(profile.workshops[+b.dataset.ws], b);
+    });
+    document.addEventListener("keydown", (ev) => {
+      if (!lb || lb.hidden) return;
+      if (ev.key === "Escape") lbClose();
+      else if (ev.key === "ArrowLeft") lbShow(lbIdx - 1);
+      else if (ev.key === "ArrowRight") lbShow(lbIdx + 1);
+      else if (ev.key === "Tab") { // keep keyboard focus inside the viewer
+        const f = [...lb.querySelectorAll("button")].filter((x) => x.offsetParent !== null);
+        if (!f.length) return;
+        const first = f[0], last = f[f.length - 1];
+        if (ev.shiftKey && document.activeElement === first) { ev.preventDefault(); last.focus(); }
+        else if (!ev.shiftKey && document.activeElement === last) { ev.preventDefault(); first.focus(); }
+      }
+    });
   }
 
   // Quote card (Home page) — rotates through profile.quotes every profile.quoteEveryDays days

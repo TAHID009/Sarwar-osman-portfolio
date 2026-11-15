@@ -96,7 +96,7 @@ const profile = {
   ],
   researchInterests: ["Aviation","Airfare Pricing","Airline Revenue","Tourism","Hospitality","International Business","Entrepreneurship","Technology in Travel"],
   // Training & Workshops (Experience page). To add one, copy a block below and fill it in.
-  // Put the photo in the repo root and point "image" at it. Leave organizer/date/location out if unknown. Newest first.
+  // Put the photo(s) in the repo root and point "image" (one photo) or "images" (several) at them. Clicking a photo on the site opens it full size. Leave organizer/date/location out if unknown. Newest first.
   // Quote card on the home page (beside Professional Focus). A new quote shows every quoteEveryDays days, in order.
   // Add, edit or remove quotes freely. Leave author "" to show no name. Please double-check any quote you add.
   quoteEveryDays: 1,
@@ -108,6 +108,15 @@ const profile = {
     { text: "If we worked on the assumption that what is accepted as true really is true, there would be little hope for advance.", author: "Orville Wright" }
   ],
   workshops: [
+    {
+      // Several photos: use "images" (the first one is the cover). A single photo can use "image" instead.
+      images: ["./workshop-qatar-group.jpg", "./workshop-qatar-award.jpg"],
+      title: "Qatar Airways Agency Workshop",
+      organizer: "Qatar Airways",
+      // date: "",      // add when you have it, for example "20 October 2026"
+      // location: "",  // add when you have it, for example "Hotel name, City"
+      description: "Attended the Qatar Airways workshop for travel agency partners, with a group photo and a token of appreciation handed over during the programme."
+    },
     {
       image: "./workshop-verteil.jpg",
       title: "Verteil Travel Agency Workshop",
