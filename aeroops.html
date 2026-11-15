@@ -3343,15 +3343,53 @@ html[data-theme="dark"] .apv-card,html[data-theme="dark"] .apv-v,html[data-theme
 
 
 
-/* PDF import check strip: lives at the top of the New Work Record pop-up */
-#pdf-import-banner{position:sticky;top:64px;z-index:4;box-shadow:0 4px 10px rgba(15,39,66,.08)}
-.aimp-checks{display:grid;gap:6px;margin-top:8px;max-height:120px;overflow:auto}
-.aimp-checks:empty{display:none}
-.aimp-w{padding:6px 10px;border-radius:8px;font-size:12.5px;font-weight:600;border:1px solid}
-.aimp-w.ok{background:#EAF6F0;border-color:#BFE3CF;color:#14653F}
-.aimp-w.warn{background:#FFF6E3;border-color:#F0D3A4;color:#7A4E0A}
-.aimp-w.bad{background:#FDF0EE;border-color:#F0C2BD;color:#9B2C20}
+/* Compact import preview panel: sits at the top of the New Work Record pop-up */
+#pdf-import-banner{position:static;padding:8px 12px 10px;margin:0 0 12px;border-radius:12px;font-weight:500}
 #pdf-import-banner.bad .aimp-ok{background:#C97F1E}
+.aimp-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+#pdf-import-banner .aimp-head .aimp-steps{flex:1;padding:0 0 6px;gap:8px}
+#pdf-import-banner .aimp-steps span{font-size:12px}#pdf-import-banner .aimp-steps i{width:20px;height:20px;font-size:11px}
+.aimp-hide{font:inherit;font-size:18px;line-height:1;width:26px;height:26px;border:1px solid #D5DCE6;background:#fff;border-radius:8px;cursor:pointer;color:#475569;margin-bottom:6px}
+.aimp-hide:hover{background:#FEE2E2;color:#B91C1C}
+#pdf-import-banner .aimp-row{gap:10px;background:#fff;border:1px solid #D6E2F5;border-radius:10px;padding:6px 10px}
+.aimp-pdfic{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:#FDE8E6;color:#C0392B;font-weight:800;font-size:10px;flex:none}
+.aimp-sep{width:1px;align-self:stretch;background:#D6E2F5;margin:0 2px}
+.aimp-row .aimp-ok{width:26px;height:26px;font-size:13px}
+.aimp-row .aimp-t b{font-size:12.5px}.aimp-row .aimp-t small{font-size:11px}
+.aimp-row .aimp-view{padding:4px 10px;font-size:12px;white-space:nowrap}
+.aimp-checks{display:grid;gap:4px;margin-top:6px;max-height:96px;overflow:auto}.aimp-checks:empty{display:none}
+.aimp-w{padding:4px 10px;border-radius:7px;font-size:12px;font-weight:600;border:1px solid}
+.aimp-w.ok{background:#EAF6F0;border-color:#BFE3CF;color:#14653F}.aimp-w.warn{background:#FFF6E3;border-color:#F0D3A4;color:#7A4E0A}.aimp-w.bad{background:#FDF0EE;border-color:#F0C2BD;color:#9B2C20}
+.aimp-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) 210px;gap:8px;margin-top:8px;align-items:start}
+.aimp-card{background:#fff;border:1px solid #DDE5F0;border-radius:10px;padding:6px 10px 8px;min-width:0}
+.aimp-card h5{margin:0 0 2px;padding-bottom:4px;border-bottom:1px solid #EEF2F7;font-size:12.5px;font-weight:700;color:#0F2742}
+.aimp-r{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:2px 0;border-top:1px solid #F0F3F8;font-size:12px;color:#475569;margin:0;font-weight:500}
+.aimp-card h5+.aimp-r{border-top:0}
+.aimp-r b{font-weight:700;color:#0F2742;text-align:right;font-size:12px;overflow-wrap:anywhere}
+.aimp-r input{width:46%;min-width:0;padding:2px 7px;font-size:12px;text-align:right;border:1px solid #D5DCE6;border-radius:6px;background:#fff;height:24px;font-family:ui-monospace,Menlo,Consolas,monospace}
+.aimp-sub{background:#F6F8FC;margin:0 -10px;padding:2px 10px}
+.aimp-hl{background:#E8F0FD;margin:0 -10px;padding:2px 10px;color:#1D4ED8}.aimp-hl b{color:#1D4ED8}
+.aimp-strong b{font-weight:800}.aimp-strong{background:#F1F7F3;margin:0 -10px;padding:2px 10px}
+.aimp-badge{display:inline-block;padding:0 9px;border-radius:999px;font-size:11.5px;font-weight:700}.aimp-badge.ok{background:#DCEBFF;color:#1D4ED8}.aimp-badge.warn{background:#FFF1D6;color:#7A4E0A}
+.aimp-pay{grid-column:1 / span 2}
+.aimp-pay table{width:100%;border-collapse:collapse;font-size:12px}
+.aimp-pay th{background:#EFF3F9;text-align:left;padding:3px 8px;font-size:11.5px;color:#0F2742;border:1px solid #E1E8F1}.aimp-pay td{padding:3px 8px;border:1px solid #E1E8F1;color:#334155}
+.aimp-pill{display:inline-block;margin-left:6px;padding:0 8px;border-radius:999px;border:1px solid #C9B6F2;background:#F5EEFF;color:#6B3FC4;font-size:11px;font-weight:700}
+.aimp-side{grid-row:1 / span 2;grid-column:3}
+.aimp-radio{display:grid;grid-template-columns:18px 1fr;column-gap:8px;width:100%;text-align:left;font:inherit;background:none;border:0;padding:4px 0;cursor:pointer;color:#0F2742}
+.aimp-radio i{grid-row:1 / span 2;width:16px;height:16px;border-radius:50%;border:2px solid #94A3B8;align-self:center;box-sizing:border-box}
+.aimp-radio[aria-checked="true"] i{border-color:#2563EB;box-shadow:inset 0 0 0 3px #fff;background:#2563EB}
+.aimp-radio b{font-size:12.5px}.aimp-radio small{font-size:11px;color:#64748B}
+.aimp-side hr{border:0;border-top:1px solid #EEF2F7;margin:4px 0 6px}
+.aimp-fl{display:block;font-size:11.5px;font-weight:600;color:#475569;margin:0 0 6px}
+.aimp-fl select,.aimp-fl input{display:block;width:100%;margin-top:2px;height:26px;padding:2px 7px;font-size:12px;border:1px solid #D5DCE6;border-radius:6px;background:#fff;box-sizing:border-box}
+.aimp-nonT{display:none;margin-top:8px;font-size:12px;color:#7A4E0A;background:#FFF6E3;border:1px solid #F0D3A4;border-radius:8px;padding:5px 10px}
+#pdf-import-banner.aimp-nt .aimp-fare,#pdf-import-banner.aimp-nt .aimp-pay,#pdf-import-banner.aimp-nt .aimp-side{display:none}
+#pdf-import-banner.aimp-nt .aimp-grid{grid-template-columns:1fr}
+#pdf-import-banner.aimp-nt .aimp-nonT{display:block}
+@media(max-width:760px){.aimp-grid{grid-template-columns:1fr}.aimp-pay,.aimp-side{grid-column:auto;grid-row:auto}}
+html[data-theme="dark"] .aimp-card,html[data-theme="dark"] #pdf-import-banner .aimp-row{background:var(--card);border-color:var(--ao-soft)}
+html[data-theme="dark"] .aimp-card h5,html[data-theme="dark"] .aimp-r b,html[data-theme="dark"] .aimp-radio{color:inherit}
 
 /* Import review page (read-only), modelled on the Work Record Entry mockup */
 #rv-back,#rv-back *{font-family:Inter,'Segoe UI',system-ui,-apple-system,Roboto,Arial,sans-serif}
@@ -4118,10 +4156,57 @@ html[data-theme="dark"] #pwi-root .pwi-import textarea{background:#0E1E36;border
       </div>
 
       <div id="pdf-import-banner" style="display:none;">
-        <div class="aimp-steps" aria-label="Import progress"><span class="done"><i>✓</i>Import PDF</span><u></u><span class="on"><i>2</i>Review Details</span><u></u><span><i>3</i>Save</span></div>
-        <div class="aimp-row"><span class="aimp-ok" id="pdf-import-ok">✓</span><div class="aimp-t"><b id="pdf-import-title">File Loaded Successfully</b><small id="pdf-import-file">Booking details have been extracted. Verify every value, then save the work record.</small></div><button type="button" id="pdf-view-file" class="aimp-view">View File</button></div>
+        <div class="aimp-head">
+          <div class="aimp-steps" aria-label="Import progress"><span class="done"><i>✓</i>Import PDF</span><u></u><span class="on"><i>2</i>Review Details</span><u></u><span><i>3</i>Save</span></div>
+          <button type="button" class="aimp-hide" id="pdf-import-hide" title="Hide preview" aria-label="Hide preview">×</button>
+        </div>
+        <div class="aimp-row">
+          <span class="aimp-pdfic">PDF</span>
+          <div class="aimp-t"><b>Import Booking PDF</b><small>Drag &amp; drop a PDF onto this form, or</small></div>
+          <button type="button" class="aimp-view" id="pdf-import-choose">Choose File</button>
+          <span class="aimp-sep"></span>
+          <span class="aimp-ok" id="pdf-import-ok">✓</span>
+          <div class="aimp-t"><b id="pdf-import-title">File Loaded Successfully</b><small id="pdf-import-file">Booking details have been extracted.</small></div>
+          <button type="button" id="pdf-view-file" class="aimp-view">👁 View File</button>
+        </div>
         <div class="aimp-checks" id="pdf-import-checks" aria-live="polite"></div>
-        <div class="aimp-note">⚠️ Layouts vary by airline/GDS, so extraction can miss or misread a field.</div>
+        <div class="aimp-grid" id="pdf-import-body">
+          <div class="aimp-card aimp-book"><h5>✈ Booking Information</h5>
+            <label class="aimp-r"><span>GDS PNR</span><input data-bind="f-pnr-gds" data-up="1" autocomplete="off" spellcheck="false" placeholder="—"></label>
+            <label class="aimp-r"><span>Airline PNR</span><input data-bind="f-pnr-air" data-up="1" autocomplete="off" spellcheck="false" placeholder="—"></label>
+            <div class="aimp-r"><span>Airline</span><b data-out="f-airline" data-sel="1"></b></div>
+            <div class="aimp-r"><span>Passenger</span><b data-out="f-pname"></b></div>
+            <label class="aimp-r"><span>Sector</span><input data-bind="f-sector-t" data-up="1" autocomplete="off" spellcheck="false" placeholder="—"></label>
+            <div class="aimp-r"><span>Booking Type</span><b id="aimp-btype"></b></div>
+            <div class="aimp-r"><span>Ticket No.</span><b id="aimp-tkts" class="mono"></b></div>
+          </div>
+          <div class="aimp-card aimp-fare"><h5>🎫 Fare Calculation</h5>
+            <label class="aimp-r"><span>Base Fare</span><input type="number" step="0.01" data-bind="f-basefare-t" placeholder="0.00"></label>
+            <label class="aimp-r"><span>Tax</span><input type="number" step="0.01" data-bind="f-taxfare-t" placeholder="0.00"></label>
+            <div class="aimp-r aimp-sub"><span>Total Fare</span><b data-out="f-atp-t"></b></div>
+            <label class="aimp-r"><span>Discount</span><input type="number" step="0.01" min="0" data-bind="f-discamt-t" placeholder="0.00"></label>
+            <div class="aimp-r aimp-hl"><span>Discount %</span><b data-out="f-discpct-t" data-suffix="%"></b></div>
+            <label class="aimp-r"><span>Markup</span><input type="number" step="0.01" min="0" data-bind="f-markup-t" placeholder="0.00"></label>
+            <div class="aimp-r aimp-strong"><span>Payable Fare (Client Pays)</span><b data-out="f-totalfare-t"></b></div>
+            <label class="aimp-r"><span>Method Charge %</span><input type="number" step="0.01" min="0" data-bind="f-paychgpct-t" placeholder="0.00"></label>
+            <div class="aimp-r"><span>Method Charge</span><b data-out="f-paychg-t" data-val="1"></b></div>
+            <div class="aimp-r aimp-strong"><span>Total Payable</span><b data-out="f-grandtotal-t"></b></div>
+          </div>
+          <div class="aimp-card aimp-side"><h5>💼 Work Context</h5>
+            <button type="button" class="aimp-radio" data-ctx="employment"><i></i><b>Employment Work</b><small>No profit analytics</small></button>
+            <button type="button" class="aimp-radio" data-ctx="self"><i></i><b>Self Business</b><small>Enable profit analytics</small></button>
+            <hr>
+            <label class="aimp-fl">Payment Status<select data-bind="f-paystat-t"></select></label>
+            <label class="aimp-fl">Payment Method<select data-bind="f-paymethod-t"></select></label>
+            <label class="aimp-fl aimp-part">Amount Received<input type="number" step="0.01" min="0" data-bind="f-paidamt-t" placeholder="0.00"></label>
+            <label class="aimp-fl aimp-part">Due Date<input type="date" data-bind="f-duedate-t"></label>
+          </div>
+          <div class="aimp-card aimp-pay"><h5>💳 Payment Details</h5>
+            <table><thead><tr><th>Method</th><th>Amount</th><th>Remarks</th></tr></thead><tbody id="aimp-paybody"></tbody></table>
+          </div>
+        </div>
+        <div class="aimp-nonT" id="aimp-nonT">Fare and payment calculation is available for <b>Ticketing</b> entries. Use the form below for other types.</div>
+        <div class="aimp-note">⚠️ Layouts vary by airline/GDS, so extraction can miss or misread a field. Edits here update the form below, and the other way round.</div>
       </div>
 
       <div class="ptc-grp"><div class="ptc-grp-body ptc-g3">
@@ -6589,7 +6674,7 @@ A.onChange(A.fillForm);
     try{ const rt = $('ptc-root'); if(rt && rt.classList.contains('wr-mode')) rt.classList.add('wr-form-open'); }catch(e){}
     const gotAny = !ctx.scanned && !!(f.reservationPnr || f.pnr || f.airlinePnr || f.sector || f.baseFare !== undefined || rows.length);
     const bn = $('pdf-import-banner'); if(!bn) return;
-    bn.style.display = 'block'; bn.classList.toggle('bad', !gotAny);
+    bn.style.display = 'block'; bn.classList.toggle('bad', !gotAny); wireImportPanel();
     const pfn = $('pdf-import-file'); if(pfn) pfn.textContent = ctx.file.name + (gotAny ? ' · booking details applied. Verify every value, then save the work record.' : ' · enter the details on the form.');
     const pt = $('pdf-import-title'); if(pt) pt.textContent = ctx.scanned ? 'No readable text in this PDF' : gotAny ? 'File Loaded Successfully' : 'File loaded, but nothing could be read';
     const pok = $('pdf-import-ok'); if(pok) pok.textContent = gotAny ? '✓' : '!';
@@ -6611,9 +6696,60 @@ A.onChange(A.fillForm);
       const all = baseWarns.concat(w);
       box.innerHTML = all.map(x => '<div class="aimp-w ' + x[0] + '">' + esc(x[1]) + '</div>').join('');
     };
-    window.__aeroImportChecks = renderChecks;
-    renderChecks();
+    window.__aeroImportChecks = () => { renderChecks(); syncImportPanel(); };
+    window.__aeroImportChecks();
     try{ const card = $('ptc-card'); if(card) card.scrollTop = 0; }catch(e){}
+  }
+  // ---- compact import preview panel: mirrors the form, and edits write straight back to the real form fields ----
+  function syncImportPanel(){
+    const bn = $('pdf-import-banner'); if(!bn || bn.style.display === 'none') return;
+    const val = id => { const e = $(id); return e ? String(e.value || '').trim() : ''; };
+    const num = id => { const n = parseFloat(val(id)); return isNaN(n) ? NaN : n; };
+    const fmt = n => (n === '' || n === undefined || n === null || isNaN(n)) ? '—' : Number(n).toFixed(2);
+    const isT = typeSelect.value === 'Ticketing';
+    bn.classList.toggle('aimp-nt', !isT);
+    bn.querySelectorAll('[data-bind]').forEach(el => {
+      const t = $(el.dataset.bind); if(!t) return;
+      if(el.tagName === 'SELECT' && el.options.length !== t.options.length) el.innerHTML = t.innerHTML;
+      if(document.activeElement !== el && el.value !== t.value) el.value = t.value;
+    });
+    bn.querySelectorAll('[data-out]').forEach(el => {
+      const t = $(el.dataset.out); if(!t) return;
+      let v = el.dataset.sel ? ((t.value && t.selectedIndex >= 0) ? t.options[t.selectedIndex].textContent.trim() : '') : String(t.value || '').trim();
+      if(el.dataset.out === 'f-pname') v = v.split(',').map(x => x.trim()).filter(Boolean).join(', ');
+      el.textContent = v ? v + (el.dataset.suffix || '') : '—';
+    });
+    const tk = (isT && entryNewTktChips && entryNewTktChips.getTickets) ? entryNewTktChips.getTickets() : [];
+    const tkEl = $('aimp-tkts'); if(tkEl) tkEl.textContent = tk.length ? tk[0] + (tk.length > 1 ? '  +' + (tk.length - 1) + ' more' : '') : '—';
+    const bt = $('aimp-btype'); if(bt) bt.innerHTML = '<span class="aimp-badge ' + (tk.length ? 'ok' : 'warn') + '">' + (tk.length ? 'Ticketed' : 'No ticket number') + '</span>';
+    const ctxSelf = entryWorkContext === 'self';
+    bn.querySelectorAll('[data-ctx]').forEach(b => b.setAttribute('aria-checked', String((b.getAttribute('data-ctx') === 'self') === ctxSelf)));
+    const st = val('f-paystat-t') || 'FULL';
+    bn.querySelectorAll('.aimp-part').forEach(e => e.style.display = st === 'PARTIAL' ? '' : 'none');
+    // payment table
+    const body = $('aimp-paybody'); if(!body || !isT) return;
+    const grand = num('f-grandtotal-t') || num('f-totalfare-t') || 0, paid = num('f-paidamt-t'), due = num('f-dueamt-t'), dd = val('f-duedate-t');
+    const m = $('f-paymethod-t'), mname = (m && m.value && m.selectedIndex >= 0) ? m.options[m.selectedIndex].textContent.trim() : '';
+    const r = [];
+    if(st === 'PARTIAL'){
+      const pp = (grand > 0 && !isNaN(paid)) ? Math.round(paid * 100 / grand) : null;
+      r.push(['Partial Payment' + (pp !== null ? ' <span class="aimp-pill">' + pp + '%</span>' : ''), fmt(paid), isNaN(paid) ? 'Enter the amount received' : 'Balance due later' + (mname ? ' · via ' + esc(mname) : '')]);
+      r.push(['Pending Balance', fmt(isNaN(due) ? (isNaN(paid) ? NaN : grand - paid) : due), dd ? 'Due on ' + esc(dd) : 'No due date set']);
+    } else if(st === 'FULL_DUE'){
+      r.push(['Full Due', '0.00', 'Nothing received yet']); r.push(['Pending Balance', fmt(grand), dd ? 'Due on ' + esc(dd) : 'No due date set']);
+    } else r.push(['Full Payment', fmt(grand), 'Paid in full' + (mname ? ' · via ' + esc(mname) : '')]);
+    body.innerHTML = r.map(x => '<tr><td>' + x[0] + '</td><td>' + x[1] + '</td><td>' + x[2] + '</td></tr>').join('');
+  }
+  function wireImportPanel(){
+    const bn = $('pdf-import-banner'); if(!bn || bn.dataset.wired) return; bn.dataset.wired = '1';
+    const push = (el, type) => { const t = $(el.dataset.bind); if(!t) return; let v = el.value; if(el.dataset.up) v = v.toUpperCase(); t.value = v; t.dispatchEvent(new Event(type, { bubbles: true })); syncImportPanel(); };
+    bn.addEventListener('input', ev => { const el = ev.target; if(el.dataset && el.dataset.bind && el.tagName !== 'SELECT'){ ev.stopPropagation(); push(el, 'input'); } });
+    bn.addEventListener('change', ev => { const el = ev.target; if(el.dataset && el.dataset.bind){ ev.stopPropagation(); push(el, 'change'); if(el.tagName !== 'SELECT'){ const t = $(el.dataset.bind); if(t) t.dispatchEvent(new Event('input', { bubbles: true })); } } });
+    bn.addEventListener('click', ev => {
+      const c = ev.target.closest('[data-ctx]'); if(c){ setEntryContext(c.getAttribute('data-ctx')); syncImportPanel(); return; }
+      if(ev.target.closest('#pdf-import-choose')){ $('pdf-ticket-input').click(); return; }
+      if(ev.target.closest('#pdf-import-hide')){ bn.style.display = 'none'; }
+    });
   }
   // re-run the strip checks whenever the form changes (debounced), while an import is showing
   (function(){
