@@ -3399,7 +3399,48 @@ html[data-theme="dark"] .aimp-card h5,html[data-theme="dark"] .aimp-r b,html[dat
 .aimp-pax td:first-child{width:1%;text-align:center}.aimp-pax td:last-child{width:1%}
 .aimp-rm{font:inherit;font-size:12px;padding:1px 8px;border:1px solid #F0C2BD;background:#FDF0EE;color:#9B2C20;border-radius:6px;cursor:pointer}
 .aimp-link{font:inherit;font-size:12px;font-weight:700;color:#1D4ED8;background:none;border:0;cursor:pointer;text-decoration:underline;padding:0 0 0 6px}
-#ptc-card.aimp-simple [data-aimp-hide]{display:none!important}
+#ptc-card.aimp-simple [data-aimp-hide]{visibility:hidden!important;position:absolute!important;height:0!important;overflow:hidden!important;pointer-events:none!important;margin:0!important;padding:0!important;border:0!important}
+
+/* ===== compact top of the New Work Record pop-up ===== */
+#ptc-root.wr-form-open #ptc-card .wr-form-bar{padding:5px 10px!important;margin:0 0 6px!important}
+#ptc-root.wr-form-open #ptc-card .wr-form-bar b{font-size:14px}
+#ptc-root.wr-form-open #ptc-card .wr-form-bar span{font-size:11.5px}
+#ptc-root.wr-form-open #ptc-card .wr-form-bar button{width:26px;height:26px;font-size:17px}
+#ptc-root.wr-form-open #ptc-card .wctx{flex-wrap:nowrap;align-items:center;gap:8px;padding:4px 10px;margin:0 0 6px;border-radius:10px}
+#ptc-root.wr-form-open #ptc-card .wctx-t{flex:0 0 auto;font-size:12px}
+#ptc-root.wr-form-open #ptc-card .wctx button{flex:0 1 auto;grid-template-columns:16px auto;padding:3px 12px;border-radius:999px;column-gap:7px}
+#ptc-root.wr-form-open #ptc-card .wctx button b{font-size:12.5px}
+#ptc-root.wr-form-open #ptc-card .wctx button small{display:none}
+#ptc-root.wr-form-open #ptc-card .ptc-entry-topbar{margin:0 0 6px;padding-bottom:6px;gap:6px 12px}
+#ptc-root.wr-form-open #ptc-card .ptc-header-tktautofill .ptc-header-control-label,#ptc-root.wr-form-open #ptc-card .ptc-pdf-import-status{display:none}
+#ptc-root.wr-form-open #ptc-card .ptc-pdf-import-btn{padding:5px 12px;font-size:12px}
+#ptc-root.wr-form-open #ptc-card .ptc-header-control-label{font-size:11px}
+/* ===== panel for every transaction type ===== */
+#pdf-import-banner.aimp-nofile .aimp-head,#pdf-import-banner.aimp-nofile .aimp-row,#pdf-import-banner.aimp-nofile .aimp-checks,#pdf-import-banner.aimp-nofile .aimp-filenote{display:none}
+#pdf-import-banner{margin:0 0 8px}
+#pdf-import-banner .aimp-grid{margin-top:0}
+#pdf-import-banner:not(.aimp-nofile) .aimp-grid{margin-top:8px}
+.aimp-t-only,.aimp-tonly{}
+#pdf-import-banner.aimp-o .aimp-tonly,#pdf-import-banner.aimp-o .aimp-tcol,#pdf-import-banner.aimp-o .aimp-pax td.aimp-tcol{display:none}
+#pdf-import-banner.aimp-o .aimp-fare,#pdf-import-banner.aimp-o .aimp-pay,#pdf-import-banner.aimp-o .aimp-side{display:none}
+#pdf-import-banner.aimp-o .aimp-grid{grid-template-columns:minmax(0,1fr) minmax(0,1.7fr)}
+#pdf-import-banner.aimp-o #aimp-colC{display:none}
+#pdf-import-banner.aimp-t .aimp-det{display:none}
+#pdf-import-banner.aimp-nt .aimp-grid{display:none}
+#aimp-detbody{column-count:2;column-gap:16px}
+#aimp-detbody>*{break-inside:avoid}
+#aimp-detbody .aimp-step{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#64748B;padding:6px 0 1px;border-top:0;break-after:avoid}
+#aimp-detbody .aimp-warn{font-size:11.5px;font-weight:600;color:#9B2C20;background:#FDF0EE;border:1px solid #F0C2BD;border-radius:7px;padding:3px 8px;margin:4px 0}
+#aimp-detbody .aimp-two{display:flex;gap:10px;font-size:12px;color:#475569;padding:2px 0}#aimp-detbody .aimp-two b{color:#0F2742}
+.aimp-adj{display:flex;gap:4px}.aimp-adj button{font:inherit;font-size:12px;font-weight:600;padding:1px 14px;border:1px solid #D5DCE6;background:#fff;border-radius:6px;cursor:pointer;color:#475569}
+.aimp-adj button.on{background:#2563EB;border-color:#2563EB;color:#fff}
+.aimp-cw{width:56%;min-width:0}
+.aimp-cw input{width:100%!important;box-sizing:border-box;text-align:left!important}
+.aimp-cl{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:3px}.aimp-cl:empty{display:none}
+.aimp-chip{display:inline-flex;align-items:center;gap:4px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11.5px;background:#EEF2F7;border:1px solid #D5DCE6;border-radius:999px;padding:0 4px 0 8px}
+.aimp-chip button{font:inherit;border:0;background:none;cursor:pointer;color:#64748B;padding:0 2px;font-size:13px;line-height:1}
+.aimp-r.aimp-chiprow{align-items:flex-start}
+@media(max-width:760px){#aimp-detbody{column-count:1}#pdf-import-banner.aimp-o .aimp-grid{grid-template-columns:1fr}}
 /* Import review page (read-only), modelled on the Work Record Entry mockup */
 #rv-back,#rv-back *{font-family:Inter,'Segoe UI',system-ui,-apple-system,Roboto,Arial,sans-serif}
 #rv-back .mono{font-family:ui-monospace,Menlo,Consolas,monospace}
@@ -4128,7 +4169,7 @@ html[data-theme="dark"] #pwi-root .pwi-import textarea{background:#0E1E36;border
       <div class="ptc-editing-banner" id="ptc-editing-banner">
         <span id="ptc-editing-banner-text">Editing entry #1</span>
       </div>
-      <div class="wctx" role="radiogroup" aria-label="Work Context"><div class="wctx-t">Work Context</div><button type="button" role="radio" aria-checked="true" data-ctx="employment"><i></i><b>Employment Work</b><small>Work Records, Activity Tracker and Work Performance. No profit analytics.</small></button><button type="button" role="radio" aria-checked="false" data-ctx="self"><i></i><b>Self Business</b><small>Personal business records, revenue, collection, commission and profit analytics.</small></button></div>
+      <div class="wctx" role="radiogroup" aria-label="Work Context"><div class="wctx-t">Work Context</div><button type="button" role="radio" aria-checked="true" data-ctx="employment" title="Work Records, Activity Tracker and Work Performance. No profit analytics."><i></i><b>Employment Work</b><small>Work Records, Activity Tracker and Work Performance. No profit analytics.</small></button><button type="button" role="radio" aria-checked="false" data-ctx="self" title="Personal business records, revenue, collection, commission and profit analytics."><i></i><b>Self Business</b><small>Personal business records, revenue, collection, commission and profit analytics.</small></button></div>
       <!-- TKT AutoFill and Transaction Type now live in the header only (see
            .ptc-header-controls above) — moved, not duplicated, so #pdf-ticket-input,
            #pdf-ticket-btn, #f-type and #f-type-tabs still work exactly as before. -->
@@ -4164,23 +4205,18 @@ html[data-theme="dark"] #pwi-root .pwi-import textarea{background:#0E1E36;border
         </div>
       </div>
 
-      <div id="pdf-import-banner" style="display:none;">
+      <div id="pdf-import-banner" class="aimp-nofile">
         <div class="aimp-head">
           <div class="aimp-steps" aria-label="Import progress"><span class="done"><i>✓</i>Import PDF</span><u></u><span class="on"><i>2</i>Review Details</span><u></u><span><i>3</i>Save</span></div>
-          <button type="button" class="aimp-hide" id="pdf-import-hide" title="Close preview and show the normal form" aria-label="Close preview">×</button>
         </div>
         <div class="aimp-row">
-          <span class="aimp-pdfic">PDF</span>
-          <div class="aimp-t"><b>Import Booking PDF</b><small>Drag &amp; drop a PDF onto this form, or</small></div>
-          <button type="button" class="aimp-view" id="pdf-import-choose">Choose File</button>
-          <span class="aimp-sep"></span>
           <span class="aimp-ok" id="pdf-import-ok">✓</span>
           <div class="aimp-t"><b id="pdf-import-title">File Loaded Successfully</b><small id="pdf-import-file">Booking details have been extracted.</small></div>
           <button type="button" id="pdf-view-file" class="aimp-view">👁 View File</button>
         </div>
         <div class="aimp-checks" id="pdf-import-checks" aria-live="polite"></div>
         <div class="aimp-grid" id="pdf-import-body">
-          <div class="aimp-col">
+          <div class="aimp-col" id="aimp-colA">
           <div class="aimp-card aimp-book"><h5>✈ Booking Information</h5>
             <label class="aimp-r"><span>Date</span><input type="date" data-bind="f-date"></label>
             <label class="aimp-r"><span>Company</span><select data-bind="f-company"></select></label>
@@ -4190,15 +4226,15 @@ html[data-theme="dark"] #pwi-root .pwi-import textarea{background:#0E1E36;border
             <label class="aimp-r aimp-oth"><span>Platform name</span><input data-bind="f-platform-other" data-mirror="1" autocomplete="off"></label>
             <label class="aimp-r"><span>Airline Code *</span><select data-bind="f-airline"></select></label>
             <label class="aimp-r aimp-oth"><span>Airline code</span><input data-bind="f-airline-other" data-mirror="1" data-up="1" autocomplete="off"></label>
-            <label class="aimp-r"><span>Sector / Route *</span><input data-bind="f-sector-t" data-up="1" autocomplete="off" spellcheck="false" placeholder="DAC-DXB-DAC"></label>
-            <label class="aimp-r"><span>Route Type</span><select data-bind="f-routetype-t"></select></label>
+            <label class="aimp-r aimp-tonly"><span>Sector / Route *</span><input data-bind="f-sector-t" data-up="1" autocomplete="off" spellcheck="false" placeholder="DAC-DXB-DAC"></label>
+            <label class="aimp-r aimp-tonly"><span>Route Type</span><select data-bind="f-routetype-t"></select></label>
             <label class="aimp-r"><span>Passenger No.</span><input data-bind="f-pnum" autocomplete="off" placeholder="optional"></label>
           </div>
           <div class="aimp-card aimp-pax"><h5>👤 Passengers &amp; Tickets <span id="aimp-paxn"></span><button type="button" class="aimp-add" id="aimp-addpax">+ Add passenger</button></h5>
-            <table><thead><tr><th>#</th><th>Passenger name</th><th>Ticket no. (13 digits)</th><th></th></tr></thead><tbody id="aimp-paxbody"></tbody></table>
+            <table><thead><tr><th>#</th><th>Passenger name</th><th class="aimp-tcol">Ticket no. (13 digits)</th><th></th></tr></thead><tbody id="aimp-paxbody"></tbody></table>
           </div>
           </div>
-          <div class="aimp-col">
+          <div class="aimp-col" id="aimp-colB">
           <div class="aimp-card aimp-fare"><h5>🎫 Fare Calculation</h5>
             <label class="aimp-r"><span>Base Fare</span><input type="number" step="0.01" data-bind="f-basefare-t" placeholder="0.00"></label>
             <label class="aimp-r"><span>Tax</span><input type="number" step="0.01" data-bind="f-taxfare-t" placeholder="0.00"></label>
@@ -4214,8 +4250,9 @@ html[data-theme="dark"] #pwi-root .pwi-import textarea{background:#0E1E36;border
           <div class="aimp-card aimp-pay"><h5>🧾 Payment Details</h5>
             <table><thead><tr><th>Method</th><th>Amount</th><th>Remarks</th></tr></thead><tbody id="aimp-paybody"></tbody></table>
           </div>
+          <div class="aimp-card aimp-det" id="aimp-det"><h5 id="aimp-dettitle">Details</h5><div id="aimp-detbody"></div></div>
           </div>
-          <div class="aimp-col">
+          <div class="aimp-col" id="aimp-colC">
           <div class="aimp-card aimp-side"><h5>💳 Payment</h5>
             <label class="aimp-fl">Payment Status<select data-bind="f-paystat-t"></select></label>
             <label class="aimp-fl">Payment Method<select data-bind="f-paymethod-t"></select></label>
@@ -4226,8 +4263,8 @@ html[data-theme="dark"] #pwi-root .pwi-import textarea{background:#0E1E36;border
           <div class="aimp-card aimp-rem"><h5>📝 Remarks</h5><textarea data-bind="f-note" rows="3" placeholder="Any additional notes"></textarea></div>
           </div>
         </div>
-        <div class="aimp-nonT" id="aimp-nonT">Fare and payment calculation is available for <b>Ticketing</b> entries. Use the form below for other types.</div>
-        <div class="aimp-note">⚠️ Layouts vary by airline/GDS, so extraction can miss or misread a field. Check every value, then press <b>Add Entry</b>. <button type="button" class="aimp-link" id="aimp-full">Show full form</button></div>
+        <div class="aimp-nonT" id="aimp-nonT">Choose a <b>transaction type</b> above to start entering the record.</div>
+        <div class="aimp-note"><span class="aimp-filenote">⚠️ Layouts vary by airline/GDS, so extraction can miss or misread a field. </span>Check every value, then press <span style="font-weight:700">Add Entry</span>. <button type="button" class="aimp-link" id="aimp-full">Show full form</button></div>
       </div>
 
       <div class="ptc-grp"><div class="ptc-grp-body ptc-g3">
@@ -6695,7 +6732,7 @@ A.onChange(A.fillForm);
     try{ const rt = $('ptc-root'); if(rt && rt.classList.contains('wr-mode')) rt.classList.add('wr-form-open'); }catch(e){}
     const gotAny = !ctx.scanned && !!(f.reservationPnr || f.pnr || f.airlinePnr || f.sector || f.baseFare !== undefined || rows.length);
     const bn = $('pdf-import-banner'); if(!bn) return;
-    bn.style.display = 'block'; bn.classList.toggle('bad', !gotAny); wireImportPanel(); aimpFull = false; aimpPaxInit();
+    bn.classList.remove('aimp-nofile'); bn.classList.toggle('bad', !gotAny); aimpFull = false; aimpType = null; syncImportPanel(); aimpPaxInit();
     const pfn = $('pdf-import-file'); if(pfn) pfn.textContent = ctx.file.name + (gotAny ? ' · booking details applied. Verify every value, then save the work record.' : ' · enter the details on the form.');
     const pt = $('pdf-import-title'); if(pt) pt.textContent = ctx.scanned ? 'No readable text in this PDF' : gotAny ? 'File Loaded Successfully' : 'File loaded, but nothing could be read';
     const pok = $('pdf-import-ok'); if(pok) pok.textContent = gotAny ? '✓' : '!';
@@ -6721,43 +6758,101 @@ A.onChange(A.fillForm);
     window.__aeroImportChecks();
     try{ const card = $('ptc-card'); if(card) card.scrollTop = 0; }catch(e){}
   }
-  // ---- import preview panel = the whole entry screen after a PDF import. Every field here writes straight to the real
-  //      (hidden) form field, so validation, saving and calculations stay exactly the same. "Show full form" reveals the originals. ----
-  let aimpPax = [], aimpFull = false;
+  // ---- entry panel = the whole entry screen for EVERY transaction type (manual or after a PDF import). Each field here writes straight to the real
+  //      (hidden) form field, so validation, saving and every calculation stay exactly the same. "Show full form" reveals the originals. ----
+  let aimpPax = [], aimpFull = false, aimpType = null, aimpDet = [];
+  const aimpChipsMap = () => ({ 'f-newtkt-t': entryNewTktChips, 'f-oldtkt-r': entryOldTktReissueChips, 'f-newtkt-r': entryNewTktReissueChips, 'f-oldtkt-f': entryOldTktRefundChips });
+  const aimpSecFor = t => ({ Booking: 'section-Booking', Reissue: 'section-Reissue', Refund: 'section-Refund', Void: 'section-Refund' })[t] || '';
   function aimpSetSimple(on){
     const card = $('ptc-card'); if(!card) return;
     ['f-date', 'f-pname', 'f-platform', 'f-note'].forEach(id => { const e = $(id), g = e && e.closest('.ptc-grp'); if(g) g.setAttribute('data-aimp-hide', '1'); });
-    const st = $('section-Ticketing'); if(st) st.setAttribute('data-aimp-hide', '1');
+    ['section-Ticketing', 'section-Booking', 'section-Reissue', 'section-Refund'].forEach(id => { const e = $(id); if(e) e.setAttribute('data-aimp-hide', '1'); });
     card.classList.toggle('aimp-simple', !!on);
   }
+  const aimpLabel = l => { if(!l) return ''; const c = l.cloneNode(true); c.querySelectorAll('.ptc-info,.ptc-tooltip,.ptc-required').forEach(x => x.remove()); let t = c.textContent.replace(/\(optional\)/i, '').replace(/\s+/g, ' ').trim(); if(l.querySelector('.ptc-required')) t += ' *'; return t; };
   function aimpPaxPush(){
     const names = aimpPax.map(r => r.name.trim()).filter(Boolean);
-    const tk = [...new Set(aimpPax.map(r => r.ticket).filter(t => /^\d{13}$/.test(t)))];
     const pn = $('f-pname'); if(pn){ pn.value = names.join(', '); pn.dispatchEvent(new Event('input', { bubbles: true })); }
-    try{ if(entryNewTktChips && entryNewTktChips.setTickets) entryNewTktChips.setTickets(tk); }catch(e){}
+    if(typeSelect.value === 'Ticketing'){
+      const tk = [...new Set(aimpPax.map(r => r.ticket).filter(t => /^\d{13}$/.test(t)))];
+      try{ if(entryNewTktChips && entryNewTktChips.setTickets) entryNewTktChips.setTickets(tk); }catch(e){}
+    }
   }
+  const aimpFormNames = () => String(($('f-pname') || {}).value || '').split(',').map(x => x.trim()).filter(Boolean);
+  const aimpFormTickets = () => (typeSelect.value === 'Ticketing' && entryNewTktChips && entryNewTktChips.getTickets) ? entryNewTktChips.getTickets() : [];
   function aimpPaxInit(){
-    const names = String(($('f-pname') || {}).value || '').split(',').map(x => x.trim()).filter(Boolean);
-    const tk = (entryNewTktChips && entryNewTktChips.getTickets) ? entryNewTktChips.getTickets() : [];
+    const names = aimpFormNames(), tk = aimpFormTickets();
     const n = Math.max(names.length, tk.length, 1); aimpPax = [];
     for(let i = 0; i < n; i++) aimpPax.push({ name: names[i] || '', ticket: tk[i] || '' });
     aimpPaxRender();
   }
   function aimpPaxRender(){
     const body = $('aimp-paxbody'); if(!body) return;
-    body.innerHTML = aimpPax.map((r, i) => '<tr><td>' + (i + 1) + '</td><td><input data-px="name" data-i="' + i + '" value="' + esc(r.name) + '" placeholder="Passenger name" autocomplete="off"></td><td><input class="mono" data-px="ticket" data-i="' + i + '" value="' + esc(r.ticket) + '" inputmode="numeric" maxlength="13" placeholder="13-digit ticket number (optional)" autocomplete="off"></td><td><button type="button" class="aimp-rm" data-rm="' + i + '" title="Remove passenger"' + (aimpPax.length < 2 ? ' disabled' : '') + '>✕</button></td></tr>').join('');
+    body.innerHTML = aimpPax.map((r, i) => '<tr><td>' + (i + 1) + '</td><td><input data-px="name" data-i="' + i + '" value="' + esc(r.name) + '" placeholder="Passenger name" autocomplete="off"></td><td class="aimp-tcol"><input class="mono" data-px="ticket" data-i="' + i + '" value="' + esc(r.ticket) + '" inputmode="numeric" maxlength="13" placeholder="13-digit ticket number (optional)" autocomplete="off"></td><td><button type="button" class="aimp-rm" data-rm="' + i + '" title="Remove passenger"' + (aimpPax.length < 2 ? ' disabled' : '') + '>✕</button></td></tr>').join('');
     const n = $('aimp-paxn'); if(n) n.textContent = '(' + aimpPax.length + ')';
     const ab = $('aimp-addpax'); if(ab) ab.disabled = aimpPax.length >= 9;
   }
+  // keep the passenger table in step with the form when the form is changed from elsewhere (edit mode, Clear Form, re-import)
+  function aimpPaxResync(){
+    const bn = $('pdf-import-banner'); if(bn && bn.contains(document.activeElement) && document.activeElement.dataset && document.activeElement.dataset.px) return;
+    const sn = aimpPax.map(r => r.name.trim()).filter(Boolean).join('|'), fn = aimpFormNames().join('|');
+    const st = [...new Set(aimpPax.map(r => r.ticket).filter(t => /^\d{13}$/.test(t)))].join('|'), ft = aimpFormTickets().join('|');
+    if(sn !== fn || (typeSelect.value === 'Ticketing' && st !== ft)) aimpPaxInit();
+  }
+  // build the Details card for Booking / Reissue / Refund / Void straight from the real section, so every field, label and rule is the form's own
+  function aimpBuildDetails(){
+    const body = $('aimp-detbody'); if(!body) return; body.innerHTML = ''; aimpDet = [];
+    const sec = $(aimpSecFor(typeSelect.value)); if(!sec) return;
+    const mk = (cls, html) => { const d = document.createElement('div'); d.className = cls; d.innerHTML = html; body.appendChild(d); return d; };
+    const seen = new Set();
+    sec.querySelectorAll('.ptc-field, .ptc-refund-step, .ptc-refund-result-line, #refund-calcout-row, #refund-negative-warning').forEach(u => {
+      if(seen.has(u)) return; seen.add(u);
+      if(u.classList.contains('ptc-refund-step')){ const t = u.querySelector('.ptc-refund-step-title'); aimpDet.push({ k: 'step', u, row: mk('aimp-step', esc(t ? t.textContent.trim() : '')) }); return; }
+      if(u.id === 'refund-negative-warning'){ aimpDet.push({ k: 'warn', u, row: mk('aimp-warn', esc(u.textContent.replace(/\s+/g, ' ').trim())) }); return; }
+      if(u.id === 'refund-calcout-row'){ aimpDet.push({ k: 'calc', u, row: mk('aimp-two', '<span>Refundable Fare <b data-t="refund-refoutfare-display">0.00</b></span><span>Refundable Tax <b data-t="refund-refouttax-display">0.00</b></span>') }); return; }
+      const lab = u.querySelector('label'), ctl = u.querySelector('input:not([type=hidden]), select, textarea');
+      if(u.querySelector('.ptc-tkt-chip-input')){
+        const hid = u.querySelector('input[type=hidden]'); if(!hid) return;
+        const row = mk('aimp-r aimp-chiprow', '<span data-lab></span><div class="aimp-cw"><div class="aimp-cl"></div><input data-chip="' + hid.id + '" class="mono" inputmode="numeric" maxlength="13" placeholder="13-digit ticket, press Enter" autocomplete="off"></div>');
+        aimpDet.push({ k: 'chip', u, lab, id: hid.id, row }); return;
+      }
+      if(u.querySelector('.ptc-adj-btn')){
+        const row = mk('aimp-r', '<span data-lab></span><div class="aimp-adj"><button type="button" data-adj="NO">No</button><button type="button" data-adj="YES">Yes</button></div>');
+        aimpDet.push({ k: 'adj', u, lab, row }); return;
+      }
+      if(!ctl || !ctl.id) return;
+      if(ctl.readOnly || ctl.tagName === 'SPAN'){ aimpDet.push({ k: 'out', u, lab: lab || u.querySelector('label'), id: ctl.id, row: mk('aimp-r aimp-strong', '<span data-lab></span><b data-out="' + ctl.id + '"></b>') }); return; }
+      const tag = ctl.tagName === 'SELECT' ? '<select data-bind="' + ctl.id + '"></select>' : ctl.tagName === 'TEXTAREA' ? '<textarea data-bind="' + ctl.id + '" rows="2"></textarea>' : '<input data-bind="' + ctl.id + '" type="' + (ctl.type === 'number' ? 'number' : ctl.type === 'date' ? 'date' : 'text') + '"' + (ctl.type === 'number' ? ' step="0.01"' : '') + (/sector|code/i.test(ctl.id) ? ' data-up="1"' : '') + ' placeholder="' + esc(ctl.getAttribute('placeholder') || '') + '" autocomplete="off">';
+      aimpDet.push({ k: 'bind', u, lab, id: ctl.id, row: mk('aimp-r', '<span data-lab></span>' + tag) });
+    });
+  }
+  function aimpSyncDetails(){
+    const chipsOf = aimpChipsMap();
+    aimpDet.forEach(d => {
+      const show = d.u.offsetParent !== null; d.row.style.display = show ? '' : 'none'; if(!show) return;
+      if(d.lab){ const sp = d.row.querySelector('[data-lab]'); const tx = aimpLabel(d.lab); if(sp && sp.textContent !== tx) sp.textContent = tx; }
+      if(d.k === 'calc'){ d.row.querySelectorAll('[data-t]').forEach(b => { const e = $(b.dataset.t); if(e) b.textContent = e.textContent; }); }
+      else if(d.k === 'chip'){
+        const ch = chipsOf[d.id], l = d.row.querySelector('.aimp-cl'); if(!ch || !l) return; const tk = ch.getTickets();
+        const key = tk.join(','); if(l.dataset.k !== key){ l.dataset.k = key; l.innerHTML = tk.map(t => '<span class="aimp-chip">' + esc(t) + '<button type="button" data-chiprm="' + d.id + '" data-t="' + esc(t) + '" aria-label="Remove ticket">×</button></span>').join(''); }
+      }
+      else if(d.k === 'adj'){ const v = ($('f-adjgiven-f') || {}).value; d.row.querySelectorAll('[data-adj]').forEach(b => b.classList.toggle('on', b.dataset.adj === v)); }
+    });
+    const tt = $('aimp-dettitle'); if(tt){ const lb = $('refund-void-label') && ['Refund', 'Void'].includes(typeSelect.value) ? $('refund-void-label') : (($(aimpSecFor(typeSelect.value)) || document.createElement('i')).querySelector('.ptc-section-label')); const t = lb ? lb.textContent.replace(/\s+/g, ' ').trim() : typeSelect.value + ' Details'; if(tt.textContent !== t) tt.textContent = t; }
+  }
   function syncImportPanel(){
-    const bn = $('pdf-import-banner'); if(!bn) return;
-    if(bn.style.display === 'none'){ aimpSetSimple(false); return; }
+    const bn = $('pdf-import-banner'), rt = $('ptc-root'); if(!bn || !rt || !rt.classList.contains('wr-form-open')) return;
     const val = id => { const e = $(id); return e ? String(e.value || '').trim() : ''; };
     const num = id => { const n = parseFloat(val(id)); return isNaN(n) ? NaN : n; };
     const fmt = n => (n === '' || n === undefined || n === null || isNaN(n)) ? '—' : Number(n).toFixed(2);
-    const isT = typeSelect.value === 'Ticketing';
-    bn.classList.toggle('aimp-nt', !isT);
-    aimpSetSimple(isT && !aimpFull);
+    const type = typeSelect.value, isT = type === 'Ticketing';
+    bn.classList.toggle('aimp-t', isT); bn.classList.toggle('aimp-o', !!type && !isT); bn.classList.toggle('aimp-nt', !type);
+    aimpSetSimple(!aimpFull);
+    if(type !== aimpType){
+      aimpType = type; aimpBuildDetails(); aimpPaxInit();
+      const rem = bn.querySelector('.aimp-rem'), col = $(isT ? 'aimp-colC' : 'aimp-colA'); if(rem && col && rem.parentNode !== col) col.appendChild(rem);
+    }
+    aimpPaxResync();
     const fb = $('aimp-full'); if(fb) fb.textContent = aimpFull ? 'Hide full form' : 'Show full form';
     bn.querySelectorAll('[data-bind]').forEach(el => {
       const t = $(el.dataset.bind); if(!t) return;
@@ -6766,9 +6861,11 @@ A.onChange(A.fillForm);
       if(el.dataset.mirror){ const row = el.closest('.aimp-r'); if(row) row.style.display = (t.style.display === 'none') ? 'none' : 'flex'; }
     });
     bn.querySelectorAll('[data-out]').forEach(el => { const t = $(el.dataset.out); if(!t) return; const v = String(t.value || '').trim(); el.textContent = v ? v + (el.dataset.suffix || '') : '—'; });
+    aimpSyncDetails();
+    if(!isT) return;
     const st = val('f-paystat-t') || 'FULL';
     bn.querySelectorAll('.aimp-part').forEach(e => e.style.display = st === 'PARTIAL' ? '' : 'none');
-    const body = $('aimp-paybody'); if(!body || !isT) return;
+    const body = $('aimp-paybody'); if(!body) return;
     const grand = num('f-grandtotal-t') || num('f-totalfare-t') || 0, paid = num('f-paidamt-t'), due = num('f-dueamt-t'), dd = val('f-duedate-t');
     const m = $('f-paymethod-t'), mname = (m && m.value && m.selectedIndex >= 0) ? m.options[m.selectedIndex].textContent.trim() : '';
     const r = [];
@@ -6781,33 +6878,44 @@ A.onChange(A.fillForm);
     } else r.push(['Full Payment', fmt(grand), 'Paid in full' + (mname ? ' · via ' + esc(mname) : '')]);
     body.innerHTML = r.map(x => '<tr><td>' + x[0] + '</td><td>' + x[1] + '</td><td>' + x[2] + '</td></tr>').join('');
   }
+  window.__aimpReset = function(){ const bn = $('pdf-import-banner'); if(bn) bn.classList.add('aimp-nofile'); window.__aeroImportChecks = null; window.__aeroPdfFile = null; aimpType = null; try{ syncImportPanel(); }catch(e){} };
   function wireImportPanel(){
     const bn = $('pdf-import-banner'); if(!bn || bn.dataset.wired) return; bn.dataset.wired = '1';
     const push = (el, type) => { const t = $(el.dataset.bind); if(!t) return; let v = el.value; if(el.dataset.up) v = v.toUpperCase(); t.value = v; t.dispatchEvent(new Event(type, { bubbles: true })); syncImportPanel(); };
+    const addChip = inp => {
+      const ch = aimpChipsMap()[inp.dataset.chip]; if(!ch) return; const v = inp.value.replace(/\D/g, ''); if(!v) { inp.value = ''; return; }
+      if(v.length !== 13){ toast('Ticket number must be exactly 13 digits.'); return; }
+      const cur = ch.getTickets(); if(!cur.includes(v)) ch.setTickets(cur.concat(v)); inp.value = ''; syncImportPanel();
+    };
+    bn.addEventListener('keydown', ev => { const el = ev.target; if(el.dataset && el.dataset.chip && (ev.key === 'Enter' || ev.key === ',' || ev.key === ' ')){ ev.preventDefault(); addChip(el); } });
+    bn.addEventListener('focusout', ev => { const el = ev.target; if(el.dataset && el.dataset.chip && el.value.replace(/\D/g, '').length === 13) addChip(el); });
     bn.addEventListener('input', ev => {
       const el = ev.target;
+      if(el.dataset && el.dataset.chip){ ev.stopPropagation(); el.value = el.value.replace(/\D/g, '').slice(0, 13); return; }
       if(el.dataset && el.dataset.px){
         ev.stopPropagation(); const r = aimpPax[+el.dataset.i]; if(!r) return;
         if(el.dataset.px === 'ticket'){ const v = el.value.replace(/\D/g, '').slice(0, 13); el.value = v; r.ticket = v; } else r.name = el.value;
-        aimpPaxPush(); if(window.__aeroImportChecks) window.__aeroImportChecks(); return;
+        aimpPaxPush(); if(window.__aeroImportChecks) window.__aeroImportChecks(); else syncImportPanel(); return;
       }
       if(el.dataset && el.dataset.bind && el.tagName !== 'SELECT'){ ev.stopPropagation(); push(el, 'input'); }
     });
     bn.addEventListener('change', ev => { const el = ev.target; if(el.dataset && el.dataset.bind){ ev.stopPropagation(); push(el, 'change'); if(el.tagName !== 'SELECT'){ const t = $(el.dataset.bind); if(t) t.dispatchEvent(new Event('input', { bubbles: true })); } } });
     bn.addEventListener('click', ev => {
-      if(ev.target.closest('#pdf-import-choose')){ $('pdf-ticket-input').click(); return; }
-      if(ev.target.closest('#pdf-import-hide')){ bn.style.display = 'none'; aimpSetSimple(false); return; }
       if(ev.target.closest('#aimp-full')){ aimpFull = !aimpFull; syncImportPanel(); return; }
+      const adj = ev.target.closest('[data-adj]'); if(adj){ const b = $(adj.dataset.adj === 'YES' ? 'btn-adj-yes' : 'btn-adj-no'); if(b) b.click(); syncImportPanel(); return; }
+      const crm = ev.target.closest('[data-chiprm]'); if(crm){ const ch = aimpChipsMap()[crm.dataset.chiprm]; if(ch) ch.setTickets(ch.getTickets().filter(t => t !== crm.dataset.t)); syncImportPanel(); return; }
       if(ev.target.closest('#aimp-addpax')){ if(aimpPax.length < 9){ aimpPax.push({ name: '', ticket: '' }); aimpPaxRender(); aimpPaxPush(); const l = bn.querySelectorAll('[data-px="name"]'); if(l.length) l[l.length - 1].focus(); if(window.__aeroImportChecks) window.__aeroImportChecks(); } return; }
       const rm = ev.target.closest('[data-rm]');
       if(rm && aimpPax.length > 1){ aimpPax.splice(+rm.dataset.rm, 1); aimpPaxRender(); aimpPaxPush(); if(window.__aeroImportChecks) window.__aeroImportChecks(); }
     });
   }
-  // re-run the strip checks whenever the form changes (debounced), while an import is showing
+  wireImportPanel();
+  // keep the panel in step with the form: on any edit (debounced) and while the pop-up is open (covers edit mode / auto-fills)
   (function(){
     const card = $('ptc-card'); if(!card) return; let t = null;
-    const go = () => { clearTimeout(t); t = setTimeout(() => { const bn = $('pdf-import-banner'); if(window.__aeroImportChecks && bn && bn.style.display !== 'none') window.__aeroImportChecks(); }, 150); };
+    const go = () => { clearTimeout(t); t = setTimeout(() => { if(window.__aeroImportChecks) window.__aeroImportChecks(); else syncImportPanel(); }, 120); };
     ['input', 'change', 'click'].forEach(ev => card.addEventListener(ev, go, true));
+    setInterval(() => { try{ syncImportPanel(); }catch(e){} }, 500);
   })();
 
   function wirePdfPreview(){
@@ -8493,7 +8601,7 @@ A.onChange(A.fillForm);
   }
 
   function clearForm(){
-    try{ const _b = document.getElementById('pdf-import-banner'); if(_b) _b.style.display = 'none'; const _c = document.getElementById('ptc-card'); if(_c) _c.classList.remove('aimp-simple'); window.__aeroImportChecks = null; window.__aeroPdfFile = null; }catch(err){}
+    try{ if(window.__aimpReset) window.__aimpReset(); }catch(err){}
     try{ if(window.aeroCo) window.aeroCo.resetForm(); }catch(err){}
     setEntryContext('employment');
     ['f-pnr-gds','f-pnr-air','f-pname','f-pnum','f-note','f-platform-other','f-airline-other',
