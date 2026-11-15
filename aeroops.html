@@ -3342,6 +3342,17 @@ html[data-theme="dark"] .apv-steps,html[data-theme="dark"] .apv-load,html[data-t
 html[data-theme="dark"] .apv-card,html[data-theme="dark"] .apv-v,html[data-theme="dark"] .apv-card h4{color:inherit;border-color:var(--ao-soft)}
 
 
+
+/* PDF import check strip: lives at the top of the New Work Record pop-up */
+#pdf-import-banner{position:sticky;top:64px;z-index:4;box-shadow:0 4px 10px rgba(15,39,66,.08)}
+.aimp-checks{display:grid;gap:6px;margin-top:8px;max-height:120px;overflow:auto}
+.aimp-checks:empty{display:none}
+.aimp-w{padding:6px 10px;border-radius:8px;font-size:12.5px;font-weight:600;border:1px solid}
+.aimp-w.ok{background:#EAF6F0;border-color:#BFE3CF;color:#14653F}
+.aimp-w.warn{background:#FFF6E3;border-color:#F0D3A4;color:#7A4E0A}
+.aimp-w.bad{background:#FDF0EE;border-color:#F0C2BD;color:#9B2C20}
+#pdf-import-banner.bad .aimp-ok{background:#C97F1E}
+
 /* Import review page (read-only), modelled on the Work Record Entry mockup */
 #rv-back,#rv-back *{font-family:Inter,'Segoe UI',system-ui,-apple-system,Roboto,Arial,sans-serif}
 #rv-back .mono{font-family:ui-monospace,Menlo,Consolas,monospace}
@@ -3388,12 +3399,13 @@ html[data-theme="dark"] .apv-card,html[data-theme="dark"] .apv-v,html[data-theme
 
 /* Review as a compact pop-up */
 #rv-back{background:rgba(11,27,51,.55);align-items:center;overflow:hidden;padding:14px}
-#rv-back .rv{max-width:1000px;max-height:calc(100vh - 28px);overflow:auto;background:#EEF2F8;border-radius:16px;padding:14px 18px 0;box-shadow:0 24px 60px rgba(11,27,51,.45)}
+#rv-back .rv{max-width:min(1360px,calc(100vw - 28px));max-height:calc(100vh - 28px);overflow:auto;background:#EEF2F8;border-radius:16px;padding:14px 18px 0;box-shadow:0 24px 60px rgba(11,27,51,.45)}
 #rv-back .rv-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
 #rv-back .rv-top h2{font-size:21px}#rv-back .rv-top p{font-size:13px;margin-top:2px}
 .rv-x{font:inherit;font-size:22px;line-height:1;width:34px;height:34px;border:1px solid #D5DCE6;background:#fff;border-radius:10px;cursor:pointer;color:#0B1B33}.rv-x:hover{background:#EEF4FD}
 #rv-back .rv-steps{margin:8px auto 10px;gap:10px;max-width:640px}#rv-back .rv-steps span{font-size:13px}#rv-back .rv-steps i{width:24px;height:24px;font-size:12px}
-#rv-back .rv-grid{grid-template-columns:minmax(0,1fr) 230px;gap:10px}#rv-back .rv-main{gap:8px}
+#rv-back .rv-grid{grid-template-columns:minmax(0,1fr) 280px;gap:12px}
+#rv-back .rv-import{flex-wrap:nowrap}#rv-back .rv-import .rv-imp-t small{white-space:nowrap}#rv-back .rv-div{flex:0 0 1px}#rv-back .rv-main{gap:8px}
 #rv-back .rv-card{padding:8px 14px 10px;border-radius:12px}
 #rv-back .rv-card h4{font-size:15px;margin-bottom:2px;padding-bottom:6px;gap:8px}
 #rv-back .rv-ic svg{width:18px;height:18px}
@@ -4106,8 +4118,9 @@ html[data-theme="dark"] #pwi-root .pwi-import textarea{background:#0E1E36;border
       </div>
 
       <div id="pdf-import-banner" style="display:none;">
-        <div class="aimp-steps" aria-label="Import progress"><span class="done"><i>✓</i>Import PDF</span><u></u><span class="done"><i>✓</i>Review Details</span><u></u><span class="on"><i>3</i>Save</span></div>
-        <div class="aimp-row"><span class="aimp-ok">✓</span><div class="aimp-t"><b>File Loaded Successfully</b><small id="pdf-import-file">Booking details have been extracted. Verify every value, then save the work record.</small></div><button type="button" id="pdf-view-file" class="aimp-view">View File</button></div>
+        <div class="aimp-steps" aria-label="Import progress"><span class="done"><i>✓</i>Import PDF</span><u></u><span class="on"><i>2</i>Review Details</span><u></u><span><i>3</i>Save</span></div>
+        <div class="aimp-row"><span class="aimp-ok" id="pdf-import-ok">✓</span><div class="aimp-t"><b id="pdf-import-title">File Loaded Successfully</b><small id="pdf-import-file">Booking details have been extracted. Verify every value, then save the work record.</small></div><button type="button" id="pdf-view-file" class="aimp-view">View File</button></div>
+        <div class="aimp-checks" id="pdf-import-checks" aria-live="polite"></div>
         <div class="aimp-note">⚠️ Layouts vary by airline/GDS, so extraction can miss or misread a field.</div>
       </div>
 
@@ -6544,8 +6557,8 @@ A.onChange(A.fillForm);
     check:'<svg viewBox="0 0 24 24" width="26" height="26" fill="#fff"><path d="M9.5 16.2 5.3 12l-1.4 1.4 5.6 5.6L20.1 8.4 18.7 7z"/></svg>'
   };
 
-  /* Import review (read-only). Page 1 (the entry form) is where everything is edited: the PDF is read straight into the form,
-     then this page only shows what will be saved. Back returns to the form to edit; Save Work Record uses the normal Add Entry. */
+  /* Import review, merged into the entry form: the PDF fills the form, and the checks show in the strip
+     at the top of that same pop-up (#pdf-import-banner). They re-run as the form is edited. Save uses the normal Add Entry. */
   function openPdfPreview(ctx){
     ['rv-back', 'apv-back'].forEach(i => { const o = document.getElementById(i); if(o) o.remove(); });
     const f = ctx.fields || {}, exist = existingTicketMap();
@@ -6557,22 +6570,9 @@ A.onChange(A.fillForm);
     if(ctx.dupFile) baseWarns.push(['warn', 'This exact PDF was already imported on ' + ctx.dupFile + '. Check that you are not entering the same booking twice.']);
     if(!ctx.scanned && !rows.length) baseWarns.push(['bad', 'No passengers could be detected in this PDF. Nothing was guessed. Add the passengers on the form.']);
     left.forEach(r => baseWarns.push(['warn', 'Ticket ' + r.ticket + ' is already saved (PNR ' + exist[r.ticket] + ') and was left out of this import.']));
-    const liveRows = () => rows.filter(r => r.inc && !r.gone && (r.name || r.ticket));
-    // checks that depend on who is currently included (they update when a passenger is removed)
-    const dyn = live => {
-      const w = [], lts = live.map(r => r.ticket).filter(Boolean);
-      if(f.expectedPax && !ctx.scanned) w.push(f.expectedPax === live.length ? ['ok', 'Passenger count matches the PDF (' + f.expectedPax + ').'] : ['bad', 'The PDF fare line says ' + f.expectedPax + ' passenger(s) but ' + live.length + ' are included. Remove or add passengers so the count matches.']);
-      else if(!ctx.scanned && !f.expectedPax && rows.length) w.push(['warn', 'The PDF does not state a passenger count, so the number detected (' + live.length + ') could not be cross-checked.']);
-      const noT = live.filter(r => !r.ticket).length;
-      if(noT) w.push(['warn', noT + ' passenger(s) have no ticket number' + (f.passengers && !f.passengers.some(p => p.ticket) ? ': this PDF does not contain ticket numbers, so none were invented. Add them on the form.' : '. Add them on the form.')]);
-      if(live.some(r => r.ticket && !/^\d{13}$/.test(r.ticket))) w.push(['bad', 'Ticket numbers must be exactly 13 digits. Fix them on the form.']);
-      if(new Set(lts).size !== lts.length) w.push(['bad', 'The same ticket number is listed twice.']);
-      if(live.length > 9) w.push(['bad', 'A PNR can hold at most 9 tickets (' + live.length + ' found). Split the booking.']);
-      return w;
-    };
-    const use = liveRows(), ts = use.map(r => r.ticket).filter(Boolean);
+    const use = rows.filter(r => r.inc && (r.name || r.ticket)), ts = use.map(r => r.ticket).filter(Boolean);
 
-    // read the PDF straight into the form (page 1)
+    // read the PDF straight into the form
     if(use.length){
       const curTk = (($('f-newtkt-t') || {}).value || '');
       if(($('f-pname').value.trim() || curTk) && !confirm('The form already has passenger or ticket data. Replace the passenger names (and ticket numbers found here) with the imported ones?')) return;
@@ -6583,136 +6583,44 @@ A.onChange(A.fillForm);
     const done = applyExtractedTicketFields(fields);
     if(done){
       try{ const l = pdfImportsLoad(); l.push({ hash: ctx.hash, file: ctx.file.name, at: aeroLocalISO(), pnr: fields.reservationPnr || '', passengers: use.map(r => ({ name: r.name, ticket: r.ticket })) }); localStorage.setItem(PDF_IMPORT_KEY, JSON.stringify(l.slice(-200))); }catch(e){}
-      window.__aeroPdfFile = ctx.file; const pfn = $('pdf-import-file'); if(pfn) pfn.textContent = ctx.file.name + ' · booking details applied. Verify every value, then save the work record.';
-      const bn = $('pdf-import-banner'); if(bn) bn.style.display = 'block';
+      window.__aeroPdfFile = ctx.file;
     }
-    const isT = typeSelect.value === 'Ticketing';
+    // make sure the one form pop-up is open, then show the results in its top strip
+    try{ const rt = $('ptc-root'); if(rt && rt.classList.contains('wr-mode')) rt.classList.add('wr-form-open'); }catch(e){}
     const gotAny = !ctx.scanned && !!(f.reservationPnr || f.pnr || f.airlinePnr || f.sector || f.baseFare !== undefined || rows.length);
-    const fmt2 = v => (v === '' || v === undefined || v === null || isNaN(v)) ? '—' : Number(v).toFixed(2);
-    const g = id => { const e = $(id); return e ? String(e.value || '').trim() : ''; };
-    const back = document.createElement('div'); back.id = 'rv-back'; back.tabIndex = -1;
-    document.body.appendChild(back);
-    const close = () => { document.removeEventListener('keydown', onKey); back.remove(); };
-    const onKey = e => { if(e.key === 'Escape'){ close(); } };
-    document.addEventListener('keydown', onKey);
+    const bn = $('pdf-import-banner'); if(!bn) return;
+    bn.style.display = 'block'; bn.classList.toggle('bad', !gotAny);
+    const pfn = $('pdf-import-file'); if(pfn) pfn.textContent = ctx.file.name + (gotAny ? ' · booking details applied. Verify every value, then save the work record.' : ' · enter the details on the form.');
+    const pt = $('pdf-import-title'); if(pt) pt.textContent = ctx.scanned ? 'No readable text in this PDF' : gotAny ? 'File Loaded Successfully' : 'File loaded, but nothing could be read';
+    const pok = $('pdf-import-ok'); if(pok) pok.textContent = gotAny ? '✓' : '!';
 
-    let saveMsg = '';
-    function render(){
-      const live = liveRows(), warns = (saveMsg ? [['err', 'Not saved yet: ' + saveMsg + ' Press Back to fix it on the form, then save again.']] : []).concat(baseWarns, dyn(live));
-      const tk = isT ? ((entryNewTktChips && entryNewTktChips.getTickets) ? entryNewTktChips.getTickets() : []) : live.map(r => r.ticket).filter(Boolean);
-      const names = g('f-pname').split(',').map(x => x.trim()).filter(Boolean);
-      const more = (arr, k) => arr.length ? arr[0] + (arr.length > k ? '  +' + (arr.length - k) + ' more' : '') : '—';
-      const sel = $('f-airline'), air = (sel && sel.value && sel.selectedIndex >= 0) ? sel.options[sel.selectedIndex].textContent.trim() : '';
-      const base = isT ? g('f-basefare-t') : (f.baseFare !== undefined ? f.baseFare : ''), tax = isT ? g('f-taxfare-t') : (f.taxFare !== undefined ? f.taxFare : '');
-      const disc = isT ? g('f-discamt-t') : (f.discountAmount !== undefined ? f.discountAmount : '');
-      const bN = parseFloat(base), dN = parseFloat(disc), mk = isT ? parseFloat(g('f-markup-t')) : NaN;
-      const pct = (bN > 0 && !isNaN(dN)) ? (dN * 100 / bN).toFixed(2) + '%' : (disc !== '' ? '0.00%' : '—');
-      const payable = isT ? g('f-totalfare-t') : ((isNaN(parseFloat(base)) && isNaN(parseFloat(tax))) ? '' : ((parseFloat(base) || 0) + (parseFloat(tax) || 0) - (dN || 0)));
-      const ctxSelf = entryWorkContext === 'self';
-      const vis = rows.filter(r => r.inc && !r.gone);
-      const paxCard = '<div class="rv-card rv-pax"><h4><span class="rv-ic">' + RV_ICO.user + '</span>Passengers &amp; Tickets (' + live.length + ')<button type="button" class="rv-add" data-a="addpax"' + (vis.length >= 9 ? ' disabled' : '') + '>+ Add passenger</button></h4><div class="rv-tw"><table><thead><tr><th>#</th><th>Passenger name</th><th>Ticket number (13 digits)</th><th></th></tr></thead><tbody>'
-        + (vis.length ? vis.map((r, i) => '<tr><td>' + (i + 1) + '</td><td><input data-f="name" data-ri="' + rows.indexOf(r) + '" value="' + esc(r.name) + '" placeholder="Passenger name" autocomplete="off"></td><td><input class="mono" data-f="ticket" data-ri="' + rows.indexOf(r) + '" value="' + esc(r.ticket) + '" inputmode="numeric" maxlength="13" placeholder="13-digit ticket number" autocomplete="off"></td><td class="rv-rmc"><button type="button" class="rv-rm" data-rm="' + rows.indexOf(r) + '" title="Remove this passenger" aria-label="Remove passenger">✕</button></td></tr>').join('') : '<tr><td colspan="4" class="rv-none">No passengers yet. Use “+ Add passenger”.</td></tr>')
-        + '</tbody></table></div></div>';
-      const blockers = warns.filter(w => w[0] === 'bad').length;
-      // payment table (Ticketing form only)
-      let pay = '', paySel = '';
-      if(isT && $('f-paystat-t')){
-        const st = g('f-paystat-t') || 'FULL', grand = parseFloat(g('f-grandtotal-t')) || parseFloat(g('f-totalfare-t')) || 0;
-        const paid = parseFloat(g('f-paidamt-t')), due = parseFloat(g('f-dueamt-t')), dd = g('f-duedate-t');
-        const m = $('f-paymethod-t'), mname = (m && m.value && m.selectedIndex >= 0) ? m.options[m.selectedIndex].textContent.trim() : '';
-        const r = [];
-        if(st === 'PARTIAL'){
-          const pp = (grand > 0 && !isNaN(paid)) ? Math.round(paid * 100 / grand) : null;
-          r.push(['Partial Payment' + (pp !== null ? ' <span class="rv-pill">' + pp + '%</span>' : ''), fmt2(paid), isNaN(paid) ? 'Enter the amount received on the form' : 'Balance due later' + (mname ? ' · via ' + esc(mname) : '')]);
-          r.push(['Pending Balance', fmt2(due), dd ? 'Due on ' + esc(dd) : 'No due date set']);
-        } else if(st === 'FULL_DUE'){
-          r.push(['Full Due', '0.00', 'Nothing received yet']); r.push(['Pending Balance', fmt2(grand), dd ? 'Due on ' + esc(dd) : 'No due date set']);
-        } else r.push(['Full Payment', fmt2(grand), 'Paid in full' + (mname ? ' · via ' + esc(mname) : '')]);
-        pay = '<div class="rv-card rv-paycard"><h4><span class="rv-ic">' + RV_ICO.card + '</span>Payment Details</h4><div class="rv-tw"><table><thead><tr><th>Method</th><th>Amount</th><th>Remarks</th></tr></thead><tbody>' + r.map(x => '<tr><td>' + x[0] + '</td><td>' + x[1] + '</td><td>' + x[2] + '</td></tr>').join('') + '</tbody></table></div></div>';
-        paySel = '<div class="rv-sub"><span class="rv-ic">' + RV_ICO.card + '</span>Payment Status</div><select id="rv-pay" aria-label="Payment status">' + [...$('f-paystat-t').options].map(o => '<option value="' + esc(o.value) + '"' + (o.value === st ? ' selected' : '') + '>' + esc(o.textContent.trim()) + '</option>').join('') + '</select>';
-      }
-      const RI = (k, key, v) => '<label class="rv-r rv-ri"><span>' + k + '</span><input data-f="' + key + '" value="' + esc(v) + '" autocomplete="off" spellcheck="false" placeholder="—"></label>';
-      const R = (k, v, cls) => '<div class="rv-r' + (cls ? ' ' + cls : '') + '"><span>' + k + '</span><b>' + v + '</b></div>';
-      back.innerHTML = '<div class="rv" role="dialog" aria-modal="true" aria-label="Review import">'
-        + '<div class="rv-top"><div><h2>Work Record Entry</h2><p>Import PDF, review details, and save your record</p></div><button type="button" class="rv-x" data-a="back" aria-label="Close and go back to the form">×</button></div>'
-        + '<div class="rv-steps" aria-label="Import progress"><span class="done"><i>✓</i>Import PDF</span><u></u><span class="on"><i>2</i>Review Details</span><u></u><span><i>3</i>Save</span></div>'
-        + '<div class="rv-grid"><div class="rv-main">'
-        + '<div class="rv-card rv-import' + (gotAny ? '' : ' bad') + '"><span class="rv-pdf"><b>PDF</b></span><div class="rv-imp-t"><b>Import Booking PDF</b><small>Drag &amp; drop your PDF file here, or</small></div><button type="button" class="rv-outline" data-a="choose">Choose File</button><span class="rv-div"></span>'
-        + '<span class="rv-ok">' + (gotAny ? RV_ICO.check : '!') + '</span><div class="rv-imp-t"><b>' + (ctx.scanned ? 'No readable text in this PDF' : gotAny ? 'File Loaded Successfully' : 'File loaded, but nothing could be read') + '</b><small>' + (gotAny ? 'Booking details have been extracted.' : 'Enter the details on the form.') + '</small></div><button type="button" class="rv-outline" data-a="view">' + RV_ICO.eye + 'View File</button></div>'
-        + (warns.length ? '<div class="rv-warns">' + warns.map(x => '<div class="rv-w ' + x[0] + '">' + esc(x[1]) + '</div>').join('') + '</div>' : '')
-        + '<div class="rv-two"><div class="rv-card"><h4><span class="rv-ic">' + RV_ICO.plane + '</span>Booking Information</h4>'
-        + RI('GDS PNR', 'gds', g('f-pnr-gds')) + RI('Airline PNR', 'air', g('f-pnr-air')) + R('Airline', esc(air || '—')) + R('Passenger Name', esc(more(names, 1))) + (isT ? RI('Sector', 'sector', g('f-sector-t')) : R('Sector', esc(fields.sector || '—')))
-        + R('Booking Type', '<span class="rv-badge ' + (tk.length ? 'ok' : 'warn') + '">' + (tk.length ? 'Ticketed' : 'No ticket number') + '</span>') + R('Ticket Number', esc(more(tk, 1))) + '</div>'
-        + '<div class="rv-card"><h4><span class="rv-ic">' + RV_ICO.ticket + '</span>Fare Details</h4>'
-        + R('Base Fare', fmt2(base)) + R('Tax', fmt2(tax)) + R('Discount', fmt2(disc)) + R('Discount Percentage', pct, 'rv-hl') + (mk > 0 ? R('Markup', fmt2(mk)) : '') + R('Payable Fare (Client Pays)', fmt2(payable), 'rv-strong') + '</div></div>'
-        + paxCard
-        + pay
-        + '</div>'
-        + '<aside class="rv-side"><div class="rv-card"><h4><span class="rv-ic">' + RV_ICO.brief + '</span>Work Context</h4>'
-        + '<button type="button" class="rv-radio" role="radio" aria-checked="' + (ctxSelf ? 'false' : 'true') + '" data-ctx="employment"><i></i><b>Employment Work</b><small>No profit analytics</small></button>'
-        + '<button type="button" class="rv-radio" role="radio" aria-checked="' + (ctxSelf ? 'true' : 'false') + '" data-ctx="self"><i></i><b>Self Business</b><small>Enable profit analytics</small></button>'
-        + (paySel ? '<hr>' + paySel : '') + '</div></aside></div>'
-        + '<div class="rv-foot"><button type="button" class="rv-outline rv-backbtn" data-a="back">← Back</button><span style="flex:1"></span><button type="button" class="rv-save" data-a="save"' + (blockers ? ' disabled title="Fix the red items on the form first"' : '') + '>' + RV_ICO.save + 'Save Work Record</button></div></div>';
-    }
-    // re-render while keeping the typing position and scroll, so inline edits never lose focus
-    function draw(focusKey){
-      const ae = document.activeElement; let key = focusKey || null, ss = 0, se = 0;
-      if(!key && ae && back.contains(ae) && ae.dataset && ae.dataset.f){ key = ae.dataset.f + ':' + (ae.dataset.ri || ''); ss = ae.selectionStart; se = ae.selectionEnd; }
-      const box = back.querySelector('.rv'), sc = box ? box.scrollTop : 0;
-      render();
-      const nb = back.querySelector('.rv'); if(nb) nb.scrollTop = sc;
-      if(key){
-        const [fk, ri] = key.split(':'); const el = back.querySelector('[data-f="' + fk + '"][data-ri="' + ri + '"]') || back.querySelector('[data-f="' + fk + '"]:not([data-ri])');
-        if(el){ el.focus(); try{ if(focusKey){ el.select(); } else el.setSelectionRange(ss, se); }catch(e){} }
-      }
-    }
-    // keep the entry form (page 1) in step with the passenger list
-    function syncPax(){
-      const live = liveRows(), nm = live.map(x => x.name.trim()).filter(Boolean), tk = live.map(x => x.ticket).filter(t => /^\d{13}$/.test(t));
-      const pn = $('f-pname'); if(pn){ pn.value = nm.join(', '); pn.dispatchEvent(new Event('input', { bubbles: true })); }
-      try{ if(entryNewTktChips && entryNewTktChips.setTickets) entryNewTktChips.setTickets(tk); }catch(e){}
-    }
-    draw();
-    back.addEventListener('input', ev => {
-      const t = ev.target; if(!t.dataset || !t.dataset.f) return; const k = t.dataset.f;
-      if(k === 'name' || k === 'ticket'){
-        const r = rows[+t.dataset.ri]; if(!r) return;
-        if(k === 'ticket'){ const v = t.value.replace(/\D/g, '').slice(0, 13); t.value = v; r.ticket = v; } else r.name = t.value;
-        syncPax(); draw(); return;
-      }
-      const map = { gds:'f-pnr-gds', air:'f-pnr-air', sector:'f-sector-t' }, el = map[k] && $(map[k]);
-      if(el){ el.value = t.value.toUpperCase(); el.dispatchEvent(new Event('input', { bubbles: true })); draw(); }
-    });
-    back.addEventListener('change', ev => { if(ev.target.id === 'rv-pay'){ const sp = $('f-paystat-t'); if(sp){ sp.value = ev.target.value; sp.dispatchEvent(new Event('change', { bubbles: true })); } draw(); } });
-    back.addEventListener('click', ev => {
-      const c = ev.target.closest('[data-ctx]'); if(c){ setEntryContext(c.getAttribute('data-ctx')); draw(); return; }
-      const rm = ev.target.closest('[data-rm]');
-      if(rm){ const r = rows[+rm.getAttribute('data-rm')]; if(!r) return; r.gone = true; syncPax(); draw(); return; }
-      const b = ev.target.closest('[data-a]'); if(!b || b.disabled) return; const a = b.dataset.a;
-      if(a === 'addpax'){ if(rows.filter(r => r.inc && !r.gone).length >= 9) return; rows.push({ name: '', ticket: '', inc: true, gone: false }); draw('name:' + (rows.length - 1)); return; }
-      if(a === 'view') aeroOpenPdf(ctx.file);
-      else if(a === 'choose') $('pdf-ticket-input').click();
-      else if(a === 'back'){ close(); const n = $('f-pname'); if(n) try{ n.focus(); }catch(e){} }
-      else if(a === 'save'){
-        const before = entries.length; saveMsg = '';
-        $('btn-add').click();
-        setTimeout(() => {
-          if(!document.getElementById('rv-back')) return;
-          if(entries.length > before){ close(); return; }
-          const t = $('ptc-toast'); saveMsg = (t && t.classList.contains('err') && t.textContent.trim()) || 'The entry was not saved. Press Back to check the form.';
-          draw(); try{ back.scrollTop = 0; }catch(e){}
-        }, 350);
-      }
-    });
-    back.addEventListener('dragover', ev => { if(ev.dataTransfer && [...(ev.dataTransfer.types || [])].includes('Files')) ev.preventDefault(); });
-    back.addEventListener('drop', ev => {
-      if(!(ev.dataTransfer && ev.dataTransfer.files && ev.dataTransfer.files.length)) return; ev.preventDefault();
-      const file = ev.dataTransfer.files[0];
-      if(file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')){ toast('Please drop a PDF file.'); return; }
-      close(); ctx.load(file);
-    });
-    try{ back.focus(); }catch(e){}
+    // checks that depend on the form as it is now (they update when a passenger or ticket is edited)
+    const renderChecks = () => {
+      const box = $('pdf-import-checks'); if(!box) return;
+      const names = String(($('f-pname') || {}).value || '').split(',').map(x => x.trim()).filter(Boolean);
+      const isT = typeSelect.value === 'Ticketing';
+      const tk = (isT && entryNewTktChips && entryNewTktChips.getTickets) ? entryNewTktChips.getTickets() : ts;
+      const n = Math.max(names.length, tk.length), w = [];
+      if(f.expectedPax && !ctx.scanned) w.push(f.expectedPax === n ? ['ok', 'Passenger count matches the PDF (' + f.expectedPax + ').'] : ['bad', 'The PDF fare line says ' + f.expectedPax + ' passenger(s) but the form has ' + n + '. Add or remove passengers so the count matches.']);
+      else if(!ctx.scanned && !f.expectedPax && rows.length) w.push(['warn', 'The PDF does not state a passenger count, so the number detected (' + n + ') could not be cross-checked.']);
+      const noT = Math.max(0, names.length - tk.length);
+      if(noT && !ctx.scanned) w.push(['warn', noT + ' passenger(s) have no ticket number' + (f.passengers && !f.passengers.some(p => p.ticket) ? ': this PDF does not contain ticket numbers, so none were invented. Add them below.' : '. Add them below.')]);
+      if(tk.some(t => !/^\d{13}$/.test(t))) w.push(['bad', 'Ticket numbers must be exactly 13 digits. Fix them below.']);
+      if(new Set(tk).size !== tk.length) w.push(['bad', 'The same ticket number is listed twice.']);
+      if(n > 9) w.push(['bad', 'A PNR can hold at most 9 tickets (' + n + ' found). Split the booking.']);
+      const all = baseWarns.concat(w);
+      box.innerHTML = all.map(x => '<div class="aimp-w ' + x[0] + '">' + esc(x[1]) + '</div>').join('');
+    };
+    window.__aeroImportChecks = renderChecks;
+    renderChecks();
+    try{ const card = $('ptc-card'); if(card) card.scrollTop = 0; }catch(e){}
   }
+  // re-run the strip checks whenever the form changes (debounced), while an import is showing
+  (function(){
+    const card = $('ptc-card'); if(!card) return; let t = null;
+    const go = () => { clearTimeout(t); t = setTimeout(() => { const bn = $('pdf-import-banner'); if(window.__aeroImportChecks && bn && bn.style.display !== 'none') window.__aeroImportChecks(); }, 150); };
+    ['input', 'change', 'click'].forEach(ev => card.addEventListener(ev, go, true));
+  })();
 
   function wirePdfPreview(){
     const fi = $('pdf-ticket-input'), btn = $('pdf-ticket-btn'), status = $('pdf-import-status'); if(!fi) return;
@@ -8397,6 +8305,7 @@ A.onChange(A.fillForm);
   }
 
   function clearForm(){
+    try{ const _b = document.getElementById('pdf-import-banner'); if(_b) _b.style.display = 'none'; window.__aeroImportChecks = null; window.__aeroPdfFile = null; }catch(err){}
     try{ if(window.aeroCo) window.aeroCo.resetForm(); }catch(err){}
     setEntryContext('employment');
     ['f-pnr-gds','f-pnr-air','f-pname','f-pnum','f-note','f-platform-other','f-airline-other',
