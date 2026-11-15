@@ -3360,7 +3360,9 @@ html[data-theme="dark"] .apv-card,html[data-theme="dark"] .apv-v,html[data-theme
 .aimp-checks{display:grid;gap:4px;margin-top:6px;max-height:96px;overflow:auto}.aimp-checks:empty{display:none}
 .aimp-w{padding:4px 10px;border-radius:7px;font-size:12px;font-weight:600;border:1px solid}
 .aimp-w.ok{background:#EAF6F0;border-color:#BFE3CF;color:#14653F}.aimp-w.warn{background:#FFF6E3;border-color:#F0D3A4;color:#7A4E0A}.aimp-w.bad{background:#FDF0EE;border-color:#F0C2BD;color:#9B2C20}
-.aimp-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) 210px;gap:8px;margin-top:8px;align-items:start}
+.aimp-grid{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr) 230px;gap:8px;margin-top:8px;align-items:stretch}
+.aimp-col{display:flex;flex-direction:column;gap:8px;min-width:0}
+.aimp-col>.aimp-card:last-child{flex:1}
 .aimp-card{background:#fff;border:1px solid #DDE5F0;border-radius:10px;padding:6px 10px 8px;min-width:0}
 .aimp-card h5{margin:0 0 2px;padding-bottom:4px;border-bottom:1px solid #EEF2F7;font-size:12.5px;font-weight:700;color:#0F2742}
 .aimp-r{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:2px 0;border-top:1px solid #F0F3F8;font-size:12px;color:#475569;margin:0;font-weight:500}
@@ -3379,14 +3381,13 @@ html[data-theme="dark"] .apv-card,html[data-theme="dark"] .apv-v,html[data-theme
 .aimp-nonT{display:none;margin-top:8px;font-size:12px;color:#7A4E0A;background:#FFF6E3;border:1px solid #F0D3A4;border-radius:8px;padding:5px 10px}
 #pdf-import-banner.aimp-nt .aimp-grid{display:none}
 #pdf-import-banner.aimp-nt .aimp-nonT{display:block}
-@media(max-width:760px){.aimp-grid{grid-template-columns:1fr}.aimp-pax,.aimp-pay,.aimp-rem{grid-column:auto!important}}
+@media(max-width:760px){.aimp-grid{grid-template-columns:1fr}}
 html[data-theme="dark"] .aimp-card,html[data-theme="dark"] #pdf-import-banner .aimp-row{background:var(--card);border-color:var(--ao-soft)}
 html[data-theme="dark"] .aimp-card h5,html[data-theme="dark"] .aimp-r b,html[data-theme="dark"] 
-.aimp-pax{grid-column:1 / span 3}.aimp-pay{grid-column:1 / span 2}.aimp-rem{grid-column:3}
 .aimp-r select{width:54%;min-width:0;height:24px;padding:1px 6px;font-size:12px;border:1px solid #D5DCE6;border-radius:6px;background:#fff}
 .aimp-r input[type=date]{text-align:left;font-family:inherit}
 .aimp-r.aimp-oth{display:none}
-.aimp-rem textarea{width:100%;box-sizing:border-box;font:inherit;font-size:12px;border:1px solid #D5DCE6;border-radius:6px;padding:4px 7px;resize:vertical;min-height:54px;margin-top:2px}
+.aimp-rem{display:flex;flex-direction:column}.aimp-rem textarea{width:100%;box-sizing:border-box;font:inherit;font-size:12px;border:1px solid #D5DCE6;border-radius:6px;padding:4px 7px;resize:vertical;min-height:54px;margin-top:2px;flex:1}
 .aimp-pax h5{display:flex;align-items:center;gap:6px}.aimp-pax h5 #aimp-paxn{font-weight:500;color:#64748B}
 .aimp-add{margin-left:auto;font:inherit;font-size:12px;font-weight:600;padding:2px 10px;border:1px solid #2563EB;color:#1D4ED8;background:#fff;border-radius:7px;cursor:pointer}
 .aimp-add:disabled{opacity:.45;cursor:default}
@@ -4179,6 +4180,7 @@ html[data-theme="dark"] #pwi-root .pwi-import textarea{background:#0E1E36;border
         </div>
         <div class="aimp-checks" id="pdf-import-checks" aria-live="polite"></div>
         <div class="aimp-grid" id="pdf-import-body">
+          <div class="aimp-col">
           <div class="aimp-card aimp-book"><h5>✈ Booking Information</h5>
             <label class="aimp-r"><span>Date</span><input type="date" data-bind="f-date"></label>
             <label class="aimp-r"><span>Company</span><select data-bind="f-company"></select></label>
@@ -4192,6 +4194,11 @@ html[data-theme="dark"] #pwi-root .pwi-import textarea{background:#0E1E36;border
             <label class="aimp-r"><span>Route Type</span><select data-bind="f-routetype-t"></select></label>
             <label class="aimp-r"><span>Passenger No.</span><input data-bind="f-pnum" autocomplete="off" placeholder="optional"></label>
           </div>
+          <div class="aimp-card aimp-pax"><h5>👤 Passengers &amp; Tickets <span id="aimp-paxn"></span><button type="button" class="aimp-add" id="aimp-addpax">+ Add passenger</button></h5>
+            <table><thead><tr><th>#</th><th>Passenger name</th><th>Ticket no. (13 digits)</th><th></th></tr></thead><tbody id="aimp-paxbody"></tbody></table>
+          </div>
+          </div>
+          <div class="aimp-col">
           <div class="aimp-card aimp-fare"><h5>🎫 Fare Calculation</h5>
             <label class="aimp-r"><span>Base Fare</span><input type="number" step="0.01" data-bind="f-basefare-t" placeholder="0.00"></label>
             <label class="aimp-r"><span>Tax</span><input type="number" step="0.01" data-bind="f-taxfare-t" placeholder="0.00"></label>
@@ -4204,6 +4211,11 @@ html[data-theme="dark"] #pwi-root .pwi-import textarea{background:#0E1E36;border
             <label class="aimp-r"><span>Method Charge</span><input type="number" step="0.01" min="0" data-bind="f-paychg-t" placeholder="0.00"></label>
             <div class="aimp-r aimp-strong"><span>Total Payable</span><b data-out="f-grandtotal-t"></b></div>
           </div>
+          <div class="aimp-card aimp-pay"><h5>🧾 Payment Details</h5>
+            <table><thead><tr><th>Method</th><th>Amount</th><th>Remarks</th></tr></thead><tbody id="aimp-paybody"></tbody></table>
+          </div>
+          </div>
+          <div class="aimp-col">
           <div class="aimp-card aimp-side"><h5>💳 Payment</h5>
             <label class="aimp-fl">Payment Status<select data-bind="f-paystat-t"></select></label>
             <label class="aimp-fl">Payment Method<select data-bind="f-paymethod-t"></select></label>
@@ -4211,13 +4223,8 @@ html[data-theme="dark"] #pwi-root .pwi-import textarea{background:#0E1E36;border
             <label class="aimp-fl aimp-part">Due Date *<input type="date" data-bind="f-duedate-t"></label>
             <div class="aimp-r aimp-strong"><span>Due Amount</span><b data-out="f-dueamt-t"></b></div>
           </div>
-          <div class="aimp-card aimp-pax"><h5>👤 Passengers &amp; Tickets <span id="aimp-paxn"></span><button type="button" class="aimp-add" id="aimp-addpax">+ Add passenger</button></h5>
-            <table><thead><tr><th>#</th><th>Passenger name</th><th>Ticket number (13 digits)</th><th></th></tr></thead><tbody id="aimp-paxbody"></tbody></table>
-          </div>
-          <div class="aimp-card aimp-pay"><h5>🧾 Payment Details</h5>
-            <table><thead><tr><th>Method</th><th>Amount</th><th>Remarks</th></tr></thead><tbody id="aimp-paybody"></tbody></table>
-          </div>
           <div class="aimp-card aimp-rem"><h5>📝 Remarks</h5><textarea data-bind="f-note" rows="3" placeholder="Any additional notes"></textarea></div>
+          </div>
         </div>
         <div class="aimp-nonT" id="aimp-nonT">Fare and payment calculation is available for <b>Ticketing</b> entries. Use the form below for other types.</div>
         <div class="aimp-note">⚠️ Layouts vary by airline/GDS, so extraction can miss or misread a field. Check every value, then press <b>Add Entry</b>. <button type="button" class="aimp-link" id="aimp-full">Show full form</button></div>
