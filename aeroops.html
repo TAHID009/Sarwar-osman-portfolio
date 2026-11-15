@@ -13506,6 +13506,13 @@ function recTable(l,opt){opt=opt||{};if(!l.length)return EMPTY;var lim=opt.pager
  return'<div class="wr-tw"><table><thead><tr><th>Date</th><th>Type / status</th><th>Airline</th><th>PNR</th><th>TKT No.</th><th>Passenger(s)</th><th>Route</th><th class="r">Amount</th><th class="wr-th-act">Action</th></tr></thead><tbody>'+lim.map(function(r){var e=r.e,st=status(e);return'<tr><td title="'+fmtD(e.date)+'">'+fmtD(e.date).replace(/ (\d{2})(\d{2})$/," '$2")+'</td><td>'+pill(e.txn,TC[e.txn]||'#475569')+(({Ticketing:'Ticketed',Booking:'Booked',Reissue:'Reissued',Void:'Voided'})[e.txn]===st?'':'<br>'+pill(st,SC[st]||'#475569'))+dueP(e)+'</td><td>'+esc(e.airline||'—')+'</td><td class="mono">'+esc(e.pnrGds)+'</td><td class="mono">'+tkCell(e)+'</td><td>'+pxCell(e)+'</td><td>'+esc(e.sector||'—')+'</td><td class="r">'+amt(e)+'</td><td class="wr-td-act"><button type="button" class="wr-link wr-dots" data-act="open" data-i="'+r.i+'" title="Open record" aria-label="Open record">'+lui('dots',16)+'</button></td></tr>'}).join('')+'</tbody></table></div>'+(opt.pager?pager(l.length):'')+(!opt.pager&&opt.limit&&l.length>opt.limit?'<div style="text-align:center;margin-top:10px"><button type="button" class="wr-link" data-act="more">Show more ('+(l.length-opt.limit)+' left)</button></div>':'')}
 
 var PGS=10;
+function fitPGS(){var n=Math.floor((window.innerHeight-620)/42);PGS=Math.max(6,Math.min(30,n||10))}
+fitPGS();
+(function(){var t=null;window.addEventListener('resize',function(){clearTimeout(t);t=setTimeout(function(){var o=PGS;fitPGS();if(o!==PGS&&typeof renderDash==='function'&&dash&&dash.offsetParent)renderDash()},250)})})();
+document.addEventListener('click',function(ev){var b=ev.target.closest&&ev.target.closest('[data-qe]');if(!b)return;var nb=document.querySelector('[data-act="new"]');if(nb)nb.click();setTimeout(function(){var t=document.querySelector('#f-type-tabs [data-type="'+b.getAttribute('data-qe')+'"]');if(t)t.click()},260)});
+function qeItems(){return TY.map(function(k){return'<button type="button" data-qe="'+k+'"><i style="background:'+TC[k]+'"></i>'+k+'</button>'}).join('')}
+document.addEventListener('click',function(ev){var m=document.querySelector('.wr-split-m');if(!m)return;var t=ev.target.closest&&ev.target.closest('[data-split]');var inside=ev.target.closest&&ev.target.closest('.wr-split-m');var c=document.querySelector('[data-split]');if(t){m.hidden=!m.hidden;if(c)c.setAttribute('aria-expanded',String(!m.hidden));return}if(!m.hidden){m.hidden=true;if(c)c.setAttribute('aria-expanded','false')}},true);
+function qeCard(){return'<div class="wr-card wr-qe"><h3>Quick Entry</h3><div class="wr-qe-b">'+TY.map(function(k){return'<button type="button" data-qe="'+k+'"><i style="background:'+TC[k]+'"></i>+ '+k+'</button>'}).join('')+'</div></div>'}
 function pager(n){var pg=Math.ceil(n/PGS);if(DS.page>=pg)DS.page=Math.max(0,pg-1);var a=DS.page*PGS+1,b=Math.min(n,DS.page*PGS+PGS),h='<div class="wr-pager"><span class="wr-pg-i">Showing '+a+' – '+b+' of '+n+' record'+(n===1?'':'s')+'</span>';
  if(pg>1){h+='<div class="wr-pg-b"><button type="button" data-act="pg" data-p="'+(DS.page-1)+'" aria-label="Previous page"'+(DS.page?'':' disabled')+'>'+lui('chevl',16)+'</button>';
   var i,from=Math.max(0,Math.min(DS.page-1,pg-3)),to=Math.min(pg,from+3);for(i=from;i<to;i++)h+='<button type="button" data-act="pg" data-p="'+i+'" class="'+(i===DS.page?'on':'')+'" aria-label="Page '+(i+1)+'">'+(i+1)+'</button>';
@@ -13543,7 +13550,7 @@ function lbkCopy(b){var t=b.dataset.pnr||'',ok=function(){b.innerHTML='\u2713';b
 function renderDash(partial){var s=span(),l=rows(s),ps=prevSpan(),pl=ps?rows(ps):null;
  if(partial==='table'){var tb=dash.querySelector('#wr-rec');if(tb){tb.innerHTML=recentBlock(l);return}}
  var filters='<div class="wr-filters"><label class="wr-sq">'+lui('search',17)+'<input id="wr-q" type="search" placeholder="Search PNR, ticket number or passenger..." value="'+esc(DS.q)+'" aria-label="Search records"></label><select data-act="type" aria-label="Type"><option value="">All types</option>'+TY.map(function(t){return'<option'+(DS.type===t?' selected':'')+'>'+t+'</option>'}).join('')+'</select><select data-act="st" aria-label="Status"><option value="">All status</option>'+Object.keys(SC).map(function(t){return'<option'+(DS.st===t?' selected':'')+'>'+t+'</option>'}).join('')+'</select></div><div id="wr-rec">'+recentBlock(l)+'</div>';
- dash.innerHTML='<div class="wr-top"><div><h2>Work Record &amp; Performance</h2><p class="wr-sub">'+esc(coLabel())+' · <b>'+esc(periodLabel())+'</b></p></div><div class="wr-ctl">'+coSelect()+rangeCtl()+'<button type="button" class="wr-btn" data-act="new">+ New Record</button></div></div>'
+ dash.innerHTML='<div class="wr-top"><div><h2>Work Record &amp; Performance</h2><p class="wr-sub">'+esc(coLabel())+' · <b>'+esc(periodLabel())+'</b></p></div><div class="wr-ctl">'+coSelect()+rangeCtl()+'<div class="wr-split"><button type="button" class="wr-btn" data-act="new">+ New Record</button><button type="button" class="wr-btn wr-split-c" data-split="1" aria-haspopup="true" aria-expanded="false" title="Choose entry type">\u25be</button><div class="wr-split-m" hidden>'+qeItems()+'</div></div></div></div>'
   +kpis(l,pl,'wr')+'<div class="wr-grid dg"><div class="wr-card wr-log"><div class="lbk-head"><h3><span class="h-ic" style="--c:#172B4D">'+lui('clip',19)+'</span>Transaction Log</h3><div class="lbk-tools"><div class="lbk-seg" role="group" aria-label="Log Book view"><button type="button" data-act="lbview" data-v="timeline" class="'+(DS.view==='table'?'':'on')+'">Timeline</button><button type="button" data-act="lbview" data-v="table" class="'+(DS.view==='table'?'on':'')+'">Table</button></div><button type="button" class="lbk-all" data-act="lbfull">Open All Logs '+lui('arrow',15)+'</button></div></div>'+filters+'</div><div class="wr-side">'+actOv(l)+wrSide(l)+'</div><div class="wr-cmp">'+wrSide(l,'cmp')+'</div></div>'}
 /* ---- New Record modal ---- */
 var bd=document.createElement('div');bd.id='wr-backdrop';root.appendChild(bd);
@@ -17758,6 +17765,54 @@ html body #ptc-root .wr-act,html body #ptc-root .wr-dist{display:none!important}
 #ptc-root .ptc-nav-btn[data-nav="salesdesk"],#ptc-root .ptc-nav-btn[data-aero="sales"],#ptc-root .ptc-nav-btn[data-ao="at"]{display:none!important}
 /* Sidebar: NexOps v2.0.0 card sits right under the menu instead of at the far bottom */
 #ptc-root .aero-sb-card{margin-top:14px!important}
+
+/* ===== dashboard redesign: fills the screen, full-width log, quick entry strip ===== */
+@media(min-width:1000px){
+html body #ptc-root .ptc-shell{grid-template-rows:68px minmax(0,1fr) auto;min-height:calc(100vh - 36px)}
+html body #ptc-root #ptc-toprow-grid{grid-row:2 / span 2;height:auto!important;min-height:calc(100vh - 104px)!important}
+html body #ptc-root #ptc-body-grid{align-self:stretch;min-height:0}
+html body #ptc-root .ptc-body-main{display:flex;flex-direction:column;height:100%}
+html body #ptc-root #wr-dash{display:flex;flex-direction:column;flex:1;min-height:0}
+html body #ptc-root #wr-dash .wr-grid.dg{flex:1;min-height:0;grid-template-columns:minmax(0,1fr)!important;grid-template-rows:auto minmax(0,1fr)!important;align-items:stretch}
+html body #ptc-root #wr-dash .wr-side{grid-column:1!important;grid-row:1!important;display:flex!important;flex-direction:row!important;flex-wrap:nowrap;gap:10px!important;align-items:stretch;min-width:0}
+html body #ptc-root #wr-dash .wr-cmp{display:none!important}
+html body #ptc-root #wr-dash .wr-log{grid-column:1!important;grid-row:2!important;display:flex;flex-direction:column;min-height:0}
+html body #ptc-root #wr-dash .wr-log #wr-rec{flex:1;min-height:0;overflow:auto}
+}
+html body #ptc-root #wr-dash .wr-side>.wr-clear,html body #ptc-root #wr-dash .wr-side>.wr-need{flex:0 0 330px!important;width:330px;height:auto!important;margin:0!important;display:flex;align-items:center}
+.wr-qe{flex:1;display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:8px 14px!important;margin:0}
+.wr-qe h3{margin:0;font-size:13px;font-weight:700;color:#0F2742;white-space:nowrap}
+.wr-qe-b{display:flex;gap:8px;flex-wrap:wrap}
+.wr-qe-b button{font:inherit;font-size:12.5px;font-weight:600;display:inline-flex;align-items:center;gap:7px;padding:6px 14px;border:1px solid #D5DCE6;background:#fff;color:#0F2742;border-radius:999px;cursor:pointer;transition:background .15s,border-color .15s}
+.wr-qe-b button i{width:8px;height:8px;border-radius:50%;display:inline-block}
+.wr-qe-b button:hover{background:#F1F6FF;border-color:#9DB7E5}
+
+/* ===== simple dashboard: compact stat cards, no sparklines/notes, no "All clear" box, tighter log rows ===== */
+html body #ptc-root #wr-dash .wr-kpis{gap:8px!important}
+html body #ptc-root #wr-dash .wr-k.wr-k2{min-height:0!important;height:auto!important;padding:9px 14px!important;display:flex!important;align-items:center;gap:10px;box-shadow:none!important;border:1px solid #E3EAF4!important;border-radius:12px}
+html body #ptc-root #wr-dash .wr-k.wr-k2::before,html body #ptc-root #wr-dash .wr-k.wr-k2::after{display:none!important}
+html body #ptc-root #wr-dash .wr-k.wr-k2>svg,html body #ptc-root #wr-dash .wr-k.wr-k2 small{display:none!important}
+html body #ptc-root #wr-dash .wr-k.wr-k2>i{width:32px;height:32px;flex:none}
+html body #ptc-root #wr-dash .wr-k.wr-k2>div{display:flex;flex-direction:column;gap:0;min-width:0}
+html body #ptc-root #wr-dash .wr-k.wr-k2>div>span{font-size:11.5px;font-weight:600;color:#64748B;white-space:nowrap}
+html body #ptc-root #wr-dash .wr-k.wr-k2>div>b{font-size:22px;line-height:1.15;color:var(--c,#0F2742)}
+html body #ptc-root #wr-dash .wr-side>.wr-clear{display:none!important}
+html body #ptc-root #wr-dash .wr-qe{padding:6px 12px!important}
+html body #ptc-root #wr-rec td{padding-top:6px!important;padding-bottom:6px!important}
+
+/* New Record is now a split button: main = open the form, caret = pick the type (replaces the Quick Entry strip) */
+.wr-split{display:inline-flex;position:relative}
+.wr-split>.wr-btn:first-child{border-top-right-radius:0;border-bottom-right-radius:0}
+.wr-split>.wr-split-c{border-top-left-radius:0;border-bottom-left-radius:0;border-left:1px solid rgba(255,255,255,.3);padding-left:10px;padding-right:10px}
+.wr-split-m{position:absolute;top:calc(100% + 6px);right:0;z-index:60;min-width:170px;background:#fff;border:1px solid #D5DCE6;border-radius:12px;box-shadow:0 12px 28px rgba(15,39,66,.18);padding:6px}
+.wr-split-m[hidden]{display:none}
+.wr-split-m button{display:flex;align-items:center;gap:9px;width:100%;text-align:left;font:inherit;font-size:13px;font-weight:600;color:#0F2742;background:none;border:0;border-radius:8px;padding:8px 10px;cursor:pointer}
+.wr-split-m button:hover{background:#F1F6FF}
+.wr-split-m button i{width:9px;height:9px;border-radius:50%;display:inline-block}
+html body #ptc-root #wr-dash .wr-side>.wr-need{flex:1 1 auto!important;width:auto}
+html body #ptc-root #wr-dash .wr-side:empty,html body #ptc-root #wr-dash .wr-side:not(:has(.wr-need)){display:none!important}
+html body #ptc-root .wr-split>.wr-split-c{background:#172B4D!important;color:#fff!important;border-color:#172B4D!important;border-left:1px solid rgba(255,255,255,.3)!important}
+html body #ptc-root .wr-split>.wr-split-c:hover{background:#0F2142!important}
 </style>
 <script id="aero-premium-bell">
 /* Header notification access: reads the existing payment follow-up banner only. Clicking asks for device alerts (existing button) or jumps to the banner. No data is read or written. */
