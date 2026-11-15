@@ -6850,7 +6850,7 @@ A.onChange(A.fillForm);
     aimpSetSimple(!aimpFull);
     if(type !== aimpType){
       aimpType = type; aimpBuildDetails(); aimpPaxInit();
-      const rem = bn.querySelector('.aimp-rem'), col = $(isT ? 'aimp-colC' : 'aimp-colA'); if(rem && col && rem.parentNode !== col) col.appendChild(rem);
+      const rem = bn.querySelector('.aimp-rem'), col = $(isT ? 'aimp-colC' : (type === 'Refund' || type === 'Void') ? 'aimp-colA' : 'aimp-colB'); if(rem && col && rem.parentNode !== col) col.appendChild(rem);
     }
     aimpPaxResync();
     const fb = $('aimp-full'); if(fb) fb.textContent = aimpFull ? 'Hide full form' : 'Show full form';
@@ -17750,6 +17750,14 @@ html:not([data-theme="dark"]) body #ptc-root #ptc-card .wr-form-bar{background:#
 html:not([data-theme="dark"]) body #ptc-root #ptc-card #btn-add{background:#172B4D!important;color:#fff!important;border-color:#172B4D!important}
 
 html:not([data-theme="dark"]) body #ptc-root #ptc-card button.ptc-txn-tab.ptc-txn-tab-active.ptc-txn-tab-active{background:#172B4D!important;color:#fff!important;border-color:#172B4D!important}
+
+/* ===== requested clean-up ===== */
+/* Dashboard: Activity Overview (donut + Daily trend), Top Airlines and Service Charges by Type are not needed */
+html body #ptc-root .wr-act,html body #ptc-root .wr-dist{display:none!important}
+/* Aero Travels menu item hidden: Self vs Employment is decided on the entry (Work Context) and only changes the analysis view */
+#ptc-root .ptc-nav-btn[data-nav="salesdesk"],#ptc-root .ptc-nav-btn[data-aero="sales"],#ptc-root .ptc-nav-btn[data-ao="at"]{display:none!important}
+/* Sidebar: NexOps v2.0.0 card sits right under the menu instead of at the far bottom */
+#ptc-root .aero-sb-card{margin-top:14px!important}
 </style>
 <script id="aero-premium-bell">
 /* Header notification access: reads the existing payment follow-up banner only. Clicking asks for device alerts (existing button) or jumps to the banner. No data is read or written. */
