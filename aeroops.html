@@ -5268,7 +5268,7 @@ html[data-theme="dark"] #pwi-root .pwi-import textarea{background:#0E1E36;border
 <div id="px-empty" class="px-hint" role="status"></div><div class="px-pager"><button type="button" id="px-prev" class="px-btn alt">Prev</button><span id="px-pg"></span><button type="button" id="px-next" class="px-btn alt">Next</button></div></div></section>
     <section id="aero-master" class="aero-page" aria-label="Master Data"><div class="aset-head"><div style="color:#0E9AA7;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase">Download Center</div><h2>Master Data</h2><p>Download any of your data as an Excel file. Pick a report below.</p></div><div class="aset-card aset-hero"><div><b>Complete Data Pack</b><span>Everything in one Excel file: all entries, sales, pending adjustments, dashboard summary and activities.</span></div><button type="button" class="aset-dl big" data-dl="all">Download everything</button></div><div class="aset-card"><h3>Individual reports</h3><div class="aset-row"><div><b>Work Record — All Entries</b><span>Ticketing, Reissue, Refund and Void, with a sheet for each · <em class="am-n" data-n="entries">…</em></span></div><button type="button" class="aset-dl" data-dl="entries">Download Excel</button></div><div class="aset-row"><div><b>Revenue Desk — Sales &amp; Payments</b><span>Every sale with price, profit, paid and due · <em class="am-n" data-n="sales">…</em></span></div><button type="button" class="aset-dl" data-dl="sales">Download Excel</button></div><div class="aset-row"><div><b>Pending Adjustments</b><span>Refunds still waiting for their adjustment · <em class="am-n" data-n="pending">…</em></span></div><button type="button" class="aset-dl" data-dl="pending">Download Excel</button></div><div class="aset-row"><div><b>Dashboard Summary</b><span>Totals by type and by month, revenue and activity numbers · <em class="am-n" data-n="summary">…</em></span></div><button type="button" class="aset-dl" data-dl="summary">Download Excel</button></div><div class="aset-row"><div><b>Activity Tracker — All Activities</b><span>Every logged task with source, client, status and effort · <em class="am-n" data-n="activities">…</em></span></div><button type="button" class="aset-dl" data-dl="activities">Download Excel</button></div></div><div class="aset-card"><h3>Auto-save file</h3><div class="aset-row"><div><b>Master Data File</b><span>Connect an Excel file so every new entry is saved to it automatically.</span></div><button type="button" class="aset-dl" id="am-connect">Set Master Data File</button></div></div></section>
 
-    <section id="aero-settings" class="aero-page" aria-label="NexOps Settings"><div class="aset-head"><div class="pwi-kicker" style="color:#0E9AA7;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase">Control Center</div><h2>NexOps Settings</h2><p>Changes apply immediately and are remembered on this device.</p></div><div class="aset-card"><h3>Appearance</h3><div class="aset-row"><div><b>Sidebar</b><span>Full labels, or a slim icon-only sidebar.</span></div><div class="aset-seg" data-key="sidebar"><button type="button" data-v="expanded">Expanded</button><button type="button" data-v="compact">Compact</button></div></div><div class="aset-row"><div><b>Animations</b><span>Turn off transitions and motion across the app.</span></div><div class="aset-seg" data-key="anim"><button type="button" data-v="on">On</button><button type="button" data-v="off">Off</button></div></div></div><div class="aset-card"><h3>Data &amp; Storage</h3><p class="aset-note">Activity records are stored in Firebase (collection <code>work_record_pwi</code>) and sync across your signed-in devices. Nothing here deletes records.</p><div class="aset-btns"><button type="button" data-sact="export-all">Export all activities (CSV)</button><button type="button" data-sact="backup">Backup (JSON)</button><button type="button" data-sact="restore">Restore from backup…</button></div></div><div class="aset-card"><h3>Reset</h3><div class="aset-row"><div><b>Reset settings</b><span>Restores the options on this page to their defaults. Your activity records are not touched.</span></div><button type="button" class="aset-danger" id="aset-reset">Reset settings</button></div></div></section>
+    <section id="aero-settings" class="aero-page" aria-label="NexOps Settings"><div class="aset-head"><div class="pwi-kicker" style="color:#0E9AA7;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase">Control Center</div><h2>NexOps Settings</h2><p>Changes apply immediately and are remembered on this device.</p></div><div class="aset-card"><h3>Appearance</h3><div class="aset-row"><div><b>Sidebar</b><span>Full labels, or a slim icon-only sidebar.</span></div><div class="aset-seg" data-key="sidebar"><button type="button" data-v="expanded">Expanded</button><button type="button" data-v="compact">Compact</button></div></div><div class="aset-row"><div><b>Animations</b><span>Turn off transitions and motion across the app.</span></div><div class="aset-seg" data-key="anim"><button type="button" data-v="on">On</button><button type="button" data-v="off">Off</button></div></div></div><div class="aset-card"><h3>Data &amp; Storage</h3><p class="aset-note">Activity records are stored in Firebase (collection <code>work_record_pwi</code>) and sync across your signed-in devices. Nothing here deletes records.</p><div class="aset-btns"><button type="button" data-sact="export-all">Export all activities (CSV)</button><button type="button" data-sact="backup">Backup (JSON)</button><button type="button" data-sact="restore">Restore from backup…</button></div></div><div class="aset-card"><h3>Reset</h3><div class="aset-row"><div><b>Reset settings</b><span>Restores the sidebar and animation options to their defaults. Theme, menu order and your records are not touched.</span></div><button type="button" class="aset-danger" id="aset-reset">Reset settings</button></div></div></section>
 
     <section id="pwi-root" aria-label="Professional Work Intelligence">
       <div class="pwi-head">
@@ -13180,7 +13180,9 @@ function summaryRows(){var E=D().entries(),S=D().sales(),r=[['WORK RECORD — BY
  return r}
 function aoa(rows,name){var ws=XLSX.utils.aoa_to_sheet(rows);ws['!cols']=rows[0]?rows[0].map(function(){return{wch:18}}):[];return ws}
 function download(kind){
- if(typeof XLSX==='undefined'){say('The Excel tool did not load. Check your internet and try again.');return}
+ if(typeof XLSX==='undefined'){if(download.ld)return;download.ld=1;say('Loading the Excel tool…');var xs=document.createElement('script');xs.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+  xs.onload=function(){download.ld=0;if(typeof XLSX==='undefined')say('The Excel tool did not load. Check your internet and try again.');else download(kind)};
+  xs.onerror=function(){download.ld=0;say('The Excel tool did not load. Check your internet and try again.')};document.head.appendChild(xs);return}
  if(!D()){say('Still loading — please try again in a moment.');return}
  var E=D().entries(),wb,name;
  try{
@@ -13313,7 +13315,7 @@ document.addEventListener('click',function(e){var d=e.target.closest&&e.target.c
 var cn=$('am-connect');if(cn)cn.addEventListener('click',function(){var c=$('btn-connect-file');if(c)c.click()});
 document.querySelectorAll('#aero-settings .aset-seg button').forEach(function(b){b.addEventListener('click',function(){prefs[b.parentNode.dataset.key]=b.dataset.v;save();applyPrefs()})});
 document.querySelectorAll('#aero-settings [data-sact]').forEach(function(b){b.addEventListener('click',function(){var t=document.querySelector('#pwi-data [data-act="'+b.dataset.sact+'"]');if(t)t.click()})});
-$('aset-reset').addEventListener('click',function(){prefs=Object.assign({},DEF);save();applyPrefs();say('Settings reset.')});
+$('aset-reset').addEventListener('click',function(){if(!confirm('Reset the sidebar and animation options to their defaults? Your records are not touched.'))return;prefs=Object.assign({},DEF);save();applyPrefs();say('Settings reset.')});
 applyPrefs();sync();
 })();</script>
 <script>
@@ -17625,6 +17627,12 @@ html:not(#a):not(#b) body #aero-settings #ao-master-block .aset-row>div{min-widt
 }
 @media(prefers-reduced-motion:reduce){#aero-settings *,#ptc-root #ptc-nav .ptc-nav-btn{transition:none!important}}
 
+#aero-settings .aoz-find{margin:0 0 12px}
+#aero-settings .aoz-find input{width:100%;max-width:420px;height:36px;box-sizing:border-box;padding:0 12px;border:1px solid var(--aoz-ln2);border-radius:10px;background:var(--aoz-card);color:var(--aoz-ink);font:inherit;font-size:13px}
+#aero-settings .aoz-find input:focus-visible{outline:0;box-shadow:0 0 0 3px var(--aoz-ring)}
+#aero-settings .aoz-nomatch{display:none!important}
+#aero-settings #aoz-none{margin:0;padding:14px 4px;font-size:13px;color:var(--aoz-mut)}
+#aero-settings.aoz-finding .aoz-tabs{opacity:.4}
 </style>
 <script>
 /* AeroOps UI refresh — Settings layout. Re-parents the existing Settings cards into tabbed, two-column sections.
@@ -17658,22 +17666,22 @@ function cardWith(sel){var n=SET.querySelector(sel);return n?(n.closest('.aset-c
 function cardTitled(re){var c=SET.querySelectorAll(':scope > .aset-card, :scope > .ao-card');for(var i=0;i<c.length;i++){var h=c[i].querySelector(':scope > h3');if(h&&re.test(h.textContent.trim()))return c[i]}return null}
 
 var TABS=[
- {id:'company',label:'Company & Workspace',icon:'building',secs:['company','access']},
- {id:'data',label:'Data Management',icon:'database',secs:['records','quick']},
- {id:'public',label:'Public Dashboard',icon:'globe',secs:['public']},
- {id:'reports',label:'Customer & Reports',icon:'chart',secs:['menu','master']},
- {id:'system',label:'System Preferences',icon:'settings2',secs:['appearance','other']}
+ {id:'general',label:'General',icon:'sliders',secs:['account','appearance','menu','other']},
+ {id:'company',label:'Company & Access',icon:'building',secs:['company','access']},
+ {id:'data',label:'Data & Downloads',icon:'database',secs:['records','quick','master']},
+ {id:'public',label:'Public Dashboard',icon:'globe',secs:['public']}
 ];
 var SECS={
+ account:{title:'Account & Session',desc:'Who is signed in on this device.',icon:'shield'},
  company:{title:'Company & Workspace',desc:'Choose the active company and manage workspaces.',icon:'building',find:function(){return document.getElementById('ao-ws')}},
  access:{title:'Employee & Access',desc:'Who can use this workspace.',icon:'shield'},
  records:{title:'Data & Work Records',desc:'Where your work records are stored.',icon:'database'},
  quick:{title:'Quick Actions',desc:'Export, back up or restore your work records.',icon:'zap',cls:'aoz-quick'},
  'public':{title:'Public Dashboard',desc:'Share a privacy-safe summary on your portfolio home page.',icon:'globe',full:true,find:function(){return cardTitled(/^public snapshot$/i)}},
- menu:{title:'Customize Menu Order',desc:'Arrange the sidebar to match how you work.',icon:'order',find:function(){return document.getElementById('kh-set')}},
- master:{title:'Master Data & Downloads',desc:'Excel exports and the auto-save Master Data File.',icon:'download',find:function(){return document.getElementById('ao-master-block')}},
+ menu:{title:'Sidebar Menu & Platforms',desc:'Reorder the sidebar and manage Knowledge Hub platforms.',icon:'order',find:function(){return document.getElementById('kh-set')}},
+ master:{title:'Excel Downloads & Master Data File',desc:'Download any report, or auto-save entries to an Excel file.',icon:'download',find:function(){return document.getElementById('ao-master-block')}},
  appearance:{title:'Appearance',desc:'Sidebar layout and motion.',icon:'palette',find:function(){return cardTitled(/^appearance$/i)}},
- other:{title:'Other Settings',desc:'Reset preferences stored on this device.',icon:'sliders',find:function(){return cardWith('#aset-reset')}}
+ other:{title:'Reset',desc:'Restore the preferences stored on this device.',icon:'sliders',find:function(){return cardWith('#aset-reset')}}
 };
 
 /* ---- header copy ---- */
@@ -17695,13 +17703,22 @@ TABS.forEach(function(t,ti){
   s.innerHTML='<header class="aoz-hd"><span class="aoz-ic">'+svg(I[d.icon])+'</span><div><h3></h3><p></p></div></header><div class="aoz-bd"></div>';
   s.querySelector('h3').textContent=d.title;s.querySelector('p').textContent=d.desc;g.appendChild(s);secEls[k]=s});
  wrap.appendChild(p)});
-function pick(id,focus){TABS.forEach(function(t){var on=t.id===id,b=document.getElementById('aoz-tab-'+t.id),p=document.getElementById('aoz-panel-'+t.id);
+var curTab=TABS[0].id;function pick(id,focus){curTab=id;TABS.forEach(function(t){var on=t.id===id,b=document.getElementById('aoz-tab-'+t.id),p=document.getElementById('aoz-panel-'+t.id);
   b.setAttribute('aria-selected',on?'true':'false');b.tabIndex=on?0:-1;p.hidden=!on;if(on&&focus)b.focus()})}
 tabs.addEventListener('click',function(e){var b=e.target.closest('.aoz-tab');if(b)pick(b.id.replace('aoz-tab-',''))});
 tabs.addEventListener('keydown',function(e){var i=-1;TABS.forEach(function(t,n){if(document.getElementById('aoz-tab-'+t.id).getAttribute('aria-selected')==='true')i=n});
  if(e.key==='ArrowRight')i=(i+1)%TABS.length;else if(e.key==='ArrowLeft')i=(i+TABS.length-1)%TABS.length;else if(e.key==='Home')i=0;else if(e.key==='End')i=TABS.length-1;else return;
  e.preventDefault();pick(TABS[i].id,true)});
 SET.insertBefore(tabs,head?head.nextSibling:SET.firstChild);SET.insertBefore(wrap,tabs.nextSibling);
+var fbox=document.createElement('div');fbox.className='aoz-find';fbox.innerHTML='<input type="search" id="aoz-find" placeholder="Search settings…" aria-label="Search settings" autocomplete="off">';SET.insertBefore(fbox,tabs);
+var none=document.createElement('p');none.id='aoz-none';none.hidden=true;none.textContent='No setting matches your search.';wrap.appendChild(none);
+var finp=fbox.firstChild;
+function find(){var q=finp.value.trim().toLowerCase(),tot=false;SET.classList.toggle('aoz-finding',!!q);
+ TABS.forEach(function(t){var p=document.getElementById('aoz-panel-'+t.id),any=false;
+  t.secs.forEach(function(k){var sc=secEls[k],m=!q||sc.textContent.toLowerCase().indexOf(q)>-1;sc.classList.toggle('aoz-nomatch',!m);if(m&&sc.classList.contains('aoz-has'))any=true});
+  p.hidden=q?!any:t.id!==curTab;if(any)tot=true});none.hidden=!(q&&!tot)}
+finp.addEventListener('input',find);
+tabs.addEventListener('click',function(){if(finp.value){finp.value='';find()}});
 
 /* ---- placement: idempotent, so cards that appear later are picked up too ---- */
 function body(k){return secEls[k].querySelector('.aoz-bd')}
@@ -17713,6 +17730,19 @@ function icons(){
  [].forEach.call(SET.querySelectorAll('.aset-dl'),function(b){if(!/master data file/i.test(b.textContent))dec(b,'download')});
  dec(SET.querySelector('#aow-list ~ .aow-add [data-a="add"]'),'plus')}
 function dec(b,k){if(!b||!k||b.getAttribute('data-aoz-ico'))return;b.setAttribute('data-aoz-ico','1');b.insertAdjacentHTML('afterbegin',svg(I[k]))}
+function who(){var el=document.getElementById('aoz-who');if(!el)return;try{var u=window.firebase&&firebase.apps&&firebase.apps.length&&firebase.auth().currentUser;el.textContent=u?(u.email||u.uid):'Not signed in'}catch(e){}}
+function acct(){if(!secEls.account.querySelector('.aoz-acct')){var d=document.createElement('div');d.className='aoz-acct';
+ d.innerHTML='<div class="aset-row"><div><b>Signed in as</b><span id="aoz-who">Checking…</span></div><button type="button" class="aset-danger" id="aoz-signout">Sign out</button></div><p class="aset-note" style="margin:8px 0 0">For security, the app returns to the home page after 10 minutes without activity.</p>';
+ body('account').appendChild(d);secEls.account.classList.add('aoz-has');
+ d.querySelector('#aoz-signout').addEventListener('click',function(){var b=document.getElementById('btn-cloud-disconnect');if(b)b.click()})}who()}
+function themeSync(){var t=document.documentElement.getAttribute('data-theme')||'light';[].forEach.call(SET.querySelectorAll('#aoz-theme button'),function(b){b.classList.toggle('on',b.getAttribute('data-v')===t)})}
+function themeRow(){var ap=SET.querySelector('[data-aoz-in="appearance"]');if(!ap||document.getElementById('aoz-theme-row'))return;
+ var r=document.createElement('div');r.className='aset-row';r.id='aoz-theme-row';
+ r.innerHTML='<div><b>Theme</b><span>Light or dark look for the whole app.</span></div><div class="aset-seg" id="aoz-theme" data-key="theme"><button type="button" data-v="light">Light</button><button type="button" data-v="dark">Dark</button></div>';
+ ap.insertBefore(r,ap.querySelector('.aset-row'));
+ r.addEventListener('click',function(e){var b=e.target.closest('button[data-v]');if(!b)return;var cur=document.documentElement.getAttribute('data-theme')||'light';if(cur!==b.getAttribute('data-v')){var tb=document.getElementById('aoTheme');if(tb)tb.click()}setTimeout(themeSync,30)})}
+new MutationObserver(themeSync).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+SET.addEventListener('click',function(){setTimeout(themeSync,0)});
 function place(){
  adopt('company',SECS.company.find());
  adopt('appearance',SECS.appearance.find());
@@ -17736,6 +17766,7 @@ function place(){
   if(c.getAttribute('data-aoz-in')||c.getAttribute('data-aoz-split')||c.style.display==='none')return;
   var h=c.querySelector(':scope > h3');if(!h||!h.textContent.trim()){return}
   adopt('other',c)});
+ acct();themeRow();themeSync();
  icons()}
 place();
 var tm=0;new MutationObserver(function(){clearTimeout(tm);tm=setTimeout(place,60)}).observe(SET,{childList:true});
