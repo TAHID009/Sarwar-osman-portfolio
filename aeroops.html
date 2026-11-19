@@ -15589,6 +15589,23 @@ render();
   if(window.MutationObserver) new MutationObserver(function(){ var now=vis(); if(now){ was=true; return; } if(was && !saved){ saved=true; try{ localStorage.setItem(KEY,JSON.stringify({t:Date.now(),b:browser()})); }catch(e){} } }).observe(bd,{attributes:true,attributeFilter:['style','class','hidden']});
 })();
 </script>
+<!-- ===== Login scene cleanup: the welcome clock, weather, map and planes disappear as soon as Log in is clicked and never linger after sign-in. Display only. ===== -->
+<style id="aero-login-clean-css">
+html.aero-go #cloud-auth-modal-backdrop .aol-widgets,html.aero-go #cloud-auth-modal-backdrop .aol-map,html.aero-go #cloud-auth-modal-backdrop .aol-world,html.aero-go #cloud-auth-modal-backdrop .aero-route,html.aero-go #cloud-auth-modal-backdrop .aero-orbit,
+html.aero-in #cloud-auth-modal-backdrop,html.aero-in .aol-widgets,html.aero-in .aol-map,html.aero-in .aol-world,html.aero-in .aero-route,html.aero-in .aero-orbit{display:none!important}
+</style>
+<script id="aero-login-clean-js">
+(function(){
+  var d=document,h=d.documentElement,g=function(i){return d.getElementById(i)},bd=g('cloud-auth-modal-backdrop');if(!bd)return;
+  function sync(){var shown=bd.style.display!=='none';h.classList.toggle('aero-in',!shown);if(!shown)h.classList.remove('aero-go')}
+  if(window.MutationObserver)new MutationObserver(sync).observe(bd,{attributes:true,attributeFilter:['style']});sync();
+  var btn=g('btn-cloud-auth-signin'),pw=g('cloud-auth-password'),em=g('cloud-auth-email'),er=g('cloud-auth-error');
+  if(btn)btn.addEventListener('click',function(){
+    var mail=(em&&em.value.trim())||'';try{mail=mail||localStorage.getItem('aeroops_registered_email')||''}catch(e){}
+    if(pw&&pw.value&&mail){h.classList.add('aero-go');setTimeout(function(){if(bd.style.display!=='none')h.classList.remove('aero-go')},12000)}});
+  if(er&&window.MutationObserver)new MutationObserver(function(){if(er.textContent)h.classList.remove('aero-go')}).observe(er,{childList:true,characterData:true,subtree:true});
+})();
+</script>
 <!-- ===== Knowledge Hub (multi-GDS library). Self-contained add-on; own Firestore collections kh_*; touches no other module. ===== -->
 <style id="kh-css">
 #aero-kh{display:none;padding:14px 0}#ptc-root.kh-active #aero-kh{display:block}
