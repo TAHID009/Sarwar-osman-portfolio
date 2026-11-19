@@ -13512,7 +13512,7 @@ function amt(e){if(e.txn==='Void')return'—';if(e.txn==='Booking')return fm(num
 function tkCell(e){var t=tkts(e);return t.length?esc(t[0])+(t.length>1?' <small>+'+(t.length-1)+'</small>':''):'—'}
 function pxCell(e){var n=names(e);return n.length?esc(n[0])+(n.length>1?' <small>+'+(n.length-1)+'</small>':''):'—'}
 function recTable(l,opt){opt=opt||{};if(!l.length)return EMPTY;var lim=opt.pager?l.slice(DS.page*PGS,DS.page*PGS+PGS):(opt.limit?l.slice(0,opt.limit):l);
- return'<div class="wr-tw"><table><thead><tr><th>Date</th><th>Type / status</th><th>Airline</th><th>PNR</th><th>TKT No.</th><th>Passenger(s)</th><th>Route</th><th class="r">Amount</th><th class="wr-th-act">Action</th></tr></thead><tbody>'+lim.map(function(r){var e=r.e,st=status(e);return'<tr><td title="'+fmtD(e.date)+'">'+fmtD(e.date).replace(/ (\d{2})(\d{2})$/," '$2")+'</td><td>'+(e.txn==='Refund'?pill(({'Refunded':'Refunded','Pending Adj.':'Refund · Adj. due','Refund Pending':'Refund · Awaiting airline'})[st]||st,SC[st]||TC[e.txn]||'#475569'):pill(e.txn,TC[e.txn]||'#475569')+(({Ticketing:'Ticketed',Booking:'Booked',Reissue:'Reissued',Void:'Voided'})[e.txn]===st?'':'<br>'+pill(st,SC[st]||'#475569')))+dueP(e)+'</td><td>'+esc(e.airline||'—')+'</td><td class="mono">'+esc(e.pnrGds)+'</td><td class="mono">'+tkCell(e)+'</td><td>'+pxCell(e)+'</td><td>'+esc(e.sector||'—')+'</td><td class="r">'+amt(e)+'</td><td class="wr-td-act"><button type="button" class="wr-link wr-dots" data-act="open" data-i="'+r.i+'" title="Open record" aria-label="Open record">'+lui('dots',16)+'</button></td></tr>'}).join('')+'</tbody></table></div>'+(opt.pager?pager(l.length):'')+(!opt.pager&&opt.limit&&l.length>opt.limit?'<div style="text-align:center;margin-top:10px"><button type="button" class="wr-link" data-act="more">Show more ('+(l.length-opt.limit)+' left)</button></div>':'')}
+ return'<div class="wr-tw"><table><thead><tr><th>Date</th><th>Type / status</th><th>Airline</th><th>PNR</th><th>TKT No.</th><th>Passenger(s)</th><th>Route</th><th class="r">Amount</th><th class="wr-th-act">Action</th></tr></thead><tbody>'+lim.map(function(r){var e=r.e,st=status(e);return'<tr><td title="'+fmtD(e.date)+'">'+fmtD(e.date).replace(/ (\d{2})(\d{2})$/," '$2")+'</td><td>'+(e.txn==='Refund'?pill(({'Refunded':'Refunded','Pending Adj.':'Refund · Adj. due','Refund Pending':'Refund · Awaiting airline'})[st]||st,SC[st]||TC[e.txn]||'#475569'):(({Ticketing:'Ticketed',Booking:'Booked',Reissue:'Reissued',Void:'Voided'})[e.txn]===st?pill(e.txn,TC[e.txn]||'#475569'):pill(e.txn+' · '+st,SC[st]||TC[e.txn]||'#475569')))+dueP(e)+'</td><td>'+esc(e.airline||'—')+'</td><td class="mono">'+esc(e.pnrGds)+'</td><td class="mono">'+tkCell(e)+'</td><td>'+pxCell(e)+'</td><td>'+esc(e.sector||'—')+'</td><td class="r">'+amt(e)+'</td><td class="wr-td-act"><button type="button" class="wr-link wr-dots" data-act="open" data-i="'+r.i+'" title="Open record" aria-label="Open record">'+lui('dots',16)+'</button></td></tr>'}).join('')+'</tbody></table></div>'+(opt.pager?pager(l.length):'')+(!opt.pager&&opt.limit&&l.length>opt.limit?'<div style="text-align:center;margin-top:10px"><button type="button" class="wr-link" data-act="more">Show more ('+(l.length-opt.limit)+' left)</button></div>':'')}
 
 var PGS=10;
 function fitPGS(){var n=Math.floor((window.innerHeight-620)/42);PGS=Math.max(6,Math.min(30,n||10))}
@@ -15753,7 +15753,7 @@ function tick(){var u=null;try{u=window.firebase&&firebase.apps&&firebase.apps.l
  un.push(db.collection('kh_notes').where('ownerUid','==',uid).onSnapshot(function(s){NO={};s.forEach(function(d){var v=d.data();v.id=d.id;NO[d.id]=v});loaded=true;merge();render()},function(e){loaded=true;err(e);render()}));
  un.push(db.collection('kh_notes').where('visibility','==','team').onSnapshot(function(s){NT={};s.forEach(function(d){var v=d.data();v.id=d.id;NT[d.id]=v});merge();render()},function(e){NT={};merge();render();console.warn('Team notes unavailable (rules not deployed or access denied):',e&&e.code)}));
  try{firebase.auth().currentUser.getIdTokenResult().then(function(r){ROLE=String((r.claims&&r.claims.role)||'');render()}).catch(function(){})}catch(e){}
- un.push(db.collection('kh_settings').doc(uid).onSnapshot(function(d){S=d.exists?d.data():{};if(S.menuOrder){try{localStorage.setItem('aeroops.menuOrder',JSON.stringify(S.menuOrder))}catch(e){}applyMenu(S.menuOrder)}renderSettings();render()},function(){}))}
+ un.push(db.collection('kh_settings').doc(uid).onSnapshot(function(d){S=d.exists?d.data():{};if(S.menuOrder&&S.menuOrder.length){try{localStorage.setItem('aeroops.menuOrder',JSON.stringify(S.menuOrder))}catch(e){}applyMenu(S.menuOrder)}renderSettings();render()},function(){}))}
 function seed(){var b=db.batch();SEED.forEach(function(s,i){b.set(db.collection('kh_platforms').doc(),{ownerUid:uid,name:s[0],code:s[1],type:s[2],color:s[3],active:!!s[4],sortOrder:i,keywords:s[5],createdAt:now(),updatedAt:now()})});b.commit().catch(err)}
 setInterval(tick,1500);
 var STORAGE_ON=false; /* Free (Spark) plan has no Cloud Storage. Set to true only after you enable Firebase Storage and publish storage.rules. */
@@ -16351,30 +16351,32 @@ function srcH(n){var s=n.source||{},ex=n.extraSources||[];if(!s.documentName&&!e
 var card=document.createElement('div');card.className='aset-card';card.id='kh-set';set.insertBefore(card,set.lastElementChild);
 var lastSig='';
 function mkey(b){return b.getAttribute('data-aero')||b.getAttribute('data-ao')||b.id}
-var DEFORD=['wr','at','ir','se','passengers','kh','ac'];
-function mainBtns(){return [].slice.call(nav.children).filter(function(b){return b.classList&&b.classList.contains('ptc-nav-btn')&&!b.classList.contains('aero-sub')&&!b.classList.contains('ao-hide')})}
+var DEFORD=['wr','ir','ac','at','passengers','kh','se'],movedKey='',movedDir='1';
+function mainBtns(){return [].slice.call(nav.children).filter(function(b){if(!(b.classList&&b.classList.contains('ptc-nav-btn')&&!b.classList.contains('aero-sub')&&!b.classList.contains('ao-hide')))return false;try{return getComputedStyle(b).display!=='none'}catch(e){return true}})}
+function savedOrder(){try{var l=JSON.parse(localStorage.getItem('aeroops.menuOrder')||'null');if(l&&l.length)return l}catch(e){}return DEFORD}
 function sig(){return mainBtns().map(function(b){return mkey(b)+':'+b.textContent.trim()}).join('|')}
 function applyMenu(keys){var bs=mainBtns(),m={};bs.forEach(function(b){m[mkey(b)]=b});var ord=keys.filter(function(k){return m[k]});bs.forEach(function(b){if(ord.indexOf(mkey(b))<0)ord.push(mkey(b))});
  ord.forEach(function(k){var b=m[k],subs=[],s=b.nextElementSibling;while(s&&s.classList.contains('aero-sub')){subs.push(s);s=s.nextElementSibling}nav.appendChild(b);subs.forEach(function(x){nav.appendChild(x)})})}
 function saveOrder(keys){applyMenu(keys);try{localStorage.setItem('aeroops.menuOrder',JSON.stringify(keys))}catch(e){}if(db)db.collection('kh_settings').doc(uid).set({ownerUid:uid,menuOrder:keys,updatedAt:now()},{merge:true}).catch(err);renderSettings()}
 function renderSettings(){lastSig=sig();var bs=mainBtns(),h='<h3>Customize Menu Order</h3><p class="aset-note">Drag rows, or use Move Up / Move Down, to reorder the sidebar. The order is saved to your account and is independent of Knowledge Hub content.</p>';
- bs.forEach(function(b,i){var l=(b.querySelector('.aero-lbl')||b).textContent.trim()||mkey(b);h+='<div class="kh-mrow" draggable="true" data-di="'+i+'"><span>&#8942;&#8942; '+esc(l)+'</span><span><button class="kh-btn" data-mv="'+i+'.-1" type="button"'+(i?'':' disabled')+'>Move Up</button> <button class="kh-btn" data-mv="'+i+'.1" type="button"'+(i<bs.length-1?'':' disabled')+'>Move Down</button></span></div>'});
+ bs.forEach(function(b,i){var l=(b.querySelector('.aero-lbl')||b).textContent.trim()||mkey(b);h+='<div class="kh-mrow'+(mkey(b)===movedKey?' kh-moved':'')+'" draggable="true" data-di="'+i+'"><span>&#8942;&#8942; '+esc(l)+'</span><span><button class="kh-btn" data-mv="'+i+'.-1" type="button"'+(i?'':' disabled')+'>Move Up</button> <button class="kh-btn" data-mv="'+i+'.1" type="button"'+(i<bs.length-1?'':' disabled')+'>Move Down</button></span></div>'});
  h+='<div class="aset-btns" style="margin-top:8px"><button class="kh-btn" data-mv="reset" type="button">Reset menu order</button></div><h3 style="margin-top:16px">Knowledge Hub platforms</h3><p class="aset-note">Add a GDS or reference library any time; it appears in filters, import and the note editor. Keywords help import detect the platform.</p>';
  P.forEach(function(p){h+='<div class="kh-mrow"><span><span class="kh-b sm" style="background:'+esc(p.color)+'">'+esc(p.code)+'</span> '+esc(p.name)+' <span class="kh-meta">'+esc((p.keywords||[]).join(', '))+'</span></span><button class="kh-btn" data-pa="'+p.id+'" type="button">'+(p.active?'Deactivate':'Activate')+'</button></div>'});
  h+='<div class="kh-row" style="margin-top:8px"><input id="kp-n" placeholder="Platform name"><input id="kp-c" placeholder="Short code"><input id="kp-k" placeholder="Detection keywords, comma separated"><button class="kh-btn pri" id="kp-a" type="button">Add</button></div>';
- card.innerHTML='<h3 style="display:none"></h3>'+h}
+ card.innerHTML='<h3 style="display:none"></h3>'+h;
+ if(movedKey){setTimeout(function(){var r=card.querySelector('.kh-moved');if(!r)return;var b=r.querySelector('[data-mv$=".'+movedDir+'"]:not([disabled])')||r.querySelector('[data-mv]:not([disabled])');if(b)try{b.focus({preventScroll:true})}catch(e){b.focus()}movedKey=''},0)}}
 card.addEventListener('click',function(e){var t=e.target;
  if(t.dataset.mv==='reset'){try{localStorage.removeItem('aeroops.menuOrder')}catch(x){}if(db)db.collection('kh_settings').doc(uid).set({menuOrder:[]},{merge:true}).catch(err);applyMenu(DEFORD);renderSettings();return}
- if(t.dataset.mv){var p=t.dataset.mv.split('.'),i=+p[0],j=i+(+p[1]),k=mainBtns().map(mkey),x=k[i];k[i]=k[j];k[j]=x;saveOrder(k)}
+ if(t.dataset.mv){var p=t.dataset.mv.split('.'),i=+p[0],j=i+(+p[1]),k=mainBtns().map(mkey),x=k[i];k[i]=k[j];k[j]=x;movedKey=x;movedDir=p[1];saveOrder(k)}
  else if(t.dataset.pa){if(!db)return;var pl=pf(t.dataset.pa);db.collection('kh_platforms').doc(pl.id).update({active:!pl.active,updatedAt:now()}).catch(err)}
  else if(t.id==='kp-a'){var n=$('kp-n').value.trim();if(!n||!db)return;if(P.some(function(p){return nrm(p.name)===nrm(n)})){alert('That platform already exists.');return}
   db.collection('kh_platforms').add({ownerUid:uid,name:n,code:($('kp-c').value.trim()||n).toUpperCase().slice(0,12),type:'gds',color:'#'+((Math.random()*0x666666|0)+0x222222).toString(16).padStart(6,'0'),active:true,sortOrder:P.length,keywords:csv($('kp-k').value||n),createdAt:now(),updatedAt:now()}).catch(err)}});
 var dg=-1;card.addEventListener('dragstart',function(e){var r=e.target.closest&&e.target.closest('[data-di]');if(r){dg=+r.dataset.di;try{e.dataTransfer.setData('text/plain','x')}catch(x){}}});
 card.addEventListener('dragover',function(e){if(dg>-1)e.preventDefault()});
-card.addEventListener('drop',function(e){var r=e.target.closest('[data-di]');if(!r||dg<0)return;e.preventDefault();var k=mainBtns().map(mkey),m=k.splice(dg,1)[0];k.splice(+r.dataset.di,0,m);dg=-1;saveOrder(k)});
-try{var ls=JSON.parse(localStorage.getItem('aeroops.menuOrder')||'null');if(ls&&ls.length){applyMenu(ls);setTimeout(function(){applyMenu(ls)},2500)}}catch(e){}
+card.addEventListener('drop',function(e){var r=e.target.closest('[data-di]');if(!r||dg<0)return;e.preventDefault();var k=mainBtns().map(mkey),m=k.splice(dg,1)[0];k.splice(+r.dataset.di,0,m);dg=-1;movedKey=m;movedDir='1';saveOrder(k)});
+applyMenu(savedOrder());setTimeout(function(){applyMenu(savedOrder());renderSettings()},2500);
 renderSettings();render();
-var rtm=0;new MutationObserver(function(){clearTimeout(rtm);rtm=setTimeout(function(){if(sig()!==lastSig)renderSettings()},200)}).observe(nav,{childList:true,subtree:true,attributes:true,attributeFilter:['class']});
+var rtm=0;new MutationObserver(function(){clearTimeout(rtm);rtm=setTimeout(function(){if(sig()!==lastSig){applyMenu(savedOrder());renderSettings()}},200)}).observe(nav,{childList:true,subtree:true,attributes:true,attributeFilter:['class']});
 })();
 </script>
 <!-- ===== Knowledge Hub add-on: Command guide (sidebar of titles + Task / Command / Remarks table) and Documents (PDF library + inline reader). Uses the same kh_notes; touches nothing else. ===== -->
@@ -17953,13 +17955,14 @@ html:not([data-theme="dark"]) #ptc-root #ptc-nav{background:transparent}
 #ptc-nav .ptc-nav-btn:not(.ao-hide):hover{background:#EEF0F4}
 #ptc-nav .ptc-nav-btn.active:not(.ao-hide){background:#E9EDF5;color:#172B4D;font-weight:600}
 #ptc-nav .ptc-nav-btn:not(.ao-hide) svg{flex:none;box-sizing:border-box;width:32px!important;height:32px!important;min-width:32px;padding:7px;stroke-width:2;border-radius:50%;background:var(--nb,#EEF0F3);color:var(--nc,#667085)}
-#ptc-nav [data-ao="wr"]{--nb:#E6EEFB;--nc:#4A7FD6;order:1}
-#ptc-nav [data-ao="ir"]{--nb:#E4F3EB;--nc:#3F8F6B;order:2}
-#ptc-nav [data-aero="ac"]{--nb:#E3F1F6;--nc:#3B88A8;order:3}
-#ptc-nav [data-ao="at"]{--nb:#FCEEDD;--nc:#D98430;order:4}
-#ptc-nav [data-aero="passengers"]{--nb:#EEEAFA;--nc:#7563BF;order:5}
-#ptc-nav [data-aero="kh"]{--nb:#FBE9E8;--nc:#CF6A64;order:6}
-#ptc-nav [data-ao="se"]{--nb:#EAECF0;--nc:#586174;order:7}
+#ptc-nav [data-ao="wr"]{--nb:#E6EEFB;--nc:#4A7FD6}
+#ptc-nav [data-ao="ir"]{--nb:#E4F3EB;--nc:#3F8F6B}
+#ptc-nav [data-aero="ac"]{--nb:#E3F1F6;--nc:#3B88A8}
+#ptc-nav [data-ao="at"]{--nb:#FCEEDD;--nc:#D98430}
+#ptc-nav [data-aero="passengers"]{--nb:#EEEAFA;--nc:#7563BF}
+#ptc-nav [data-aero="kh"]{--nb:#FBE9E8;--nc:#CF6A64}
+#ptc-nav [data-ao="se"]{--nb:#EAECF0;--nc:#586174}
+#aero-settings .kh-mrow.kh-moved{animation:khmv 1.3s ease}@keyframes khmv{0%{background:#DCE8FB}100%{background:transparent}}
 /* ---------- responsive ---------- */
 @media(max-width:1180px){#ptc-root .wr-grid.dg{grid-template-columns:1fr}}
 @media(max-width:900px){#ptc-root .wr-filters{flex-wrap:wrap}#ptc-root .wr-ov{grid-template-columns:110px 1fr}}
