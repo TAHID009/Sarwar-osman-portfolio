@@ -16909,6 +16909,7 @@ draw();
 .khh-m .mono{font-family:'IBM Plex Mono',ui-monospace,Consolas,monospace}
 .khh-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}@media(max-width:640px){.khh-3{grid-template-columns:1fr}}
 .khh-ft{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding-top:10px;border-top:1px solid var(--kl)}.khh-ft .sp{flex:1;font-size:13px;color:var(--km)}.khh-ft label{display:flex;flex-direction:row;align-items:center;gap:6px;font-weight:500}
+.khh-pv{font-size:13px;color:var(--km);line-height:1.5}.khh-m input[type=file]{font:inherit;font-size:13px}
 .khh-err{font-size:13px;color:#B42318;min-height:1em}
 </style>
 <script id="khh-js">
@@ -16916,7 +16917,7 @@ draw();
 var sec=document.getElementById('aero-kh'),tabs=document.getElementById('kg-tabs'),pg=document.getElementById('kg-g'),root=document.getElementById('ptc-root');
 if(!sec||!tabs||!pg||document.getElementById('kg-h'))return;
 var GD=['SABRE','GALILEO','AMADEUS'],LB={SABRE:'Sabre',GALILEO:'Galileo',AMADEUS:'Amadeus'},RK='aeroops.kg.recent',GK='aeroops.kh.gds',STALE=180*864e5;
-var uid=null,db=null,un=[],NS={},PS={},S={},q='',gf='ALL',on=false,CP=[],GR=[],from='',mt=0,busy=false;
+var uid=null,db=null,un=[],NS={},PS={},S={},q='',gf='ALL',on=false,CP=[],GR=[],from='',mt=0,busy=false,rv=false,mode='add',CI=[];
 try{gf=localStorage.getItem(GK)||'ALL'}catch(e){}
 function $(i){return document.getElementById(i)}
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
@@ -16955,7 +16956,9 @@ function search(v){var T=norm(v).split(' ').filter(Boolean),L=[];if(!T.length)re
  for(var i=0;i<T.length;i++){var z=tm(T[i],g.h,g.w);if(!z)return;s+=z+(ti.indexOf(T[i])>-1?4:0)}g.s=s;L.push(g)});
  return L.sort(function(a,b){return b.s-a.s}).slice(0,8)}
 /* ---------- render ---------- */
-function shell(){return'<div class="khh-top"><label class="khh-sb"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><input id="khh-q" type="text" autocomplete="off" placeholder="What do you need to do? Type a task or command: refund, name correction, EMD..." aria-label="Search the Knowledge Hub"><kbd>Ctrl K</kbd></label><button type="button" class="khh-b pri" data-h="add">+ Quick add</button><button type="button" class="khh-b" data-h="imp">Import PDF</button></div><div class="khh-seg" id="khh-seg"></div><div id="khh-body"></div>'}
+function shell(){return'<div class="khh-top"><label class="khh-sb"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><input id="khh-q" type="text" autocomplete="off" placeholder="What do you need to do? Type a task or command: refund, name correction, EMD..." aria-label="Search the Knowledge Hub"><kbd>Ctrl K</kbd></label><button type="button" class="khh-b pri" data-h="add">+ Quick add</button><button type="button" class="khh-b" data-h="imp">Import PDF</button><button type="button" class="khh-b" data-h="csv">Import CSV</button><button type="button" class="khh-b" data-h="exp">Backup</button></div><div class="khh-seg" id="khh-seg"></div><div id="khh-body"></div>'}
+function due(g){return !g.all||!g.v.length||g.stale}
+function pinned(g,cols){var a=0,p=0;cols.forEach(function(x){g.by[x].forEach(function(m){a++;if(m.c.pin)p++})});return a>0&&a===p}
 function tile(it){CP.push(ccopy(it.c));return'<div class="khh-t"><b>'+esc(it.c.description||it.n.title)+'</b><small>'+esc(LB[code(it.n)]||code(it.n))+'</small><div class="khh-k">'+esc(ctext(it.c))+'</div><button type="button" class="khh-cp" data-cp="'+(CP.length-1)+'">Copy</button></div>'}
 function recents(){try{var l=JSON.parse(localStorage.getItem(RK)||'[]');return Array.isArray(l)?l:[]}catch(e){return[]}}
 function fl(n){return gf==='ALL'||code(n)===gf}
@@ -16964,30 +16967,31 @@ function cardH(g,gi){var cols=GD.filter(function(x){return g.by[x]&&(gf==='ALL'|
  return'<div class="khh-card"><div class="khh-ch"><h3>'+esc(g.t)+'</h3>'+bd+'</div>'+(g.rem?'<p class="khh-rm">'+esc(g.rem)+'</p>':'')
  +'<div class="khh-cols">'+cols.map(function(x){return'<div><div class="khh-gl">'+LB[x]+'</div>'+g.by[x].slice(0,3).map(function(m){CP.push(ccopy(m.c));return'<div class="khh-k">'+esc(ctext(m.c))+'</div><button type="button" class="khh-cp" data-cp="'+(CP.length-1)+'">Copy</button> '}).join('')+'</div>'}).join('')+'</div>'
  +(gf!=='ALL'&&Object.keys(g.by).length>cols.length?'<p class="khh-rm" style="margin:10px 0 0">Also in: '+Object.keys(g.by).filter(function(x){return cols.indexOf(x)<0}).map(function(x){return esc(LB[x]||x)}).join(', ')+' (choose All to compare)</p>':'')
- +'<div class="khh-cf"><span>'+(ver&&lv?'Last verified '+esc(fd(lv)):'Check it against the system, then confirm.')+' &middot; From '+esc(g.src.slice(0,2).join(', '))+'</span><button type="button" class="khh-cp" data-h="ok" data-gi="'+gi+'">Still correct &#10003;</button></div></div>'}
+ +'<div class="khh-cf"><span>'+(ver&&lv?'Last verified '+esc(fd(lv)):'Check it against the system, then confirm.')+' &middot; From '+esc(g.src.slice(0,2).join(', '))+'</span><button type="button" class="khh-cp" data-h="pin" data-gi="'+gi+'">'+(pinned(g,cols)?'&#9733; Pinned':'&#9734; Pin')+'</button><button type="button" class="khh-cp" data-h="ok" data-gi="'+gi+'">Still correct &#10003;</button></div></div>'}
 function draw(){var s=$('khh-seg'),b=$('khh-body');if(!s||!b)return;
  s.innerHTML='<span>Show:</span>'+['ALL'].concat(GD).map(function(x){return'<button type="button" data-g="'+x+'" class="'+(gf===x?'on':'')+'">'+(x==='ALL'?'All':LB[x])+'</button>'}).join('')+'<span style="margin-left:6px">Your last choice is remembered</span>';
  CP=[];GR=[];var h='';
  if(!uid){b.innerHTML='<div class="khh-empty">Sign in to NexOps to load your Knowledge Hub.</div>';return}
  var any=Object.keys(NS).some(function(k){return live(NS[k])});
  if(!any){b.innerHTML='<div class="khh-empty"><b>Your library is empty.</b><br>Use <b>+ Quick add</b> for a single command, or <b>Import PDF</b> to build it from a document.</div>';return}
+ if(rv&&!q.trim()){GR=groups().filter(due).sort(function(a,b){return(a.v.length?1:0)-(b.v.length?1:0)}).slice(0,30);b.innerHTML='<div class="khh-ch" style="margin-bottom:6px"><h3 style="margin:0;font-size:17px">Review due</h3><button type="button" class="khh-cp" data-h="rvx">Back to Home</button></div><p class="khh-rm">Check each entry against the live system, then tick Still correct. Showing up to 30, never-verified first.</p>'+(GR.length?GR.map(cardH).join(''):'<div class="khh-empty"><b>Nothing to review.</b><br>Every entry is verified and recent.</div>');return}
  if(q.trim()){GR=search(q);
   if(GR.length)h=GR.map(cardH).join('');
   else h='<div class="khh-empty"><b>Nothing found for &ldquo;'+esc(q.trim())+'&rdquo;.</b><br>Try fewer or different words. We have noted this search so you can add the answer later.<br><br><button type="button" class="khh-b pri" data-h="addq">+ Add &ldquo;'+esc(q.trim().slice(0,50))+'&rdquo; as a new note</button></div>';
   b.innerHTML=h;return}
  var pins=[];Object.keys(NS).forEach(function(k){var n=NS[k];if(live(n)&&fl(n))(n.commands||[]).forEach(function(c){if(c.pin)pins.push({n:n,c:c})})});
  var rc=recents().map(function(x){var n=NS[x.n];if(!live(n)||!fl(n))return null;var c=(n.commands||[]).filter(function(z){return(z.syntax||'')===x.s&&(z.description||'')===x.d})[0];return c?{n:n,c:c}:null}).filter(Boolean).slice(0,6);
- var nr=Object.keys(NS).filter(function(k){var n=NS[k];return live(n)&&n.reviewStatus==='needs_review'&&!n.verified}).length,ms=(S.missed||[]).slice(-8).reverse();
+ var gg=groups(),nr=gg.filter(due).length,tot=gg.length,ms=(S.missed||[]).slice(-8).reverse();
  h='<div class="khh-grid"><div><p class="khh-h">Pinned commands'+(gf==='ALL'?'':' &middot; '+esc(LB[gf]))+'</p>'
  +(pins.length?'<div class="khh-tiles">'+pins.slice(0,8).map(tile).join('')+'</div>':'<div class="khh-empty"><b>Nothing pinned yet.</b><br>Star a command in <b>Browse all commands</b> and it will sit here, one click from Copy.</div>')
  +(ms.length?'<p class="khh-h">Searched but not found</p><div class="khh-miss">'+ms.map(function(m){return'<button type="button" data-h="miss" data-v="'+esc(m)+'">+ '+esc(m)+'</button>'}).join('')+'</div>':'')+'</div>'
  +'<div><div class="khh-side"><p class="khh-h">Recently opened</p>'+(rc.length?rc.map(function(it){CP.push(ccopy(it.c));return'<div class="khh-row"><span>'+esc(it.c.description||it.n.title)+' <small>'+esc(LB[code(it.n)]||'')+'</small></span><button type="button" class="khh-cp" data-cp="'+(CP.length-1)+'">Copy</button></div>'}).join(''):'<p style="margin:0;font-size:13px;color:var(--km)">Commands you open will show up here.</p>')+'</div>'
- +(nr?'<div class="khh-side" style="margin-top:12px;background:#FFF8EA;border-color:#F2C46B;color:#0B2545"><p class="khh-h" style="color:#8A5200">Needs your review</p><div style="font-size:13.5px;line-height:1.5">'+nr+' imported or quick-added note'+(nr===1?' is':'s are')+' not verified yet.<br><button type="button" class="khh-cp" style="margin-top:6px" data-h="guide">Review in Browse all</button></div></div>':'')+'</div></div>';
+ +(nr?'<div class="khh-side" style="margin-top:12px;background:#FFF8EA;border-color:#F2C46B;color:#0B2545"><p class="khh-h" style="color:#8A5200">Needs your review</p><div style="font-size:13.5px;line-height:1.5">'+nr+' of '+tot+' entries need checking (never verified, or over 6 months old).<br><button type="button" class="khh-cp" style="margin-top:6px" data-h="rv">Start review</button></div></div>':'')+'</div></div>';
  b.innerHTML=h}
 /* ---------- Quick add ---------- */
 var ov=document.createElement('div');ov.className='khh-ov';document.body.appendChild(ov);
 function guess(v){v=String(v||'').trim();if(/^-\S/.test(v)||/^[0-9]\S*-[A-Z]$/.test(v))return'SABRE';if(/^[A-Z]\.\S/.test(v))return'GALILEO';if(/^(NM\d|AP\s|RF\s|ET$)/i.test(v))return'AMADEUS';return''}
-function openAdd(t){from=t||'';var inp=function(x){return'<label>'+LB[x]+'<input type="text" class="mono" id="khh-s-'+x+'" autocomplete="off"></label>'};
+function openAdd(t){from=t||'';mode='add';var inp=function(x){return'<label>'+LB[x]+'<input type="text" class="mono" id="khh-s-'+x+'" autocomplete="off"></label>'};
  ov.innerHTML='<div class="khh-m" role="dialog" aria-modal="true" aria-label="Quick add"><div><h3>Quick add</h3><p>Only a task and one command are needed. Fill what you know now, polish later.</p></div>'
  +'<label>Task<input type="text" id="khh-t" autocomplete="off" placeholder="For example: End transaction"></label>'
  +'<label>Paste an entry (best guess picks the GDS)<input type="text" class="mono" id="khh-p" autocomplete="off"></label><div class="khh-3">'+GD.map(inp).join('')+'</div>'
@@ -17012,6 +17016,41 @@ function logMiss(v){v=String(v||'').trim().toLowerCase().slice(0,60);if(v.length
  S.missed=m.concat([v]);db.collection('kh_settings').doc(uid).set({ownerUid:uid,missed:firebase.firestore.FieldValue.arrayUnion(v),updatedAt:now()},{merge:true}).catch(function(){})}
 function stillOk(g){if(!g||!db)return;var ts=now(),by={};Object.keys(g.by).forEach(function(x){g.by[x].forEach(function(m){(by[m.n.id]=by[m.n.id]||{n:m.n,i:[]}).i.push(m.i)})});
  Promise.all(Object.keys(by).map(function(id){var n=by[id].n,cs=(n.commands||[]).map(function(c){return Object.assign({},c)});by[id].i.forEach(function(i){if(cs[i])cs[i].verifiedAt=ts});return db.collection('kh_notes').doc(id).update({commands:cs,updatedAt:ts,updatedBy:me()})})).then(function(){toast('Marked as verified')}).catch(fail)}
+
+/* ---------- backup, CSV import, pin ---------- */
+function dl(name,text,type){var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type:type}));a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},500)}
+function exportAll(){if(!uid){toast('Sign in first.');return}var n=Object.keys(NS).length;if(!n){toast('Nothing to back up yet.');return}
+ dl('nexops-knowledge-backup-'+now().slice(0,10)+'.json',JSON.stringify({app:'NexOps Knowledge Hub',exportedAt:now(),platforms:PS,notes:NS},null,2),'application/json');toast('Backup downloaded ('+n+' notes)')}
+function tpl(){dl('knowledge-import-template.csv','Task,Sabre,Galileo,Amadeus,Remarks\r\nAdd passenger name,-SMITH/JOHN MR,N.SMITH/JOHN MR,NM1SMITH/JOHN MR,ASCII only\r\nEnd transaction,E,ET,ET,\r\n','text/csv')}
+function parseCSV(t){t=String(t||'').replace(/^\uFEFF/,'');var fl=t.split(/\r?\n/)[0]||'',d=[',',';','\t'].sort(function(a,b){return fl.split(b).length-fl.split(a).length})[0],R=[],r=[],c='',q2=false,i;
+ for(i=0;i<t.length;i++){var ch=t[i];if(q2){if(ch==='"'){if(t[i+1]==='"'){c+='"';i++}else q2=false}else c+=ch}else if(ch==='"')q2=true;else if(ch===d){r.push(c);c=''}else if(ch==='\n'||ch==='\r'){if(ch==='\r'&&t[i+1]==='\n')i++;r.push(c);c='';if(r.some(function(x){return x.trim()}))R.push(r);r=[]}else c+=ch}
+ r.push(c);if(r.some(function(x){return x.trim()}))R.push(r);return R}
+function gcode(v){v=String(v||'');return/sab/i.test(v)?'SABRE':/gal|travelport|worldspan/i.test(v)?'GALILEO':/ama/i.test(v)?'AMADEUS':''}
+function mapRows(R){if(R.length<2)return{items:[],bad:0,err:'The file needs a header row and at least one data row.'};
+ var H=R[0].map(function(x){return norm(x)}),ix=function(re){for(var i=0;i<H.length;i++)if(re.test(H[i]))return i;return-1};
+ var it=ix(/^(task|title|description|name)$/),ig=ix(/^(gds|platform|system)$/),ic=ix(/^(command|entry|syntax|format)$/),ir=ix(/^(remarks?|notes?|exceptions?)$/),W={SABRE:ix(/^sabre$/),GALILEO:ix(/^(galileo|travelport)$/),AMADEUS:ix(/^amadeus$/)},wide=GD.some(function(x){return W[x]>-1}),items=[],bad=0;
+ if(it<0)return{items:[],bad:0,err:'No Task column found. Use the template for the right headings.'};if(!wide&&(ig<0||ic<0))return{items:[],bad:0,err:'Use either Task, GDS, Command columns, or Task, Sabre, Galileo, Amadeus columns.'};
+ R.slice(1).forEach(function(r){var t=String(r[it]||'').trim(),rm=ir>-1?String(r[ir]||'').trim():'';if(!t){bad++;return}
+  if(wide)GD.forEach(function(x){var v=W[x]>-1?String(r[W[x]]||'').trim():'';if(v)items.push({code:x,t:t,cmd:v,rm:rm})});
+  else{var x=gcode(r[ig]),v=String(r[ic]||'').trim();if(x&&v)items.push({code:x,t:t,cmd:v,rm:rm});else bad++}});
+ return{items:items,bad:bad,err:items.length?'':'No usable rows found.'}}
+function openCsv(){mode='csv';CI=[];ov.innerHTML='<div class="khh-m" role="dialog" aria-modal="true" aria-label="Import from spreadsheet"><div><h3>Import from spreadsheet</h3><p>Save your sheet as CSV (Excel: File, Save As, CSV). Columns: <b>Task, Sabre, Galileo, Amadeus, Remarks</b>, or <b>Task, GDS, Command, Remarks</b>.</p></div><div><button type="button" class="khh-b" data-h="tpl">Download template</button></div><label>Choose CSV file<input type="file" id="khh-f" accept=".csv,.txt,text/csv"></label><div class="khh-pv" id="khh-pv">Imported commands are saved as drafts that need review. Duplicates are skipped.</div><div class="khh-ft"><span class="sp"></span><button type="button" class="khh-b" data-h="x">Cancel</button><button type="button" class="khh-b pri" data-h="csvgo">Import &middot; Ctrl Enter</button></div></div>';ov.classList.add('on')}
+ov.addEventListener('change',function(e){if(e.target.id!=='khh-f')return;var f=e.target.files&&e.target.files[0],pv=$('khh-pv');if(!f)return;var rd=new FileReader();rd.onload=function(){var m=mapRows(parseCSV(rd.result));CI=m.items;
+ if(m.err){pv.style.color='#B42318';pv.textContent=m.err;return}pv.style.color='';var by={};m.items.forEach(function(x){by[x.code]=(by[x.code]||0)+1});pv.textContent='Ready: '+m.items.length+' commands ('+GD.filter(function(x){return by[x]}).map(function(x){return LB[x]+' '+by[x]}).join(', ')+')'+(m.bad?'. '+m.bad+' row(s) skipped (missing task, GDS or command).':'.')};rd.readAsText(f)});
+function doImport(){if(busy)return;if(!CI.length){toast('Choose a CSV file first.');return}if(!db){toast('Sign in first.');return}
+ var ts=now(),u=me(),by={},miss=[],jobs=[],added=0,dup=0;CI.forEach(function(x){(by[x.code]=by[x.code]||[]).push(x)});
+ Object.keys(by).forEach(function(cd){var pid=Object.keys(PS).filter(function(k){return String(PS[k].code).toUpperCase()===cd})[0];if(!pid){miss.push(LB[cd]);return}
+  var have={};Object.keys(NS).forEach(function(k){var n=NS[k];if(n.platformId===pid)(n.commands||[]).forEach(function(c){have[norm(c.description)+'|'+(c.syntax||'')]=1})});
+  var cmds=[];by[cd].forEach(function(x){var k=norm(x.t)+'|'+x.cmd;if(have[k]){dup++;return}have[k]=1;cmds.push({description:x.t,syntax:x.cmd,exceptions:x.rm,example:'',variants:[],pin:false,verifiedAt:''})});
+  if(!cmds.length)return;added+=cmds.length;
+  var note=Object.keys(NS).map(function(k){return NS[k]}).filter(function(n){return n.platformId===pid&&n.title==='Quick adds'&&n.status!=='archived'&&n.ownerUid===uid})[0];
+  if(note)jobs.push(db.collection('kh_notes').doc(note.id).update({commands:(note.commands||[]).concat(cmds),reviewStatus:'needs_review',updatedAt:ts,updatedBy:u}));
+  else jobs.push(db.collection('kh_notes').add({ownerUid:uid,title:'Quick adds',description:'Commands added with Quick add or CSV import. Review and verify them.',platformId:pid,platformName:PS[pid].name,platformCode:PS[pid].code,platformColor:PS[pid].color,visibility:'private',status:'published',category:'Commands & Formats',commands:cmds,attachments:[],tags:['quick add'],favorite:false,verified:false,reviewStatus:'needs_review',createdAt:ts,updatedAt:ts,createdBy:u,updatedBy:u}))});
+ if(!jobs.length){toast(miss.length?'No platform found for '+miss.join(', ')+'.':'Nothing new to import ('+dup+' duplicates).');if(!miss.length)closeAdd();return}
+ busy=true;Promise.all(jobs).then(function(){busy=false;closeAdd();toast('Imported '+added+(dup?', skipped '+dup+' duplicates':'')+(miss.length?'. No platform for '+miss.join(', '):''))}).catch(function(e){busy=false;console.error(e);toast('Import failed. Check you are signed in.')})}
+function pinG(g){if(!g||!db)return;var ts=now(),cols=GD.filter(function(x){return g.by[x]&&(gf==='ALL'||gf===x)}),all=pinned(g,cols),by={};
+ cols.forEach(function(x){g.by[x].forEach(function(m){(by[m.n.id]=by[m.n.id]||{n:m.n,i:[]}).i.push(m.i)})});
+ Promise.all(Object.keys(by).map(function(id){var n=by[id].n,cs=(n.commands||[]).map(function(c){return Object.assign({},c)});by[id].i.forEach(function(i){if(cs[i])cs[i].pin=!all});return db.collection('kh_notes').doc(id).update({commands:cs,updatedAt:ts,updatedBy:me()})})).then(function(){toast(all?'Unpinned':'Pinned to Home')}).catch(fail)}
 /* ---------- wiring ---------- */
 pg.insertAdjacentHTML('beforebegin','<div id="kg-h" class="kg-p">'+shell()+'</div>');
 tabs.insertAdjacentHTML('afterbegin','<button type="button" data-t="h">Home</button>');
@@ -17023,7 +17062,7 @@ function show(){on=true;['kg-g','kg-d'].forEach(function(i){var e=$(i);if(e)e.cl
  [].forEach.call(tabs.children,function(b){if(b.dataset&&b.dataset.t)b.classList.toggle('on',b.dataset.t==='h')});fit();setTimeout(fit,60);setTimeout(fit,400)}
 function focusQ(){var i=$('khh-q');if(i){i.focus();i.select()}}
 tabs.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('button[data-t]');if(!b)return;if(b.dataset.t==='h'){show();focusQ()}else{on=false;P.classList.remove('on');P.style.height=''}});
-P.addEventListener('input',function(e){if(e.target.id!=='khh-q')return;q=e.target.value;clearTimeout(P._t);P._t=setTimeout(function(){draw();if(q.trim()&&!GR.length){clearTimeout(P._m);P._m=setTimeout(function(){if(q.trim()&&!GR.length)logMiss(q)},1500)}},120)});
+P.addEventListener('input',function(e){if(e.target.id!=='khh-q')return;q=e.target.value;rv=false;clearTimeout(P._t);P._t=setTimeout(function(){draw();if(q.trim()&&!GR.length){clearTimeout(P._m);P._m=setTimeout(function(){if(q.trim()&&!GR.length)logMiss(q)},1500)}},120)});
 P.addEventListener('keydown',function(e){if(e.target.id==='khh-q'&&e.key==='Escape'){if(q){e.target.value='';q='';draw()}else e.target.blur()}if(e.target.id==='khh-q'&&e.key==='Enter'&&q.trim()&&!GR.length)logMiss(q)});
 P.addEventListener('click',function(e){var t=e.target.closest&&e.target.closest('[data-g],[data-cp],[data-h]');if(!t)return;
  if(t.dataset.g){gf=t.dataset.g;try{localStorage.setItem(GK,gf)}catch(x){}draw();return}
@@ -17031,11 +17070,11 @@ P.addEventListener('click',function(e){var t=e.target.closest&&e.target.closest(
  var h=t.dataset.h;if(h==='add')openAdd('');else if(h==='addq')openAdd(q.trim());else if(h==='miss')openAdd(t.dataset.v);
  else if(h==='imp'){var b=$('kh-imp');if(b)b.click();else toast('Open Browse all commands to import a document.')}
  else if(h==='guide'){var g=tabs.querySelector('[data-t="g"]');if(g)g.click()}
- else if(h==='ok')stillOk(GR[+t.dataset.gi])});
-ov.addEventListener('click',function(e){if(e.target===ov){closeAdd();return}var t=e.target.closest&&e.target.closest('[data-h]');if(!t)return;if(t.dataset.h==='x')closeAdd();else if(t.dataset.h==='save')saveAdd()});
+ else if(h==='ok')stillOk(GR[+t.dataset.gi]);else if(h==='rv'){rv=true;draw()}else if(h==='rvx'){rv=false;draw()}else if(h==='exp')exportAll();else if(h==='csv')openCsv();else if(h==='pin')pinG(GR[+t.dataset.gi])});
+ov.addEventListener('click',function(e){if(e.target===ov){closeAdd();return}var t=e.target.closest&&e.target.closest('[data-h]');if(!t)return;if(t.dataset.h==='x')closeAdd();else if(t.dataset.h==='save')saveAdd();else if(t.dataset.h==='csvgo')doImport();else if(t.dataset.h==='tpl')tpl()});
 ov.addEventListener('input',function(e){if(e.target.id!=='khh-p')return;var g=guess(e.target.value);if(g){var f=$('khh-s-'+g);if(f&&!f.value){f.value=e.target.value.trim();e.target.value='';$('khh-e').textContent='Placed in '+LB[g]+' (best guess). Check it.'}}});
 document.addEventListener('keydown',function(e){
- if(ov.classList.contains('on')){if(e.key==='Escape')closeAdd();else if(e.key==='Enter'&&(e.ctrlKey||e.metaKey)){e.preventDefault();saveAdd()}return}
+ if(ov.classList.contains('on')){if(e.key==='Escape')closeAdd();else if(e.key==='Enter'&&(e.ctrlKey||e.metaKey)){e.preventDefault();if(mode==='csv')doImport();else saveAdd()}return}
  var vis=root&&root.classList.contains('kh-active')&&sec.offsetParent!==null;if(!vis)return;
  if((e.ctrlKey||e.metaKey)&&String(e.key).toLowerCase()==='k'){e.preventDefault();if(!on){var hb=tabs.querySelector('[data-t="h"]');if(hb)hb.click()}else focusQ();setTimeout(focusQ,30);return}
  if(e.key==='/'&&on&&!/INPUT|TEXTAREA|SELECT/.test((e.target&&e.target.tagName)||'')){e.preventDefault();focusQ()}},true);
