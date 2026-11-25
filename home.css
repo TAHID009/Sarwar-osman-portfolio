@@ -315,3 +315,88 @@ html.h-lb-open{overflow:hidden}
 @media(max-width:640px){.h-lb{padding:54px 10px 20px}.h-lb-nav{top:auto;bottom:18px;margin:0;width:42px;height:42px}.h-lb-prev{left:16px}.h-lb-next{right:16px}.h-lb-img{max-height:calc(100vh - 190px)}}
 @keyframes hLbIn{from{opacity:0}to{opacity:1}}
 @media(prefers-reduced-motion:reduce){.h-lb{animation:none}.h-train-zoom{transition:none}}
+
+
+/* ==========================================================================
+   Design refresh v3 — white / dim-white, transparent hero, orange accent.
+   Appended last so it overrides the rules above. Applies to every page
+   (all pages use body.home), so header/footer stay identical site-wide.
+   To roll back: delete everything from this comment to the end of the file.
+   ========================================================================== */
+.home{--navy:#14213D;--blue:#B4521A;--sky:#F6F4EF;--ink:#14213D;--soft:#55607A;--accent:#E8742C;--ground:#F6F4EF;--line:#E6E2D8;background:var(--ground)}
+
+/* Header: solid white */
+.home .header{background:rgba(255,255,255,.96);border-bottom:1px solid var(--line)}
+.home .header .btn,.h-contact-btn{background:var(--accent);color:#14213D;border-radius:999px;font-weight:600;padding:10px 20px}
+.home .header .btn:hover,.h-contact-btn:hover{filter:brightness(.95)}
+.home .nav-links a{color:var(--soft)}
+.home .nav-links a.active{color:var(--ink)}
+
+/* Hero: transparent, page ground shows through (photo background removed) */
+.home .h-hero{background:none}
+.h-eyebrow,.h-kicker{color:var(--blue)}
+.h-role{color:var(--blue)}
+.h-text{color:var(--soft)}
+.h-chips li{background:#fff;border-color:var(--line);color:var(--ink)}
+.h-actions .btn-line,.h-more,.snap-btn{background:transparent;color:var(--ink);border:1.5px solid var(--ink);border-radius:999px}
+.h-actions .btn-line:hover,.h-more:hover,.snap-btn:hover{background:var(--ink);color:#fff}
+.h-frame{border-color:var(--line);box-shadow:0 18px 44px rgba(20,33,61,.10);border-radius:24px}
+.h-frame:before{border-color:rgba(232,116,44,.45);border-radius:28px}
+
+/* At-a-glance strip */
+.h-strip ul{background:#fff;border-color:var(--line);border-radius:20px;box-shadow:0 10px 30px rgba(20,33,61,.06)}
+.h-strip li{border-left-color:var(--line)}
+.h-strip small{color:var(--soft)}
+
+/* Section grounds: transparent / dim white */
+.h-about,.h-journey,.h-training,.h-skills,.h-snap,.h-edu,.h-interests{background:transparent}
+.h-journey,.h-training,.h-skills,.h-snap,.h-interests{border-top:1px solid var(--line)}
+.h-about-copy p,.h-skill-desc,.h-train-desc,.snap-sub,.snap-note,.h-certs li{color:var(--soft)}
+
+/* About */
+.h-focus{border-left-color:var(--line)}
+.h-focus li,.h-quote{background:#fff;border-color:var(--line);border-radius:18px}
+.h-quote-by{color:var(--soft)}
+
+/* Experience: ruled rows instead of dotted timeline (desktop) */
+.h-years{background:#fff;border-color:var(--line);border-radius:20px}
+.h-years-label{color:var(--soft)}
+@media(min-width:761px){
+.h-timeline{border-top:1px solid var(--line)}
+.h-job{grid-template-columns:170px minmax(0,1fr) minmax(0,1.2fr);gap:0 32px;padding:26px 0;border-bottom:1px solid var(--line)}
+.h-job:before,.h-dot{display:none}
+.h-role-box strong{font-family:"Source Serif 4",Georgia,serif;font-size:19px;line-height:1.3}
+}
+.h-job time{color:var(--soft)}
+.h-job ul,.h-role-box span{color:var(--soft)}
+.h-role-box em{color:var(--soft)}
+
+/* Training cards */
+.h-train-card{background:#fff;border-color:var(--line);border-radius:20px}
+.h-train-card:hover{border-color:#d3cdbf;box-shadow:0 14px 34px rgba(20,33,61,.10)}
+.h-train-chip{background:var(--ground);color:var(--blue)}
+.h-train-org{color:var(--blue)}
+
+/* Core expertise cards */
+.h-skill{border-color:var(--line);border-radius:20px;box-shadow:none}
+.h-skill:hover{border-color:#d3cdbf;box-shadow:0 14px 34px rgba(20,33,61,.10)}
+.h-skill .h-ico{background:var(--ground)}
+.h-skill li{background:var(--ground);border-color:var(--line);color:var(--ink)}
+.h-interest-list li{background:#fff;border-color:var(--line);border-radius:16px}
+
+/* Snapshot + experience-page cards */
+.snap-main,.snap-cards li,.x-card,.x-rolecard{background:#fff;border-color:var(--line);border-radius:20px}
+.x-card:hover{border-color:#d3cdbf}
+.x-card li,.x-list li,.x-lede{color:var(--soft)}
+.x-tags li{background:#fff;border-color:var(--line)}
+
+/* Education + connect */
+.h-connect-card{background:#fff;border-color:var(--line);border-radius:24px}
+.h-connect-card p{color:var(--soft)}
+.h-degrees article{border-left-color:var(--line)}
+
+/* Footer: light */
+.h-footer{background:#fff;color:var(--ink);border-top:1px solid var(--line)}
+.h-footer span{color:var(--soft)}
+.h-footer a{color:var(--ink);opacity:1}
+.h-footer a:hover{color:var(--blue)}
