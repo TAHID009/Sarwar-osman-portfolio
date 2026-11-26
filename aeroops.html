@@ -16105,382 +16105,6 @@ var pn=$('f-pnr-gds'),ty=$('f-type');if(pn)pn.addEventListener('change',check);i
 
 
 
-<!-- ===== GDS Command Finder (professional edition): 20 modules, subcategories, step-by-step PNR workflow, command detail sections, reference images, CSV import. Self-contained add-on; saves to your account (kh_settings) and this device; touches no other module. ===== -->
-<style id="gd-css">
-#aero-gds{display:none;padding:16px;background:linear-gradient(180deg,#E8F0FB,#F4F8FE);border-radius:16px;color:#0B2545;--g-bg:#F4F8FE;--card:#fff;--ink:#0B2545;--mut:#52627A;--line:#DDE8F6;--acc:#1D6BF0;--accb:#E8F0FB;--code:#0B2545;--codet:#D6E8FF;--ok:#067647;--okb:#E7F6EC;--wn:#8A5200;--wnb:#FFF1D6;--bad:#B42318;--sh:0 1px 2px rgba(11,37,69,.06),0 6px 18px rgba(11,37,69,.05)}#ptc-root.gds-active #aero-gds{display:block}
-#ptc-root.gds-active #lb,#ptc-root.gds-active #ptc-body-grid,#ptc-root.gds-active #pwi-root,#ptc-root.gds-active #aero-master,#ptc-root.gds-active #aero-settings,#ptc-root.gds-active #aero-pax,#ptc-root.gds-active #aero-ac{display:none!important}
-#aero-gds .gd-top{display:flex;gap:14px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
-#aero-gds .gd-top h2{margin:0;font-size:24px;font-weight:800;color:var(--ink)}
-#aero-gds .gd-top p{margin:2px 0 0;font-size:14px;color:var(--mut)}
-#aero-gds .gd-ti{width:54px;height:54px;border-radius:50%;background:#D4E6FB;color:var(--acc);display:grid;place-items:center;flex:none}
-#aero-gds .gd-sp{flex:1}
-#aero-gds .stats{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 14px}
-#aero-gds .stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 16px;box-shadow:var(--sh);font-size:12px;color:var(--mut);min-width:110px}
-#aero-gds .stat b{display:block;font-size:20px;color:var(--ink);line-height:1.2;font-weight:700}
-#aero-gds .b{font:inherit;border:1px solid #CFDAEA;background:var(--card);color:var(--ink);border-radius:10px;padding:0 14px;min-height:42px;font-weight:600;font-size:14px;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
-#aero-gds .b:hover{background:var(--accb)}
-#aero-gds .b.p{background:var(--acc);border-color:var(--acc);color:#fff}
-#aero-gds .b.p:hover{filter:brightness(1.08)}
-#aero-gds .b:focus-visible,#aero-gds .sm:focus-visible,#aero-gds .ch:focus-visible,#aero-gds .it:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
-#aero-gds .sb{display:flex;align-items:center;gap:10px;margin:0 0 6px;background:var(--card);border:1px solid #CFDAEA;border-radius:12px;padding:0 16px;height:54px;box-shadow:var(--sh);color:var(--mut)}
-#aero-gds .sb:focus-within{border-color:var(--acc);box-shadow:0 0 0 4px var(--accb)}
-#aero-gds .sb input{flex:1;min-width:0;border:0!important;background:none!important;outline:0!important;box-shadow:none!important;font-size:16.5px!important;height:100%;color:var(--ink);padding:0!important}
-#aero-gds .hint{font-size:12.5px;color:var(--mut);margin:0 0 14px}
-#aero-gds .hint kbd{font:600 11px ui-monospace,Consolas,monospace;border:1px solid var(--line);background:var(--card);border-radius:5px;padding:1px 6px}
-#aero-gds .app{display:grid;grid-template-columns:340px minmax(0,1fr);gap:16px;align-items:start}
-#aero-gds .pane{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--sh)}
-#aero-gds .chs{display:flex;gap:6px;overflow-x:auto;padding:10px 12px;border-bottom:1px solid var(--line)}
-#aero-gds .ch{font:inherit;flex:none;border:1px solid var(--line);background:var(--card);border-radius:999px;padding:3px 12px;min-height:30px;font-size:12.5px;font-weight:600;cursor:pointer;color:var(--mut)}
-#aero-gds .ch.on{background:var(--ink);border-color:var(--ink);color:#fff}
-#aero-gds .lst{max-height:calc(100vh - 400px);min-height:200px;overflow:auto;padding:6px}
-#aero-gds h4{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);margin:12px 10px 4px;font-weight:700}
-#aero-gds .it{font:inherit;display:flex;gap:8px;align-items:center;width:100%;text-align:left;border:0;background:none;border-radius:10px;padding:9px 10px;cursor:pointer;min-height:54px;color:var(--ink)}
-#aero-gds .it:hover{background:var(--g-bg)}
-#aero-gds .it.on{background:var(--accb);box-shadow:inset 3px 0 0 var(--acc)}
-#aero-gds .it span.t{flex:1;min-width:0}
-#aero-gds .it b{display:block;font-size:14.5px;font-weight:600}
-#aero-gds .it small{color:var(--mut);font-size:12px}
-#aero-gds .dots{display:flex;gap:3px}
-#aero-gds .dots s{text-decoration:none;font:700 10px ui-monospace,Consolas,monospace;border-radius:4px;padding:2px 5px;background:var(--line);color:var(--mut)}
-#aero-gds .dots s.y{background:var(--acc);color:#fff}
-#aero-gds .det{padding:22px 24px;min-height:320px}
-#aero-gds .bk{display:none}
-#aero-gds .dh{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-#aero-gds .dh h2{margin:0;font-size:24px;flex:1;color:var(--ink)}
-#aero-gds .bd{font-size:12px;font-weight:700;border-radius:999px;padding:3px 10px;background:var(--line);color:var(--mut)}
-#aero-gds .bd.v{background:var(--okb);color:var(--ok)}
-#aero-gds .bd.w{background:var(--wnb);color:var(--wn)}
-#aero-gds .rm{color:var(--mut);margin:6px 0 4px}
-#aero-gds .seg{display:flex;gap:6px;flex-wrap:wrap;margin:14px 0}
-#aero-gds .tiles{display:grid;gap:12px}
-#aero-gds .tile{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--card)}
-#aero-gds .gl{font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mut)}
-#aero-gds .k{background:var(--code);color:var(--codet);border-radius:10px;padding:12px 14px;margin:8px 0;font:500 16.5px/1.5 ui-monospace,Consolas,"IBM Plex Mono",monospace;white-space:pre-wrap;word-break:break-all}
-#aero-gds .k.e{font-size:14px;color:#8FA3BD;font-style:italic}
-#aero-gds .tile .b{min-height:38px;font-size:13.5px}
-#aero-gds .sm{font:inherit;border:1px solid #CFDAEA;background:var(--card);border-radius:8px;min-height:36px;padding:0 12px;font-size:13px;font-weight:600;cursor:pointer;color:var(--ink)}
-#aero-gds .sm:hover{background:var(--accb)}
-#aero-gds .sm.d{color:var(--bad)}
-#aero-gds .ft{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px;padding-top:14px;border-top:1px solid var(--line)}
-#aero-gds .em{text-align:center;color:var(--mut);padding:36px 14px}
-#aero-gds .em b{color:var(--ink)}
-#aero-gds dialog{border:0;border-radius:16px;padding:0;width:min(660px,calc(100% - 24px));background:var(--card);color:var(--ink);box-shadow:0 24px 60px rgba(0,0,0,.35)}
-#aero-gds dialog::backdrop{background:rgba(11,37,69,.55)}
-#aero-gds .f{padding:22px;display:grid;gap:12px}
-#aero-gds .f h2{margin:0;font-size:20px}
-#aero-gds .f label{display:grid;gap:4px;font-size:13px;font-weight:600}
-#aero-gds .f input,#aero-gds .f select,#aero-gds .f textarea{font:inherit;font-size:14px;border:1px solid #CFDAEA;border-radius:9px;padding:10px 12px;background:#F8FAFD;width:100%;box-sizing:border-box;color:var(--ink)}
-#aero-gds .f .m{font-family:ui-monospace,Consolas,monospace}
-#aero-gds .g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
-#aero-gds .g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-#aero-gds .fa{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end;border-top:1px solid var(--line);padding-top:12px}
-#aero-gds .fa label{display:flex;flex-direction:row;gap:6px;align-items:center;font-weight:500;margin-right:auto}
-#aero-gds .fa input{width:auto}
-#aero-gds .er{color:var(--bad);font-size:13px;min-height:1em}
-#gd-t{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:#0B2545;color:#fff;padding:10px 18px;border-radius:10px;font-weight:600;font-size:13px;opacity:0;pointer-events:none;transition:opacity .15s;z-index:100000}
-#gd-t{opacity:1}
-#aero-gds .gd-mn{position:relative}
-#aero-gds .gd-mm{position:absolute;right:0;top:calc(100% + 6px);min-width:210px;background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:0 12px 32px rgba(11,37,69,.2);padding:6px;z-index:20}
-#aero-gds .gd-mm[hidden]{display:none}
-#aero-gds .gd-mm button{font:inherit;display:block;width:100%;text-align:left;border:0;background:none;padding:9px 12px;border-radius:8px;min-height:40px;cursor:pointer;color:var(--ink)}
-#aero-gds .gd-mm button:hover{background:var(--accb)}
-#aero-gds .gd-mm hr{border:0;border-top:1px solid var(--line);margin:4px 0}
-@media(max-width:860px){
-#aero-gds .app{grid-template-columns:1fr}
-#aero-gds .det{display:none}
-#aero-gds.gd-open .pane.l{display:none}
-#aero-gds.gd-open .det{display:block}
-#aero-gds .bk{display:inline-flex;margin-bottom:10px}
-#aero-gds .lst{max-height:none}
-#aero-gds .g3,.g2{grid-template-columns:1fr}
-#aero-gds .hint{display:none}
-#aero-gds .stat{flex:1;min-width:90px}
-}
-#aero-gds .ln{display:flex;gap:8px;align-items:center;margin:6px 0}#aero-gds .ln .k{flex:1;margin:0;min-width:0}#aero-gds .ln .sm{flex:none}
-#aero-gds .tile .b.p{margin-top:6px}#aero-gds .pv{display:block;font:11.5px ui-monospace,Consolas,monospace;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:210px}#aero-gds .pv.no{font-family:inherit;font-style:italic;color:#B07A00}
-#aero-gds .tpb{padding:10px 12px;border-bottom:1px solid var(--line)}#aero-gds .tpb select{width:100%;font:inherit;font-size:13.5px;font-weight:600;border:1px solid #CFDAEA;border-radius:9px;padding:9px 10px;background:#F8FAFD;color:var(--ink)}
-#aero-gds .bs{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}#aero-gds .bd.q{background:#E4ECFF;color:#1D4ED8}
-#aero-gds .gal{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}#aero-gds .gi{height:96px;max-width:200px;object-fit:cover;border-radius:8px;border:1px solid var(--line);cursor:zoom-in;background:#fff;min-width:60px}#aero-gds .gi.bad{cursor:default;font-size:11px;color:var(--bad);padding:6px}
-#aero-gds .pcs{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}#aero-gds .pc{background:var(--accb);border-radius:999px;padding:3px 6px 3px 12px;font-size:12.5px;display:inline-flex;gap:6px;align-items:center}#aero-gds .pc button{border:0;background:none;cursor:pointer;font-size:16px;color:var(--bad);line-height:1}
-#aero-gds details{border:1px solid var(--line);border-radius:9px;padding:8px 12px}#aero-gds summary{cursor:pointer;font-size:13px;font-weight:600}#aero-gds details .g2{margin-top:8px}
-#aero-gds .fa .b.d{color:var(--bad)}#aero-gds #gd-lb{position:fixed;inset:0;background:rgba(11,37,69,.8);z-index:100001;display:flex;align-items:center;justify-content:center;padding:20px;cursor:zoom-out}#aero-gds #gd-lb[hidden]{display:none}#aero-gds #gd-lb img{max-width:100%;max-height:100%;border-radius:10px;background:#fff}
-#aero-gds .fa label{margin-right:0}
-#aero-gds .gw{position:relative;display:inline-block}#aero-gds .gx{position:absolute;top:4px;right:4px;width:22px;height:22px;border-radius:50%;border:0;background:rgba(11,37,69,.78);color:#fff;font-size:15px;line-height:1;cursor:pointer;padding:0}#aero-gds .gx:hover{background:var(--bad)}
-#aero-gds .gal{align-items:center}#aero-gds .pc{padding:4px 6px 4px 4px}#aero-gds .pt{width:44px;height:34px;object-fit:cover;border-radius:6px;background:#fff;border:1px solid var(--line)}#aero-gds .gd-hint{font-size:12.5px;color:var(--mut)}#aero-gds #gd-pi{border:2px dashed var(--line);border-radius:10px;padding:8px;min-height:48px;align-items:center}
-#aero-gds .vws{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}#aero-gds .it.wfb{background:var(--accb);margin-bottom:6px}
-#aero-gds .sx{margin-top:14px;display:grid;gap:8px}#aero-gds .sx details,#aero-gds #gd-fdx{border:1px solid var(--line);border-radius:10px;padding:8px 12px;background:var(--card)}#aero-gds .sx summary,#aero-gds #gd-fdx summary{cursor:pointer;font-weight:600;font-size:13.5px}#aero-gds .sx p{margin:8px 0 2px;color:var(--mut)}#aero-gds .f2{display:grid;gap:10px;margin-top:10px}
-#aero-gds .stat{position:relative;padding-left:20px;overflow:hidden}#aero-gds .stat::before{content:"";position:absolute;left:0;top:10px;bottom:10px;width:4px;border-radius:0 4px 4px 0;background:var(--acc)}#aero-gds .stat:nth-child(2)::before{background:#2F6FEB}#aero-gds .stat:nth-child(3)::before{background:#E0A100}#aero-gds .stat:nth-child(4)::before{background:#7C5CE0}#aero-gds .stat:nth-child(5)::before{background:#0E9F8E}
-#aero-gds .tile{border-top:3px solid var(--line);box-shadow:var(--sh)}#aero-gds .tile.tS{border-top-color:#2F6FEB}#aero-gds .tile.tG{border-top-color:#7C5CE0}#aero-gds .tile.tA{border-top-color:#0E9F8E}#aero-gds .tile.tS .gl{color:#2F6FEB}#aero-gds .tile.tG .gl{color:#7C5CE0}#aero-gds .tile.tA .gl{color:#0E8F80}#aero-gds .tile+.tile{margin-top:12px}
-#aero-gds h4{position:sticky;top:0;z-index:1;background:var(--card);margin:0;padding:10px 10px 6px;border-bottom:1px solid var(--line)}
-#aero-gds .gs{max-width:560px;margin:28px auto;padding:28px;border:1px solid var(--line);border-radius:16px;background:var(--card);box-shadow:var(--sh)}#aero-gds .gs h3{margin:0 0 6px;font-size:20px;color:var(--ink)}#aero-gds .gs p{color:var(--mut);margin:0 0 14px}#aero-gds .gs ol{padding-left:22px;line-height:1.75;margin:0 0 18px}#aero-gds .gb{display:flex;gap:8px;flex-wrap:wrap}#aero-gds .lst .gs{margin:8px;padding:16px;box-shadow:none}
-#aero-gds .pane{border-radius:16px}#aero-gds .it small{max-width:230px}
-</style>
-<script id="gd-js">
-(function(){'use strict';
-var root=document.getElementById('ptc-root'),nav=document.getElementById('ptc-nav'),anchorEl=document.getElementById('aero-ac')||document.getElementById('aero-settings');
-if(!root||!nav||!anchorEl||document.getElementById('aero-gds'))return;
-var sec=document.createElement('section');sec.id='aero-gds';sec.className='aero-page';sec.setAttribute('aria-label','GDS Command Finder');
-sec.innerHTML="<div class=\"gd-top\"><div class=\"gd-ti\"><svg width=\"26\" height=\"26\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M4 17l6-6-6-6\"/><path d=\"M12 19h8\"/></svg></div><div><h2>GDS Command Finder</h2><p>Search, copy and follow step-by-step Sabre workflows. Edit, verify and organise your own commands across 20 modules.</p></div><div class=\"gd-sp\"></div><button class=\"b p\" id=\"gd-add\" type=\"button\">+ Add command</button><div class=\"gd-mn\"><button class=\"b\" id=\"gd-more\" type=\"button\" aria-haspopup=\"true\">More &#9662;</button><div class=\"gd-mm\" id=\"gd-mm\" hidden><button type=\"button\" id=\"gd-ex\">Download backup (JSON)</button><button type=\"button\" id=\"gd-exc\">Export to CSV</button><button type=\"button\" id=\"gd-ic\">Import from CSV</button><button type=\"button\" id=\"gd-iw\">Import from Word / PDF</button><button type=\"button\" id=\"gd-iu\">Undo last Word / PDF import</button><button type=\"button\" id=\"gd-tpl\">Download CSV template</button><button type=\"button\" id=\"gd-im\">Restore from backup</button><hr><button type=\"button\" id=\"gd-rs\" style=\"color:#B42318\">Delete all commands</button></div></div></div>\n<div class=\"stats\" id=\"gd-stats\"></div>\n<label class=\"sb\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" aria-hidden=\"true\"><circle cx=\"11\" cy=\"11\" r=\"7\"/><path d=\"M21 21l-4.3-4.3\"/></svg><input id=\"gd-q\" placeholder=\"Search command, airline, passenger type, process (refund, ADT, JR, ticketing...)\" autocomplete=\"off\" aria-label=\"Search commands\"></label>\n<p class=\"hint\"><kbd>/</kbd> search &nbsp;&middot;&nbsp; <kbd>&uarr;</kbd><kbd>&darr;</kbd> choose &nbsp;&middot;&nbsp; <kbd>Enter</kbd> copy the first command</p>\n<div class=\"app\"><div class=\"pane l\"><div class=\"tpb\"><select id=\"gd-tp\" aria-label=\"Module\"></select><div class=\"vws\" id=\"gd-vws\"></div></div><div class=\"lst\" id=\"gd-lst\"></div></div><div class=\"pane det\" id=\"gd-det\"></div></div>\n<input type=\"file\" id=\"gd-fi\" accept=\"application/json\" hidden><input type=\"file\" id=\"gd-fimg\" accept=\"image/*\" multiple hidden><input type=\"file\" id=\"gd-fatt\" accept=\"image/*\" multiple hidden><input type=\"file\" id=\"gd-fiw\" accept=\".docx,.pdf,.doc\" multiple hidden><input type=\"file\" id=\"gd-ficsv\" accept=\".csv,text/csv,text/plain\" hidden>\n<dialog id=\"gd-dl\"><form class=\"f\" id=\"gd-fm\" method=\"dialog\"><h2 id=\"gd-dt\">Add command</h2>\n<label>Task (what are you trying to do?)<input id=\"gd-ft\" required placeholder=\"e.g. Issue ticket\"></label>\n<div class=\"g2\"><label>Module<select id=\"gd-fc\"></select></label><label>Paste one entry (guesses the GDS)<input id=\"gd-fp\" class=\"m\" autocomplete=\"off\"></label></div>\n<label>Sabre command (one command per line)<textarea id=\"gd-fs\" class=\"m\" rows=\"4\"></textarea></label>\n<details id=\"gd-dlx\"><summary>Galileo and Amadeus (optional)</summary><div class=\"g2\"><label>Galileo<textarea id=\"gd-fg\" class=\"m\" rows=\"2\"></textarea></label><label>Amadeus<textarea id=\"gd-fa\" class=\"m\" rows=\"2\"></textarea></label></div></details>\n<label>Remarks (optional)<textarea id=\"gd-fr\" rows=\"2\"></textarea></label><label>Also known as (extra search words)<input id=\"gd-fl\" placeholder=\"e.g. rename, add pax\"></label>\n<details id=\"gd-fdx\"><summary>More details (subcategory, example, notes, source, workflow step)</summary><div class=\"f2\"><label>Subcategory<input id=\"gd-fsub\"></label><label>PNR workflow step<select id=\"gd-fwf\"></select></label><label>Example<textarea id=\"gd-fex\" rows=\"2\"></textarea></label><label>When to use<textarea id=\"gd-fwu\" rows=\"2\"></textarea></label><label>How to use<textarea id=\"gd-fhu\" rows=\"2\"></textarea></label><label>Important notes and warnings<textarea id=\"gd-fnt\" rows=\"2\"></textarea></label><label>Related commands<input id=\"gd-frel\"></label><label>Source manual and page<input id=\"gd-fsrc\" placeholder=\"e.g. Sabre handbook, p. 3\"></label><label>My notes<textarea id=\"gd-fpn\" rows=\"2\"></textarea></label></div></details>\n<div><div class=\"gl\">Reference images (optional)</div><div class=\"pcs\" id=\"gd-pi\"></div><button type=\"button\" class=\"sm\" id=\"gd-addimg\">+ Add image</button></div>\n<div class=\"er\" id=\"gd-fe\" role=\"alert\"></div>\n<div class=\"fa\"><label><input type=\"checkbox\" id=\"gd-fv\"> Verified manually (my own check)</label><span class=\"gd-sp\"></span><button type=\"button\" class=\"b d\" id=\"gd-fdel\" hidden>Delete</button><button type=\"button\" class=\"b\" id=\"gd-fx\">Cancel</button><button class=\"b p\" id=\"gd-fk\">Save &middot; Ctrl Enter</button></div></form></dialog>\n<div id=\"gd-lb\" hidden><img id=\"gd-lbi\" alt=\"Reference image\"></div><div id=\"gd-t\" role=\"status\"></div>";
-anchorEl.insertAdjacentElement('afterend',sec);
-var MODS=['PNR Creation and Management','Availability Search','JR – One Way','JR – Round Trip','JR – Multi City','JR – Surface Sector','Passenger Types – ADT / CHD / INF','Fare Display and Fare Rules','Pricing and Fare Calculation','Ticket Issuance','Umrah Booking and Ticketing','DOCS / DOCO / DOCA','Ancillary Services','Reissue and Exchange','Refund and Void','EMD','Split PNR','Student Fares','Reports and Printer Commands','Quick Command Index and Other Commands'],TOPICS=MODS,HB=[],
- STEPS=['Check Availability','Select Flight','Sell Flight Segment','Add Passenger Name','Add Phone Contact','Add Ticketing Time Limit','Add Received From','End Transaction','Retrieve PNR','Fare Display','Pricing','Fare Verification','Ticket Issuance'],
- OLDT={'Book or Generate a PNR':0,'Fare Load and Fare Check':7,'Fare Rules Check':7,'Issue Command':9,'Umrah Fare Check and Issue':10,'DOCS, DOCO, DOCA update':11,'Ancillary Selection (seat, baggage)':12,'Reissue Process':13,'Refund Process':14,'Void Process':14,'EMD Process':15,'Split PNR':16,'Student Fare or Baggage':17,'Sales Report Check':18,'Printer Assign':18,'Others':19,'Quick Command Index':19,'Booking':0,'Passenger':6,'Ticketing':9,'Reissue & refund':13,'Fares':7,'Queues':19,'Other':19},
- AL={chd:'child',child:'chd',inf:'infant',infant:'inf',adt:'adult',adult:'adt'};
-var G=['S','G','A'],N={S:'Sabre',G:'Galileo',A:'Amadeus'},F={S:'s',G:'g',A:'a'};
-var db=null,uid=null,un=null,pt=0,synced=false,sv=false,K='gdscf.v2',OK='gdscf.v1',I=[],V=[],URLS={},PD=[],sdkP=null;
-var $=function(i){return document.getElementById('gd-'+i)};
-function lget(k){try{return localStorage.getItem(k)}catch(e){return null}}
-var gf=lget(K+'g')||'S',cf='',vw='all',wfs=1,WP={},q='',sel='',ed=null;
-function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
-function norm(s){return String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim()}
-function lines(v){return String(v||'').split(/\r?\n/).map(function(x){return x.trim()}).filter(Boolean)}
-function tix(c){var i=MODS.indexOf(c);return i<0?99:i}
-function tname(c){var i=MODS.indexOf(c);return i<0?String(c||'Other'):(i+1)+'. '+c}
-function mkHB(h,n){return{id:h.id,task:h.t,cat:TOPICS[h.c-1],s:h.s||'',g:'',a:'',rm:h.r||'',al:'',fav:false,ver:false,ts:0,ord:n,qi:!!h.q,imgs:[]}}
-function payload(){return JSON.stringify({v:2,items:I,hb:1,wp:WP})}
-function parse(str){try{var d=JSON.parse(str);if(Array.isArray(d))return{items:d,hb:false};if(d&&Array.isArray(d.items))return{items:d.items,hb:!!d.hb,wp:d.wp}}catch(e){}return null}
-function merge(p){var it=p.items.filter(function(x){return x&&x.task}),n0=it.length;it=it.filter(function(x){var seed=/^hb\d{3}$/.test(x.id)||(/^s\d$/.test(x.id)&&!x.ver&&!x.ts);return!(seed&&!(x.imgs&&x.imgs.length))});
- it.forEach(function(x,n){var o=OLDT[x.cat];if(o!=null){x.sub=x.sub||x.cat;x.cat=MODS[o]}if(x.ord==null)x.ord=1e5+n;if(!x.imgs)x.imgs=[];if(x.cr==null)x.cr=x.ts||0});return{items:it,ch:it.length!==n0||!p.hb}}
-(function(){var p=parse(lget(K))||parse(lget(OK));if(p){WP=p.wp||{};var m=merge(p);I=m.items;if(m.ch){try{localStorage.setItem(K,JSON.stringify({v:2,items:I,hb:1}))}catch(e){}}}})();
-function save(){try{localStorage.setItem(K,payload())}catch(e){}push()}
-function push(){if(!db||!uid)return;clearTimeout(pt);pt=setTimeout(function(){db.collection('kh_settings').doc(uid).set({ownerUid:uid,gdsItems:payload(),gdsUpdated:new Date().toISOString()},{merge:true}).catch(function(){toast('Saved on this device only. Cloud save failed.')})},400)}
-function toast(m){var e=$('t');e.textContent=m;e.classList.add('on');clearTimeout(toast.h);toast.h=setTimeout(function(){e.classList.remove('on')},1800)}
-function copy(s){var ok=function(){toast('Copied: '+String(s).split('\n')[0].slice(0,60)+(String(s).indexOf('\n')>-1?' ...':''))},fb=function(){var a=document.createElement('textarea');a.value=s;a.style.cssText='position:fixed;opacity:0';document.body.appendChild(a);a.select();try{document.execCommand('copy')}catch(e){}a.remove();ok()};if(navigator.clipboard&&window.isSecureContext)navigator.clipboard.writeText(s).then(ok,fb);else fb()}
-/* images live in Firebase Storage (same kh/<uid>/ area as before); only the path is saved in the record */
-function loadSdk(cb){if(window.firebase&&firebase.storage)return cb(null);if(sdkP)return sdkP.push(cb);sdkP=[cb];var v=firebase.SDK_VERSION,src=['./vendor/','https://cdn.jsdelivr.net/npm/firebase@'+v+'/','https://www.gstatic.com/firebasejs/'+v+'/'],i=0;
- (function t(){if(i>=src.length){var l=sdkP;sdkP=null;l.forEach(function(f){f(new Error('x'))});return}var s=document.createElement('script');s.src=src[i++]+'firebase-storage-compat.js';s.onload=function(){var l=sdkP;sdkP=null;l.forEach(function(f){f(null)})};s.onerror=function(){s.remove();t()};document.head.appendChild(s)})()}
-function stg(cb){loadSdk(function(e){if(e)return cb(e);try{cb(null,firebase.storage())}catch(x){cb(x)}})}
-function imgUrl(p,cb){if(URLS[p])return cb(URLS[p]);stg(function(e,s){if(e)return cb('');s.ref(p).getDownloadURL().then(function(u){URLS[p]=u;cb(u)}).catch(function(){cb('')})})}
-function putImg(p,b){return new Promise(function(res,rej){stg(function(e,s){if(e)return rej(e);s.ref(p).put(b,{contentType:'image/jpeg',customMetadata:{uploadedBy:uid}}).then(res,rej)})})}
-function delImg(p){stg(function(e,s){if(!e)s.ref(p).delete().catch(function(){})})}
-function shrink(f,cb){var r=new FileReader();r.onload=function(){var im=new Image();im.onload=function(){var sc=Math.min(1,1400/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*sc);c.height=Math.round(im.height*sc);var x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(im,0,0,c.width,c.height);c.toBlob(function(b){cb(b)},'image/jpeg',.82)};im.onerror=function(){cb(null)};im.src=r.result};r.onerror=function(){cb(null)};r.readAsDataURL(f)}
-/* search */
-function lev(a,b){if(Math.abs(a.length-b.length)>1)return 2;var p=[],i,j;for(j=0;j<=b.length;j++)p[j]=j;for(i=1;i<=a.length;i++){var c=[i];for(j=1;j<=b.length;j++)c[j]=Math.min(p[j]+1,c[j-1]+1,p[j-1]+(a[i-1]===b[j-1]?0:1));p=c}return p[b.length]}
-function hit(t,h,w){if(h.indexOf(t)>-1)return 2;if(t.length>=4)for(var i=0;i<w.length;i++)if(lev(t,w[i])<=1)return 1;return 0}
-function match(it){var T=norm(q).split(' ').filter(Boolean);if(!T.length)return 1;var h=norm([it.task,it.al,it.cat,it.sub,it.rm,it.s,it.g,it.a,it.ex,it.wu,it.hu,it.nt,it.rel,it.src,it.pn].join(' ')),w=h.split(' '),s=0;for(var i=0;i<T.length;i++){var z=Math.max(hit(T[i],h,w),AL[T[i]]?hit(AL[T[i]],h,w):0);if(!z)return 0;s+=z+(norm(it.task).indexOf(T[i])>-1?3:0)}return s}
-function find(id){return I.filter(function(x){return x.id===id})[0]}
-function inTopic(it){return!cf||it.cat===cf}
-function prev(it){var x=gf!=='ALL'&&lines(it[F[gf]]).length?gf:G.filter(function(g){return lines(it[F[g]]).length})[0];return x?lines(it[F[x]])[0]:''}
-function hasCmd(it){return G.some(function(g){return lines(it[F[g]]).length})}
-function row(it){var p=it.rm||prev(it);return'<button class="it'+(it.id===sel?' on':'')+'" data-r="'+esc(it.id)+'"><span class="t"><b>'+esc(it.task)+'</b><small class="pv'+(p?'':' no')+'">'+(p?esc(String(p).slice(0,80)):'No command yet')+'</small></span><span class="dots">'+G.map(function(x){return'<s class="'+(lines(it[F[x]]).length?'y':'')+'">'+x+'</s>'}).join('')+'</span>'+(it.fav?'<span aria-label="Pinned">&#9733;</span>':'')+'</button>'}
-function stats(){var wk=Date.now()-6048e5,gs=G.map(function(x){return I.filter(function(i){return lines(i[F[x]]).length}).length}),bx=function(n,l){return'<div class="stat"><b>'+n+'</b>'+l+'</div>'};
- $('stats').innerHTML=bx(I.length,'Total commands')+bx(I.filter(function(x){return x.ver}).length+' / '+I.length,'Verified (manual)')+bx(I.filter(function(x){return x.fav}).length,'Pinned')+'<div class="stat"><b style="font-size:15px;padding-top:4px">S '+gs[0]+' &middot; G '+gs[1]+' &middot; A '+gs[2]+'</b>GDS coverage</div>'+bx(I.filter(function(x){return(x.cr||0)>wk}).length,'Added this week')}
-function drawList(){var cs={};I.forEach(function(it){cs[it.cat]=(cs[it.cat]||0)+1});var ex=Object.keys(cs).filter(function(c){return MODS.indexOf(c)<0}).sort(),VW=[['all','All'],['pin','&#9733; Pinned'],['rec','Recent'],['freq','Frequent'],['wf','PNR workflow']];
- $('tp').innerHTML='<option value="">All modules ('+I.length+')</option>'+MODS.concat(ex).map(function(c){return'<option value="'+esc(c)+'"'+(cf===c?' selected':'')+'>'+(MODS.indexOf(c)>-1?(MODS.indexOf(c)+1)+'. ':'')+esc(c)+' ('+(cs[c]||0)+')</option>'}).join('');
- $('vws').innerHTML=VW.map(function(x){return'<button class="ch'+(vw===x[0]?' on':'')+'" data-v="'+x[0]+'">'+x[1]+'</button>'}).join('');
- if(vw==='wf'){V=[];$('lst').innerHTML='<h4>Generate a PNR &middot; step by step</h4>'+STEPS.map(function(s,i){var n=i+1,c=I.filter(function(x){return x.wf===n}).length;return'<button class="it'+(n===wfs?' on':'')+'" data-s="'+n+'"><span class="t"><b>'+(n<10?'0':'')+n+' &ndash; '+esc(s)+'</b><small>'+(c?c+' command'+(c>1?'s':''):'No command yet')+'</small></span>'+(WP[n]?'<span class="bd v">&#10003;</span>':'')+'</button>'}).join('');return}
- var L=I.filter(function(it){return(!cf||it.cat===cf)&&(vw!=='pin'||it.fav)&&(vw!=='rec'||it.rv)&&(vw!=='freq'||it.uc)}).map(function(it){return{it:it,s:match(it)}}).filter(function(x){return x.s}),h='',nq=norm(q);
- if(q.trim())L.sort(function(a,b){return b.s-a.s});else if(vw==='rec')L.sort(function(a,b){return b.it.rv-a.it.rv});else if(vw==='freq')L.sort(function(a,b){return b.it.uc-a.it.uc});else L.sort(function(a,b){return tix(a.it.cat)-tix(b.it.cat)||(a.it.ord||0)-(b.it.ord||0)});
- V=L.map(function(x){return x.it});var wb=/pnr/.test(nq)&&/(generate|create|book|booking|workflow|step|process|make)/.test(nq)?'<button class="it wfb" data-v="wf"><span class="t"><b>&#9654; Step-by-step PNR workflow</b><small>13 steps from availability to ticket issuance</small></span></button>':'';
- if(q.trim())h=wb+(V.length?V.map(row).join(''):'<div class="em"><b>Nothing found for &ldquo;'+esc(q.trim())+'&rdquo;.</b><br>Try other words, or add it for next time.<br><br><button class="b p" data-a="nq">+ Add &ldquo;'+esc(q.trim().slice(0,30))+'&rdquo;</button></div>');
- else if(!V.length)h=!I.length?gs():'<div class="em"><b>Nothing here yet.</b><br>Change the module or view above, or add a command.</div>';
- else{var P=vw==='all'?V.filter(function(x){return x.fav}):[],R=vw==='all'?V.filter(function(x){return!x.fav}):V,last='';h=wb+(P.length?'<h4>Pinned</h4>'+P.map(row).join(''):'');R.forEach(function(x){if(vw==='all'&&!cf&&x.cat!==last){last=x.cat;h+='<h4>'+esc(tname(last))+'</h4>'}h+=row(x)})}
- $('lst').innerHTML=h}
-function wfDet(){var d=$('det'),n=wfs,cs=I.filter(function(x){return x.wf===n}).sort(function(a,b){return(a.ord||0)-(b.ord||0)}),g0=gf==='ALL'?'S':gf,dn=Object.keys(WP).filter(function(k){return WP[k]}).length;
- d.innerHTML='<button class="b bk" data-a="bk">&larr; Back to steps</button><div class="dh"><h2>Step '+(n<10?'0':'')+n+' &ndash; '+esc(STEPS[n-1])+'</h2><span class="bd">Generate a PNR</span>'+(WP[n]?'<span class="bd v">Done</span>':'')+'</div>'
- +'<p class="rm">Step '+n+' of '+STEPS.length+' &middot; '+dn+' completed. Commands shown are your own ('+N[g0]+'); nothing is assumed from another GDS.</p>'
- +'<div class="seg">'+G.map(function(x){return'<button class="ch'+(g0===x?' on':'')+'" data-g="'+x+'">'+N[x]+'</button>'}).join('')+'</div>'
- +(cs.length?cs.map(function(c){var ls=lines(c[F[g0]]);return'<div class="tile t'+g0+'"><div class="gl">'+esc(c.task)+'</div>'+(ls.length?ls.map(function(l,j){return'<div class="ln"><div class="k">'+esc(l)+'</div><button class="sm" data-a="wc" data-i="'+esc(c.id)+'" data-l="'+j+'">Copy</button></div>'}).join(''):'<div class="k e">No '+N[g0]+' command yet</div>')+(c.rm?'<p class="rm">'+esc(c.rm)+'</p>':'')+(c.ex?'<p class="rm">Example: '+esc(c.ex)+'</p>':'')+'<button class="sm" data-a="wdt" data-i="'+esc(c.id)+'">Details</button></div>'}).join(''):'<div class="em"><b>No command for this step yet.</b><br>Add your own, so nothing is guessed.</div>')
- +'<div class="ft"><button class="sm" data-a="addwf">+ Add command to this step</button><label class="sm" style="display:inline-flex;align-items:center;gap:6px"><input type="checkbox" data-a="wd"'+(WP[n]?' checked':'')+'> Step complete</label><button class="sm" data-a="wp"'+(n===1?' disabled':'')+'>&larr; Previous</button><button class="sm" data-a="wn"'+(n===STEPS.length?' disabled':'')+'>Next &rarr;</button><button class="sm d" data-a="wr">Reset progress</button></div>'}
-function gs(){return'<div class="gs"><h3>Your library is ready</h3><p>Nothing is pre-filled, so every command here is one you added or confirmed yourself.</p><ol><li><b>Import Word / PDF</b> to read your manual: each numbered title becomes a module, and new commands are added or existing ones updated after you review them.</li><li>Or <b>download the CSV template</b>, fill it in with Excel or Sheets, and <b>Import CSV</b>.</li><li>Open a command to add examples, notes, images and its source, then <b>Mark as verified</b>.</li></ol><div class="gb"><button class="b p" data-a="impw">Import Word / PDF</button><button class="b" data-a="imp2">Import CSV</button><button class="b" data-a="tpl2">Download template</button><button class="b" data-a="add2">+ Add one command</button></div></div>'}
-function tpl(){dlf('gds-import-template.csv','Module,Subcategory,Task,Sabre,Galileo,Amadeus,Remarks,Example,Source\r\n10,,Example task,,,,Short description,,\r\n','text/csv');toast('Template downloaded. Module = number 1 to 20.')}
-function drawDet(){if(vw==='wf'){wfDet();return}var it=find(sel),d=$('det');
- if(!it){d.innerHTML='<button class="b bk" data-a="bk">&larr; Back</button>'+(I.length?'<div class="em"><b>Pick a command</b><br>Choose one from the list, or start typing above.</div>':gs());return}
- var stale=it.ver&&Date.now()-it.ts>158e8*1000,cols=G.filter(function(x){return gf==='ALL'||gf===x}),sx=[['Example',it.ex],['When to use',it.wu],['How to use',it.hu],['Important notes and warnings',it.nt],['Related commands',it.rel],['Source manual and page',it.src],['My notes',it.pn]].filter(function(x){return x[1]});
- d.innerHTML='<button class="b bk" data-a="bk">&larr; Back to list</button><div class="dh"><h2>'+esc(it.task)+'</h2></div><div class="bs"><span class="bd">'+esc(tname(it.cat))+'</span>'+(it.sub?'<span class="bd">'+esc(it.sub)+'</span>':'')+(it.wf?'<span class="bd q">PNR step '+it.wf+'</span>':'')+(it.ver?'<span class="bd '+(stale?'w':'v')+'">'+(stale?'Review due':'Verified (manual)')+'</span>':'<span class="bd w">Not verified</span>')+'</div>'
- +(it.rm?'<p class="rm">'+esc(it.rm)+'</p>':'')+(it.al?'<p class="rm">Also known as: '+esc(it.al)+'</p>':'')
- +'<div class="gal">'+(it.imgs||[]).map(function(m,i){return'<span class="gw"><img class="gi" alt="Reference image '+(i+1)+'" data-a="zm" data-p="'+esc(m.path)+'"><button type="button" class="gx" data-a="gx" data-i="'+i+'" aria-label="Remove image">&times;</button></span>'}).join('')+'<button type="button" class="sm" data-a="ai">+ Add reference image</button></div>'
- +'<div class="seg">'+['ALL'].concat(G).map(function(x){return'<button class="ch'+(gf===x?' on':'')+'" data-g="'+x+'">'+(x==='ALL'?'All GDS':N[x])+'</button>'}).join('')+'</div>'
- +'<div class="tiles">'+cols.map(function(x){var ls=lines(it[F[x]]);return'<div class="tile t'+x+'"><div class="gl">'+N[x]+'</div>'+(ls.length?ls.map(function(l,j){return'<div class="ln"><div class="k">'+esc(l)+'</div><button class="sm" data-a="cl" data-g="'+x+'" data-l="'+j+'">Copy</button></div>'}).join('')+(ls.length>1?'<button class="b p" data-a="cp" data-g="'+x+'">Copy all '+ls.length+' lines</button>':''):'<div class="k e">Not added yet</div><button class="sm" data-a="ed">+ Add '+N[x]+' command</button>')+'</div>'}).join('')+'</div>'
- +(sx.length?'<div class="sx">'+sx.map(function(x,i){return'<details'+(i===0?' open':'')+'><summary>'+x[0]+'</summary><p>'+esc(x[1]).replace(/\n/g,'<br>')+'</p></details>'}).join('')+'</div>':'')
- +'<div class="ft"><button class="sm" data-a="ed">Edit</button><button class="sm" data-a="fv">'+(it.fav?'&#9733; Pinned':'&#9734; Pin / bookmark')+'</button><button class="sm" data-a="ok">'+(it.ver?'Re-confirm &#10003;':'Mark as verified &#10003;')+'</button><button class="sm" data-a="dp">Duplicate</button><button class="sm" data-a="mu" aria-label="Move up">&uarr;</button><button class="sm" data-a="md" aria-label="Move down">&darr;</button><button class="sm d" data-a="dl">Delete</button></div>';
- [].forEach.call(d.querySelectorAll('img.gi'),function(im){imgUrl(im.dataset.p,function(u){if(u)im.src=u;else{im.alt='Image could not be loaded';im.className='gi bad'}})})}
-function draw(keep){stats();drawList();if(vw==='wf'){drawDet();return}if(!keep&&V.indexOf(find(sel))<0)sel='';if(V.indexOf(find(sel))<0)sel=V.length?V[0].id:'';drawList();drawDet()}
-/* add / edit */
-function drawPD(){var h='';PD.forEach(function(m,i){if(m.rm)return;if(!m.u&&m.blob)m.u=URL.createObjectURL(m.blob);h+='<span class="pc"><img class="pt" alt="" '+(m.ex?'data-p="'+esc(m.path)+'"':'src="'+m.u+'"')+'><span>'+esc(m.name||'image')+'</span><button type="button" data-a="pr" data-i="'+i+'" aria-label="Remove image">&times;</button></span>'});$('pi').innerHTML=h||'<span class="gd-hint">No images yet. Add, drop or paste a screenshot.</span>';[].forEach.call($('pi').querySelectorAll('img[data-p]'),function(im){imgUrl(im.dataset.p,function(u){if(u)im.src=u})})}
-function addPending(fs){fs=[].slice.call(fs||[]).filter(function(f){return/^image\//.test(f.type)});fs.forEach(function(f){if(PD.filter(function(m){return!m.rm}).length>=6){toast('Up to 6 images per command.');return}shrink(f,function(b){if(!b){toast('That image could not be read.');return}PD.push({blob:b,name:f.name||'screenshot.jpg'});drawPD()})})}
-function attachNow(files){var it=find(sel);if(!it)return;if(!uid){toast('Sign in to add images.');return}var fs=[].slice.call(files||[]).filter(function(f){return/^image\//.test(f.type)});if(!fs.length)return;var room=6-(it.imgs||[]).length;if(room<=0){toast('Up to 6 images per command.');return}fs=fs.slice(0,room);toast('Adding image...');
- Promise.all(fs.map(function(f,n){return new Promise(function(res){shrink(f,function(b){if(!b)return res(null);var p='kh/'+uid+'/gds/'+it.id+'_'+Date.now()+'_'+n+'.jpg';putImg(p,b).then(function(){res({path:p,name:f.name||'screenshot.jpg'})},function(){res(null)})})})})).then(function(r){var ok=r.filter(Boolean);if(ok.length){it.imgs=(it.imgs||[]).concat(ok);save();drawDet();toast(ok.length+' image'+(ok.length>1?'s':'')+' added')}else toast('Image could not be added. Check Storage is enabled.')})}
-function openF(it,t,wn){ed=it||null;PD=(it&&it.imgs||[]).map(function(m){return{path:m.path,name:m.name,ex:1}});
- $('dt').textContent=it?'Edit command':'Add command';var ms=MODS.slice();if(it&&ms.indexOf(it.cat)<0)ms.push(it.cat);$('fc').innerHTML=ms.map(function(c){return'<option>'+esc(c)+'</option>'}).join('');$('fwf').innerHTML='<option value="0">None</option>'+STEPS.map(function(x,i){return'<option value="'+(i+1)+'">Step '+(i+1)+': '+esc(x)+'</option>'}).join('');
- $('ft').value=it?it.task:(t||'');$('fc').value=it?it.cat:(cf||MODS[0]);var V2={fs:'s',fg:'g',fa:'a',fr:'rm',fl:'al',fsub:'sub',fex:'ex',fwu:'wu',fhu:'hu',fnt:'nt',frel:'rel',fsrc:'src',fpn:'pn'};Object.keys(V2).forEach(function(k){$(k).value=it?(it[V2[k]]||''):''});
- $('fwf').value=it?(it.wf||0):(wn||0);$('fv').checked=!!(it&&it.ver);$('fp').value='';$('fe').textContent='';$('fdel').hidden=!it;$('dlx').open=!!(it&&(it.g||it.a));$('fdx').open=!!(it&&(it.ex||it.wu||it.hu||it.nt||it.rel||it.src||it.pn||it.sub||it.wf))||!!wn;drawPD();$('dl').showModal();setTimeout(function(){$(it?'fs':'ft').focus()},30)}
-function guess(v){v=v.trim();return/^-\S/.test(v)||/^\d\S*-[A-Z]$/.test(v)?'fs':/^[A-Z]\.\S/.test(v)?'fg':/^(NM\d|AP\s|RF\s)/i.test(v)?'fa':''}
-function saveF(){if(sv)return;var t=$('ft').value.trim(),e=$('fe'),m=$('fc').value,S=lines($('fs').value).join('\n'),Gx=lines($('fg').value).join('\n'),A=lines($('fa').value).join('\n');if(!t){e.textContent='Add a task name.';return}
- var bad=[['Sabre',S],['Galileo',Gx],['Amadeus',A]].filter(function(x){return x[1]&&(/[<>{}]/.test(x[1])||x[1].length>1200)})[0];if(bad){e.textContent=bad[0]+' command has invalid characters or is too long.';return}
- if(I.some(function(x){return x!==ed&&x.cat===m&&norm(x.task)===norm(t)&&norm(x.s)===norm(S)&&norm(x.g)===norm(Gx)&&norm(x.a)===norm(A)})){e.textContent='This command already exists in this module.';return}
- var up=PD.filter(function(p){return!p.ex&&p.blob}),gone=PD.filter(function(p){return p.ex&&p.rm}),keep=PD.filter(function(p){return p.ex&&!p.rm}).map(function(p){return{path:p.path,name:p.name}});
- if((up.length||gone.length)&&!uid){e.textContent='Sign in to add or remove images.';return}
- var was=!!ed,o=ed||{id:'u'+Date.now(),fav:false,imgs:[],cr:Date.now(),ord:I.reduce(function(a,x){return Math.max(a,x.ord||0)},0)+1};
- o.task=t;o.cat=m;o.sub=$('fsub').value.trim();o.s=S;o.g=Gx;o.a=A;o.rm=$('fr').value.trim();o.al=$('fl').value.trim();o.ex=$('fex').value.trim();o.wu=$('fwu').value.trim();o.hu=$('fhu').value.trim();o.nt=$('fnt').value.trim();o.rel=$('frel').value.trim();o.src=$('fsrc').value.trim();o.pn=$('fpn').value.trim();o.wf=+$('fwf').value||0;o.ver=$('fv').checked;o.ts=Date.now();
- sv=true;$('fk').disabled=true;
- Promise.all(up.map(function(p,n){var path='kh/'+uid+'/gds/'+o.id+'_'+Date.now()+'_'+n+'.jpg';return putImg(path,p.blob).then(function(){return{path:path,name:p.name}},function(){return null})})).then(function(r){var badn=r.filter(function(x){return!x}).length;
-  o.imgs=keep.concat(r.filter(Boolean));gone.forEach(function(p){delImg(p.path)});if(!was)I.push(o);save();sv=false;$('fk').disabled=false;$('dl').close();q='';$('q').value='';if(vw!=='wf'){vw='all';cf=''}sel=o.id;sec.classList.add('gd-open');draw(true);toast(badn?'Saved. '+badn+' image(s) could not upload.':(was?'Saved':'Added'))})}
-function delItem(it){(it.imgs||[]).forEach(function(m){delImg(m.path)});I=I.filter(function(x){return x.id!==it.id});save()}
-function dlf(n,t,ty){var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([t],{type:ty||'application/json'}));a.download=n;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},400)}
-function pick(id){sel=id;var it=find(id);if(it){it.rv=Date.now();save()}sec.classList.add('gd-open');drawList();drawDet()}
-function use(it){it.uc=(it.uc||0)+1;save()}
-function move(it,d){var g=I.filter(function(x){return x.cat===it.cat}).sort(function(a,b){return(a.ord||0)-(b.ord||0)}),i=g.indexOf(it),o=g[i+d];if(!o){toast(d<0?'Already first in this module.':'Already last in this module.');return}var t=it.ord;it.ord=o.ord;o.ord=t;if(it.ord===o.ord)it.ord+=d;save();draw(true)}
-$('q').addEventListener('input',function(e){q=e.target.value;sec.classList.remove('gd-open');draw()});
-$('tp').addEventListener('change',function(e){cf=e.target.value;sec.classList.remove('gd-open');draw()});
-$('q').addEventListener('keydown',function(e){var i=V.map(function(x){return x.id}).indexOf(sel);
- if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();if(!V.length)return;i=e.key==='ArrowDown'?Math.min(V.length-1,i+1):Math.max(0,i-1);sel=V[i].id;drawList();drawDet();var o=sec.querySelector('.it.on');if(o&&o.scrollIntoView)o.scrollIntoView({block:'nearest'})}
- else if(e.key==='Enter'){var it=find(sel);if(!it)return;var x=gf!=='ALL'?gf:G.filter(function(g){return lines(it[F[g]]).length})[0],l=x?lines(it[F[x]])[0]:'';if(l){use(it);copy(l)}else toast('No command to copy yet.')}
- else if(e.key==='Escape'){$('q').value='';q='';draw()}});
-$('add').onclick=function(){openF(null,'')};$('fx').onclick=function(){$('dl').close()};$('fm').addEventListener('submit',function(e){e.preventDefault();saveF()});
-$('fdel').onclick=function(){if(ed&&confirm('Delete this command? This cannot be undone.')){delItem(ed);$('dl').close();sel='';sec.classList.remove('gd-open');draw();toast('Deleted')}};
-$('addimg').onclick=function(){$('fimg').click()};
-$('fimg').onchange=function(e){var fs=[].slice.call(e.target.files||[]);e.target.value='';addPending(fs)};
-$('fatt').onchange=function(e){var fs=[].slice.call(e.target.files||[]);e.target.value='';attachNow(fs)};
-$('pi').addEventListener('dragover',function(e){e.preventDefault()});$('pi').addEventListener('drop',function(e){e.preventDefault();addPending(e.dataTransfer&&e.dataTransfer.files)});
-$('dl').addEventListener('paste',function(e){var f=e.clipboardData&&e.clipboardData.files;if(f&&f.length&&/^image\//.test(f[0].type)){e.preventDefault();addPending(f)}});
-document.addEventListener('paste',function(e){if(!root.classList.contains('gds-active')||$('dl').open)return;var t=e.target&&e.target.tagName;if(/INPUT|TEXTAREA|SELECT/.test(t||''))return;var f=e.clipboardData&&e.clipboardData.files;if(f&&f.length&&/^image\//.test(f[0].type)){e.preventDefault();attachNow(f)}});
-$('fp').addEventListener('input',function(e){var f=guess(e.target.value);if(f&&!$(f).value){$(f).value=e.target.value.trim();e.target.value='';$('fe').textContent='Placed in '+N[{fs:'S',fg:'G',fa:'A'}[f]]+' (best guess). Check it.';if(f!=='fs')$('dlx').open=true}});
-$('dl').addEventListener('keydown',function(e){if(e.key==='Enter'&&(e.ctrlKey||e.metaKey)){e.preventDefault();saveF()}});
-$('more').onclick=function(){$('mm').hidden=!$('mm').hidden};
-$('ex').onclick=function(){dlf('gds-commands-'+new Date().toISOString().slice(0,10)+'.json',payload());toast('Backup downloaded (image files stay in your account)')};
-$('exc').onclick=function(){var c=function(v){return'"'+String(v||'').replace(/"/g,'""')+'"'};dlf('gds-commands-'+new Date().toISOString().slice(0,10)+'.csv','Topic,Task,Sabre,Galileo,Amadeus,Remarks,Also known as,Checked,Quick index\r\n'+I.slice().sort(function(a,b){return tix(a.cat)-tix(b.cat)||a.ord-b.ord}).map(function(i){return[i.cat,i.task,i.s,i.g,i.a,i.rm,i.al,i.ver?'yes':'no',i.qi?'yes':'no'].map(c).join(',')}).join('\r\n'),'text/csv');toast('CSV downloaded')};
-$('im').onclick=function(){$('fi').click()};
-$('fi').onchange=function(e){var f=e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){var p=parse(r.result);if(!p){toast('That file is not a valid backup.');return}I=merge({items:p.items,hb:true}).items;save();draw();toast('Restored '+I.length+' commands')};r.readAsText(f);e.target.value=''};
-$('rs').onclick=function(){if(!I.length){toast('Nothing to delete.');return}if(confirm('Delete ALL '+I.length+' commands and their images? This cannot be undone. Download a backup first if unsure.')){I.forEach(function(x){(x.imgs||[]).forEach(function(m){delImg(m.path)})});I=[];save();cf='';vw='all';sel='';draw();toast('All commands deleted')}};
-function parseCSV(t){t=String(t||'').replace(/^\uFEFF/,'');var fl=t.split(/\r?\n/)[0]||'',d=[',',';','\t'].sort(function(a,b){return fl.split(b).length-fl.split(a).length})[0],R=[],r=[],c='',qq=false,i;
- for(i=0;i<t.length;i++){var ch=t[i];if(qq){if(ch==='"'){if(t[i+1]==='"'){c+='"';i++}else qq=false}else c+=ch}else if(ch==='"')qq=true;else if(ch===d){r.push(c);c=''}else if(ch==='\n'||ch==='\r'){if(ch==='\r'&&t[i+1]==='\n')i++;r.push(c);c='';if(r.some(function(x){return x.trim()}))R.push(r);r=[]}else c+=ch}
- r.push(c);if(r.some(function(x){return x.trim()}))R.push(r);return R}
-function topicOf(v){v=String(v||'').trim();if(/^\d+$/.test(v)&&MODS[+v-1])return{c:MODS[+v-1]};var nv=norm(v);if(nv)for(var i=0;i<MODS.length;i++){var nt=norm(MODS[i]);if(nt===nv||nt.indexOf(nv)===0||nv.indexOf(nt)===0)return{c:MODS[i]}}return{c:MODS[19]}}
-function importCSV(text){var R=parseCSV(text);if(R.length<2){toast('The file needs a header row and at least one command.');return}
- var H=R[0].map(function(x){return norm(x)}),ix=function(re){for(var i=0;i<H.length;i++)if(re.test(H[i]))return i;return-1},c={tp:ix(/^(module|topic|category|section)$/),sub:ix(/^(subcategory|sub)$/),tk:ix(/^(task|title|name)$/),s:ix(/^(sabre|command|commands|entry)$/),g:ix(/^galileo$/),a:ix(/^amadeus$/),r:ix(/^(remarks?|description|notes?)$/),ex:ix(/^example$/),src:ix(/^(source|manual|source manual)$/),al:ix(/^(also known as|aka|keywords|search words)$/)};
- if(c.tk<0){toast('No Task column found. Download the template for the right headings.');return}
- var have={};I.forEach(function(x){have[norm(x.cat+' '+x.task+' '+x.s+' '+x.g+' '+x.a)]=1});var mo=I.reduce(function(m,x){return Math.max(m,x.ord||0)},0),add=0,dup=0,skip=0,now=Date.now(),g=function(r,k){return k<0?'':String(r[k]||'')};
- R.slice(1).forEach(function(r,n){var t=g(r,c.tk).trim();if(!t)return;var s2=lines(g(r,c.s)).join('\n'),g2=lines(g(r,c.g)).join('\n'),a2=lines(g(r,c.a)).join('\n');if(!s2&&!g2&&!a2){skip++;return}var tp=topicOf(g(r,c.tp)),key=norm(tp.c+' '+t+' '+s2+' '+g2+' '+a2);if(have[key]){dup++;return}have[key]=1;
-  I.push({id:'u'+now+'_'+n,task:t,cat:tp.c,sub:g(r,c.sub).trim(),s:s2,g:g2,a:a2,rm:g(r,c.r).trim(),ex:g(r,c.ex).trim(),src:g(r,c.src).trim(),al:g(r,c.al).trim(),fav:false,ver:false,ts:0,cr:now,ord:++mo,imgs:[]});add++});
- if(!add){toast(dup?'Nothing new: '+dup+' duplicates skipped.':'No usable rows found (each row needs a task and a command).');return}save();cf='';vw='all';q='';$('q').value='';sec.classList.remove('gd-open');draw();toast('Imported '+add+' command'+(add>1?'s':'')+(dup?', skipped '+dup+' duplicates':'')+(skip?', '+skip+' without commands':''))}
-/* ===== Word / PDF reader: reads a manual (.docx or .pdf) and adds or updates commands under the matching title. Review first, nothing saves until Apply; commands are stored as text only. ===== */
-var WD=null,SNAPK=K+'.preimport';
-(function(){var st=document.createElement('style');st.id='gd-wd-css';st.textContent='#aero-gds #gd-wd{width:min(1000px,calc(100% - 24px));max-height:92vh;overflow:hidden}#aero-gds #gd-wd .wh{padding:18px 22px 10px;border-bottom:1px solid var(--line)}#aero-gds #gd-wd .wh h2{margin:0 0 4px;font-size:20px}#aero-gds #gd-wd .wh p{margin:0;font-size:13px;color:var(--mut)}#aero-gds #gd-wd .wb{padding:14px 22px;overflow:auto;max-height:calc(92vh - 190px)}#aero-gds #gd-wd .wmsg{padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--accb);font-size:13.5px;margin:0 0 12px}#aero-gds #gd-wd .wmsg.bad{background:var(--wnb);color:var(--wn);border-color:#F2D9A6}#aero-gds #gd-wd .wg{border:1px solid var(--line);border-radius:12px;margin:0 0 14px;overflow:hidden}#aero-gds #gd-wd .wgh{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 12px;background:var(--accb)}#aero-gds #gd-wd .wgh b{flex:1 1 240px;font-size:14px}#aero-gds #gd-wd .wgh small{flex:1 0 100%;color:var(--mut);font-size:12px}#aero-gds #gd-wd select{font:inherit;font-size:13px;border:1px solid #CFDAEA;border-radius:8px;padding:6px 8px;background:#fff;color:var(--ink);max-width:100%}#aero-gds #gd-wd .wr{display:grid;grid-template-columns:minmax(120px,1fr) minmax(0,2fr) 150px;gap:10px;padding:9px 12px;border-top:1px solid var(--line);align-items:start;font-size:13px}#aero-gds #gd-wd .wr pre{margin:0;white-space:pre-wrap;word-break:break-word;font:12.5px ui-monospace,Consolas,monospace;background:var(--code);color:var(--codet);border-radius:8px;padding:6px 8px}#aero-gds #gd-wd .wr .old{margin-top:6px;font-size:11.5px;color:var(--mut)}#aero-gds #gd-wd .wr .old pre{background:#EEF2F6;color:var(--ink)}#aero-gds #gd-wd .wr small{color:var(--mut)}#aero-gds #gd-wd .wtag{display:inline-block;margin-top:4px;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px}#aero-gds #gd-wd .wtag.n{background:var(--okb);color:var(--ok)}#aero-gds #gd-wd .wtag.u{background:var(--wnb);color:var(--wn)}#aero-gds #gd-wd .wtag.s{background:#EEF2F6;color:var(--mut)}#aero-gds #gd-wd .wf{display:flex;gap:10px;justify-content:space-between;align-items:center;flex-wrap:wrap;padding:12px 22px;border-top:1px solid var(--line);font-size:13px}#aero-gds #gd-wd .wf span:last-child{display:flex;gap:8px}@media(max-width:700px){#aero-gds #gd-wd .wr{grid-template-columns:1fr}}';document.head.appendChild(st);sec.insertAdjacentHTML('beforeend','<dialog id="gd-wd"></dialog>')})();
-function wtoast(m){toast(m);clearTimeout(toast.h);toast.h=setTimeout(function(){$('t').classList.remove('on')},6000)}
-function u16(d,o){return d[o]|d[o+1]<<8}
-function u32(d,o){return(d[o]|d[o+1]<<8|d[o+2]<<16|d[o+3]<<24)>>>0}
-function inflate(u8){if(!window.DecompressionStream)return Promise.reject(new Error('This browser cannot open Word files. Use a current Chrome, Edge or Safari.'));return new Response(new Blob([u8]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).arrayBuffer().then(function(b){return new Uint8Array(b)})}
-function zipGet(buf,name){var d=new Uint8Array(buf),e=d.length-22;while(e>=0&&u32(d,e)!==0x06054b50)e--;if(e<0)return Promise.reject(new Error('Not a valid .docx file.'));var n=u16(d,e+10),p=u32(d,e+16);for(var i=0;i<n;i++){if(u32(d,p)!==0x02014b50)break;var m=u16(d,p+10),cs=u32(d,p+20),nl=u16(d,p+28),el=u16(d,p+30),cl=u16(d,p+32),lo=u32(d,p+42),nm=new TextDecoder().decode(d.subarray(p+46,p+46+nl));if(nm===name){var ds=lo+30+u16(d,lo+26)+u16(d,lo+28),raw=d.subarray(ds,ds+cs);return m===0?Promise.resolve(raw):inflate(raw)}p+=46+nl+el+cl}return Promise.reject(new Error('This Word file has no readable text (word/document.xml is missing).'))}
-function wTxt(n){var t='';(function w(x){for(var c=x.firstChild;c;c=c.nextSibling){if(c.nodeType!==1)continue;var l=c.localName;if(l==='t')t+=c.textContent;else if(l==='tab')t+='\t';else if(l==='br'||l==='cr')t+='\n';else if(l==='del'||l==='delText'||l==='instrText')continue;else w(c)}})(n);return t}
-function docxBlocks(xml){var doc=new DOMParser().parseFromString(xml,'application/xml'),out=[];
- function kids(n,l){var a=[];for(var c=n.firstChild;c;c=c.nextSibling)if(c.nodeType===1&&c.localName===l)a.push(c);return a}
- function para(p){var sty='',bold=true,any=false,pr=kids(p,'pPr')[0];if(pr){var ps=kids(pr,'pStyle')[0];if(ps)sty=ps.getAttribute('w:val')||''}
-  kids(p,'r').forEach(function(r){if(!wTxt(r).trim())return;any=true;var rp=kids(r,'rPr')[0],b=false;if(rp){var bb=kids(rp,'b')[0];if(bb&&bb.getAttribute('w:val')!=='0'&&bb.getAttribute('w:val')!=='false')b=true}if(!b)bold=false});
-  return{t:wTxt(p).replace(/\u00a0/g,' ').trim(),h:/^(heading\s*\d|title|subtitle)/i.test(sty),b:any&&bold}}
- function walk(n){for(var c=n.firstChild;c;c=c.nextSibling){if(c.nodeType!==1)continue;var l=c.localName;
-  if(l==='p'){var p=para(c);if(p.t)out.push({k:'p',t:p.t,h:p.h,b:p.b})}
-  else if(l==='tbl'){var rows=[];kids(c,'tr').forEach(function(tr){var cells=kids(tr,'tc').map(function(tc){return kids(tc,'p').map(function(pp){return wTxt(pp).replace(/\u00a0/g,' ').replace(/\s+$/,'')}).join('\n').trim()});if(cells.length)rows.push(cells)});out.push({k:'t',rows:rows})}
-  else if(l==='body'||l==='sdt'||l==='sdtContent'||l==='customXml')walk(c)}}
- walk(doc.documentElement);return out}
-function gdsOf(s){var m=/\b(sabre|galileo|amadeus)\b/i.exec(s||'');return m?m[1].charAt(0).toUpperCase():''}
-function isTitle(b){if(b.k!=='p')return false;if(b.h)return true;if(/^\d+\s*[\.\)]\s+.{3,100}\((sabre|galileo|amadeus)\)\s*$/i.test(b.t))return true;return b.b&&b.t.length<120&&/^\d+\s*[\.\)]\s+\S/.test(b.t)}
-function colMap(cells){var m={t:-1,c:-1,r:-1};cells.forEach(function(x,i){var v=norm(x);if(m.t<0&&/^(task|title|name|function|purpose|action|operation)\b/.test(v))m.t=i;else if(m.c<0&&/(command|format|syntax|entry|code)/.test(v))m.c=i;else if(m.r<0&&/(remark|note|explanation|comment|description|usage)/.test(v))m.r=i});return m.t>=0&&m.c>=0?m:null}
-function flat(v){return String(v||'').replace(/\s*\n\s*/g,' ').trim()}
-function extract(blocks,file){var out=[],title='',sub='',fg=gdsOf(file);
- function row(cells,m){var t=flat(cells[m.t]),c=lines(cells[m.c]||'').join('\n'),r=m.r>=0?flat(cells[m.r]):'';if(!t||!c)return;out.push({file:file,title:title||'(No title)',gds:gdsOf(title)||fg,sub:sub,task:t,cmd:c,rm:r})}
- blocks.forEach(function(b){if(b.k==='p'){if(isTitle(b)){title=b.t;sub=''}return}
-  var m=null;sub='';b.rows.forEach(function(cells){var cm=colMap(cells);if(cm){m=cm;return}var ne=cells.filter(function(x){return x.trim()});if(ne.length===1&&cells.length>1){sub=flat(ne[0]);return}if(!m)m=cells.length>=3?{t:0,c:1,r:2}:cells.length===2?{t:0,c:1,r:-1}:null;if(m)row(cells,m)})});
- return out}
-function loadPdf(ok,er){if(window.pdfjsLib){ok();return}var s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';s.onload=function(){window.pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';ok()};s.onerror=function(){er(new Error('Could not load the PDF reader. Check the internet connection and try again.'))};document.head.appendChild(s)}
-function pdfPage(page){return page.getTextContent().then(function(tc){var it=tc.items.filter(function(i){return i.str&&i.str.trim()}).map(function(i){return{x:i.transform[4],y:i.transform[5],w:i.width||0,s:i.str}});it.sort(function(a,b){return b.y-a.y||a.x-b.x});var L=[],cur=null;it.forEach(function(i){if(!cur||Math.abs(cur.y-i.y)>3){cur={y:i.y,it:[]};L.push(cur)}cur.it.push(i)});
- return L.map(function(l){l.it.sort(function(a,b){return a.x-b.x});var cells=[],pe=-1e9;l.it.forEach(function(i){var gap=i.x-pe;if(!cells.length||gap>18)cells.push({x:i.x,s:i.s});else{var c=cells[cells.length-1];c.s+=(gap>1.2&&!/\s$/.test(c.s)&&!/^\s/.test(i.s)?' ':'')+i.s}pe=i.x+i.w});return cells})})}
-function pdfExtract(pages,file){var out=[],title='',sub='',cols=null,cm=null,last=null,fg=gdsOf(file);
- function fin(){if(last&&last.task&&last.cmd)out.push({file:file,title:title||'(No title)',gds:gdsOf(title)||fg,sub:last.sub,task:flat(last.task),cmd:lines(last.cmd).join('\n'),rm:flat(last.rm)});last=null}
- pages.forEach(function(L){L.forEach(function(cells){var txt=cells.map(function(c){return c.s}).join(' ').trim();
-  if(cells.length>=2){var hc=colMap(cells.map(function(c){return c.s}));if(hc){fin();cols=cells.map(function(c){return c.x});cm=hc;sub='';return}}
-  if(cells.length===1&&txt.length<120&&(/\((sabre|galileo|amadeus)\)\s*$/i.test(txt)||/^\d+\s*[\.\)]\s+[A-Za-z]/.test(txt))){fin();title=txt;sub='';return}
-  if(!cols)return;
-  var a=['','','','','',''];cells.forEach(function(c){var ci=0;for(var i=0;i<cols.length;i++)if(cols[i]<=c.x+6)ci=i;a[ci]+=(a[ci]?' ':'')+c.s});
-  var T=a[cm.t],C=a[cm.c],R=cm.r>=0?a[cm.r]:'';
-  if(T&&(C||R)){fin();last={task:T,cmd:C,rm:R,sub:sub}}
-  else if(T){if(last)last.task+=' '+T;else sub=T}
-  else if(last){if(C)last.cmd+=(last.cmd?'\n':'')+C;if(R)last.rm+=' '+R}})});
- fin();return out}
-function readFile(f){var nm=f.name,ext=(nm.split('.').pop()||'').toLowerCase();
- return new Promise(function(res,rej){var r=new FileReader();r.onerror=function(){rej(new Error('Could not read '+nm))};r.onload=function(){res(r.result)};r.readAsArrayBuffer(f)}).then(function(buf){
-  if(ext==='docx')return zipGet(buf,'word/document.xml').then(function(u){return extract(docxBlocks(new TextDecoder().decode(u)),nm)});
-  if(ext==='pdf')return new Promise(function(ok,er){loadPdf(ok,er)}).then(function(){return window.pdfjsLib.getDocument({data:new Uint8Array(buf)}).promise}).then(function(pdf){var ps=[],chain=Promise.resolve();for(var i=1;i<=pdf.numPages;i++)(function(n){chain=chain.then(function(){return pdf.getPage(n)}).then(pdfPage).then(function(l){ps.push(l)})})(i);return chain.then(function(){return pdfExtract(ps,nm)})});
-  if(ext==='doc')throw new Error(nm+': the old .doc format cannot be read. In Word choose Save As, pick .docx, then import that file.');
-  throw new Error(nm+': please choose a .docx or .pdf file.')})}
-function modGuess(t){var c=String(t||'').replace(/^\s*\d+\s*[\.\)]\s*/,'').replace(/\s*\((sabre|galileo|amadeus)\)\s*$/i,'').trim(),v=norm(c);if(!v)return'';for(var i=0;i<MODS.length;i++){var nt=norm(MODS[i]);if(nt===v||nt.indexOf(v)===0||v.indexOf(nt)===0)return MODS[i]}
- var tk=v.split(' ').filter(function(x){return x.length>2}),best='',bs=0;MODS.forEach(function(m){var mt=norm(m).split(' ').filter(function(x){return x.length>2}),h=mt.filter(function(x){return tk.indexOf(x)>=0}).length,sc=mt.length?h/mt.length:0;if(h>=2&&sc>bs){bs=sc;best=m}});return bs>=.5?best:''}
-function classify(g,r){if(!g.mod)return{k:'nomod',act:'skip'};var gk=F[g.gds]||'s',nt=norm(r.task),nc=norm(r.cmd),c=I.filter(function(x){return x.cat===g.mod&&norm(x.task)===nt});if(!c.length)return{k:'new',act:'add'};var same=c.filter(function(x){return norm(x[gk])===nc})[0];if(same)return{k:'same',act:'skip',it:same};var it=c.filter(function(x){return lines(x[gk]).length})[0]||c[0];return{k:lines(it[gk]).length?'chg':'fill',act:'upd',it:it}}
-function wdRender(){var d=$('wd'),b0=d.querySelector('.wb'),sc=b0?b0.scrollTop:0,n={add:0,upd:0,skip:0},body='',tags={new:['n','New'],fill:['u','Fills an empty field'],chg:['u','Differs from library'],same:['s','Already in library'],nomod:['s','Choose a module']};
- WD.errs.forEach(function(e){body+='<div class="wmsg bad">'+esc(e)+'</div>'});
- if(WD.busy)body+='<div class="wmsg">Reading the file…</div>';
- else if(!WD.groups.length)body+='<div class="wmsg">No commands found. Use a numbered title, followed by a table with the columns TASK | COMMAND / FORMAT | REMARKS, for example &ldquo;1. Booking &amp; Name Field Entry (SABRE)&rdquo;. Scanned PDFs without selectable text cannot be read.</div>';
- WD.groups.forEach(function(g,gi){var rows='';g.rows.forEach(function(r,ri){var c=classify(g,r),act=c.k==='nomod'?'skip':r.act,gk=F[g.gds]||'s',t=tags[c.k];n[act==='add'?'add':act==='upd'?'upd':'skip']++;
-  rows+='<div class="wr"><div><b>'+esc(r.task)+'</b>'+(r.sub||r.rm?'<br><small>'+esc([r.sub,r.rm].filter(Boolean).join(' · '))+'</small>':'')+'<br><span class="wtag '+t[0]+'">'+t[1]+'</span></div><div><pre>'+esc(r.cmd)+'</pre>'+(c.k==='chg'?'<div class="old">Currently in library:<pre>'+esc(c.it[gk])+'</pre></div>':'')+'</div><div><select data-g="'+gi+'" data-r="'+ri+'" data-k="act" aria-label="Action"'+(c.k==='nomod'?' disabled':'')+'><option value="add"'+(act==='add'?' selected':'')+'>Add as new</option>'+(c.it?'<option value="upd"'+(act==='upd'?' selected':'')+'>Update existing</option>':'')+'<option value="skip"'+(act==='skip'?' selected':'')+'>Skip</option></select></div></div>'});
-  body+='<div class="wg"><div class="wgh"><b>'+esc(g.title)+'</b><select data-g="'+gi+'" data-k="mod" aria-label="Module"><option value="">Select module…</option>'+MODS.map(function(m){return'<option value="'+esc(m)+'"'+(g.mod===m?' selected':'')+'>'+esc(tname(m))+'</option>'}).join('')+'</select><select data-g="'+gi+'" data-k="gds" aria-label="GDS">'+G.map(function(x){return'<option value="'+x+'"'+(g.gds===x?' selected':'')+'>'+N[x]+'</option>'}).join('')+'</select><small>'+esc(g.file)+' · '+g.rows.length+' command'+(g.rows.length>1?'s':'')+(g.gg?' · GDS not named in the title, please check it':'')+(g.mod?'':' · choose the module to continue')+'</small></div>'+rows+'</div>'});
- d.innerHTML='<div class="wh"><h2>Import from Word / PDF</h2><p>'+esc(WD.files.join(', '))+'. Check each title, then apply. Nothing is saved until you press Apply, and commands are only stored as text, never run.</p></div><div class="wb">'+body+'</div><div class="wf"><span>Add '+n.add+' · Update '+n.upd+' · Skip '+n.skip+'</span><span><button type="button" class="b" data-w="x">Cancel</button><button type="button" class="b p" data-w="ok"'+(n.add+n.upd?'':' disabled')+'>Apply changes</button></span></div>';
- var b1=d.querySelector('.wb');if(b1)b1.scrollTop=sc}
-function wdStart(fs){var d=$('wd');WD={files:fs.map(function(f){return f.name}),errs:[],groups:[],busy:true};if(!d.open)d.showModal();wdRender();var all=[],chain=Promise.resolve();
- fs.forEach(function(f){chain=chain.then(function(){return readFile(f)}).then(function(r){all=all.concat(r)},function(e){WD.errs.push(e&&e.message?e.message:String(e))})});
- chain.then(function(){var m={};all.forEach(function(r){var k=r.file+'\u0001'+r.title;if(!m[k]){m[k]={file:r.file,title:r.title,gds:r.gds||(F[gf]?gf:'S'),gg:!r.gds,mod:modGuess(r.title),rows:[]};WD.groups.push(m[k])}m[k].rows.push(r)});WD.groups.forEach(function(g){g.rows.forEach(function(r){r.act=classify(g,r).act})});WD.busy=false;wdRender()})}
-function wdApply(){if(!WD)return;var snap=JSON.stringify(I),now=Date.now(),mo=I.reduce(function(m,x){return Math.max(m,x.ord||0)},0),add=0,upd=0,k=0;
- WD.groups.forEach(function(g){if(!g.mod)return;var gk=F[g.gds]||'s';g.rows.forEach(function(r){if(r.act==='skip')return;var nt=norm(r.task),nc=norm(r.cmd),c=I.filter(function(x){return x.cat===g.mod&&norm(x.task)===nt});if(c.some(function(x){return norm(x[gk])===nc}))return;
-  if(r.act==='upd'&&c.length){var it=c.filter(function(x){return lines(x[gk]).length})[0]||c[0];it[gk]=r.cmd;if(r.rm)it.rm=r.rm;it.ver=false;it.ts=0;if(!it.src)it.src=g.file+' – '+g.title;upd++;return}
-  var o={id:'w'+now+'_'+(k++),task:r.task,cat:g.mod,sub:r.sub||'',s:'',g:'',a:'',rm:r.rm||'',ex:'',src:g.file+' – '+g.title,al:'',fav:false,ver:false,ts:0,cr:now,ord:++mo,imgs:[]};o[gk]=r.cmd;I.push(o);add++})});
- if(!add&&!upd){toast('Nothing new to apply.');return}
- try{localStorage.setItem(SNAPK,snap)}catch(e){}
- save();cf='';vw='all';q='';$('q').value='';sec.classList.remove('gd-open');draw();$('wd').close();WD=null;
- wtoast('Added '+add+' and updated '+upd+' command'+(add+upd>1?'s':'')+'. Updated commands are marked unverified. To reverse this: More, then Undo last Word / PDF import.')}
-$('wd').onchange=function(e){var t=e.target,gi=t.dataset.g,k=t.dataset.k;if(gi==null||!WD)return;var g=WD.groups[+gi];if(k==='mod'){g.mod=t.value;g.rows.forEach(function(r){r.act=classify(g,r).act})}else if(k==='gds'){g.gds=t.value;g.gg=false;g.rows.forEach(function(r){r.act=classify(g,r).act})}else if(k==='act')g.rows[+t.dataset.r].act=t.value;wdRender()};
-$('wd').onclick=function(e){var t=e.target.closest('[data-w]');if(!t)return;if(t.dataset.w==='x'){$('wd').close();WD=null}else if(t.dataset.w==='ok')wdApply()};
-$('iw').onclick=function(){$('mm').hidden=true;$('fiw').click()};
-$('fiw').onchange=function(e){var fs=Array.prototype.slice.call(e.target.files||[]);e.target.value='';if(fs.length)wdStart(fs)};
-$('iu').onclick=function(){$('mm').hidden=true;var s0=lget(SNAPK);if(!s0){toast('There is no Word / PDF import to undo.');return}try{I=JSON.parse(s0)}catch(x){toast('Could not restore the earlier library.');return}try{localStorage.removeItem(SNAPK)}catch(x){}save();draw();wtoast('Last Word / PDF import undone.')};
-$('ic').onclick=function(){$('mm').hidden=true;$('ficsv').click()};
-$('ficsv').onchange=function(e){var f=e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){importCSV(r.result)};r.readAsText(f);e.target.value=''};
-$('tpl').onclick=function(){$('mm').hidden=true;tpl()};
-$('lb').addEventListener('click',function(){$('lb').hidden=true});
-sec.addEventListener('click',function(e){var t=e.target.closest('[data-a],[data-g],[data-r],[data-v],[data-s]');if(!t)return;
- if(t.dataset.v!=null&&!t.dataset.a&&!t.dataset.r){vw=t.dataset.v;sec.classList.remove('gd-open');draw();return}
- if(t.dataset.s){wfs=+t.dataset.s;sec.classList.add('gd-open');drawList();drawDet();return}
- if(t.dataset.r){pick(t.dataset.r);return}
- if(t.dataset.g!=null&&!t.dataset.a){gf=t.dataset.g;try{localStorage.setItem(K+'g',gf)}catch(x){}drawList();drawDet();return}
- var a=t.dataset.a,it=find(sel);
- if(a==='bk'){sec.classList.remove('gd-open');return}
- if(a==='nq'){openF(null,q.trim());return}
- if(a==='add2'){openF(null,'');return}if(a==='impw'){$('fiw').click();return}if(a==='imp2'){$('ficsv').click();return}if(a==='tpl2'){tpl();return}
- if(a==='wd'){WP[wfs]=!WP[wfs];save();drawList();drawDet();return}
- if(a==='wp'||a==='wn'){wfs=Math.max(1,Math.min(STEPS.length,wfs+(a==='wn'?1:-1)));drawList();drawDet();return}
- if(a==='addwf'){openF(null,'',wfs);return}
- if(a==='wr'){if(confirm('Reset all workflow progress?')){WP={};save();drawList();drawDet()}return}
- if(a==='wdt'){vw='all';cf='';q='';$('q').value='';draw(true);pick(t.dataset.i);return}
- if(a==='wc'){var c0=find(t.dataset.i);if(c0){var g0=gf==='ALL'?'S':gf,l0=lines(c0[F[g0]])[+t.dataset.l];if(l0){use(c0);copy(l0)}else toast('No '+N[g0]+' command for this step yet.')}return}
- if(a==='pr'){var m=PD[+t.dataset.i];if(m){if(m.ex)m.rm=true;else PD.splice(+t.dataset.i,1);drawPD()}return}
- if(a==='zm'){imgUrl(t.dataset.p,function(u){if(u){$('lbi').src=u;$('lb').hidden=false}});return}
- if(a==='ai'){$('fatt').click();return}
- if(a==='gx'){var it0=find(sel),m0=it0&&it0.imgs[+t.dataset.i];if(m0&&confirm('Remove this image?')){it0.imgs.splice(+t.dataset.i,1);delImg(m0.path);save();drawDet();toast('Image removed')}return}
- if(!it)return;
- if(a==='cl'){var l1=lines(it[F[t.dataset.g]])[+t.dataset.l];if(l1){use(it);copy(l1)}}else if(a==='cp'){use(it);copy(lines(it[F[t.dataset.g]]).join('\n'))}else if(a==='ed')openF(it);
- else if(a==='fv'){it.fav=!it.fav;save();draw(true)}else if(a==='ok'){it.ver=true;it.ts=Date.now();save();draw(true);toast('Marked as verified')}
- else if(a==='mu'||a==='md')move(it,a==='mu'?-1:1)
- else if(a==='dp'){var c={};Object.keys(it).forEach(function(k){c[k]=it[k]});c.id='u'+Date.now();c.task=it.task+' (copy)';c.fav=false;c.ver=false;c.ts=Date.now();c.cr=Date.now();c.imgs=[];c.rv=0;c.uc=0;c.ord=I.reduce(function(mx,x){return Math.max(mx,x.ord||0)},0)+1;I.push(c);save();sel=c.id;draw(true);openF(c)}
- else if(a==='dl'){if(confirm('Delete "'+it.task+'"? This cannot be undone.')){delItem(it);sel='';sec.classList.remove('gd-open');draw();toast('Deleted')}}});
-document.addEventListener('click',function(e){if(!e.target.closest('.gd-mn'))$('mm').hidden=true});
-document.addEventListener('keydown',function(e){if(!root.classList.contains('gds-active'))return;if(e.key==='Escape'&&!$('lb').hidden){$('lb').hidden=true;return}var m=/INPUT|TEXTAREA|SELECT/.test(e.target.tagName||'');if(((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k')||(e.key==='/'&&!m)){e.preventDefault();$('q').focus();$('q').select()}});
-draw();
-function tick(){var u=null;try{u=window.firebase&&firebase.apps&&firebase.apps.length&&firebase.auth().currentUser}catch(e){}
- if(!u){if(uid){if(un)un();un=null;uid=null;db=null;synced=false}return}
- if(uid===u.uid)return;uid=u.uid;db=firebase.firestore();synced=false;
- un=db.collection('kh_settings').doc(uid).onSnapshot(function(d){var S=d.exists?d.data():{},first=!synced,p;synced=true;p=S.gdsItems?parse(S.gdsItems):null;
-  if(p){if(p.wp)WP=p.wp;var m=merge(p);if(JSON.stringify(m.items)!==JSON.stringify(I)){I=m.items;try{localStorage.setItem(K,payload())}catch(e){}draw(true)}if(m.ch)push()}else if(first)push()},function(){})}
-setInterval(tick,1500);
-var anchor=nav.querySelector('[data-aero="ac"]')||nav.querySelector('[data-aero="passengers"]'),gb=document.createElement('button');
-gb.type='button';gb.className='ptc-nav-btn';gb.setAttribute('data-aero','gds');gb.title='GDS Command Finder';
-gb.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 17l6-6-6-6"/><path d="M12 19h8"/></svg><span class="aero-lbl">GDS Commands</span>';
-nav.insertBefore(gb,anchor?anchor.nextSibling:nav.firstChild);
-function mark(){if(root.classList.contains('gds-active'))[].slice.call(nav.querySelectorAll('.ptc-nav-btn')).forEach(function(b){b.classList.toggle('active',b===gb)})}
-gb.addEventListener('click',function(){root.classList.remove('set-active','mas-active','pax-active','pwi-active','ac-active','kh-active','wr-intel-on','wr-form-open');root.classList.add('gds-active');tick();setTimeout(mark,0);setTimeout(function(){var x=$('q');if(x)x.focus()},60);try{window.scrollTo({top:0})}catch(e){}});
-nav.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('.ptc-nav-btn');if(b&&b!==gb)root.classList.remove('gds-active')},true);
-if(window.MutationObserver)new MutationObserver(mark).observe(root,{attributes:true,attributeFilter:['class','data-pane']});
-var op=window.ptcSetPane;if(typeof op==='function')window.ptcSetPane=function(){root.classList.remove('gds-active');return op.apply(this,arguments)};
-
-})();
-</script>
 
 <!-- ===== AeroOps UI polish: icons, tooltips, upload pipeline (presentation only; no data/logic touched) ===== -->
 <style id="kh-ui-pro">
@@ -17589,5 +17213,160 @@ function upd(){var q=$('lb-quick');if(!q)return;var E=[];try{E=window.aeroData.e
 function go(){build();upd()}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',go);else go();
 setInterval(go,1500)})();
+</script>
+<style id="aero-login-simple">
+/* Simple white login board (overrides earlier login themes) */
+html body #cloud-auth-modal-backdrop,html[data-theme] body #cloud-auth-modal-backdrop{background:#fff!important;background-image:none!important;display:flex!important;align-items:center!important;justify-content:center!important;padding:24px!important;overflow:auto!important}
+html body #cloud-auth-modal-backdrop::before,html body #cloud-auth-modal-backdrop::after{display:none!important;content:none!important}
+html body #cloud-auth-modal-backdrop .aero-auth-hero,html body #cloud-auth-modal-backdrop .aero-auth-topbar,html body #cloud-auth-modal-backdrop .aero-auth-status,html body #cloud-auth-modal-backdrop .aero-sky,html body #cloud-auth-modal-backdrop .aero-shield,html body #cloud-auth-modal-backdrop #aol-widgets,html body #cloud-auth-modal-backdrop .aol-map,html body #cloud-auth-modal-backdrop #aol-world,html body #cloud-auth-modal-backdrop .aero-orbit,html body #cloud-auth-modal-backdrop .aero-route{display:none!important}
+html body #cloud-auth-modal-backdrop .aero-auth-split{display:block!important;width:100%!important;max-width:400px!important;min-height:0!important;height:auto!important;margin:0 auto!important;align-self:center!important;background:#fff!important;border:1px solid #e5e7eb!important;border-radius:12px!important;box-shadow:0 1px 3px rgba(17,24,39,.08)!important;overflow:hidden!important}
+html body #cloud-auth-modal-backdrop .aero-auth-panel{display:block!important;min-height:0!important;background:#fff!important;padding:32px 28px 24px!important}
+html body #cloud-auth-modal-backdrop .ptc-modal{background:#fff!important;border:0!important;box-shadow:none!important;padding:0!important;max-width:none!important;animation:none!important}
+html body #cloud-auth-modal-backdrop h1,html body #cloud-auth-modal-backdrop h2,html body #cloud-auth-modal-backdrop h3,html body #cloud-auth-modal-backdrop label{color:#111827!important}
+html body #cloud-auth-modal-backdrop p,html body #cloud-auth-modal-backdrop small,html body #cloud-auth-modal-backdrop a{color:#6b7280!important}
+html body #cloud-auth-modal-backdrop input{background:#fff!important;color:#111827!important;border:1px solid #d1d5db!important;border-radius:8px!important;box-shadow:none!important}
+html body #cloud-auth-modal-backdrop input:focus{border-color:#374151!important;outline:2px solid #e5e7eb!important}
+html body #cloud-auth-modal-backdrop .ptc-btn-primary,html body #cloud-auth-modal-backdrop #btn-cloud-auth-signin{background:#1f2937!important;border:1px solid #1f2937!important;color:#fff!important;box-shadow:none!important;background-image:none!important;border-radius:8px!important}
+html body #cloud-auth-modal-backdrop .ptc-btn-primary:hover:not(:disabled){background:#111827!important}
+html body #cloud-auth-modal-backdrop .aero-auth-footer{position:static!important;text-align:center!important;margin-top:18px!important;color:#9ca3af!important;letter-spacing:.08em!important}
+</style>
+<!-- ===== GDS Library (add-on): provider tabs, categories, add/edit/delete commands, reference images. Saves on this device and to your account (kh_settings.glItems). ===== -->
+<style id="gl-css">
+#aero-gdslib{display:none;background:#f6f3ea;color:#2b2d2a;border-radius:14px;padding:0 0 16px;font-family:inherit}
+#ptc-root.gl-active #aero-gdslib{display:block}
+#ptc-root.gl-active #lb,#ptc-root.gl-active #ptc-body-grid,#ptc-root.gl-active #pwi-root,#ptc-root.gl-active #aero-master,#ptc-root.gl-active #aero-settings,#ptc-root.gl-active #aero-pax,#ptc-root.gl-active #aero-ac{display:none!important}
+#aero-gdslib .gh{padding:18px 20px;background:linear-gradient(90deg,#f6f3ea,#e8eedd);border-radius:14px 14px 0 0;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+#aero-gdslib .gh h2{margin:0;font-size:26px;color:#1f4a21}#aero-gdslib .gh p{margin:2px 0 0;color:#555}#aero-gdslib .gsp{flex:1}
+#aero-gdslib button,#aero-gdslib select,#aero-gdslib input,#aero-gdslib textarea{font:inherit;font-size:14px}
+#aero-gdslib .tabs{display:flex;gap:6px;overflow-x:auto;padding:10px 16px 0}
+#aero-gdslib .tab{flex:none;border:1px solid #d6d3c8;border-bottom:0;background:#fff;border-radius:8px 8px 0 0;padding:10px 18px;font-weight:600;cursor:pointer;color:#444}
+#aero-gdslib .tab.on{background:#1f4a21;color:#fff;border-color:#1f4a21}
+#aero-gdslib .gb{display:flex;gap:14px;padding:14px 16px;align-items:flex-start}
+#aero-gdslib .cats{width:250px;flex:none;background:#fff;border:1px solid #d6d3c8;border-radius:10px;padding:10px}
+#aero-gdslib .cats h3{margin:0 4px 6px;color:#1f4a21;font-size:17px}
+#aero-gdslib .cat{display:flex;justify-content:space-between;gap:6px;width:100%;text-align:left;border:0;background:none;border-radius:8px;padding:8px 10px;cursor:pointer;color:#2b2d2a}
+#aero-gdslib .cat:hover{background:#e8eedd}#aero-gdslib .cat.on{background:#1f4a21;color:#fff}
+#aero-gdslib .cat i{font-style:normal;font-size:12px;background:#eee;color:#333;border-radius:99px;padding:0 8px;align-self:center}
+#aero-gdslib .cat.on i{background:rgba(255,255,255,.25);color:#fff}
+#aero-gdslib .main{flex:1;min-width:0}
+#aero-gdslib .bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+#aero-gdslib .bar input[type=search]{flex:1;min-width:180px}
+#aero-gdslib .bar input,#aero-gdslib .bar select{border:1px solid #cfcbbd;border-radius:8px;padding:9px 10px;background:#fff;color:#2b2d2a}
+#aero-gdslib .btn{border:1px solid #1f4a21;background:#fff;color:#1f4a21;border-radius:8px;padding:8px 14px;font-weight:600;cursor:pointer}
+#aero-gdslib .btn:hover{background:#e8eedd}#aero-gdslib .btn.p{background:#1f4a21;color:#fff}#aero-gdslib .btn.d{border-color:#b42318;color:#b42318}
+#aero-gdslib .card{display:flex;gap:12px;flex-wrap:wrap;background:#fff;border:1px solid #d6d3c8;border-radius:10px;padding:14px;margin-bottom:10px}
+#aero-gdslib .ci{width:52px;height:52px;border-radius:10px;background:#e8eedd;color:#1f4a21;display:grid;place-items:center;flex:none;font-weight:800}
+#aero-gdslib .cm{flex:1;min-width:200px}#aero-gdslib .cm h4{margin:0;font-size:17px}
+#aero-gdslib .bg{display:inline-block;font-size:11.5px;border-radius:5px;padding:2px 8px;margin:4px 4px 0 0;background:#e8eedd;color:#1f4a21}
+#aero-gdslib .bg.g{background:#1f4a21;color:#fff}#aero-gdslib .bg.w{background:#fef3c7;color:#92400e}#aero-gdslib .bg.v{background:#d1fae5;color:#065f46}
+#aero-gdslib code,#aero-gdslib pre{font-family:ui-monospace,Consolas,monospace}
+#aero-gdslib .sx{background:#f1efe7;border-radius:6px;padding:8px 10px;font-size:12.5px;max-width:260px;white-space:pre-wrap;word-break:break-all}
+#aero-gdslib .ca{display:flex;flex-direction:column;gap:6px;width:200px}
+#aero-gdslib .em{background:#fff;border:1px dashed #cfcbbd;border-radius:10px;padding:28px;text-align:center;color:#555}
+#aero-gdslib .pg{display:flex;gap:4px;margin-top:8px;align-items:center;flex-wrap:wrap}
+#aero-gdslib .pg button{min-width:32px;border:1px solid #cfcbbd;background:#fff;border-radius:6px;padding:5px 8px;cursor:pointer}#aero-gdslib .pg button.on{background:#1f4a21;color:#fff}
+#aero-gdslib .dt{background:#fff;border:1px solid #d6d3c8;border-radius:10px;padding:18px}
+#aero-gdslib .dt pre{background:#1c1f1c;color:#eef;padding:12px;border-radius:8px;white-space:pre-wrap;overflow:auto}
+#aero-gdslib .gal{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0}#aero-gdslib .gal figure{margin:0;width:170px}
+#aero-gdslib .gal img{width:100%;height:110px;object-fit:cover;border:1px solid #d6d3c8;border-radius:8px;cursor:zoom-in}
+#aero-gdslib .gal figcaption{font-size:12px;color:#555}
+#aero-gdslib dialog{border:0;border-radius:14px;padding:0;width:min(720px,calc(100% - 20px));max-height:92vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+#aero-gdslib dialog::backdrop{background:rgba(0,0,0,.5)}
+#aero-gdslib .fm{padding:20px;display:grid;gap:10px;background:#fff;color:#2b2d2a}
+#aero-gdslib .fm h3{margin:0;color:#1f4a21}#aero-gdslib .fm label{display:grid;gap:3px;font-weight:600;font-size:13px}
+#aero-gdslib .fm input,#aero-gdslib .fm select,#aero-gdslib .fm textarea{border:1px solid #cfcbbd;border-radius:8px;padding:8px 10px;background:#fff;color:#2b2d2a;width:100%;box-sizing:border-box}
+#aero-gdslib .fm textarea.m{font-family:ui-monospace,Consolas,monospace}
+#aero-gdslib .g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#aero-gdslib .th{display:flex;gap:8px;flex-wrap:wrap}#aero-gdslib .th div{width:130px;font-size:12px}#aero-gdslib .th img{width:130px;height:86px;object-fit:cover;border-radius:6px;border:1px solid #d6d3c8}
+#aero-gdslib .th input{padding:4px 6px;font-size:12px}
+#aero-gdslib .er{color:#b42318;min-height:1.2em;font-size:13px}
+#gl-lb{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:100003;display:flex;align-items:center;justify-content:center;padding:16px;cursor:zoom-out}#gl-lb img{max-width:100%;max-height:100%}
+@media(max-width:760px){#aero-gdslib .gb{flex-direction:column}#aero-gdslib .cats{width:auto}#aero-gdslib .ca{width:100%;flex-direction:row}#aero-gdslib .g2{grid-template-columns:1fr}}
+</style>
+<script id="gl-js">
+(function(){'use strict';
+var root=document.getElementById('ptc-root'),nav=document.getElementById('ptc-nav'),anchor=document.getElementById('aero-ac')||document.getElementById('aero-settings');
+if(!root||!nav||!anchor||document.getElementById('aero-gdslib'))return;
+var GDS=['Sabre','Amadeus','Galileo','Travelport+','Worldspan','Apollo'],CATS=['Availability & Schedule','PNR Creation & Management','Fare Display & Pricing','Ticketing & E-ticket','Reissue & Exchange','Refund & Void','Ancillary Services & SSR','Queue & Remarks','PNR History','Passenger Profiles','Error Messages & Troubleshooting','Advanced Commands'],DIFF=['Basic','Standard','Advanced'];
+var K='aeroops.glItems',MAX=950000,PS=6,I=[],DEL=[],g=GDS[0],cat='',q='',df='',vs='',so='new',pg=1,sel=null,ed=null,PD=[],db=null,uid=null,un=null,synced=false;
+function $(i){return document.getElementById(i)}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function toast(m){var d=document.createElement('div');d.textContent=m;d.style.cssText='position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#1f4a21;color:#fff;padding:9px 16px;border-radius:10px;font-size:13px;z-index:100004';document.body.appendChild(d);setTimeout(function(){d.remove()},3500)}
+function load(){try{var p=JSON.parse(localStorage.getItem(K)||'{}');I=p.items||[];DEL=p.del||[]}catch(e){I=[];DEL=[]}}
+function payload(){return JSON.stringify({items:I,del:DEL.slice(-300)})}
+function persist(){var s=payload();try{localStorage.setItem(K,s)}catch(e){toast('This device is out of storage space.')}
+ if(db&&uid){if(s.length>MAX){toast('Saved on this device only: the library is over the ~1 MB cloud limit. Remove some images.');return}
+  db.collection('kh_settings').doc(uid).set({ownerUid:uid,glItems:s,updatedAt:new Date().toISOString()},{merge:true}).catch(function(e){toast(e&&e.code==='permission-denied'?'Cloud save blocked by Firebase rules. Saved on this device.':'Cloud save failed. Saved on this device.')})}}
+function merge(r){var d={};DEL.concat(r.del||[]).forEach(function(x){d[x]=1});var m={};I.concat(r.items||[]).forEach(function(x){if(d[x.id])return;if(!m[x.id]||(x.ts||0)>(m[x.id].ts||0))m[x.id]=x});
+ var arr=Object.keys(m).map(function(k){return m[k]}),dl=Object.keys(d);return{items:arr,del:dl}}
+function tick(){var u=null;try{u=window.firebase&&firebase.apps&&firebase.apps.length&&firebase.auth().currentUser}catch(e){}
+ if(!u){if(uid){if(un)un();un=null;uid=null;db=null;synced=false}return}
+ if(uid===u.uid)return;uid=u.uid;db=firebase.firestore();synced=false;
+ un=db.collection('kh_settings').doc(uid).onSnapshot(function(d){var S=d.exists?d.data():{},first=!synced;synced=true;var r=null;try{r=S.glItems?JSON.parse(S.glItems):null}catch(e){}
+  if(r){var m=merge(r),a=JSON.stringify(m.items.map(function(x){return x.id+x.ts}).sort()),b=JSON.stringify(I.map(function(x){return x.id+x.ts}).sort());I=m.items;DEL=m.del;if(a!==b){try{localStorage.setItem(K,payload())}catch(e){}draw()}if(first&&(m.items.length!==(r.items||[]).length||(r.del||[]).length!==m.del.length))persist()}
+  else if(first&&I.length)persist()},function(){})}
+function lst(){var t=q.toLowerCase().split(/\s+/).filter(Boolean);
+ var r=I.filter(function(x){if(x.g!==g)return false;if(cat&&x.cat!==cat)return false;if(df&&x.diff!==df)return false;if(vs==='v'&&!x.ver)return false;if(vs==='u'&&x.ver)return false;
+  var h=[x.title,x.syntax,x.desc,x.expl,x.ex,x.notes,x.cat].join(' ').toLowerCase();return t.every(function(w){return h.indexOf(w)>-1})});
+ r.sort(so==='az'?function(a,b){return a.title.localeCompare(b.title)}:function(a,b){return(b.ts||0)-(a.ts||0)});return r}
+function find(id){for(var i=0;i<I.length;i++)if(I[i].id===id)return I[i]}
+var sec=document.createElement('section');sec.id='aero-gdslib';sec.className='aero-page';sec.setAttribute('aria-label','GDS Library');
+sec.innerHTML='<div class="gh"><div><h2>GDS Library</h2><p>Your own GDS commands, notes and screenshots in one place</p></div><span class="gsp"></span><button class="btn p" data-a="add">+ Add command</button></div><div class="tabs" id="gl-tabs"></div><div class="gb"><div class="cats" id="gl-cats"></div><div class="main"><div id="gl-body"></div></div></div><dialog id="gl-dlg"></dialog>';
+anchor.parentNode.insertBefore(sec,anchor.nextSibling);
+function draw(){if(sel&&!find(sel))sel=null;
+ $('gl-tabs').innerHTML=GDS.map(function(x){return'<button class="tab'+(x===g?' on':'')+'" data-g="'+esc(x)+'">'+esc(x)+'</button>'}).join('');
+ var base=I.filter(function(x){return x.g===g});
+ $('gl-cats').innerHTML='<h3>'+esc(g)+'</h3>'+[''].concat(CATS).map(function(c){var n=base.filter(function(x){return!c||x.cat===c}).length;return'<button class="cat'+(cat===c?' on':'')+'" data-c="'+esc(c)+'"><span>'+(c||'All Categories')+'</span><i>'+n+'</i></button>'}).join('');
+ var b=$('gl-body');if(sel){b.innerHTML=detail(find(sel));return}
+ var r=lst(),pages=Math.max(1,Math.ceil(r.length/PS));if(pg>pages)pg=pages;var sh=r.slice((pg-1)*PS,pg*PS);
+ var h='<div class="bar"><input type="search" id="gl-q" placeholder="Search in '+esc(g)+' commands…" value="'+esc(q)+'"><select id="gl-df"><option value="">Difficulty</option>'+DIFF.map(function(x){return'<option'+(df===x?' selected':'')+'>'+x+'</option>'}).join('')+'</select><select id="gl-vs"><option value="">Status</option><option value="v"'+(vs==='v'?' selected':'')+'>Verified</option><option value="u"'+(vs==='u'?' selected':'')+'>Unverified</option></select><select id="gl-so"><option value="new">Newest</option><option value="az"'+(so==='az'?' selected':'')+'>A–Z</option></select></div>';
+ if(!sh.length)h+='<div class="em"><b>'+(I.length?'No commands match.':'Your library is empty.')+'</b><br>'+(I.length?'Clear a filter or add a command for '+esc(g)+'.':'Nothing is pre-filled. Add commands you have confirmed yourself, with optional screenshots.')+'<br><br><button class="btn p" data-a="add">+ Add command</button></div>';
+ else h+=sh.map(function(x){return'<div class="card"><div class="ci">'+esc(x.g.charAt(0))+'</div><div class="cm"><h4>'+esc(x.title)+'</h4><span class="bg g">'+esc(x.g)+'</span><span class="bg">'+esc(x.cat)+'</span><span class="bg">'+esc(x.diff)+'</span><span class="bg '+(x.ver?'v':'w')+'">'+(x.ver?'Verified':'Unverified')+'</span>'+((x.imgs||[]).length?'<span class="bg">'+x.imgs.length+' image'+(x.imgs.length>1?'s':'')+'</span>':'')+'<p style="margin:6px 0 0;font-size:13px;color:#555">'+esc(x.desc)+'</p></div><div class="sx">'+esc((x.syntax||'').split('\n')[0])+'</div><div class="ca"><button class="btn" data-a="view" data-id="'+x.id+'">View Details →</button><button class="btn" data-a="edit" data-id="'+x.id+'">Edit</button></div></div>'}).join('');
+ h+='<div class="pg"><span style="margin-right:auto">Showing '+(r.length?(pg-1)*PS+1:0)+'–'+Math.min(pg*PS,r.length)+' of '+r.length+' commands</span>'+(function(){var s='';for(var i=1;i<=pages;i++)s+='<button data-p="'+i+'" class="'+(i===pg?'on':'')+'">'+i+'</button>';return s})()+'</div>';
+ b.innerHTML=h}
+function detail(x){var rel=(x.rel||[]).map(find).filter(Boolean);
+ return'<div class="dt"><button class="btn" data-a="back">← Back</button> <h2 style="margin:10px 0 4px;color:#1f4a21">'+esc(x.title)+'</h2><span class="bg g">'+esc(x.g)+'</span><span class="bg">'+esc(x.cat)+'</span><span class="bg">'+esc(x.diff)+'</span><span class="bg '+(x.ver?'v':'w')+'">'+(x.ver?'Verified':'Unverified')+'</span>'
+ +'<pre>'+esc(x.syntax)+'</pre><button class="btn p" data-a="copy" data-id="'+x.id+'">Copy command</button> <button class="btn" data-a="edit" data-id="'+x.id+'">Edit</button> <button class="btn d" data-a="del" data-id="'+x.id+'">Delete</button>'
+ +[['Description',x.desc],['Explanation',x.expl],['Example',x.ex],['Notes',x.notes]].map(function(p){return p[1]?'<h4 style="margin:14px 0 2px">'+p[0]+'</h4><div style="white-space:pre-wrap;font-size:14px">'+esc(p[1])+'</div>':''}).join('')
+ +((x.imgs||[]).length?'<h4 style="margin:14px 0 2px">Reference images</h4><div class="gal">'+x.imgs.map(function(m,i){return'<figure><img data-a="zoom" data-id="'+x.id+'" data-i="'+i+'" src="'+m.d+'" alt="'+esc(m.cap||x.title)+'"><figcaption>'+esc(m.cap)+'</figcaption></figure>'}).join('')+'</div>':'')
+ +(rel.length?'<h4 style="margin:14px 0 4px">Related commands</h4>'+rel.map(function(r){return'<button class="btn" style="margin:0 6px 6px 0" data-a="view" data-id="'+r.id+'">'+esc(r.title)+'</button>'}).join(''):'')+'</div>'}
+function compress(f){return new Promise(function(ok,no){var r=new FileReader();r.onerror=no;r.onload=function(){var im=new Image();im.onerror=no;im.onload=function(){var s=Math.min(1,760/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);var x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(im,0,0,c.width,c.height);ok(c.toDataURL('image/jpeg',.68))};im.src=r.result};r.readAsDataURL(f)})}
+function form(x){ed=x||null;PD=x?JSON.parse(JSON.stringify(x.imgs||[])):[];var o=function(a,v){return a.map(function(k){return'<option'+(k===v?' selected':'')+'>'+esc(k)+'</option>'}).join('')};
+ var same=I.filter(function(y){return y.g===(x?x.g:g)&&(!x||y.id!==x.id)});
+ $('gl-dlg').innerHTML='<div class="fm"><h3>'+(x?'Edit command':'Add command')+'</h3><div class="g2"><label>GDS<select id="gf-g">'+o(GDS,x?x.g:g)+'</select></label><label>Category<select id="gf-c">'+o(CATS,x?x.cat:(cat||CATS[0]))+'</select></label></div><label>Title *<input id="gf-t" value="'+esc(x&&x.title)+'"></label><label>Command syntax *<textarea id="gf-s" class="m" rows="3">'+esc(x&&x.syntax)+'</textarea></label><label>Short description<input id="gf-d" value="'+esc(x&&x.desc)+'"></label><label>Explanation<textarea id="gf-e" rows="3">'+esc(x&&x.expl)+'</textarea></label><label>Example<textarea id="gf-x" class="m" rows="2">'+esc(x&&x.ex)+'</textarea></label><label>Notes<textarea id="gf-n" rows="2">'+esc(x&&x.notes)+'</textarea></label><div class="g2"><label>Difficulty<select id="gf-f">'+o(DIFF,x?x.diff:'Basic')+'</select></label><label>Related commands (same GDS)<select id="gf-r" multiple size="3">'+same.map(function(y){return'<option value="'+y.id+'"'+((x&&(x.rel||[]).indexOf(y.id)>-1)?' selected':'')+'>'+esc(y.title)+'</option>'}).join('')+'</select></label></div><label style="display:flex;gap:8px;align-items:center;font-weight:500"><input type="checkbox" id="gf-v" style="width:auto"'+(x&&x.ver?' checked':'')+'> I have confirmed this command against an official source</label><div><b style="font-size:13px">Reference images</b> <input type="file" id="gf-i" accept="image/jpeg,image/png,image/webp" multiple><div class="th" id="gf-th"></div></div><div class="er" id="gf-er"></div><div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn" data-a="cancel">Cancel</button><button class="btn p" data-a="save">Save</button></div></div>';
+ th();$('gl-dlg').showModal()}
+function th(){var t=$('gf-th');if(!t)return;t.innerHTML=PD.map(function(m,i){return'<div><img src="'+m.d+'" alt=""><input data-cap="'+i+'" placeholder="Caption" value="'+esc(m.cap)+'"><button type="button" class="btn d" style="padding:2px 8px;margin-top:3px" data-a="rmi" data-i="'+i+'">Remove</button></div>'}).join('')}
+function save(){var v=function(i){return $(i).value.trim()},e=$('gf-er'),t=v('gf-t'),s=$('gf-s').value.trim();
+ if(!t){e.textContent='Enter a title.';return}if(!s){e.textContent='Enter the command syntax.';return}
+ var gg=v('gf-g'),cc=v('gf-c');if(I.some(function(y){return y!==ed&&y.g===gg&&y.cat===cc&&y.title.toLowerCase()===t.toLowerCase()&&y.syntax===s})){e.textContent='This exact command already exists for '+gg+'.';return}
+ var rel=[].slice.call($('gf-r').selectedOptions).map(function(o){return o.value}),n={id:ed?ed.id:'gl'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),g:gg,cat:cc,title:t,syntax:s,desc:v('gf-d'),expl:$('gf-e').value.trim(),ex:$('gf-x').value.trim(),notes:$('gf-n').value.trim(),diff:v('gf-f'),ver:$('gf-v').checked,rel:rel,imgs:PD,ts:Date.now()};
+ var old=I.slice();if(ed)I[I.indexOf(ed)]=n;else I.unshift(n);
+ if(payload().length>MAX*1.0&&db){I=old;e.textContent='Too many or too large images for the ~1 MB cloud limit. Remove an image and try again.';return}
+ g=gg;sel=n.id;$('gl-dlg').close();persist();draw();toast(ed?'Command updated.':'Command added.')}
+sec.addEventListener('click',function(ev){var t=ev.target.closest('[data-a],[data-g],[data-c],[data-p]');if(!t)return;var a=t.dataset.a,id=t.dataset.id;
+ if(t.dataset.g){g=t.dataset.g;cat='';pg=1;sel=null;draw();return}
+ if(t.hasAttribute('data-c')){cat=t.dataset.c;pg=1;sel=null;draw();return}
+ if(t.dataset.p){pg=+t.dataset.p;draw();return}
+ if(a==='add')form(null);else if(a==='edit')form(find(id));else if(a==='view'){sel=id;draw();window.scrollTo({top:0})}else if(a==='back'){sel=null;draw()}
+ else if(a==='cancel')$('gl-dlg').close();else if(a==='save')save();
+ else if(a==='rmi'){PD.splice(+t.dataset.i,1);th()}
+ else if(a==='copy'){var x=find(id);try{navigator.clipboard.writeText(x.syntax).then(function(){toast('Copied')})}catch(e){toast('Copy failed')}}
+ else if(a==='del'){if(confirm('Delete this command permanently? This cannot be undone.')){I=I.filter(function(y){return y.id!==id});DEL.push(id);sel=null;persist();draw();toast('Command deleted.')}}
+ else if(a==='zoom'){var m=find(id).imgs[+t.dataset.i],l=document.createElement('div');l.id='gl-lb';l.innerHTML='<img src="'+m.d+'" alt="">';l.onclick=function(){l.remove()};document.body.appendChild(l)}});
+sec.addEventListener('input',function(ev){var t=ev.target;if(t.id==='gl-q'){q=t.value;pg=1;var p=t.selectionStart;draw();var n=$('gl-q');n.focus();try{n.setSelectionRange(p,p)}catch(e){}}else if(t.dataset&&t.dataset.cap!=null)PD[+t.dataset.cap].cap=t.value});
+sec.addEventListener('change',function(ev){var t=ev.target;if(t.id==='gl-df'){df=t.value;pg=1;draw()}else if(t.id==='gl-vs'){vs=t.value;pg=1;draw()}else if(t.id==='gl-so'){so=t.value;draw()}
+ else if(t.id==='gf-g'){var gg=t.value,r=$('gf-r');r.innerHTML=I.filter(function(y){return y.g===gg&&(!ed||y.id!==ed.id)}).map(function(y){return'<option value="'+y.id+'">'+esc(y.title)+'</option>'}).join('')}
+ else if(t.id==='gf-i'){var fs=[].slice.call(t.files).filter(function(f){return/^image\/(jpeg|png|webp)$/.test(f.type)});if(!fs.length){toast('Use JPG, PNG or WEBP images.');return}
+  Promise.all(fs.map(compress)).then(function(r){r.forEach(function(d){PD.push({d:d,cap:''})});t.value='';th()}).catch(function(){toast('Could not read that image.')})}});
+var gb=document.createElement('button');gb.type='button';gb.className='ptc-nav-btn';gb.setAttribute('data-aero','gdslib');gb.title='GDS Library';
+gb.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h7a3 3 0 013 3v13a2 2 0 00-2-2H4zM20 4h-7a3 3 0 00-3 3v13a2 2 0 012-2h8z"/></svg><span class="aero-lbl">GDS Library</span>';
+nav.insertBefore(gb,anchor.nodeType&&nav.querySelector('[data-aero="ac"]')?nav.querySelector('[data-aero="ac"]').nextSibling:nav.firstChild);
+function mark(){if(root.classList.contains('gl-active'))[].slice.call(nav.querySelectorAll('.ptc-nav-btn')).forEach(function(b){b.classList.toggle('active',b===gb)})}
+gb.addEventListener('click',function(){root.classList.remove('set-active','mas-active','pax-active','pwi-active','ac-active','kh-active','wr-intel-on','wr-form-open');root.classList.add('gl-active');tick();draw();setTimeout(mark,0);try{window.scrollTo({top:0})}catch(e){}});
+nav.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('.ptc-nav-btn');if(b&&b!==gb)root.classList.remove('gl-active')},true);
+if(window.MutationObserver)new MutationObserver(mark).observe(root,{attributes:true,attributeFilter:['class','data-pane']});
+var op=window.ptcSetPane;if(typeof op==='function')window.ptcSetPane=function(){root.classList.remove('gl-active');return op.apply(this,arguments)};
+load();setInterval(tick,1500);draw();
+})();
 </script>
 </body></html>
